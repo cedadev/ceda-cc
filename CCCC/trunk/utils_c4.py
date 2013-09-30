@@ -547,7 +547,7 @@ class mipVocab:
 
   def __init__(self):
      ms = mipTableScan()
-     dir = '/home/martin/2013/mipML/FCC2/trunk/work/cordex_vocabs/mip/'
+     dir = 'cordex_vocabs/mip/'
      self.varInfo = {}
      self.varcons = {}
      for f in ['fx','sem','mon','day','6h','3h']:

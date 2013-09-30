@@ -17,13 +17,13 @@ plevBndsRequired = ['clh', 'clm', 'cll']
 heightRequired = ['tas','tasmax','tasmin','huss','sfcWind','sfcWindmax','wsgsmax','uas','vas']
 
 
-ii = open( 'GCMModelName.txt' ).readlines()
+ii = open( 'cordex_vocabs/GCMModelName.txt' ).readlines()
 validGcmNames = []
 for l in ii:
   if l[0] != '#' and len( string.strip(l) ) > 0:
     validGcmNames.append( string.split(l)[0] )
 
-ii = open( 'RCMModelName.txt' ).readlines()
+ii = open( 'cordex_vocabs/RCMModelName.txt' ).readlines()
 validRcmNames = []
 validInstNames = []
 for l in ii:
@@ -46,7 +46,7 @@ for v in heightRequired:
   else:
     heightValues[v] = 10
 
-ii = open( 'cordex_domains.csv' ).readlines()
+ii = open( 'cordex_vocabs/cordex_domains.csv' ).readlines()
 keys = ['name','tag','res','grid_np_lon','grid_np_lat','nlon','nlat','w','e','s','n']
 rotatedPoleGrids = {}
 for l in ii[2:16]:
