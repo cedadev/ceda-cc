@@ -545,17 +545,20 @@ class checkGrids(checkBase):
 
 class mipVocab:
 
-  def __init__(self):
+  def __init__(self,project='CORDEX'):
+     assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
+     if project == 'CORDEX':
+       dir = 'cordex_vocabs/mip/'
+       tl = ['fx','sem','mon','day','6h','3h']
+       vgmap = {'6h':'6hr','3h':'3hr'}
+       fnpat = 'CORDEX_%s'
      ms = mipTableScan()
-     dir = 'cordex_vocabs/mip/'
      self.varInfo = {}
      self.varcons = {}
-     for f in ['fx','sem','mon','day','6h','3h']:
-        vg = f
-        if f in ['6h','3h']:
-          vg += 'r'
+     for f in tl:
+        vg = vgmap.get( f, f )
         self.varcons[vg] = {}
-        fn = 'CORDEX_%s' % f
+        fn = fnpat % f
         ll = open( '%s%s' % (dir,fn) ).readlines()
         ee = ms.scan_table(ll,None,asDict=True)
         for v in ee.keys():
