@@ -94,7 +94,7 @@ class checkBase:
              'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
     self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
     self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-    self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
+    self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
     self.checks = ()
     self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'driving_model_ensemble_member', 'model':'model_id', 'driving_model':'driving_model_id', \
@@ -302,10 +302,12 @@ class checkGlobalAttributes(checkBase):
 ## need to insert a check that variable is present
     self.checkId = '005'
     ok = True
-    msg = 'Variable [%s] has incorrect missing_value attribute' % varName
-    ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
-    msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
-    ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
+    if varAts[varName].has_key('missing_value'):
+      msg = 'Variable [%s] has incorrect missing_value attribute' % varName
+      ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
+    if varAts[varName].has_key('_FillValue'):
+      msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
+      ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
     mm = []
     
     contAts = ['long_name', 'standard_name', 'units']
