@@ -280,9 +280,8 @@ if __name__ == '__main__':
         c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
         rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
     except:
-      c4i.logger.info( 'Exception caught' )
+      c4i.logger.error("Exception has occured" ,exc_info=1)
       rec.addErr( f, 'ERROR: Exception' )
-      raise
 
   cc.info.log = c4i.logger
   cbv.check( recorder=rec, calendar=cc.calendar)
