@@ -24,14 +24,13 @@ For multiple files:
   -- summary log, 3 records per file;
   -- "Rec.txt" -- single record for each file, as above
 
-VOCABULARIES
-------------
 
 Vocabulary lists GCMModelName.txt and RCMModelName.txt are held on the DMI CORDEX site:
 
   http://cordex.dmi.dk/joomla/images/CORDEX/GCMModelName.txt
   http://cordex.dmi.dk/joomla/images/CORDEX/RCMModelName.txt
 
-
-
-
+Exceptions
+----------
+The exception handling is designed to ensure that problems analysing one file do not prevent testing of other files.
+Traceback information is written to log file.

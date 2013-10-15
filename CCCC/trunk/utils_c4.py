@@ -94,7 +94,7 @@ class checkBase:
              'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
     self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
     self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-    self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+    self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
     self.checks = ()
     self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'driving_model_ensemble_member', 'model':'model_id', 'driving_model':'driving_model_id', \
@@ -302,12 +302,10 @@ class checkGlobalAttributes(checkBase):
 ## need to insert a check that variable is present
     self.checkId = '005'
     ok = True
-    if varAts[varName].has_key('missing_value'):
-      msg = 'Variable [%s] has incorrect missing_value attribute' % varName
-      ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
-    if varAts[varName].has_key('_FillValue'):
-      msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
-      ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
+    msg = 'Variable [%s] has incorrect missing_value attribute' % varName
+    ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
+    msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
+    ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
     mm = []
     
     contAts = ['long_name', 'standard_name', 'units']
@@ -351,8 +349,25 @@ class checkStandardDims(checkBase):
     self.id = 'C4.003'
     self.checkId = 'unset'
     self.step = 'Initialised'
+    self.checks = (self.do_check,)
 
   def check(self,varName,varGroup, da, va, isInsta):
+    self.errorCount = 0
+    assert type(varName) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
+    self.var = varName
+    self.varGroup = varGroup
+    self.da = da
+    self.va = va
+    self.isInsta = isInsta
+    self.runChecks()
+
+  def do_check(self):
+    varName = self.var
+    varGroup = self.varGroup
+    da = self.da
+    va = self.va
+    isInsta = self.isInsta
+
     self.errorCount = 0
     self.completed = False
     self.checkId = '001'
@@ -547,20 +562,17 @@ class checkGrids(checkBase):
 
 class mipVocab:
 
-  def __init__(self,project='CORDEX'):
-     assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
-     if project == 'CORDEX':
-       dir = 'cordex_vocabs/mip/'
-       tl = ['fx','sem','mon','day','6h','3h']
-       vgmap = {'6h':'6hr','3h':'3hr'}
-       fnpat = 'CORDEX_%s'
+  def __init__(self):
      ms = mipTableScan()
+     dir = '/home/martin/2013/mipML/FCC2/trunk/work/cordex_vocabs/mip/'
      self.varInfo = {}
      self.varcons = {}
-     for f in tl:
-        vg = vgmap.get( f, f )
+     for f in ['fx','sem','mon','day','6h','3h']:
+        vg = f
+        if f in ['6h','3h']:
+          vg += 'r'
         self.varcons[vg] = {}
-        fn = fnpat % f
+        fn = 'CORDEX_%s' % f
         ll = open( '%s%s' % (dir,fn) ).readlines()
         ee = ms.scan_table(ll,None,asDict=True)
         for v in ee.keys():
