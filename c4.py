@@ -1,11 +1,29 @@
+#!/usr/bin/env python
 
-import utils_c4 as utils
-import config_c4 as config
-import os, string, time
+"""
+c4.py
+=====
+
+Command-line entry point for the CCCC quality checking tool.
+
+This module contains as set of classes that manage the process and loggging.
+
+The code depends on PCMDI's CDMS2 library (part of CDAT or CDAT-Lite).
+
+"""
+
+# Standard library imports
+import os, string, time, sys
 import logging
 
-reload( utils )
+# Third-party imports
 import cdms2
+
+# Local imports
+import utils_c4 as utils
+import config_c4 as config
+
+reload( utils )
 
 vocabs = { 'variable':utils.mipVocab(), \
            'driving_experiment_name':utils.listControl( 'driving_experiment_name', config.validExperiment ), \
@@ -21,10 +39,12 @@ vocabs = { 'variable':utils.mipVocab(), \
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
 
-class dummy:
+class Dummy(object):
+   "A simple container class."
    pass
 
-class recorder:
+class Recorder(object):
+  "A class for recording the results of file checks."
 
   def __init__(self,fileName,type='map'):
     self.file = fileName
@@ -86,9 +106,11 @@ class recorder:
     fn = string.split( fpath, '/' )[-1]
     self.records[fn] = record
 
-class checker:
+class FileChecker(object):
+  "Class for checking data files."
+
   def __init__(self):
-    self.info = dummy()
+    self.info = Dummy()
     self.calendar = 'None'
     self.cfn = utils.checkFileName(parent=self.info)
     self.cga = utils.checkGlobalAttributes(parent=self.info)
@@ -158,7 +180,7 @@ class checker:
     self.drs = self.cga.getDrs()
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
-class c4_init:
+class C4Init(object):
 
   def __init__(self):
     self.logByFile = True
@@ -234,14 +256,14 @@ class c4_init:
   def closeFileLog(self):
     self.fHdlr.close()
 
-cc = checker()
+cc = FileChecker()
 
 cal = None
 
 if __name__ == '__main__':
-  import sys
-  c4i = c4_init()
-  rec = recorder( c4i.recordFile )
+
+  c4i = C4Init()
+  rec = Recorder( c4i.recordFile )
 
   c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
 
@@ -284,7 +306,7 @@ if __name__ == '__main__':
       rec.addErr( f, 'ERROR: Exception' )
 
   cc.info.log = c4i.logger
-  cbv.check( recorder=rec, calendar=cc.calendar)
+  cbv.check(recorder=rec, calendar=cc.calendar)
   rec.dumpAll()
   c4i.hdlr.close()
 else:

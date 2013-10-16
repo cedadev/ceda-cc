@@ -4,7 +4,7 @@ ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'
 ##
 
-class mipTableScan:
+class MipTableScan(object):
 
   def __init__(self, vats = ['standard_name','long_name','units','cell_methods'] ):
     self.vats = vats
@@ -105,7 +105,8 @@ class mipTableScan:
 ##
 ## this class carries a logging method, and is used to carry information about datasets being parsed.
 ##
-class qcHandler:
+class OLD_NOT_USED_qcHandler(object):
+
 
   def __init__( self, qcc, log, baseDir, logPasses=True ):
     self.datasets = {}
@@ -178,7 +179,7 @@ class qcHandler:
              
     self.msgk[key] += 1
 
-class dirParser:
+class OLD_NOT_USED_dirParser:
 
   def __init__(self, qcc, linksOnly=True):
     self.nclevs = []
@@ -352,7 +353,7 @@ class dirParser:
             handler.datasets[k][dsId] = []
           handler.datasets[k][dsId].append( (dir,f, handler.nofail, ns) )
 
-class dataSetParser:
+class OLD_NOT_USED_dataSetParser:
 
   def __init__(self,qcc, log, handler):
     self.qcc = qcc
@@ -520,11 +521,14 @@ class dataSetParser:
                     self.h._log( 'CQC.102.002.008', f, '%s [%s::%s]'% (var,v[1],v[2]), isPresent )
        
 
-class dataset:
+class Dataset(object):
+   "A container class for a dataset."
+
    def __init__(self,name):
      self.name = name
 
-class qcConfigParse:
+class OLD_NOT_USED_qcConfigParse(object):
+  "A class to parse configuration files for the QC process."
 
   def __init__( self, file, log=None ):
     assert os.path.isfile( file ), '%s not found' % file
@@ -559,7 +563,7 @@ class qcConfigParse:
           self._parse_l0_section.add( l )
       elif l[0:6] == 'START ':
         sname = string.strip( string.split(l)[1] )
-        self._parse_l0_section = section_parser_l0( self, sname )
+        self._parse_l0_section = SectionParserL0( self, sname )
         f = True
 
   def parse_l1(self):
@@ -572,7 +576,7 @@ class qcConfigParse:
 
      for s in requiredSections:
        assert s in self.sections.keys(), 'Required section %s not found in %s [parsing %s]' % (s, self.section.keys(),self.file)
-     self._parse_l1 = section_parser_l1( self )
+     self._parse_l1 = SectionParserL1( self )
      self._parse_l1.parse( 'GENERAL' )
      self._parse_l1.parse( 'VOCABULARIES' )
      if self.mipTables != None:
@@ -593,7 +597,7 @@ regv = re.compile( 'version=([0-9.]+)' )
 refs = re.compile( 'separator=(.+)' )
 revsc = re.compile( 'validSectionCount,(.+)' )
 
-class section_parser_l1:
+class SectionParserL1(object):
 
   def __init__(self,parent):
      self.parent = parent
@@ -726,12 +730,12 @@ class section_parser_l1:
         else:
           self.parent.vocab[id] = vlist[:]
           if id == 'mipVarAtts':
-            self.mipsc = mipTableScan( vlist )
+            self.mipsc = MipTableScan( vlist )
   
   def parse_filename(self):
     sep = self.__get_match( refs, self.currentSection[1], 'File separator' )
     nn = map( int, string.split( self.__get_match( revsc, self.currentSection[2], 'File separator' ),',') )
-    self.parent.fileNameSegments = fileNameSegments( self.parent, sep, nn )
+    self.parent.fileNameSegments = FileNameSegments( self.parent, sep, nn )
     for l in self.currentSection[3:]:
        self.parent.fileNameSegments.add(l)
     self.parent.fileNameSegments.finish()
@@ -863,18 +867,18 @@ class section_parser_l1:
          else:
            self.datasetVersionMode.append( None )
        elif bits[0] == 'datasetId':
-         thisDs = dataset(bits[1])
+         thisDs = Dataset(bits[1])
          thisDs.datasetIdMethod = bits[2]
          if bits[2] == 'prints':
            thisDs.getDatasetId = lambda x: bits[3] % x
            thisDs.datasetIdTuple = tuple( bits[4:] )
          elif bits[2] == 'joinFileNameSegSlice':
            thisSlice = slice( int(bits[4]), int(bits[5]) )
-           thisDs.getDatasetId = dsid1( thisSlice, bits[3] ).get
+           thisDs.getDatasetId = DSID1( thisSlice, bits[3] ).get
            thisDs.datasetIdArg = 'fileNameBits'
          elif bits[2] == 'cmip5':
            thisSlice = slice( int(bits[4]), int(bits[5]) )
-           thisDs.getDatasetId = cmip5_dsid( thisSlice, bits[3] ).get
+           thisDs.getDatasetId = CMIP5DSID( thisSlice, bits[3] ).get
            thisDs.datasetIdArg = 'filePathBits'
          self.parent.datasets[bits[1]] = thisDs
        elif bits[0] == 'datasetHierarchy':
@@ -906,7 +910,7 @@ class section_parser_l1:
         else:
           self.parent.datasets[bb[k]].child = self.parent.datasets[bb[k+1]]
           
-class dsid1:
+class DSID1(object):
 
   def __init__(self,slice,sep):
     self.slice = slice
@@ -915,7 +919,7 @@ class dsid1:
   def get(self,x):
     return string.join( x[self.slice], self.sep ) 
 
-class cmip5_dsid:
+class CMIP5DSID(object):
 
   def __init__(self,slice,sep):
     self.slice = slice
@@ -925,7 +929,7 @@ class cmip5_dsid:
     return '%s_%s.%s' % (string.join( x[self.slice], self.sep ) , y[-2], y[-1] )
 
 
-class get_trange:
+class GetTRange(object):
  
   def __init__(self,pat,kseg):
     self.kseg = kseg
@@ -973,7 +977,8 @@ class get_trange:
       return True, (None,None)
     return self._get( l[self.kseg] )
          
-class fileNameSegments:
+class FileNameSegments(object):
+
   def __init__(self, parent, sep, nn ):
     self.sep = sep
     self.nn = nn
@@ -1000,7 +1005,7 @@ class fileNameSegments:
 
     if bits[2] == 'TimeRange':
        self.parent.hasTimeRange = True
-       self.parent.timeRange = get_trange(regex,k)
+       self.parent.timeRange = GetTRange(regex,k)
 
   def finish(self):
     sl = []
@@ -1243,7 +1248,7 @@ def ref_to_key(ref):
      elif bits[0] == 'VALUE':
            return ('VALUE',bits[1])
 
-class section_parser_l0:
+class SectionParserL0(object):
 
   def __init__(self,parent,sectionName):
      self.sname = sectionName
