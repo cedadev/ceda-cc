@@ -315,7 +315,7 @@ class checkGlobalAttributes(checkBase):
       if varAts[varName][k] != vocabs['variable'].getAttr( varName, varGroup, k ):
         mm.append( k )
 
-    ok &= self.test( len(m)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
+    ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
     if ok:
        self.log_pass()
 
