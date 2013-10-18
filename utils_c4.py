@@ -79,27 +79,46 @@ class checkSeq:
 
 cs = checkSeq()
 
+class readVocab:
+
+  def __init__(self,dir):
+    self.dir = dir
+
+  def getSimpleList(self,file):
+    ii = open('%s/%s' % (self.dir,file) )
+    return map( string.strip, ii.readlines() )
+
 class checkBase:
 
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None):
     self.cls = cls
-    assert cls == 'CORDEX','This version of the checker only supports CORDEX'
+    assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
     self.re_isInt = re.compile( '[0-9]+' )
     self.errorCount = 0
     self.passCount = 0
     self.missingValue = 1.e20
     self.parent = parent
     self.reportPass=reportPass
-    self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
+    if self.cls == 'CORDEX':
+      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
              'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
-    self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
-    self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-    self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
-    self.checks = ()
-    self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
+      self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
+      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
+      self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'driving_model_ensemble_member', 'model':'model_id', 'driving_model':'driving_model_id', \
                         'frequency':'frequency', \
                         'project':'project_id', 'domain':'CORDEX_domain', 'model_version':'rcm_version_id' }
+    elif self.cls == 'SPECS':
+      lrdr = readVocab( 'specs_vocabs/')
+      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'product', 'creation_date', 'tracking_id', \
+              'experiment_id']
+      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      self.controlledGlobalAttributes = [ ]
+      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
+      self.drsMappings = {'variable':'@var'}
+    self.checks = ()
     self.init()
 
   def isInt(self,x):
@@ -188,16 +207,30 @@ class checkFileName(checkBase):
     self.checkId = '001'
     self.test( fn[-3:] == '.nc', 'File name ending ".nc" expected', abort=True, part=True )
     bits = string.split( fn[:-3], '_' )
-    self.test( len(bits) in [8,9], 'File name not parsed into 8 or 9 elements [%s]' % str(bits), abort=True )
-
     self.fnParts = bits[:]
-    self.domain = self.fnParts[1]
-    self.freq = self.fnParts[7]
+
+    if self.cls == 'CORDEX':
+      self.fnPartsOkLen = [8,9]
+      self.fnPartsOkFixedLen = [8,]
+      self.fnPartsOkUnfixedLen = [9,]
+      checkTrangeLen = True
+      self.domain = self.fnParts[1]
+      self.freq = self.fnParts[7]
+    elif self.cls == 'SPECS':
+      self.domain = None
+      self.freq = self.fnParts[1]
+      self.fnPartsOkLen = [6,7]
+      self.fnPartsOkFixedLen = [6,]
+      self.fnPartsOkUnfixedLen = [7,]
+      checkTrangeLen = False
+    self.test( len(bits) in self.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.fnPartsOkLen),str(bits)), abort=True )
+
     self.var = self.fnParts[0]
 
+    self.isFixed = self.freq == 'fx'
 
     self.checkId = '002'
-    if len(self.fnParts) == 9:
+    if not self.isFixed:
 
 ## test time segment
       bits = string.split( self.fnParts[-1], '-' )
@@ -211,11 +244,11 @@ class checkFileName(checkBase):
       self.fnTimeParts = bits[:]
 
     self.checkId = '003'
-    if len(self.fnParts) == 8:
-      self.test( self.fnParts[7] == 'fx', 'Time range not specified and frequency not fx' )
+    if self.isFixed:
+      self.test( len(self.fnParts) in self.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
     self.checkId, ok = ('004',True)
-    if len(self.fnParts) == 9:
+    if len(self.fnParts) == 9 and checkTrangeLen:
       ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':10, '6hr':10 }
       ok &=self.test( self.freq in ltr.keys(), 'Frequency [%s] not recognised' % self.freq, part=True )
       if ok:
@@ -315,7 +348,7 @@ class checkGlobalAttributes(checkBase):
       if varAts[varName][k] != vocabs['variable'].getAttr( varName, varGroup, k ):
         mm.append( k )
 
-    ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
+    ok &= self.test( len(m)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
     if ok:
        self.log_pass()
 
@@ -562,17 +595,25 @@ class checkGrids(checkBase):
 
 class mipVocab:
 
-  def __init__(self):
+  def __init__(self,project='CORDEX'):
+     assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
+     if project == 'CORDEX':
+       dir = 'cordex_vocabs/mip/'
+       tl = ['fx','sem','mon','day','6h','3h']
+       vgmap = {'6h':'6hr','3h':'3hr'}
+       fnpat = 'CORDEX_%s'
+     elif project == 'SPECS':
+       dir = 'specs_vocabs/mip/'
+       tl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
+       vgmap = {}
+       fnpat = 'SPECS_%s'
      ms = mipTableScan()
-     dir = 'cordex_vocabs/mip/'
      self.varInfo = {}
      self.varcons = {}
-     for f in ['fx','sem','mon','day','6h','3h']:
-        vg = f
-        if f in ['6h','3h']:
-          vg += 'r'
+     for f in tl:
+        vg = vgmap.get( f, f )
         self.varcons[vg] = {}
-        fn = 'CORDEX_%s' % f
+        fn = fnpat % f
         ll = open( '%s%s' % (dir,fn) ).readlines()
         ee = ms.scan_table(ll,None,asDict=True)
         for v in ee.keys():
@@ -639,17 +680,23 @@ class checkByVar(checkBase):
     for f in flist:
       fn = string.split(f, '/' )[-1]
       fnParts = string.split( fn[:-3], '_' )
-      if fnParts[7] == 'fx':
+      if self.cls == 'CORDEX':
+        isFixed = fnParts[7] == 'fx'
+        group = fnParts[7]
+      elif self.cls == 'SPECS':
+        isFixed = fnParts[1] == 'fx'
+        group = fnParts[1]
+
+      if isFixed:
         trange = None
       else:
-        trange = string.split( fnParts[8], '-' )
-      group = fnParts[7]
+        trange = string.split( fnParts[-1], '-' )
       var = fnParts[0]
       if group not in ee.keys():
         ee[group] = {}
       if var not in ee[group].keys():
         ee[group][var] = []
-      ee[group][var].append( (f,fn,fnParts[7],trange) )
+      ee[group][var].append( (f,fn,group,trange) )
 
     nn = len(flist)
     n2 = 0
