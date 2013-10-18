@@ -6,8 +6,14 @@ import logging
 
 reload( utils )
 import cdms2
+project='SPECS'
+project='CORDEX'
 
-vocabs = { 'variable':utils.mipVocab(), \
+
+if project == 'SPECS':
+  vocabs = { 'variable':utils.mipVocab(project=project) }
+else:
+  vocabs = { 'variable':utils.mipVocab(), \
            'driving_experiment_name':utils.listControl( 'driving_experiment_name', config.validExperiment ), \
            'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
            'CORDEX_domain':utils.listControl( 'CORDEX_domain',  config.validCordexDomains ), \
@@ -87,13 +93,14 @@ class recorder:
     self.records[fn] = record
 
 class checker:
-  def __init__(self):
+  def __init__(self,cls='CORDEX'):
     self.info = dummy()
     self.calendar = 'None'
-    self.cfn = utils.checkFileName(parent=self.info)
-    self.cga = utils.checkGlobalAttributes(parent=self.info)
-    self.cgd = utils.checkStandardDims(parent=self.info)
-    self.cgg = utils.checkGrids(parent=self.info)
+    self.cfn = utils.checkFileName(parent=self.info,cls=cls)
+    self.cga = utils.checkGlobalAttributes(parent=self.info,cls=cls)
+    self.cgd = utils.checkStandardDims(parent=self.info,cls=cls)
+    self.cgg = utils.checkGrids(parent=self.info,cls=cls)
+    self.cls = cls
 
   def checkFile(self,fpath,log=None):
     self.calendar = 'None'
@@ -147,13 +154,14 @@ class checker:
       self.completed = False
       return
 
-    self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
-    self.cgg.interpolatedGrids = config.interpolatedGrids
-    self.cgg.check( self.cfn.var, self.cfn.domain, self.da, self.va )
+    if self.cls == 'CORDEX':
+      self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
+      self.cgg.interpolatedGrids = config.interpolatedGrids
+      self.cgg.check( self.cfn.var, self.cfn.domain, self.da, self.va )
     
-    if not self.cgg.completed:
-      self.completed = False
-      return
+      if not self.cgg.completed:
+        self.completed = False
+        return
     self.completed = True
     self.drs = self.cga.getDrs()
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
@@ -234,7 +242,7 @@ class c4_init:
   def closeFileLog(self):
     self.fHdlr.close()
 
-cc = checker()
+cc = checker(cls=project)
 
 cal = None
 
@@ -245,7 +253,7 @@ if __name__ == '__main__':
 
   c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
 
-  cbv = utils.checkByVar( parent=cc.info)
+  cbv = utils.checkByVar( parent=cc.info,cls=project)
   cbv.impt( c4i.flist )
 
   for f in c4i.flist:
@@ -284,7 +292,9 @@ if __name__ == '__main__':
       rec.addErr( f, 'ERROR: Exception' )
 
   cc.info.log = c4i.logger
-  cbv.check( recorder=rec, calendar=cc.calendar)
+  
+  if project != 'SPECS':
+     cbv.check( recorder=rec, calendar=cc.calendar)
   rec.dumpAll()
   c4i.hdlr.close()
 else:
