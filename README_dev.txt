@@ -11,12 +11,12 @@ Unit testing
 Configuration
 -------------
 #03.001: Put project dependent information into a specific class instance -- projectConfig.
-#03.002: Merge back version configured for SPECS
+#03.002: Merge back version configured for SPECS -- [Martin, 18th Oct]
 #03.003: Create basic configuration for CMIP5 and run to exercise code and identify problems.
 
 Organisation of files
 ---------------------
-#04.001: Move checking classes into a seperate file -- to make it easier for different people to work on different parts of the code.
+#04.001: Move checking classes into a seperate file -- to make it easier for different people to work on different parts of the code.  -- [Martin, 18th Oct]
 #04.002: Move class definitions out of the c4.py script.
 
 
