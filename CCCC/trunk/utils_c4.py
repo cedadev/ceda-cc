@@ -1,5 +1,5 @@
 
-import string, re, os, sys
+import string, re, os, sys, traceback
 
 from fcc_utils import mipTableScan
 
@@ -125,7 +125,7 @@ class checkBase:
     return self.re_isInt.match( x ) != None
 
   def logMessage(self, msg, error=False ):
-    if self.parent.log != None:
+    if self.parent != None and self.parent.log != None:
        if error:
          self.parent.log.error( msg )
        else:
@@ -134,7 +134,7 @@ class checkBase:
        print msg
 
   def log_exception( self, msg):
-    if self.parent.log != None:
+    if self.parent != None and self.parent.log != None:
         self.parent.log.error("Exception has occured" ,exc_info=1)
     else:
         traceback.print_exc(file=sys.stdout)
@@ -215,15 +215,19 @@ class checkFileName(checkBase):
       self.fnPartsOkUnfixedLen = [9,]
       checkTrangeLen = True
       self.domain = self.fnParts[1]
-      self.freq = self.fnParts[7]
     elif self.cls == 'SPECS':
       self.domain = None
-      self.freq = self.fnParts[1]
       self.fnPartsOkLen = [6,7]
       self.fnPartsOkFixedLen = [6,]
       self.fnPartsOkUnfixedLen = [7,]
       checkTrangeLen = False
+
     self.test( len(bits) in self.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.fnPartsOkLen),str(bits)), abort=True )
+
+    if self.cls == 'CORDEX':
+      self.freq = self.fnParts[7]
+    elif self.cls == 'SPECS':
+      self.freq = self.fnParts[1]
 
     self.var = self.fnParts[0]
 
@@ -249,11 +253,15 @@ class checkFileName(checkBase):
 
     self.checkId, ok = ('004',True)
     if len(self.fnParts) == 9 and checkTrangeLen:
-      ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':10, '6hr':10 }
+      ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':[10,12], '6hr':10 }
       ok &=self.test( self.freq in ltr.keys(), 'Frequency [%s] not recognised' % self.freq, part=True )
       if ok:
-        msg = 'Length of time range parts [%s,%s] not equal to required length [%s] for frequency %s' % (self.fnTimeParts[0],self.fnTimeParts[1],ltr[self.freq],self.freq)
-        ok &= self.test( len(self.fnTimeParts[0]) == ltr[self.freq], msg, part=True )
+        if type( ltr[self.freq] ) == type(0):
+          msg = 'Length of time range parts [%s,%s] not equal to required length [%s] for frequency %s' % (self.fnTimeParts[0],self.fnTimeParts[1],ltr[self.freq],self.freq)
+          ok &= self.test( len(self.fnTimeParts[0]) == ltr[self.freq], msg, part=True )
+        elif type( ltr[self.freq] ) in [type([]),type( () )]:
+          msg = 'Length of time range parts [%s,%s] not in acceptable list [%s] for frequency %s' % (self.fnTimeParts[0],self.fnTimeParts[1],str(ltr[self.freq]),self.freq)
+          ok &= self.test( len(self.fnTimeParts[0]) in ltr[self.freq], msg, part=True )
 
       if ok:
         self.log_pass()
@@ -321,7 +329,7 @@ class checkGlobalAttributes(checkBase):
 
     self.checkId = '004'
     m = []
-    reqAts = self.requiredVarAttributes
+    reqAts = self.requiredVarAttributes[:]
     if varGroup != 'fx':
       reqAts.append( 'cell_methods' )
     for k in reqAts + vocabs['variable'].lists(varName, 'addRequiredAttributes'):
@@ -708,7 +716,7 @@ class checkByVar(checkBase):
     print '%s files, %s frequencies' % (nn,len(ee.keys()) )
     self.ee = ee
 
-  def check(self, recorder=None,calendar='None'):
+  def check(self, recorder=None,calendar='None',norun=False):
     self.errorCount = 0
     self.recorder=recorder
     self.calendar=calendar
@@ -716,8 +724,15 @@ class checkByVar(checkBase):
       self.enddec = 30
     else:
       self.enddec = 31
+    mm = { 'enddec':self.enddec }
+    self.pats = {'mon':('(?P<d>[0-9]{3})101','(?P<e>[0-9]{3})012'), \
+            'sem':('(?P<d>[0-9]{3})012','(?P<e>[0-9]{3})011'), \
+            'day':('(?P<d>[0-9]{3}[16])0101','(?P<e>[0-9]{3}[50])12%(enddec)s' % mm), \
+            'subd':('(?P<d>[0-9]{4})0101(?P<h1>[0-9]{2})(?P<mm>[30]0){0,1}$', '(?P<e>[0-9]{4})12%(enddec)s(?P<h2>[0-9]{2})([30]0){0,1}$' % mm ), \
+            'subd2':('(?P<d>[0-9]{4})0101(?P<h1>[0-9]{2})', '(?P<e>[0-9]{4})010100' ) }
 
-    self.runChecks()
+    if not norun:
+      self.runChecks()
 
   def checkTrange(self):
     keys = self.ee.keys()
@@ -730,18 +745,12 @@ class checkByVar(checkBase):
           self.checkThisTrange( self.ee[k][k2], k, k2 )
 
   def checkThisTrange( self, tt, group, var):
-    mm = { 'enddec':self.enddec }
-    pats = {'mon':('(?P<d>[0-9]{3})101','(?P<e>[0-9]{3})012'), \
-            'sem':('(?P<d>[0-9]{3})012','(?P<e>[0-9]{3})011'), \
-            'day':('(?P<d>[0-9]{3}[16])0101','(?P<e>[0-9]{3}[50])12%(enddec)s' % mm), \
-            'subd':('(?P<d>[0-9]{4})0101(?P<h1>[0-9]{2})', '(?P<e>[0-9]{4})12%(enddec)s(?P<h2>[0-9]{2})' % mm ), \
-            'subd2':('(?P<d>[0-9]{4})0101(?P<h1>[0-9]{2})', '(?P<e>[0-9]{4})010100' ) }
 
     if group in ['3hr','6hr']:
        kg = 'subd'
     else:
        kg = group
-    ps = pats[kg]
+    ps = self.pats[kg]
     rere = (re.compile( ps[0] ), re.compile( ps[1] ) )
 
     n = len(tt)
