@@ -24,11 +24,13 @@ For multiple files:
   -- summary log, 3 records per file;
   -- "Rec.txt" -- single record for each file, as above
 
-
 Vocabulary lists GCMModelName.txt and RCMModelName.txt are held on the DMI CORDEX site:
 
   http://cordex.dmi.dk/joomla/images/CORDEX/GCMModelName.txt
   http://cordex.dmi.dk/joomla/images/CORDEX/RCMModelName.txt
+
+To update the CMOR tables use: 
+"git clone git://uv-cdat.llnl.gov/gitweb/cordex-cmor-tables.git"
 
 Exceptions
 ----------
