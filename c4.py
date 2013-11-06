@@ -148,6 +148,7 @@ class checker:
     self.cgd.plevValues = config.plevValues
     self.cgd.heightRequired = config.heightRequired
     self.cgd.heightValues = config.heightValues
+    self.cgd.heightRange = config.heightRange
     self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous )
     self.calendar = self.cgd.calendar
     if not self.cgd.completed:

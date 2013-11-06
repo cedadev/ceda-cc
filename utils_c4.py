@@ -104,7 +104,7 @@ class checkBase:
              'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
       self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
       self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-      self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'driving_model_ensemble_member', 'model':'model_id', 'driving_model':'driving_model_id', \
                         'frequency':'frequency', \
@@ -116,7 +116,7 @@ class checkBase:
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.controlledGlobalAttributes = [ ]
       self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-      self.requiredVarAttributes = ['long_name', 'standard_name', 'units', 'missing_value', '_FillValue']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
     self.checks = ()
     self.init()
@@ -343,10 +343,16 @@ class checkGlobalAttributes(checkBase):
 ## need to insert a check that variable is present
     self.checkId = '005'
     ok = True
-    msg = 'Variable [%s] has incorrect missing_value attribute' % varName
-    ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
-    msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
-    ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
+    if varAts[varName].has_key( 'missing_value' ) or varAts[varName].has_key( '_FillValue' ):
+      ok &= self.test( varAts[varName].has_key( 'missing_value' ) and varAts[varName].has_key( '_FillValue' ), \
+                'missing_value and _FillValue must both be present if one is [%s]' % varName )
+      if varAts[varName].has_key( 'missing_value' ):
+         msg = 'Variable [%s] has incorrect missing_value attribute' % varName
+         ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
+      if varAts[varName].has_key( '_FillValue' ):
+         msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
+         ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
+
     mm = []
     
     contAts = ['long_name', 'standard_name', 'units']
@@ -419,7 +425,7 @@ class checkStandardDims(checkBase):
          ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
 
 ## is time zone designator needed?
-      ok &= self.test( da['time'].get( 'units', 'xxx' ) in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00"], 
+      ok &= self.test( da['time'].get( 'units', 'xxx' ) in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00", "days since 1949-12-01"],
                        'Time units [%s] attribute not set correctly to "days since 1949-12-01 00:00:00Z"' % da['time'].get( 'units', 'xxx' ), part=True )
 
       ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attibute calendar missing', part=True )
@@ -479,8 +485,12 @@ class checkStandardDims(checkBase):
       heightAtDict = {'long_name':"height", 'standard_name':"height", 'units':"m", 'positive':"up", 'axis':"Z" }
       ok = True
       ok &= self.test( 'height' in va.keys(), 'height coordinate not found %s' % str(va.keys()), abort=True, part=True )
-      ok &= self.test( abs( va['height']['_data'] - self.heightValues[varName]) < 0.001, \
-                'height value [%s] does not match required [%s]' % (va['height']['_data'],self.heightValues[varName] ), part=True )
+      ##ok &= self.test( abs( va['height']['_data'] - self.heightValues[varName]) < 0.001, \
+                ##'height value [%s] does not match required [%s]' % (va['height']['_data'],self.heightValues[varName] ), part=True )
+
+      r = self.heightRange[varName]
+      ok &= self.test( r[0] <= va['height']['_data'] <= r[1], \
+                'height value [%s] not in specified range [%s]' % (va['height']['_data'], (self.heightRange[varName] ) ), part=True )
       
       for k in heightAtDict.keys():
         ok &= self.test( va['height'].get( k, None ) == heightAtDict[k], \
@@ -581,7 +591,7 @@ class checkGrids(checkBase):
 
       ok = True
       for k in ['lat','lon']:
-        res = len(da[k]['_data']) == self.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
+        res = len(da[k]['_data']) >= self.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
         if not res:
           a,b =  len(da[k]['_data']), self.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
           self.test( res, 'Size of %s dimension does not match specification (%s,%s)' % (k,a,b), part=True )
@@ -589,10 +599,14 @@ class checkGrids(checkBase):
 
       a = ( da['lat']['_data'][0], da['lat']['_data'][-1], da['lon']['_data'][0], da['lon']['_data'][-1] )
       b = map( lambda x: self.interpolatedGrids[domain][x], ['s','n','w','e'] )
+      rs = self.interpolatedGrids[domain]['res']
+      c = [-rs,rs,-rs,rs]
       mm = []
       for i in range(4):
         if a[i] != b[i]:
-          mm.append( (a[i],b[i]) )
+          x = (a[i]-b[i])/c[i]
+          if x < 0 or abs( x - int(x) ) > 0.001:
+             mm.append( (a[i],b[i]) )
 
       ok &= self.test( len(mm) == 0, 'Domain boundaries for interpolated grid do not match %s' % str(mm), part=True )
 
@@ -630,9 +644,9 @@ class mipVocab:
           ac = []
           for a in ee[v][1].keys():
             eeee[a] = ee[v][1][a]
-          if 'positive' in eeee.keys():
-            ar.append( 'positive' )
-            ac.append( 'positive' )
+          ##if 'positive' in eeee.keys():
+            ##ar.append( 'positive' )
+            ##ac.append( 'positive' )
           self.varInfo[v] = {'ar':ar, 'ac':ac }
           self.varcons[vg][v] = eeee
             

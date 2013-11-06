@@ -2,6 +2,7 @@
 
 import logging, time
 import utils_c4
+import config_c4 as config
 
 #### set up log file ####
 tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
@@ -85,3 +86,22 @@ for x in ['200401010040','2004010200']:
      print 'Failed to detect bad sub-daily time range element [%s] %s' % (module,x)
 
 
+c = utils_c4.checkGrids(parent=p)
+c.interpolatedGrids = config.interpolatedGrids
+
+lat = map( lambda x: -46.25 + x*0.5, range(180) )
+lon = map( lambda x: -25.25 + x*0.5, range(173) )
+da = {'lat':{'_data':lat,'units':'degrees_north','long_name':'latitude','standard_name':'latitude','_type':'float64'}, 'lon':{'_data':lon,'units':'degrees_east','long_name':'longitude','standard_name':'longitude','_type':'float64'} }
+c.check( 'tas','AFR-44i', da, {'tas':{} } )
+if c.errorCount == 0:
+  print 'OK -- passed a correct grid'
+else:
+  print 'Failed -- reported errors on correct grid'
+lat = map( lambda x: -46.25 + x*0.5, range(180) )
+lon = map( lambda x: -25.25 + x*0.5, range(172) )
+da = {'lat':{'_data':lat,'units':'degrees_north','long_name':'latitude','standard_name':'latitude','_type':'float64'}, 'lon':{'_data':lon,'units':'degrees_east','long_name':'longitude','standard_name':'longitude','_type':'float64'} }
+c.check( 'tas','AFR-44i', da, {'tas':{} } )
+if c.errorCount == 0:
+  print 'Failed -- passed a bad grid'
+else:
+  print 'OK -- detected a bad grid'

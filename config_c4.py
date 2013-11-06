@@ -40,11 +40,13 @@ for i in [200,500,850]:
 
 heightRequired = ['tas', 'tasmax', 'tasmin', 'huss', 'sfcWind', 'sfcWindmax', 'wsgsmax', 'uas', 'vas']
 heightValues = {}
+heightRange = {}
 for v in heightRequired:
   if v in ['tas', 'tasmax', 'tasmin', 'huss']:
     heightValues[v] = 2
   else:
     heightValues[v] = 10
+  heightRange[v] = (1.5,10.)
 
 ii = open( 'cordex_vocabs/cordex_domains.csv' ).readlines()
 keys = ['name','tag','res','grid_np_lon','grid_np_lat','nlon','nlat','w','e','s','n']
@@ -56,7 +58,7 @@ for l in ii[2:16]:
   for k in keys:
     if k in ['nlon','nlat']:
       ee[k] = int(bits[i])
-    elif k in ['grid_np_lon','grid_np_lat','w','e','s','n']:
+    elif k in ['grid_np_lon','grid_np_lat','w','e','s','n','res']:
       if bits[i] != 'N/A':
         ee[k] = float(bits[i])
       else:
@@ -76,7 +78,7 @@ for l in ii[18:33]:
   for k in keys:
     if k in ['nlon','nlat']:
       ee[k] = int(bits[i])
-    elif k in ['w','e','s','n']:
+    elif k in ['w','e','s','n','res']:
         ee[k] = float(bits[i])
     else:
       ee[k] = bits[i]
