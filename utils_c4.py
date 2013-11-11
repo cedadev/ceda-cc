@@ -133,6 +133,15 @@ class checkBase:
     else:
        print msg
 
+    doThis = True
+    if self.appendLogFile[0] != None and doThis:
+      xlog = self.c4i.getFileLog( self.appendLogFile[1], flf=self.appendLogFile[0] )
+      if error:
+         xlog.error( msg )
+      else:
+         xlog.info( msg )
+      self.c4i.closeFileLog()
+
   def log_exception( self, msg):
     if self.parent != None and self.parent.log != None:
         self.parent.log.error("Exception has occured" ,exc_info=1)
@@ -157,7 +166,8 @@ class checkBase:
   def status(self):
     return '%s.%s' % (self.id,self.checkId)
 
-  def test(self,res,msg,abort=False,part=False):
+  def test(self,res,msg,abort=False,part=False,appendLogFile=(None,None)):
+    self.appendLogFile = appendLogFile
     if res:
       if not part:
          self.log_pass()
@@ -697,6 +707,9 @@ class checkByVar(checkBase):
     self.step = 'Initialised'
     self.checks = (self.checkTrange,)
 
+  def setLogDict( self,fLogDict ):
+    self.fLogDict = fLogDict
+
   def impt(self,flist):
     ee = {}
     for f in flist:
@@ -739,7 +752,7 @@ class checkByVar(checkBase):
     else:
       self.enddec = 31
     mm = { 'enddec':self.enddec }
-    self.pats = {'mon':('(?P<d>[0-9]{3})101','(?P<e>[0-9]{3})012'), \
+    self.pats = {'mon':('(?P<d>[0-9]{3})102','(?P<e>[0-9]{3})012'), \
             'sem':('(?P<d>[0-9]{3})012','(?P<e>[0-9]{3})011'), \
             'day':('(?P<d>[0-9]{3}[16])0101','(?P<e>[0-9]{3}[50])12%(enddec)s' % mm), \
             'subd':('(?P<d>[0-9]{4})0101(?P<h1>[0-9]{2})(?P<mm>[30]0){0,1}$', '(?P<e>[0-9]{4})12%(enddec)s(?P<h2>[0-9]{2})([30]0){0,1}$' % mm ), \
@@ -770,13 +783,15 @@ class checkByVar(checkBase):
     n = len(tt)
     for j in range(n):
       t = tt[j]
+      print '>>>>>>>>>>>>>>>>',t
+      fn = t[1]
       isFirst = j == 0
       isLast = j == n-1
       lok = True
       for i in [0,1]:
         if not (i==0 and isFirst or i==1 and isLast):
           x = rere[i].match( t[3][i] )
-          lok &= self.test( x != None, 'Cannot match time range %s: %s' % (i,t[1]), part=True )
+          lok &= self.test( x != None, 'Cannot match time range %s: %s' % (i,fn), part=True, appendLogFile=(self.fLogDict.get(fn,None),fn) )
         if not lok:
           print 'Cannot match time range %s:' % t[1]
           if self.recorder != None:
