@@ -9,7 +9,6 @@ import cdms2
 project='SPECS'
 project='CORDEX'
 
-
 if project == 'SPECS':
   vocabs = { 'variable':utils.mipVocab(project=project) }
 else:
@@ -26,6 +25,81 @@ else:
 
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
+
+class fileMetadata:
+
+  def __init__(self):
+     pass
+
+  def loadNc(self,fpath):
+    self.nc = cdms2.open( fpath )
+    self.ga = {}
+    self.va = {}
+    self.da = {}
+    for k in self.nc.attributes.keys():
+      self.ga[k] = self.nc.attributes[k]
+    for v in self.nc.variables.keys():
+      self.va[v] = {}
+      for k in self.nc.variables[v].attributes.keys():
+        self.va[v][k] = self.nc.variables[v].attributes[k]
+      self.va[v]['_type'] = str( self.nc.variables[v].dtype )
+      if v in ['plev','plev_bnds','height']:
+        self.va[v]['_data'] = self.nc.variables[v].getValue().tolist()
+
+    for v in self.nc.axes.keys():
+      self.da[v] = {}
+      for k in self.nc.axes[v].attributes.keys():
+        self.da[v][k] = self.nc.axes[v].attributes[k]
+      self.da[v]['_type'] = str( self.nc.axes[v].getValue().dtype )
+      self.da[v]['_data'] = self.nc.axes[v].getValue().tolist()
+      
+    self.nc.close()
+
+  def applyMap( self, mapList, log=None ):
+    for m in mapList:
+      if m[0] == 'am001':
+        if m[1][0][0] == "@var":
+          if m[1][0][1] in self.va.keys():
+            this = self.va[m[1][0][1]]
+            apThis = True
+            for c in m[1][1:]:
+              if c[0] not in this.keys():
+                apThis = False
+              elif c[1] != this[c[0]]:
+                apThis = False
+            if m[2][0] != '':
+              targ = m[2][0]
+            else:
+              targ = m[1][-1][0]
+            if apThis:
+              if log != None:
+                log.info( 'Setting %s to %s' % (targ,m[2][1]) )
+              ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              self.va[m[1][0][1]][targ] = m[2][1]
+
+        elif m[1][0][0] == "@ax":
+          ##print 'checking dimension ',m[1][0][1], self.da.keys()
+          if m[1][0][1] in self.da.keys():
+            ##print 'checking dimension [2]',m[1][0][1]
+            this = self.da[m[1][0][1]]
+            apThis = True
+            for c in m[1][1:]:
+              if c[0] not in this.keys():
+                apThis = False
+              elif c[1] != this[c[0]]:
+                apThis = False
+            if m[2][0] != '':
+              targ = m[2][0]
+            else:
+              targ = m[1][-1][0]
+            if apThis:
+              if log != None:
+                log.info( 'Setting %s to %s' % (targ,m[2][1]) )
+              ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              self.da[m[1][0][1]][targ] = m[2][1]
+        else:
+          print 'Token %s not recognised' % m[1][0][0]
+
 
 class dummy:
    pass
@@ -68,10 +142,10 @@ class recorder:
   def modify(self,fn,msg):
     assert fn in self.records.keys(),'Attempt to modify non-existent record %s, %s' % [fn,str(self.records.keys()[0:10])]
     if string.find( self.records[fn], '| OK |') == -1:
-      print 'File %s already flagged with errors' % fn
+      ##print 'File %s already flagged with errors' % fn
       return
     s = string.replace( self.records[fn], '| OK |', '| %s |' % msg )
-    print '--> ',s
+    ##print '--> ',s
     self.records[fn] = s
 
   def dumpAll(self,safe=True):
@@ -102,7 +176,7 @@ class checker:
     self.cgg = utils.checkGrids(parent=self.info,cls=cls)
     self.cls = cls
 
-  def checkFile(self,fpath,log=None):
+  def checkFile(self,fpath,log=None,attributeMappings=[]):
     self.calendar = 'None'
     self.info.log = log
 
@@ -116,28 +190,12 @@ class checker:
       self.completed = False
       return
 
-    self.nc = cdms2.open( fpath )
-    self.ga = {}
-    self.va = {}
-    self.da = {}
-    for k in self.nc.attributes.keys():
-      self.ga[k] = self.nc.attributes[k]
-    for v in self.nc.variables.keys():
-      self.va[v] = {}
-      for k in self.nc.variables[v].attributes.keys():
-        self.va[v][k] = self.nc.variables[v].attributes[k]
-      self.va[v]['_type'] = str( self.nc.variables[v].dtype )
-      if v in ['plev','plev_bnds','height']:
-        self.va[v]['_data'] = self.nc.variables[v].getValue().tolist()
-
-    for v in self.nc.axes.keys():
-      self.da[v] = {}
-      for k in self.nc.axes[v].attributes.keys():
-        self.da[v][k] = self.nc.axes[v].attributes[k]
-      self.da[v]['_type'] = str( self.nc.axes[v].getValue().dtype )
-      self.da[v]['_data'] = self.nc.axes[v].getValue().tolist()
-      
-    self.nc.close()
+    ncReader.loadNc( fpath )
+    if attributeMappings != []:
+      ncReader.applyMap( attributeMappings, log=log )
+    self.ga = ncReader.ga
+    self.va = ncReader.va
+    self.da = ncReader.da
 
     self.cga.check( self.ga, self.va, self.cfn.var, self.cfn.freq, vocabs, self.cfn.fnParts )
     if not self.cga.completed:
@@ -174,6 +232,7 @@ class c4_init:
     args = sys.argv[1:]
     nn = 0
 
+    self.attributeMappingFile = None
     self.recordFile = 'Rec.txt'
     self.logDir = 'logs_02'
     while len(args) > 0:
@@ -197,6 +256,9 @@ class c4_init:
         self.recordFile = args.pop(0)
       elif next == '--ld':
         self.logDir = args.pop(0)
+      elif next == '--aMap':
+        self.attributeMappingFile = args.pop(0)
+        assert os.path.isfile( self.attributeMappingFile ), 'The token "--aMap" should be followed by the path or name of a file'
       else:
        print 'Unused argument: %s' % next
        nn+=1
@@ -228,12 +290,33 @@ class c4_init:
     self.logger.setLevel(logging.INFO)
     self.logger.addHandler(self.hdlr)
 
+    self.attributeMappings = []
+    if self.attributeMappingFile != None:
+      for l in open( self.attributeMappingFile ).readlines():
+        if l[0] != '#':
+          bb = string.split( string.strip(l), '|' ) 
+          assert len(bb) ==2, "Error in experimental module attributeMapping -- configuration line not scanned [%s]" % str(l)
+          bits = string.split( bb[0], ';' )
+          cl = []
+          for b in bits:
+            cl.append( string.split(b, '=' ) )
+          self.attributeMappings.append( ('am001',cl, string.split(bb[1],'=') ) )
+    print self.attributeMappings
 
-  def getFileLog( self, fn ):
-    tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
-    self.fileLogFile = '%s/%s__qclog_%s.txt' % (self.logDir,fn[:-3],tstring2)
-    fLogger = logging.getLogger('fileLog_%s' % fn)
-    self.fHdlr = logging.FileHandler(self.fileLogFile,mode='w')
+  def getFileLog( self, fn, flf=None ):
+    if flf == None:
+      tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
+      self.fileLogFile = '%s/%s__qclog_%s.txt' % (self.logDir,fn[:-3],tstring2)
+      m = 'w'
+    else:
+      m = 'a'
+      self.fileLogFile = flf
+
+    fLogger = logging.getLogger('fileLog_%s_%s' % (fn,m))
+    if m == 'a':
+      self.fHdlr = logging.FileHandler(self.fileLogFile)
+    else:
+      self.fHdlr = logging.FileHandler(self.fileLogFile,mode=m)
     fileFormatter = logging.Formatter('%(message)s')
     self.fHdlr.setFormatter(fileFormatter)
     fLogger.addHandler(self.fHdlr)
@@ -249,8 +332,10 @@ cal = None
 
 if __name__ == '__main__':
   import sys
+  logDict = {}
   c4i = c4_init()
   rec = recorder( c4i.recordFile )
+  ncReader = fileMetadata()
 
   c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
 
@@ -264,22 +349,28 @@ if __name__ == '__main__':
 ### need to have a unique name, otherwise get mixing of logs despite close statement below.
       if c4i.logByFile:
         fLogger = c4i.getFileLog( fn )
+        logDict[fn] = c4i.fileLogFile
         c4i.logger.info( 'Log file: %s' % c4i.fileLogFile )
       else:
         fLogger = c4i.logger
 
       fLogger.info( 'Starting file %s' % fn )
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
-      cc.checkFile( f, log=fLogger )
+      cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
+
+      if cc.completed:
+        if cal not in (None,'None'):
+          if cal != cc.calendar:
+            c4i.logger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
+            fLogger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
+            cc.errorCount += 1
+        cal = cc.calendar
+
       if c4i.logByFile:
+        fLogger.info( 'Done -- error count %s' % cc.errorCount )
         c4i.closeFileLog( )
 
       if cc.completed:
-        if cal != None:
-          if cal != cc.calendar:
-            c4i.logger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
-            cc.errorCount += 1
-        cal = cc.calendar
         c4i.logger.info( 'Done -- error count %s' % cc.errorCount ) 
         if cc.errorCount == 0:
           rec.add( f, cc.drs )
@@ -295,6 +386,8 @@ if __name__ == '__main__':
   cc.info.log = c4i.logger
   
   if project != 'SPECS':
+     cbv.c4i = c4i
+     cbv.setLogDict( logDict )
      cbv.check( recorder=rec, calendar=cc.calendar)
   rec.dumpAll()
   c4i.hdlr.close()
