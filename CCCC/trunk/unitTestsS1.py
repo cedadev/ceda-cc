@@ -85,6 +85,21 @@ for x in ['200401010040','2004010200']:
   else:
      print 'Failed to detect bad sub-daily time range element [%s] %s' % (module,x)
 
+r1 = re.compile( c.pats['sem'][0] )
+for x in ['199012','199101']:
+  m = r1.match( x )
+  if m:
+     print 'OK -- passed [%s] %s for seasonal data' % (module,x)
+  else:
+     print 'Failed to match correct seasonal time range element [%s] %s' % (module,x)
+
+for x in ['199011','199112']:
+  m = r1.match( x )
+  if not m:
+     print 'OK -- correctly failed [%s] %s for seasonal data' % (module,x)
+  else:
+     print 'Failed to detect bad seasonal time range element [%s] %s' % (module,x)
+
 
 c = utils_c4.checkGrids(parent=p)
 c.interpolatedGrids = config.interpolatedGrids
