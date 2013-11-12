@@ -104,7 +104,7 @@ for x in ['199011','199112']:
 c = utils_c4.checkGrids(parent=p)
 c.interpolatedGrids = config.interpolatedGrids
 
-lat = map( lambda x: -46.25 + x*0.5, range(180) )
+lat = map( lambda x: -46.25 + x*0.5, range(185) )
 lon = map( lambda x: -25.25 + x*0.5, range(173) )
 da = {'lat':{'_data':lat,'units':'degrees_north','long_name':'latitude','standard_name':'latitude','_type':'float64'}, 'lon':{'_data':lon,'units':'degrees_east','long_name':'longitude','standard_name':'longitude','_type':'float64'} }
 c.check( 'tas','AFR-44i', da, {'tas':{} } )
