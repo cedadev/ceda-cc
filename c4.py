@@ -32,6 +32,8 @@ class fileMetadata:
      pass
 
   def loadNc(self,fpath):
+    self.fn = string.split( fpath, '/' )[-1]
+    self.fparts = string.split( self.fn[:-3], '_' )
     self.nc = cdms2.open( fpath )
     self.ga = {}
     self.va = {}
@@ -55,7 +57,7 @@ class fileMetadata:
       
     self.nc.close()
 
-  def applyMap( self, mapList, log=None ):
+  def applyMap( self, mapList, globalAttributesInFn, log=None ):
     for m in mapList:
       if m[0] == 'am001':
         if m[1][0][0] == "@var":
@@ -97,6 +99,26 @@ class fileMetadata:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
               self.da[m[1][0][1]][targ] = m[2][1]
+        elif m[1][0][0][0] != "@":
+            this = self.ga
+            apThis = True
+            for c in m[1]:
+              if c[0] not in this.keys():
+                apThis = False
+              elif c[1] != this[c[0]]:
+                apThis = False
+            if m[2][0] != '':
+              targ = m[2][0]
+            else:
+              targ = m[1][-1][0]
+            if apThis:
+              if log != None:
+                log.info( 'Setting %s to %s' % (targ,m[2][1]) )
+              print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              self.ga[targ] = m[2][1]
+              if targ in globalAttributesInFn:
+                self.fparts[ globalAttributesInFn.index(targ) ] = m[2][1]
+                self.fn = string.join( self.fparts, '_' ) + '.nc'
         else:
           print 'Token %s not recognised' % m[1][0][0]
 
@@ -181,7 +203,15 @@ class checker:
     self.info.log = log
 
     fn = string.split( fpath, '/' )[-1]
-    self.cfn.check( fn )
+
+    if attributeMappings != []:
+      ncReader.loadNc( fpath )
+      ncReader.applyMap( attributeMappings, self.cfn.globalAttributesInFn, log=log )
+      ncRed = True
+    else:
+      ncRed = False
+
+    self.cfn.check( ncReader.fn )
     if not self.cfn.completed:
       self.completed = False
       return
@@ -190,9 +220,8 @@ class checker:
       self.completed = False
       return
 
-    ncReader.loadNc( fpath )
-    if attributeMappings != []:
-      ncReader.applyMap( attributeMappings, log=log )
+    if not ncRed:
+      ncReader.loadNc( fpath )
     self.ga = ncReader.ga
     self.va = ncReader.va
     self.da = ncReader.da
