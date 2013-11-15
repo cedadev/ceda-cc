@@ -6,8 +6,8 @@ import logging
 
 reload( utils )
 import cdms2
-project='SPECS'
 project='CORDEX'
+project='SPECS'
 
 if project == 'SPECS':
   vocabs = { 'variable':utils.mipVocab(project=project) }
@@ -208,10 +208,12 @@ class checker:
       ncReader.loadNc( fpath )
       ncReader.applyMap( attributeMappings, self.cfn.globalAttributesInFn, log=log )
       ncRed = True
+      thisFn = ncReader.fn
     else:
       ncRed = False
+      thisFn = fn
 
-    self.cfn.check( ncReader.fn )
+    self.cfn.check( thisFn )
     if not self.cfn.completed:
       self.completed = False
       return
