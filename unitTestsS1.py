@@ -100,6 +100,14 @@ for x in ['199011','199112']:
   else:
      print 'Failed to detect bad seasonal time range element [%s] %s' % (module,x)
 
+r1 = re.compile( c.pats['mon'][0] )
+for x in ['199101']:
+  m = r1.match( x )
+  if m:
+     print 'OK -- passed [%s] %s for daily data' % (module,x)
+  else:
+     print 'Failed to match correct daily time range element [%s] %s -- %s' % (module,x,c.pats['day'][0])
+
 
 c = utils_c4.checkGrids(parent=p)
 c.interpolatedGrids = config.interpolatedGrids
