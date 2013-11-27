@@ -1,18 +1,23 @@
 
+# Standard library imports
+import os, string, time, logging, sys, glob
+
+# Third party imports
+import cdms2
+
+# Local imports
 import utils_c4 as utils
 import config_c4 as config
-import os, string, time
-import logging
 
 reload( utils )
-import cdms2
-project='SPECS'
-project='CORDEX'
 
-if project == 'SPECS':
-  vocabs = { 'variable':utils.mipVocab(project=project) }
-else:
-  vocabs = { 'variable':utils.mipVocab(), \
+
+def getVocabs(project):
+  "Returns a dictionary of vocabulary details for the project provided."
+  if project == 'SPECS':
+    vocabs = { 'variable':utils.mipVocab(project=project) }
+  else:
+    vocabs = { 'variable':utils.mipVocab(), \
            'driving_experiment_name':utils.listControl( 'driving_experiment_name', config.validExperiment ), \
            'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
            'CORDEX_domain':utils.listControl( 'CORDEX_domain',  config.validCordexDomains ), \
@@ -22,6 +27,8 @@ else:
            'model_id':utils.listControl( 'model_id',  config.validRcmNames ), \
            'institute_id':utils.listControl( 'institute_id',  config.validInstNames ), \
            'frequency':utils.listControl( 'frequency', config.validCordexFrequecies ) }
+
+  return vocabs
 
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
@@ -189,7 +196,7 @@ class recorder:
     self.records[fn] = record
 
 class checker:
-  def __init__(self,cls='CORDEX'):
+  def __init__(self, cls):
     self.info = dummy()
     self.calendar = 'None'
     self.cfn = utils.checkFileName(parent=self.info,cls=cls)
@@ -197,6 +204,9 @@ class checker:
     self.cgd = utils.checkStandardDims(parent=self.info,cls=cls)
     self.cgg = utils.checkGrids(parent=self.info,cls=cls)
     self.cls = cls
+
+    # Define vocabs based on project
+    self.vocabs = getVocabs(cls)
 
   def checkFile(self,fpath,log=None,attributeMappings=[]):
     self.calendar = 'None'
@@ -228,7 +238,7 @@ class checker:
     self.va = ncReader.va
     self.da = ncReader.da
 
-    self.cga.check( self.ga, self.va, self.cfn.var, self.cfn.freq, vocabs, self.cfn.fnParts )
+    self.cga.check( self.ga, self.va, self.cfn.var, self.cfn.freq, self.vocabs, self.cfn.fnParts )
     if not self.cga.completed:
       self.completed = False
       return
@@ -266,13 +276,16 @@ class c4_init:
     self.attributeMappingFile = None
     self.recordFile = 'Rec.txt'
     self.logDir = 'logs_02'
+    
+    # Set default project to "CORDEX"
+    self.project = "CORDEX"
+
     while len(args) > 0:
       next = args.pop(0)
       if next == '-f':
         flist = [args.pop(0),]
         self.logByFile = False
       elif next == '-d':
-        import glob
         fdir = args.pop(0)
         flist = glob.glob( '%s/*.nc' % fdir  )
       elif next == '-D':
@@ -290,6 +303,8 @@ class c4_init:
       elif next == '--aMap':
         self.attributeMappingFile = args.pop(0)
         assert os.path.isfile( self.attributeMappingFile ), 'The token "--aMap" should be followed by the path or name of a file'
+      elif next == "-p":
+        self.project = args.pop(0)
       else:
        print 'Unused argument: %s' % next
        nn+=1
@@ -357,20 +372,20 @@ class c4_init:
   def closeFileLog(self):
     self.fHdlr.close()
 
-cc = checker(cls=project)
-
-cal = None
 
 if __name__ == '__main__':
-  import sys
+
   logDict = {}
   c4i = c4_init()
+  cc = checker(cls = c4i.project)
   rec = recorder( c4i.recordFile )
   ncReader = fileMetadata()
 
+  cal = None
+
   c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
 
-  cbv = utils.checkByVar( parent=cc.info,cls=project)
+  cbv = utils.checkByVar( parent=cc.info,cls=c4i.project)
   cbv.impt( c4i.flist )
 
   for f in c4i.flist:
@@ -416,7 +431,7 @@ if __name__ == '__main__':
 
   cc.info.log = c4i.logger
   
-  if project != 'SPECS':
+  if c4i.project != 'SPECS':
      cbv.c4i = c4i
      cbv.setLogDict( logDict )
      cbv.check( recorder=rec, calendar=cc.calendar)
