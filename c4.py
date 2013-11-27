@@ -6,8 +6,8 @@ import logging
 
 reload( utils )
 import cdms2
-project='CORDEX'
 project='SPECS'
+project='CORDEX'
 
 if project == 'SPECS':
   vocabs = { 'variable':utils.mipVocab(project=project) }
