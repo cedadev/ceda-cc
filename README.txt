@@ -36,3 +36,5 @@ Exceptions
 ----------
 The exception handling is designed to ensure that problems analysing one file do not prevent testing of other files.
 Traceback information is written to log file.
+
+----------
