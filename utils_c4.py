@@ -92,6 +92,7 @@ class checkBase:
 
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None):
     self.cls = cls
+    self.project = cls
     assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
     self.re_isInt = re.compile( '[0-9]+' )
     self.errorCount = 0
@@ -616,7 +617,15 @@ class checkGrids(checkBase):
         if a[i] != b[i]:
           x = (a[i]-b[i])/c[i]
           if x < 0 or abs( x - int(x) ) > 0.001:
-             mm.append( (a[i],b[i]) )
+             skipThis = False
+             if self.project  == 'CORDEX':
+               if domain[:3] == 'ANT':
+                 if i == 2 and abs( a[i] - 0.25 ) < 0.001:
+                    skipThis = True
+                 elif i == 3 and abs( a[i] - 359.75 ) < 0.001:
+                    skipThis = True
+             if not skipThis:
+               mm.append( (a[i],b[i]) )
 
       ok &= self.test( len(mm) == 0, 'Domain boundaries for interpolated grid do not match %s' % str(mm), part=True )
 
