@@ -12,24 +12,6 @@ import config_c4 as config
 reload( utils )
 
 
-def getVocabs(pcfg):
-  "Returns a dictionary of vocabulary details for the project provided."
-  if project == 'SPECS':
-    vocabs = { 'variable':utils.mipVocab(pcfg) }
-  else:
-    vocabs = { 'variable':utils.mipVocab(pcfg), \
-           'driving_experiment_name':utils.listControl( 'driving_experiment_name', config.validExperiment ), \
-           'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
-           'CORDEX_domain':utils.listControl( 'CORDEX_domain',  config.validCordexDomains ), \
-           'driving_model_id':utils.listControl( 'driving_model_id',  config.validGcmNames ), \
-           'driving_model_ensemble_member':utils.patternControl( 'driving_model_ensemble_member',  'r[0-9]+i[0-9]+p[0-9]+' ), \
-           'rcm_version_id':utils.patternControl( 'rcm_version_id',  '[a-zA-Z0-9-]+' ), \
-           'model_id':utils.listControl( 'model_id',  config.validRcmNames ), \
-           'institute_id':utils.listControl( 'institute_id',  config.validInstNames ), \
-           'frequency':utils.listControl( 'frequency', config.validCordexFrequecies ) }
-
-  return vocabs
-
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
 
@@ -207,7 +189,8 @@ class checker:
     self.cls = cls
 
     # Define vocabs based on project
-    self.vocabs = getVocabs(pcgf)
+    ##self.vocabs = getVocabs(pcgf)
+    self.vocabs = pcfg.vocabs()
 
   def checkFile(self,fpath,log=None,attributeMappings=[]):
     self.calendar = 'None'
