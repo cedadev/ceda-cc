@@ -2,7 +2,6 @@
 import string, re, os, sys, traceback
 
 from fcc_utils import mipTableScan
-from config_c4 import projectConfig
 
 class reportSection:
 
@@ -200,7 +199,6 @@ class checkFileName(checkBase):
     self.test( fn[-3:] == '.nc', 'File name ending ".nc" expected', abort=True, part=True )
     bits = string.split( fn[:-3], '_' )
     self.fnParts = bits[:]
-
 
     if self.pcfg.domainIndex != None:
       self.domain = self.fnParts[self.pcfg.domainIndex]
