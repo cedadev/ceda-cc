@@ -85,4 +85,55 @@ for l in ii[18:33]:
     i += 1
     interpolatedGrids[bits[1]] = ee
 
+class readVocab:
+
+  def __init__(self,dir):
+    self.dir = dir
+
+  def getSimpleList(self,file):
+    ii = open('%s/%s' % (self.dir,file) )
+    return map( string.strip, ii.readlines() )
+
+class projectConfig:
+
+  def __init__(self, project):
+    knownProjects = ['CORDEX','SPECS']
+    assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
+
+    self.project = project
+    if project == 'CORDEX':
+      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
+             'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
+      self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
+      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
+                        'ensemble':'driving_model_ensemble_member', 'model':'model_id', 'driving_model':'driving_model_id', \
+                        'frequency':'frequency', \
+                        'project':'project_id', 'domain':'CORDEX_domain', 'model_version':'rcm_version_id' }
+
+    elif project == 'SPECS':
+      lrdr = readVocab( 'specs_vocabs/')
+      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'product', 'creation_date', 'tracking_id', \
+              'experiment_id']
+      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      self.controlledGlobalAttributes = [ ]
+      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.drsMappings = {'variable':'@var'}
+
+####### used in checkStandardDims
+
+    self.plevRequired = plevRequired
+    self.plevValues = plevValues
+    self.heightRequired = heightRequired
+    self.heightValues = heightValues
+    self.heightRange = heightRange
+
+####### used in checkGrids
+    self.rotatedPoleGrids = rotatedPoleGrids
+    self.interpolatedGrids = interpolatedGrids
+    self.doCheckGrids = self.project in ['CORDEX',]
+
+
 

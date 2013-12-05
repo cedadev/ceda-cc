@@ -2,6 +2,7 @@
 import string, re, os, sys, traceback
 
 from fcc_utils import mipTableScan
+from config_c4 import projectConfig
 
 class reportSection:
 
@@ -79,15 +80,6 @@ class checkSeq:
 
 cs = checkSeq()
 
-class readVocab:
-
-  def __init__(self,dir):
-    self.dir = dir
-
-  def getSimpleList(self,file):
-    ii = open('%s/%s' % (self.dir,file) )
-    return map( string.strip, ii.readlines() )
-
 class checkBase:
 
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None):
@@ -100,25 +92,14 @@ class checkBase:
     self.missingValue = 1.e20
     self.parent = parent
     self.reportPass=reportPass
-    if self.cls == 'CORDEX':
-      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
-             'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
-      self.controlledGlobalAttributes = ['frequency', 'driving_experiment_name', 'project_id', 'CORDEX_domain', 'driving_model_id', 'model_id', 'institute_id','driving_model_ensemble_member','rcm_version_id']
-      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var','institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
-                        'ensemble':'driving_model_ensemble_member', 'model':'model_id', 'driving_model':'driving_model_id', \
-                        'frequency':'frequency', \
-                        'project':'project_id', 'domain':'CORDEX_domain', 'model_version':'rcm_version_id' }
-    elif self.cls == 'SPECS':
-      lrdr = readVocab( 'specs_vocabs/')
-      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'product', 'creation_date', 'tracking_id', \
-              'experiment_id']
-      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
-      self.controlledGlobalAttributes = [ ]
-      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
-      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var'}
+    self.pcfg = projectConfig( self.cls )
+################################
+    self.requiredGlobalAttributes = self.pcfg.requiredGlobalAttributes
+    self.controlledGlobalAttributes = self.pcfg.controlledGlobalAttributes
+    self.globalAttributesInFn = self.pcfg.globalAttributesInFn
+    self.requiredVarAttributes = self.pcfg.requiredVarAttributes
+    self.drsMappings = self.pcfg.drsMappings
+#######################################
     self.checks = ()
     self.init()
 
@@ -408,6 +389,11 @@ class checkStandardDims(checkBase):
     self.checkId = 'unset'
     self.step = 'Initialised'
     self.checks = (self.do_check,)
+    self.plevRequired = self.pcfg.plevRequired
+    self.plevValues = self.pcfg.plevValues
+    self.heightRequired = self.pcfg.heightRequired
+    self.heightValues = self.pcfg.heightValues
+    self.heightRange = self.pcfg.heightRange
 
   def check(self,varName,varGroup, da, va, isInsta):
     self.errorCount = 0
@@ -542,9 +528,9 @@ class checkGrids(checkBase):
     if va[varName].get( 'grid_mapping', None ) == "rotated_pole":
       self.checkId = '001'
       atDict = { 'grid_mapping_name':'rotated_latitude_longitude' }
-      atDict['grid_north_pole_latitude'] = self.rotatedPoleGrids[domain]['grid_np_lat']
-      if self.rotatedPoleGrids[domain]['grid_np_lon'] != 'N/A':
-        atDict['grid_north_pole_longitude'] = self.rotatedPoleGrids[domain]['grid_np_lon']
+      atDict['grid_north_pole_latitude'] = self.pcfg.rotatedPoleGrids[domain]['grid_np_lat']
+      if self.pcfg.rotatedPoleGrids[domain]['grid_np_lon'] != 'N/A':
+        atDict['grid_north_pole_longitude'] = self.pcfg.rotatedPoleGrids[domain]['grid_np_lon']
 
       self.checkId = '002'
       self.test( 'rlat' in da.keys() and 'rlon' in da.keys(), 'rlat and rlon not found (required for grid_mapping = rotated_pole )', abort=True, part=True )
@@ -561,13 +547,13 @@ class checkGrids(checkBase):
       self.checkId = '003'
       ok = True
       for k in ['rlat','rlon']:
-        res = len(da[k]['_data']) == self.rotatedPoleGrids[domain][ {'rlat':'nlat','rlon':'nlon' }[k] ]
+        res = len(da[k]['_data']) == self.pcfg.rotatedPoleGrids[domain][ {'rlat':'nlat','rlon':'nlon' }[k] ]
         if not res:
           self.test( res, 'Size of %s dimension does not match specification (%s,%s)' % (k,a,b), part=True  )
           ok = False
 
       a = ( da['rlat']['_data'][0], da['rlat']['_data'][-1], da['rlon']['_data'][0], da['rlon']['_data'][-1] )
-      b = map( lambda x: self.rotatedPoleGrids[domain][x], ['s','n','w','e'] )
+      b = map( lambda x: self.pcfg.rotatedPoleGrids[domain][x], ['s','n','w','e'] )
       mm = []
       for i in range(4):
         if a[i] != b[i]:
@@ -602,15 +588,15 @@ class checkGrids(checkBase):
 
       ok = True
       for k in ['lat','lon']:
-        res = len(da[k]['_data']) >= self.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
+        res = len(da[k]['_data']) >= self.pcfg.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
         if not res:
-          a,b =  len(da[k]['_data']), self.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
+          a,b =  len(da[k]['_data']), self.pcfg.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
           self.test( res, 'Size of %s dimension does not match specification (%s,%s)' % (k,a,b), part=True )
           ok = False
 
       a = ( da['lat']['_data'][0], da['lat']['_data'][-1], da['lon']['_data'][0], da['lon']['_data'][-1] )
-      b = map( lambda x: self.interpolatedGrids[domain][x], ['s','n','w','e'] )
-      rs = self.interpolatedGrids[domain]['res']
+      b = map( lambda x: self.pcfg.interpolatedGrids[domain][x], ['s','n','w','e'] )
+      rs = self.pcfg.interpolatedGrids[domain]['res']
       c = [-rs,rs,-rs,rs]
       mm = []
       for i in range(4):
