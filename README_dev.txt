@@ -10,9 +10,13 @@ Unit testing
 
 Configuration
 -------------
-#03.001: Put project dependent information into a specific class instance -- projectConfig.
+#03.001: Put project dependent information into a specific class instance -- projectConfig. Done (Dec 5th)
 #03.002: Merge back version configured for SPECS -- [Martin, 18th Oct]
 #03.003: Create basic configuration for CMIP5 and run to exercise code and identify problems.
+#03.004: Clean up special case for CORDEX in domain checks (allowing 2nd formulation for Antarctica, as it is cyclic)
+#03.005: Extend checkByVar to SPECS and CCMI data
+#03.006: Add CCMI configuration
+#03.007: Complete SPECS configuration (additional global attributes)
 
 Organisation of files
 ---------------------
