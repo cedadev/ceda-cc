@@ -92,7 +92,7 @@ class checkBase:
     self.missingValue = 1.e20
     self.parent = parent
     self.reportPass=reportPass
-    self.pcfg = projectConfig( self.cls )
+    self.pcfg = parent.pcfg
 ################################
     self.requiredGlobalAttributes = self.pcfg.requiredGlobalAttributes
     self.controlledGlobalAttributes = self.pcfg.controlledGlobalAttributes
@@ -201,25 +201,32 @@ class checkFileName(checkBase):
     bits = string.split( fn[:-3], '_' )
     self.fnParts = bits[:]
 
-    if self.cls == 'CORDEX':
-      self.fnPartsOkLen = [8,9]
-      self.fnPartsOkFixedLen = [8,]
-      self.fnPartsOkUnfixedLen = [9,]
-      checkTrangeLen = True
-      self.domain = self.fnParts[1]
-    elif self.cls == 'SPECS':
+
+    if self.pcfg.domainIndex != None:
+      self.domain = self.fnParts[self.pcfg.domainIndex]
+    else:
       self.domain = None
-      self.fnPartsOkLen = [6,7]
-      self.fnPartsOkFixedLen = [6,]
-      self.fnPartsOkUnfixedLen = [7,]
-      checkTrangeLen = False
+    ##if self.cls == 'CORDEX':
+      ##self.fnPartsOkLen = [8,9]
+      ##self.fnPartsOkFixedLen = [8,]
+      ##self.fnPartsOkUnfixedLen = [9,]
+      ##checkTrangeLen = True
+    ##elif self.cls == 'SPECS':
+      ##self.fnPartsOkLen = [6,7]
+      ##self.fnPartsOkFixedLen = [6,]
+      ##self.fnPartsOkUnfixedLen = [7,]
+      ##checkTrangeLen = False
 
-    self.test( len(bits) in self.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.fnPartsOkLen),str(bits)), abort=True )
+    self.test( len(bits) in self.pcfg.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.pcfg.fnPartsOkLen),str(bits)), abort=True )
 
-    if self.cls == 'CORDEX':
-      self.freq = self.fnParts[7]
-    elif self.cls == 'SPECS':
-      self.freq = self.fnParts[1]
+    if self.pcfg.freqIndex != None:
+      self.freq = self.fnParts[self.pcfg.freqIndex]
+    else:
+      self.freq = None
+    ##if self.cls == 'CORDEX':
+      ##self.freq = self.fnParts[7]
+    ##elif self.cls == 'SPECS':
+      ##self.freq = self.fnParts[1]
 
     self.var = self.fnParts[0]
 
@@ -241,10 +248,10 @@ class checkFileName(checkBase):
 
     self.checkId = '003'
     if self.isFixed:
-      self.test( len(self.fnParts) in self.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
+      self.test( len(self.fnParts) in self.pcfg.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
     self.checkId, ok = ('004',True)
-    if len(self.fnParts) == 9 and checkTrangeLen:
+    if len(self.fnParts) == 9 and self.pcfg.checkTrangeLen:
       ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':[10,12], '6hr':10 }
       ok &=self.test( self.freq in ltr.keys(), 'Frequency [%s] not recognised' % self.freq, part=True )
       if ok:
@@ -622,18 +629,20 @@ class checkGrids(checkBase):
 
 class mipVocab:
 
-  def __init__(self,project='CORDEX'):
+  def __init__(self,pcfg):
+     project = pcfg.project
      assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
-     if project == 'CORDEX':
-       dir = 'cordex_vocabs/mip/'
-       tl = ['fx','sem','mon','day','6h','3h']
-       vgmap = {'6h':'6hr','3h':'3hr'}
-       fnpat = 'CORDEX_%s'
-     elif project == 'SPECS':
-       dir = 'specs_vocabs/mip/'
-       tl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
-       vgmap = {}
-       fnpat = 'SPECS_%s'
+     ##if project == 'CORDEX':
+       ##dir = 'cordex_vocabs/mip/'
+       ##tl = ['fx','sem','mon','day','6h','3h']
+       ##vgmap = {'6h':'6hr','3h':'3hr'}
+       ##fnpat = 'CORDEX_%s'
+     ##elif project == 'SPECS':
+       ##dir = 'specs_vocabs/mip/'
+       ##tl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
+       ##vgmap = {}
+       ##fnpat = 'SPECS_%s'
+     dir, tl, vgmap, fnpat = pcfg.mipVocabPars
      ms = mipTableScan()
      self.varInfo = {}
      self.varcons = {}
@@ -710,12 +719,20 @@ class checkByVar(checkBase):
     for f in flist:
       fn = string.split(f, '/' )[-1]
       fnParts = string.split( fn[:-3], '_' )
-      if self.cls == 'CORDEX':
-        isFixed = fnParts[7] == 'fx'
-        group = fnParts[7]
-      elif self.cls == 'SPECS':
-        isFixed = fnParts[1] == 'fx'
-        group = fnParts[1]
+      ##if self.cls == 'CORDEX':
+        ##isFixed = fnParts[7] == 'fx'
+        ##group = fnParts[7]
+      ##elif self.cls == 'SPECS':
+        ##isFixed = fnParts[1] == 'fx'
+        ##group = fnParts[1]
+
+      if self.pcfg.freqIndex != None:
+        freq = self.fnParts[self.pcfg.freqIndex]
+      else:
+        freq = None
+
+      isFixed = freq == 'fx'
+      group = fnParts[ self.pcfg.groupIndex ]
 
       if isFixed:
         trange = None

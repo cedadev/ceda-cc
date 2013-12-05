@@ -12,12 +12,12 @@ import config_c4 as config
 reload( utils )
 
 
-def getVocabs(project):
+def getVocabs(pcfg):
   "Returns a dictionary of vocabulary details for the project provided."
   if project == 'SPECS':
-    vocabs = { 'variable':utils.mipVocab(project=project) }
+    vocabs = { 'variable':utils.mipVocab(pcfg) }
   else:
-    vocabs = { 'variable':utils.mipVocab(), \
+    vocabs = { 'variable':utils.mipVocab(pcfg), \
            'driving_experiment_name':utils.listControl( 'driving_experiment_name', config.validExperiment ), \
            'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
            'CORDEX_domain':utils.listControl( 'CORDEX_domain',  config.validCordexDomains ), \
@@ -196,17 +196,18 @@ class recorder:
     self.records[fn] = record
 
 class checker:
-  def __init__(self, cls):
+  def __init__(self, pcfg, cls):
     self.info = dummy()
+    self.info.pcfg = pcfg
     self.calendar = 'None'
-    self.cfn = utils.checkFileName(parent=self.info,cls=cls)
-    self.cga = utils.checkGlobalAttributes(parent=self.info,cls=cls)
-    self.cgd = utils.checkStandardDims(parent=self.info,cls=cls)
-    self.cgg = utils.checkGrids(parent=self.info,cls=cls)
+    self.cfn = utils.checkFileName( parent=self.info,cls=cls)
+    self.cga = utils.checkGlobalAttributes( parent=self.info,cls=cls)
+    self.cgd = utils.checkStandardDims( parent=self.info,cls=cls)
+    self.cgg = utils.checkGrids( parent=self.info,cls=cls)
     self.cls = cls
 
     # Define vocabs based on project
-    self.vocabs = getVocabs(cls)
+    self.vocabs = getVocabs(pcgf)
 
   def checkFile(self,fpath,log=None,attributeMappings=[]):
     self.calendar = 'None'
@@ -377,7 +378,8 @@ if __name__ == '__main__':
 
   logDict = {}
   c4i = c4_init()
-  cc = checker(cls = c4i.project)
+  pcfg = config.projectConfig( c4i.project )
+  cc = checker(pcfg, cls = c4i.project)
   rec = recorder( c4i.recordFile )
   ncReader = fileMetadata()
 

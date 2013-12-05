@@ -4,6 +4,7 @@ import logging, time
 import utils_c4
 import config_c4 as config
 
+
 #### set up log file ####
 tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
 testLogFile = '%s__qclog_%s.txt' % ('unitTests',tstring2)
@@ -21,6 +22,7 @@ class dummy:
 
 p = dummy()
 p.log = log
+p.pcfg = config.projectConfig( "CORDEX" )
 
 
 module = 'checkFileName'
@@ -66,7 +68,7 @@ if c.errorCount == 0:
 else:
   print 'OK -- detected bad file name: [%s] %s' % (module,fn)
 
-c = utils_c4.checkStandardDims()
+c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
 c.check( 'tas', 'day', {},{}, False )
 if c.errorCount == 0:
@@ -74,7 +76,7 @@ if c.errorCount == 0:
 else:
   print 'OK -- detected error in standard dims'
 
-c = utils_c4.checkByVar()
+c = utils_c4.checkByVar(parent=p)
 module = 'checkByVar (regex)'
 c.check( norun=True )
 import re
