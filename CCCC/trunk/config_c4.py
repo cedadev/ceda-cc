@@ -135,5 +135,39 @@ class projectConfig:
     self.interpolatedGrids = interpolatedGrids
     self.doCheckGrids = self.project in ['CORDEX',]
 
+####### used in checkFileName (freqIndex also used in checkByVar)
+
+    if self.project == 'CORDEX':
+      self.fnPartsOkLen = [8,9]
+      self.fnPartsOkFixedLen = [8,]
+      self.fnPartsOkUnfixedLen = [9,]
+      self.checkTrangeLen = True
+      self.domainIndex = 1
+      self.freqIndex = 7
+    elif self.project == 'SPECS':
+      self.fnPartsOkLen = [6,7]
+      self.fnPartsOkFixedLen = [6,]
+      self.fnPartsOkUnfixedLen = [7,]
+      self.checkTrangeLen = False
+      self.domainIndex = None
+      self.freqIndex = 1
 
 
+######## used in mipVocabs
+    if self.project == 'CORDEX':
+       self.mipVocabDir = 'cordex_vocabs/mip/'
+       self.mipVocabTl = ['fx','sem','mon','day','6h','3h']
+       self.mipVocabVgmap = {'6h':'6hr','3h':'3hr'}
+       self.mipVocabFnpat = 'CORDEX_%s'
+    elif self.project == 'SPECS':
+       self.mipVocabDir = 'specs_vocabs/mip/'
+       self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
+       self.mipVocabVgmap = {}
+       self.mipVocabFnpat = 'SPECS_%s'
+    self.mipVocabPars = [self.mipVocabDir, self.mipVocabTl, self.mipVocabVgmap, self.mipVocabFnpat]
+
+######## used in checkByVar
+    if self.project == 'CORDEX':
+      self.groupIndex = 7
+    elif self.project == 'SPECS':
+      self.groupIndex = 1
