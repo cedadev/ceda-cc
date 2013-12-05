@@ -243,20 +243,20 @@ class checker:
       self.completed = False
       return
 
-    self.cgd.plevRequired = config.plevRequired
-    self.cgd.plevValues = config.plevValues
-    self.cgd.heightRequired = config.heightRequired
-    self.cgd.heightValues = config.heightValues
-    self.cgd.heightRange = config.heightRange
+    ##self.cgd.plevRequired = config.plevRequired
+    ##self.cgd.plevValues = config.plevValues
+    ##self.cgd.heightRequired = config.heightRequired
+    ##self.cgd.heightValues = config.heightValues
+    ##self.cgd.heightRange = config.heightRange
     self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous )
     self.calendar = self.cgd.calendar
     if not self.cgd.completed:
       self.completed = False
       return
 
-    if self.cls == 'CORDEX':
-      self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
-      self.cgg.interpolatedGrids = config.interpolatedGrids
+    if self.pcfg.doCheckGrids:
+      ##self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
+      ##self.cgg.interpolatedGrids = config.interpolatedGrids
       self.cgg.check( self.cfn.var, self.cfn.domain, self.da, self.va )
     
       if not self.cgg.completed:

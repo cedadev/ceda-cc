@@ -66,6 +66,14 @@ if c.errorCount == 0:
 else:
   print 'OK -- detected bad file name: [%s] %s' % (module,fn)
 
+c = utils_c4.checkStandardDims()
+module = 'checkStandardDims'
+c.check( 'tas', 'day', {},{}, False )
+if c.errorCount == 0:
+  print 'Failed [%s]: failed to detect empty dictionaries' % module
+else:
+  print 'OK -- detected error in standard dims'
+
 c = utils_c4.checkByVar()
 module = 'checkByVar (regex)'
 c.check( norun=True )
