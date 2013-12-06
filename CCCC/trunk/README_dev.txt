@@ -7,6 +7,8 @@ Documentation
 Unit testing
 ------------
 #02.001: Create some unit tests (dependent on #001).
+#02.002: Create a __dummy project, to support testing of logging system etc.
+   --- added to mip vocabs and config -- need to pt something in the NetCDF file reader.
 
 Configuration
 -------------

@@ -84,7 +84,8 @@ class checkBase:
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None):
     self.cls = cls
     self.project = cls
-    assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
+    ## check done earlier
+    ## assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
     self.re_isInt = re.compile( '[0-9]+' )
     self.errorCount = 0
     self.passCount = 0
@@ -627,8 +628,11 @@ class checkGrids(checkBase):
 
 class mipVocab:
 
-  def __init__(self,pcfg):
+  def __init__(self,pcfg,dummy=False):
      project = pcfg.project
+     if dummy:
+       self.pcfg = pcfg
+       return self.dummyMipTable()
      assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
      ##if project == 'CORDEX':
        ##dir = 'cordex_vocabs/mip/'
@@ -662,6 +666,25 @@ class mipVocab:
           self.varInfo[v] = {'ar':ar, 'ac':ac }
           self.varcons[vg][v] = eeee
             
+  def dummyMipTable(self):
+     self.varInfo = {}
+     self.varcons = {}
+     ee = { 'standard_name':'sn%s', 'name':'n%s', 'units':'1' }
+     dir, tl, vgmap, fnpat = self.pcfg.mipVocabPars
+     for f in tl:
+        vg = vgmap.get( f, f )
+        self.varcons[vg] = {}
+        for i in range(12):
+          v = 'v%s' % i
+          eeee = {}
+          eeee['standard_name'] = ee['standard_name'] % i
+          eeee['name'] = ee['name'] % i
+          eeee['units'] = ee['units']
+          ar = []
+          ac = []
+          self.varInfo[v] = {'ar':ar, 'ac':ac }
+          self.varcons[vg][v] = eeee
+
   def lists( self, k, k2 ):
      if k2 == 'addRequiredAttributes':
        return self.varInfo[k]['ar']
@@ -671,7 +694,7 @@ class mipVocab:
        raise 'mipVocab.lists called with bad list specifier %s' % k2
 
   def isInTable( self, v, vg ):
-    assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys()'
+    assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys()' % vg
     return (v in self.varcons[vg].keys())
       
   def getAttr( self, v, vg, a ):
@@ -725,7 +748,7 @@ class checkByVar(checkBase):
         ##group = fnParts[1]
 
       if self.pcfg.freqIndex != None:
-        freq = self.fnParts[self.pcfg.freqIndex]
+        freq = fnParts[self.pcfg.freqIndex]
       else:
         freq = None
 
@@ -793,7 +816,6 @@ class checkByVar(checkBase):
     n = len(tt)
     for j in range(n):
       t = tt[j]
-      print '>>>>>>>>>>>>>>>>',t
       fn = t[1]
       isFirst = j == 0
       isLast = j == n-1

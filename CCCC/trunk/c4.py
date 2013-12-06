@@ -3,7 +3,13 @@
 import os, string, time, logging, sys, glob
 
 # Third party imports
-import cdms2
+
+try:
+  import cdms2
+  withCdms = True
+except:
+  print 'Failed to import cdms2: will not be able to read NetCDF'
+  withCdms = False
 
 # Local imports
 import utils_c4 as utils
@@ -17,16 +23,19 @@ reload( utils )
 
 class fileMetadata:
 
-  def __init__(self):
-     pass
+  def __init__(self,dummy=False):
+     self.dummy = dummy
 
   def loadNc(self,fpath):
     self.fn = string.split( fpath, '/' )[-1]
     self.fparts = string.split( self.fn[:-3], '_' )
-    self.nc = cdms2.open( fpath )
     self.ga = {}
     self.va = {}
     self.da = {}
+    if self.dummy:
+      self.makeDummyFileImage()
+      return
+    self.nc = cdms2.open( fpath )
     for k in self.nc.attributes.keys():
       self.ga[k] = self.nc.attributes[k]
     for v in self.nc.variables.keys():
@@ -45,6 +54,26 @@ class fileMetadata:
       self.da[v]['_data'] = self.nc.axes[v].getValue().tolist()
       
     self.nc.close()
+
+  def makeDummyFileImage(self):
+    for k in range(10):
+      self.ga['ga%s' % k] =  str(k)
+    for v in [self.fparts[0],]:
+      self.va[v] = {}
+      self.va[v]['standard_name'] = 's%s' % v
+      self.va[v]['name'] = v
+      self.va[v]['units'] = '1'
+      self.va[v]['_type'] = 'float32'
+
+    for v in ['lat','lon','time']:
+      self.da[v] = {}
+      self.da[v]['_type'] = 'float64'
+      self.da[v]['_data'] = range(5)
+    dlist = ['lat','lon','time']
+    svals = lambda p,q: map( lambda y,z: self.da[y].__setitem__(p, z), dlist, q )
+    svals( 'standard_name', ['latitude', 'longitude','time'] )
+    svals( 'name', ['latitude', 'longitude','time'] )
+    svals( 'units', ['degrees_north', 'degrees_east','days since 19590101'] )
 
   def applyMap( self, mapList, globalAttributesInFn, log=None ):
     for m in mapList:
@@ -117,7 +146,8 @@ class dummy:
 
 class recorder:
 
-  def __init__(self,fileName,type='map'):
+  def __init__(self,fileName,type='map',dummy=False):
+    self.dummy = dummy
     self.file = fileName
     self.type = type
     self.pathTmpl = '%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/'
@@ -137,11 +167,15 @@ class recorder:
 
   def add(self,fpath,drs,safe=True):
     assert self.type == 'map','Can only do map files at present'
-    assert os.path.isfile( fpath ), 'File %s not found' % fpath
     assert type(drs) == type( {} ), '2nd user argument to method add should be a dictionary [%s]' % type(drs)
     tpath = self.pathTmpl % drs
-    fdate = time.ctime(os.path.getmtime(fpath))
-    sz = os.stat(fpath).st_size
+    if not self.dummy:
+      assert os.path.isfile( fpath ), 'File %s not found' % fpath
+      fdate = time.ctime(os.path.getmtime(fpath))
+      sz = os.stat(fpath).st_size
+    else:
+      fdate = "na"
+      sz = 0
     record = '%s | OK | %s | modTime = %s | target = %s ' % (fpath,sz,fdate,tpath)
     for k in ['creation_date','tracking_id']:
       if k in drs.keys():
@@ -190,7 +224,7 @@ class checker:
 
     # Define vocabs based on project
     ##self.vocabs = getVocabs(pcgf)
-    self.vocabs = pcfg.vocabs()
+    self.vocabs = pcfg.vocabs
 
   def checkFile(self,fpath,log=None,attributeMappings=[]):
     self.calendar = 'None'
@@ -211,10 +245,11 @@ class checker:
     if not self.cfn.completed:
       self.completed = False
       return
-    if not os.path.isfile( fpath ):
-      print 'File %s not found' % fpath
-      self.completed = False
-      return
+    if not self.info.pcfg.project[:2] == '__':
+      if not os.path.isfile( fpath ):
+        print 'File %s not found [2]' % fpath
+        self.completed = False
+        return
 
     if not ncRed:
       ncReader.loadNc( fpath )
@@ -294,6 +329,14 @@ class c4_init:
        nn+=1
     assert nn==0, 'Aborting because of unused arguments'
 
+    if self.project[:2] == '__':
+       flist = []
+       ss = 'abcdefgijklmnopqrstuvwxyz'
+       for i in range(10):
+         v = 'v%s' % i
+         for a in ss:
+           for b in ss:
+             flist.append( '%s_day_%s_%s_1900-1909.nc' % (v,a,b) )
     flist.sort()
     fnl = []
     nd = 0
@@ -361,10 +404,15 @@ if __name__ == '__main__':
 
   logDict = {}
   c4i = c4_init()
+  isDummy  = c4i.project[:2] == '__'
+  if (not withCdms) and isDummy:
+     print withCdms, c4i.project
+     print 'Cannot proceed with non-dummy project without cdms'
+     raise
   pcfg = config.projectConfig( c4i.project )
   cc = checker(pcfg, cls = c4i.project)
-  rec = recorder( c4i.recordFile )
-  ncReader = fileMetadata()
+  rec = recorder( c4i.recordFile, dummy=isDummy )
+  ncReader = fileMetadata(dummy=isDummy)
 
   cal = None
 
@@ -398,7 +446,10 @@ if __name__ == '__main__':
         cal = cc.calendar
 
       if c4i.logByFile:
-        fLogger.info( 'Done -- error count %s' % cc.errorCount )
+        if cc.completed:
+          fLogger.info( 'Done -- error count %s' % cc.errorCount )
+        else:
+          fLogger.info( 'Done -- checks not completed' )
         c4i.closeFileLog( )
 
       if cc.completed:
@@ -422,8 +473,8 @@ if __name__ == '__main__':
      cbv.check( recorder=rec, calendar=cc.calendar)
   rec.dumpAll()
   c4i.hdlr.close()
-else:
-  f1 = '/data/u10/cordex/AFR-44/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/day/clh/clh_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_day_19810101-19851231.nc'
-  f2 = '/data/u10/cordex/AFR-44/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/sem/tas/tas_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_sem_200012-201011.nc'
-  f3 = '/data/u10/cordex/AFR-44i/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/mon/tas/tas_AFR-44i_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_mon_199101-200012.nc'
-  cc.checkFile( f3 )
+##else:
+  ##f1 = '/data/u10/cordex/AFR-44/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/day/clh/clh_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_day_19810101-19851231.nc'
+  ##f2 = '/data/u10/cordex/AFR-44/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/sem/tas/tas_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_sem_200012-201011.nc'
+  ##f3 = '/data/u10/cordex/AFR-44i/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/mon/tas/tas_AFR-44i_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_mon_199101-200012.nc'
+  ##cc.checkFile( f3 )
