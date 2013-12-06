@@ -15,8 +15,8 @@ log.addHandler(fHdlr)
 log.setLevel(logging.INFO)
 
 try:
-  fmd = fileMetadata()
-  fmd.loadNc( '/dummyPath/v1_day_a_b_1990-1991.nc', dummy=True)
+  fmd = fileMetadata(dummy=True)
+  fmd.loadNc( '/dummyPath/v1_day_a_b_1990-1991.nc')
 except:
   print 'Failed to parse a simple dummy file path'
   raise
