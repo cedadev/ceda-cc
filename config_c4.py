@@ -99,6 +99,8 @@ def getVocabs(pcfg):
   "Returns a dictionary of vocabulary details for the project provided."
   if pcfg.project == 'SPECS':
     vocabs = { 'variable':utils.mipVocab(pcfg) }
+  elif pcfg.project == '__dummy':
+    vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
   else:
     vocabs = { 'variable':utils.mipVocab(pcfg), \
            'driving_experiment_name':utils.listControl( 'driving_experiment_name', validExperiment ), \
@@ -116,7 +118,7 @@ def getVocabs(pcfg):
 class projectConfig:
 
   def __init__(self, project):
-    knownProjects = ['CORDEX','SPECS']
+    knownProjects = ['CORDEX','SPECS','__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -138,6 +140,13 @@ class projectConfig:
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.controlledGlobalAttributes = [ ]
       self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.drsMappings = {'variable':'@var'}
+
+    elif project == '__dummy':
+      self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
+      self.controlledGlobalAttributes = [ ]
+      self.globalAttributesInFn = [None,'ga2', 'ga3', 'ga4' ]
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
 
@@ -170,6 +179,13 @@ class projectConfig:
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = 1
+    elif self.project == '__dummy':
+      self.fnPartsOkLen = [4,5]
+      self.fnPartsOkFixedLen = [4,]
+      self.fnPartsOkUnfixedLen = [5,]
+      self.checkTrangeLen = False
+      self.domainIndex = None
+      self.freqIndex = 1
 
 
 ######## used in mipVocabs
@@ -183,12 +199,17 @@ class projectConfig:
        self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'SPECS_%s'
+    else:
+       self.mipVocabDir = None
+       self.mipVocabTl = ['day', 't2']
+       self.mipVocabVgmap = {}
+       self.mipVocabFnpat = None
     self.mipVocabPars = [self.mipVocabDir, self.mipVocabTl, self.mipVocabVgmap, self.mipVocabFnpat]
 
 ######## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
-    elif self.project == 'SPECS':
+    elif self.project in ['SPECS','__dummy']:
       self.groupIndex = 1
 
     self.vocabs = getVocabs(self)
