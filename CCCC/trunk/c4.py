@@ -331,6 +331,8 @@ class c4_init:
 
     if self.project[:2] == '__':
        flist = []
+       ss = 'abcdefgijk'
+       ss = 'abc'
        ss = 'abcdefgijklmnopqrstuvwxyz'
        for i in range(10):
          v = 'v%s' % i
@@ -385,18 +387,19 @@ class c4_init:
       m = 'a'
       self.fileLogFile = flf
 
-    fLogger = logging.getLogger('fileLog_%s_%s' % (fn,m))
+    self.fLogger = logging.getLogger('fileLog_%s_%s' % (fn,m))
     if m == 'a':
       self.fHdlr = logging.FileHandler(self.fileLogFile)
     else:
       self.fHdlr = logging.FileHandler(self.fileLogFile,mode=m)
     fileFormatter = logging.Formatter('%(message)s')
     self.fHdlr.setFormatter(fileFormatter)
-    fLogger.addHandler(self.fHdlr)
-    fLogger.setLevel(logging.INFO)
-    return fLogger
+    self.fLogger.addHandler(self.fHdlr)
+    self.fLogger.setLevel(logging.INFO)
+    return self.fLogger
 
   def closeFileLog(self):
+    self.fLogger.removeHandler(self.fHdlr)
     self.fHdlr.close()
 
 
@@ -413,15 +416,22 @@ if __name__ == '__main__':
   cc = checker(pcfg, cls = c4i.project)
   rec = recorder( c4i.recordFile, dummy=isDummy )
   ncReader = fileMetadata(dummy=isDummy)
+  monitorFileHandles = False
+  if monitorFileHandles:
+    monitor = utils.sysMonitor()
+  else:
+    monitor = None
 
   cal = None
 
   c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
 
-  cbv = utils.checkByVar( parent=cc.info,cls=c4i.project)
+  cbv = utils.checkByVar( parent=cc.info,cls=c4i.project,monitor=monitor)
   cbv.impt( c4i.flist )
 
   for f in c4i.flist:
+    if monitorFileHandles:
+      nofhStart = monitor.get_open_fds()
     fn = string.split(f,'/')[-1]
     c4i.logger.info( 'Starting: %s' % fn )
     try:
@@ -464,6 +474,10 @@ if __name__ == '__main__':
     except:
       c4i.logger.error("Exception has occured" ,exc_info=1)
       rec.addErr( f, 'ERROR: Exception' )
+    if monitorFileHandles:
+      nofhEnd = monitor.get_open_fds()
+      if nofhEnd > nofhStart:
+         print 'Open file handles: %s --- %s' % (nofhStart, nofhEnd)
 
   cc.info.log = c4i.logger
   

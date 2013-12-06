@@ -81,9 +81,10 @@ cs = checkSeq()
 
 class checkBase:
 
-  def  __init__(self,cls="CORDEX",reportPass=True,parent=None):
+  def  __init__(self,cls="CORDEX",reportPass=True,parent=None,monitor=None):
     self.cls = cls
     self.project = cls
+    self.monitor = monitor
     ## check done earlier
     ## assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
     self.re_isInt = re.compile( '[0-9]+' )
@@ -117,12 +118,18 @@ class checkBase:
 
     doThis = True
     if self.appendLogFile[0] != None and doThis:
+      if self.monitor != None:
+         nofh0 = self.monitor.get_open_fds()
       xlog = self.c4i.getFileLog( self.appendLogFile[1], flf=self.appendLogFile[0] )
       if error:
          xlog.error( msg )
       else:
          xlog.info( msg )
       self.c4i.closeFileLog()
+      if self.monitor != None:
+         nofh9 = self.monitor.get_open_fds()
+         if nofh9 > nofh0:
+           print 'Leaking file handles [1]: %s --- %s' % (nofh0, nofh9)
 
   def log_exception( self, msg):
     if self.parent != None and self.parent.log != None:
@@ -815,6 +822,8 @@ class checkByVar(checkBase):
 
     n = len(tt)
     for j in range(n):
+      if self.monitor != None:
+         nofh0 = self.monitor.get_open_fds()
       t = tt[j]
       fn = t[1]
       isFirst = j == 0
@@ -825,8 +834,33 @@ class checkByVar(checkBase):
           x = rere[i].match( t[3][i] )
           lok &= self.test( x != None, 'Cannot match time range %s: %s' % (i,fn), part=True, appendLogFile=(self.fLogDict.get(fn,None),fn) )
         if not lok:
-          print 'Cannot match time range %s:' % t[1]
+          ### print 'Cannot match time range %s:' % t[1]
           if self.recorder != None:
             self.recorder.modify( t[1], 'ERROR: time range' )
+      if self.monitor != None:
+         nofh9 = self.monitor.get_open_fds()
+         if nofh9 > nofh0:
+           print 'Open file handles: %s --- %s [%s]' % (nofh0, nofh9, j )
 
-    
+### http://stackoverflow.com/questions/2023608/check-what-files-are-open-in-python
+class sysMonitor:
+
+  def __init__(self):
+    pass
+
+  def get_open_fds(self):
+    '''
+    return the number of open file descriptors for current process
+    .. warning: will only work on UNIX-like os-es.
+    '''
+    import subprocess
+    import os
+
+    pid = os.getpid()
+    self.procs = subprocess.check_output( 
+        [ "lsof", '-w', '-Ff', "-p", str( pid ) ] )
+
+    self.ps = filter( 
+            lambda s: s and s[ 0 ] == 'f' and s[1: ].isdigit(),
+            self.procs.split( '\n' ) )
+    return len( self.ps )
