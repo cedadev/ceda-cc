@@ -61,7 +61,8 @@ class fileMetadata:
     for v in [self.fparts[0],]:
       self.va[v] = {}
       self.va[v]['standard_name'] = 's%s' % v
-      self.va[v]['name'] = v
+      self.va[v]['long_name'] = v
+      self.va[v]['cell_methods'] = 'time: point'
       self.va[v]['units'] = '1'
       self.va[v]['_type'] = 'float32'
 
@@ -72,7 +73,7 @@ class fileMetadata:
     dlist = ['lat','lon','time']
     svals = lambda p,q: map( lambda y,z: self.da[y].__setitem__(p, z), dlist, q )
     svals( 'standard_name', ['latitude', 'longitude','time'] )
-    svals( 'name', ['latitude', 'longitude','time'] )
+    svals( 'long_name', ['latitude', 'longitude','time'] )
     svals( 'units', ['degrees_north', 'degrees_east','days since 19590101'] )
 
   def applyMap( self, mapList, globalAttributesInFn, log=None ):
@@ -212,9 +213,10 @@ class recorder:
     self.records[fn] = record
 
 class checker:
-  def __init__(self, pcfg, cls,reader):
+  def __init__(self, pcfg, cls,reader,abortMessageCount=-1):
     self.info = dummy()
     self.info.pcfg = pcfg
+    self.info.abortMessageCount = abortMessageCount
     self.calendar = 'None'
     self.ncReader = reader
     self.cfn = utils.checkFileName( parent=self.info,cls=cls)
@@ -378,7 +380,6 @@ class c4_init:
           for b in bits:
             cl.append( string.split(b, '=' ) )
           self.attributeMappings.append( ('am001',cl, string.split(bb[1],'=') ) )
-    print self.attributeMappings
 
   def getFileLog( self, fn, flf=None ):
     if flf == None:
@@ -407,8 +408,9 @@ class c4_init:
 
 class main:
 
-  def __init__(self,args=None):
+  def __init__(self,args=None,holdExceptions=False,abortMessageCount=-1,printInfo=False,monitorFileHandles = False):
     logDict = {}
+    ecount = 0
     c4i = c4_init(args=args)
     isDummy  = c4i.project[:2] == '__'
     if (not withCdms) and isDummy:
@@ -417,24 +419,24 @@ class main:
        raise
     pcfg = config.projectConfig( c4i.project )
     ncReader = fileMetadata(dummy=isDummy)
-    cc = checker(pcfg, c4i.project, ncReader)
+    cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
     rec = recorder( c4i.recordFile, dummy=isDummy )
-    monitorFileHandles = False
     if monitorFileHandles:
-      monitor = utils.sysMonitor()
+      self.monitor = utils.sysMonitor()
     else:
-      monitor = None
+      self.monitor = None
 
     cal = None
-
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
   
-    cbv = utils.checkByVar( parent=cc.info,cls=c4i.project,monitor=monitor)
+    cbv = utils.checkByVar( parent=cc.info,cls=c4i.project,monitor=self.monitor)
     cbv.impt( c4i.flist )
+    if printInfo:
+      print cbv.info
 
     for f in c4i.flist:
       if monitorFileHandles:
-        nofhStart = monitor.get_open_fds()
+        nofhStart = self.monitor.get_open_fds()
       fn = string.split(f,'/')[-1]
       c4i.logger.info( 'Starting: %s' % fn )
       try:
@@ -467,18 +469,22 @@ class main:
 
         if cc.completed:
           c4i.logger.info( 'Done -- error count %s' % cc.errorCount ) 
+          ecount += cc.errorCount
           if cc.errorCount == 0:
             rec.add( f, cc.drs )
           else:
             rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % cc.errorCount )
         else:
+          ecount += 20
           c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
           rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
       except:
         c4i.logger.error("Exception has occured" ,exc_info=1)
         rec.addErr( f, 'ERROR: Exception' )
+        if not holdExceptions:
+          raise
       if monitorFileHandles:
-        nofhEnd = monitor.get_open_fds()
+        nofhEnd = self.monitor.get_open_fds()
         if nofhEnd > nofhStart:
            print 'Open file handles: %s --- %s' % (nofhStart, nofhEnd)
   
@@ -488,10 +494,16 @@ class main:
        cbv.c4i = c4i
        cbv.setLogDict( logDict )
        cbv.check( recorder=rec, calendar=cc.calendar)
+       try:
+         ecount += cbv.errorCount
+       except:
+         ecount = None
     rec.dumpAll()
+    if printInfo:
+      print 'Error count %s' % ecount
     c4i.hdlr.close()
 if __name__ == '__main__':
-  main()
+  main(printInfo=True)
 
 
 ##else:

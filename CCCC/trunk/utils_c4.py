@@ -84,6 +84,7 @@ class checkBase:
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None,monitor=None):
     self.cls = cls
     self.project = cls
+    self.abortMessageCount = parent.abortMessageCount
     self.monitor = monitor
     ## check done earlier
     ## assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
@@ -102,12 +103,15 @@ class checkBase:
     self.drsMappings = self.pcfg.drsMappings
 #######################################
     self.checks = ()
+    self.messageCount = 0
     self.init()
 
   def isInt(self,x):
     return self.re_isInt.match( x ) != None
 
   def logMessage(self, msg, error=False ):
+    self.messageCount += 1
+    assert self.abortMessageCount < 0 or self.abortMessageCount > self.messageCount, 'Raising error [TESTX01], perhaps for testing'
     if self.parent != None and self.parent.log != None:
        if error:
          self.parent.log.error( msg )
@@ -676,7 +680,7 @@ class mipVocab:
   def dummyMipTable(self):
      self.varInfo = {}
      self.varcons = {}
-     ee = { 'standard_name':'sn%s', 'name':'n%s', 'units':'1' }
+     ee = { 'standard_name':'sn%s', 'long_name':'n%s', 'units':'1' }
      dir, tl, vgmap, fnpat = self.pcfg.mipVocabPars
      for f in tl:
         vg = vgmap.get( f, f )
@@ -685,7 +689,8 @@ class mipVocab:
           v = 'v%s' % i
           eeee = {}
           eeee['standard_name'] = ee['standard_name'] % i
-          eeee['name'] = ee['name'] % i
+          eeee['long_name'] = ee['long_name'] % i
+          eeee['cell_methods'] = 'time: point'
           eeee['units'] = ee['units']
           ar = []
           ac = []
@@ -780,7 +785,7 @@ class checkByVar(checkBase):
         n2 += len( ee[k][k2] )
 
     assert nn==n2, 'some file lost!!!!!!'
-    print '%s files, %s frequencies' % (nn,len(ee.keys()) )
+    self.info =  '%s files, %s frequencies' % (nn,len(ee.keys()) )
     self.ee = ee
 
   def check(self, recorder=None,calendar='None',norun=False):
@@ -846,7 +851,7 @@ class checkByVar(checkBase):
 class sysMonitor:
 
   def __init__(self):
-    pass
+    self.fhCountMax = 0
 
   def get_open_fds(self):
     '''
@@ -863,4 +868,5 @@ class sysMonitor:
     self.ps = filter( 
             lambda s: s and s[ 0 ] == 'f' and s[1: ].isdigit(),
             self.procs.split( '\n' ) )
+    self.fhCountMax = max( self.fhCountMax, len(self.ps) )
     return len( self.ps )
