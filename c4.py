@@ -212,10 +212,11 @@ class recorder:
     self.records[fn] = record
 
 class checker:
-  def __init__(self, pcfg, cls):
+  def __init__(self, pcfg, cls,reader):
     self.info = dummy()
     self.info.pcfg = pcfg
     self.calendar = 'None'
+    self.ncReader = reader
     self.cfn = utils.checkFileName( parent=self.info,cls=cls)
     self.cga = utils.checkGlobalAttributes( parent=self.info,cls=cls)
     self.cgd = utils.checkStandardDims( parent=self.info,cls=cls)
@@ -233,10 +234,10 @@ class checker:
     fn = string.split( fpath, '/' )[-1]
 
     if attributeMappings != []:
-      ncReader.loadNc( fpath )
-      ncReader.applyMap( attributeMappings, self.cfn.globalAttributesInFn, log=log )
+      self.ncReader.loadNc( fpath )
+      self.ncReader.applyMap( attributeMappings, self.cfn.globalAttributesInFn, log=log )
       ncRed = True
-      thisFn = ncReader.fn
+      thisFn = self.ncReader.fn
     else:
       ncRed = False
       thisFn = fn
@@ -252,10 +253,10 @@ class checker:
         return
 
     if not ncRed:
-      ncReader.loadNc( fpath )
-    self.ga = ncReader.ga
-    self.va = ncReader.va
-    self.da = ncReader.da
+      self.ncReader.loadNc( fpath )
+    self.ga = self.ncReader.ga
+    self.va = self.ncReader.va
+    self.da = self.ncReader.da
 
     self.cga.check( self.ga, self.va, self.cfn.var, self.cfn.freq, self.vocabs, self.cfn.fnParts )
     if not self.cga.completed:
@@ -273,7 +274,7 @@ class checker:
       self.completed = False
       return
 
-    if self.pcfg.doCheckGrids:
+    if self.info.pcfg.doCheckGrids:
       ##self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
       ##self.cgg.interpolatedGrids = config.interpolatedGrids
       self.cgg.check( self.cfn.var, self.cfn.domain, self.da, self.va )
@@ -287,9 +288,10 @@ class checker:
 
 class c4_init:
 
-  def __init__(self):
+  def __init__(self,args=None):
     self.logByFile = True
-    args = sys.argv[1:]
+    if args==None:
+       args = sys.argv[1:]
     nn = 0
 
     self.attributeMappingFile = None
@@ -332,8 +334,8 @@ class c4_init:
     if self.project[:2] == '__':
        flist = []
        ss = 'abcdefgijk'
-       ss = 'abc'
        ss = 'abcdefgijklmnopqrstuvwxyz'
+       ss = 'abc'
        for i in range(10):
          v = 'v%s' % i
          for a in ss:
@@ -403,90 +405,95 @@ class c4_init:
     self.fHdlr.close()
 
 
-if __name__ == '__main__':
+class main:
 
-  logDict = {}
-  c4i = c4_init()
-  isDummy  = c4i.project[:2] == '__'
-  if (not withCdms) and isDummy:
-     print withCdms, c4i.project
-     print 'Cannot proceed with non-dummy project without cdms'
-     raise
-  pcfg = config.projectConfig( c4i.project )
-  cc = checker(pcfg, cls = c4i.project)
-  rec = recorder( c4i.recordFile, dummy=isDummy )
-  ncReader = fileMetadata(dummy=isDummy)
-  monitorFileHandles = False
-  if monitorFileHandles:
-    monitor = utils.sysMonitor()
-  else:
-    monitor = None
-
-  cal = None
-
-  c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
-
-  cbv = utils.checkByVar( parent=cc.info,cls=c4i.project,monitor=monitor)
-  cbv.impt( c4i.flist )
-
-  for f in c4i.flist:
+  def __init__(self,args=None):
+    logDict = {}
+    c4i = c4_init(args=args)
+    isDummy  = c4i.project[:2] == '__'
+    if (not withCdms) and isDummy:
+       print withCdms, c4i.project
+       print 'Cannot proceed with non-dummy project without cdms'
+       raise
+    pcfg = config.projectConfig( c4i.project )
+    ncReader = fileMetadata(dummy=isDummy)
+    cc = checker(pcfg, c4i.project, ncReader)
+    rec = recorder( c4i.recordFile, dummy=isDummy )
+    monitorFileHandles = False
     if monitorFileHandles:
-      nofhStart = monitor.get_open_fds()
-    fn = string.split(f,'/')[-1]
-    c4i.logger.info( 'Starting: %s' % fn )
-    try:
-### need to have a unique name, otherwise get mixing of logs despite close statement below.
-      if c4i.logByFile:
-        fLogger = c4i.getFileLog( fn )
-        logDict[fn] = c4i.fileLogFile
-        c4i.logger.info( 'Log file: %s' % c4i.fileLogFile )
-      else:
-        fLogger = c4i.logger
+      monitor = utils.sysMonitor()
+    else:
+      monitor = None
 
-      fLogger.info( 'Starting file %s' % fn )
-## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
-      cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
+    cal = None
 
-      if cc.completed:
-        if cal not in (None,'None'):
-          if cal != cc.calendar:
-            c4i.logger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
-            fLogger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
-            cc.errorCount += 1
-        cal = cc.calendar
-
-      if c4i.logByFile:
-        if cc.completed:
-          fLogger.info( 'Done -- error count %s' % cc.errorCount )
-        else:
-          fLogger.info( 'Done -- checks not completed' )
-        c4i.closeFileLog( )
-
-      if cc.completed:
-        c4i.logger.info( 'Done -- error count %s' % cc.errorCount ) 
-        if cc.errorCount == 0:
-          rec.add( f, cc.drs )
-        else:
-          rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % cc.errorCount )
-      else:
-        c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
-        rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
-    except:
-      c4i.logger.error("Exception has occured" ,exc_info=1)
-      rec.addErr( f, 'ERROR: Exception' )
-    if monitorFileHandles:
-      nofhEnd = monitor.get_open_fds()
-      if nofhEnd > nofhStart:
-         print 'Open file handles: %s --- %s' % (nofhStart, nofhEnd)
-
-  cc.info.log = c4i.logger
+    c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
   
-  if c4i.project != 'SPECS':
-     cbv.c4i = c4i
-     cbv.setLogDict( logDict )
-     cbv.check( recorder=rec, calendar=cc.calendar)
-  rec.dumpAll()
-  c4i.hdlr.close()
+    cbv = utils.checkByVar( parent=cc.info,cls=c4i.project,monitor=monitor)
+    cbv.impt( c4i.flist )
+
+    for f in c4i.flist:
+      if monitorFileHandles:
+        nofhStart = monitor.get_open_fds()
+      fn = string.split(f,'/')[-1]
+      c4i.logger.info( 'Starting: %s' % fn )
+      try:
+  ### need to have a unique name, otherwise get mixing of logs despite close statement below.
+        if c4i.logByFile:
+          fLogger = c4i.getFileLog( fn )
+          logDict[fn] = c4i.fileLogFile
+          c4i.logger.info( 'Log file: %s' % c4i.fileLogFile )
+        else:
+          fLogger = c4i.logger
+  
+        fLogger.info( 'Starting file %s' % fn )
+## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
+        cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
+
+        if cc.completed:
+          if cal not in (None,'None'):
+            if cal != cc.calendar:
+              c4i.logger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
+              fLogger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
+              cc.errorCount += 1
+          cal = cc.calendar
+
+        if c4i.logByFile:
+          if cc.completed:
+            fLogger.info( 'Done -- error count %s' % cc.errorCount )
+          else:
+            fLogger.info( 'Done -- checks not completed' )
+          c4i.closeFileLog( )
+
+        if cc.completed:
+          c4i.logger.info( 'Done -- error count %s' % cc.errorCount ) 
+          if cc.errorCount == 0:
+            rec.add( f, cc.drs )
+          else:
+            rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % cc.errorCount )
+        else:
+          c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
+          rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
+      except:
+        c4i.logger.error("Exception has occured" ,exc_info=1)
+        rec.addErr( f, 'ERROR: Exception' )
+      if monitorFileHandles:
+        nofhEnd = monitor.get_open_fds()
+        if nofhEnd > nofhStart:
+           print 'Open file handles: %s --- %s' % (nofhStart, nofhEnd)
+  
+    cc.info.log = c4i.logger
+    
+    if c4i.project != 'SPECS':
+       cbv.c4i = c4i
+       cbv.setLogDict( logDict )
+       cbv.check( recorder=rec, calendar=cc.calendar)
+    rec.dumpAll()
+    c4i.hdlr.close()
+if __name__ == '__main__':
+  main()
+
+
 ##else:
   ##f1 = '/data/u10/cordex/AFR-44/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/day/clh/clh_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_day_19810101-19851231.nc'
   ##f2 = '/data/u10/cordex/AFR-44/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/sem/tas/tas_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_sem_200012-201011.nc'
