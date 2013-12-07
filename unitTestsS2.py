@@ -24,6 +24,7 @@ print 'OK: instantiated fileMetaData and parsed a simple dummy path'
 
 p = dummy()
 p.log = log
+p.abortMessageCount = -1
 p.pcfg = config.projectConfig( "__dummy" )
 
 
@@ -31,12 +32,31 @@ module = 'checkFileName'
 c = utils_c4.checkFileName(parent=p)
 
 fn = 'v1_t1_a_b_20060101-20101231.nc'
-testId = '#01.001'
+testId = '#10.001'
 c.check( fn )
 if c.errorCount == 0:
-  print 'Passed [%s] %s: valid file name' % (module,fn)
+  print 'OK [%s] %s: valid file name with project=__dummy' % (module,fn)
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
 
 
-main( args=['-p', '__dummy'] )
+testId = '#11.001'
+try:
+  m = main( args=['-p', '__dummy'], monitorFileHandles=True )
+  print 'OK [%s]: dummy run completed without exception' % testId
+except:
+  print 'Failed [%s]: dummy run triggered exception' % testId
+  raise
+
+testId = '#11.002'
+if m.monitor.fhCountMax < 10:
+  print 'OK [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
+else:
+  print 'Failed [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
+
+testId = '#11.003'
+try:
+  m = main( args=['-p', '__dummy'], abortMessageCount=10 )
+  print 'Failed [%s]: did not trigger exception' % testId
+except:
+  print 'OK [%s]: attempt to trigger exception successful' % testId

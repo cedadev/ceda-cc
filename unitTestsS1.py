@@ -23,6 +23,7 @@ class dummy:
 p = dummy()
 p.log = log
 p.pcfg = config.projectConfig( "CORDEX" )
+p.abortMessageCount = -1
 
 
 module = 'checkFileName'
