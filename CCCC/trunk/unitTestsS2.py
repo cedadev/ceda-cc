@@ -2,7 +2,7 @@
 import logging, time
 import utils_c4
 import config_c4 as config
-from c4 import fileMetadata, dummy
+from c4 import fileMetadata, dummy, main
 
 #### set up log file ####
 tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
@@ -37,3 +37,6 @@ if c.errorCount == 0:
   print 'Passed [%s] %s: valid file name' % (module,fn)
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
+
+
+main( args=['-p', '__dummy'] )
