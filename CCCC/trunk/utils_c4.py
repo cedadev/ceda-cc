@@ -630,7 +630,7 @@ class checkGrids(checkBase):
              if not skipThis:
                mm.append( (a[i],b[i]) )
 
-      ok &= self.test( len(mm) == 0, 'Domain boundaries for interpolated grid do not match %s' % str(mm), part=True )
+      ok &= self.test( len(mm) == 0, 'Interpolated grid boundary error: File %s; Req. %s' % (str(a),str(b)), part=True )
 
       for k in ['lat','lon']:
         ok &= self.test( cs.check( da[k]['_data'] ), '%s values not evenly spaced -- min/max delta = %s, %s' % (k,cs.dmn,cs.dmx), part=True )
@@ -826,6 +826,7 @@ class checkByVar(checkBase):
     rere = (re.compile( ps[0] ), re.compile( ps[1] ) )
 
     n = len(tt)
+    self.checkId = '001'
     for j in range(n):
       if self.monitor != None:
          nofh0 = self.monitor.get_open_fds()
@@ -837,7 +838,7 @@ class checkByVar(checkBase):
       for i in [0,1]:
         if not (i==0 and isFirst or i==1 and isLast):
           x = rere[i].match( t[3][i] )
-          lok &= self.test( x != None, 'Cannot match time range %s: %s' % (i,fn), part=True, appendLogFile=(self.fLogDict.get(fn,None),fn) )
+          lok &= self.test( x != None, 'Cannot match time range %s: %s [%s/%s]' % (i,fn,j,n), part=True, appendLogFile=(self.fLogDict.get(fn,None),fn) )
         if not lok:
           ### print 'Cannot match time range %s:' % t[1]
           if self.recorder != None:
