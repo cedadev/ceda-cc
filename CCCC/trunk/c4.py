@@ -453,11 +453,13 @@ class main:
         cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
 
         if cc.completed:
-          if cal not in (None,'None'):
+          if cal not in (None, 'None') and cc.cgd.varGroup != "fx":
             if cal != cc.calendar:
-              c4i.logger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
-              fLogger.info( 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar) )
+              cal_change_err_msg = 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar)
+              c4i.logger.info(cal_change_err_msg)
+              fLogger.info(cal_change_err_msg)
               cc.errorCount += 1
+
           cal = cc.calendar
 
         if c4i.logByFile:
