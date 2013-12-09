@@ -772,11 +772,12 @@ class checkByVar(checkBase):
       else:
         trange = string.split( fnParts[-1], '-' )
       var = fnParts[0]
+      thisKey = string.join( fnParts[:-1], '.' )
       if group not in ee.keys():
         ee[group] = {}
-      if var not in ee[group].keys():
-        ee[group][var] = []
-      ee[group][var].append( (f,fn,group,trange) )
+      if thisKey not in ee[group].keys():
+        ee[group][thisKey] = []
+      ee[group][thisKey].append( (f,fn,group,trange) )
 
     nn = len(flist)
     n2 = 0
@@ -814,9 +815,9 @@ class checkByVar(checkBase):
         keys2 = self.ee[k].keys()
         keys2.sort()
         for k2 in keys2:
-          self.checkThisTrange( self.ee[k][k2], k, k2 )
+          self.checkThisTrange( self.ee[k][k2], k )
 
-  def checkThisTrange( self, tt, group, var):
+  def checkThisTrange( self, tt, group):
 
     if group in ['3hr','6hr']:
        kg = 'subd'
