@@ -442,7 +442,7 @@ class checkStandardDims(checkBase):
       ok &= self.test( da['time'].get( 'units', 'xxx' ) in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00", "days since 1949-12-01"],
                        'Time units [%s] attribute not set correctly to "days since 1949-12-01 00:00:00Z"' % da['time'].get( 'units', 'xxx' ), part=True )
 
-      ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attibute calendar missing', part=True )
+      ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attribute calendar missing', part=True )
 
       ok &= self.test( da['time']['_type'] == "float64", 'Time: data type not float64', part=True )
        
