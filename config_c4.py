@@ -3,7 +3,7 @@ import utils_c4 as utils
 
 validCmip5Experiments = ['1pctCO2', 'abrupt4xCO2', 'amip', 'amip4K', 'amip4xCO2', 'amipFuture', 'aqua4K', 'aqua4xCO2', 'aquaControl', 'decadal1959', 'decadal1960', 'decadal1961', 'decadal1962', 'decadal1963', 'decadal1964', 'decadal1965', 'decadal1966', 'decadal1967', 'decadal1968', 'decadal1969', 'decadal1970', 'decadal1971', 'decadal1972', 'decadal1973', 'decadal1974', 'decadal1975', 'decadal1976', 'decadal1977', 'decadal1978', 'decadal1979', 'decadal1980', 'decadal1981', 'decadal1982', 'decadal1983', 'decadal1984', 'decadal1985', 'decadal1986', 'decadal1987', 'decadal1988', 'decadal1989', 'decadal1990', 'decadal1991', 'decadal1992', 'decadal1993', 'decadal1994', 'decadal1995', 'decadal1996', 'decadal1997', 'decadal1998', 'decadal1999', 'decadal2000', 'decadal2001', 'decadal2002', 'decadal2003', 'decadal2004', 'decadal2005', 'decadal2006', 'decadal2007', 'decadal2008', 'decadal2009', 'decadal2010', 'decadal2011', 'decadal2012', 'esmControl', 'esmFdbk1', 'esmFdbk2', 'esmFixClim1', 'esmFixClim2', 'esmHistorical', 'esmrcp85', 'historical', 'historicalExt', 'historicalGHG', 'historicalMisc', 'historicalNat', 'lgm', 'midHolocene', 'noVolc1960', 'noVolc1965', 'noVolc1970', 'noVolc1975', 'noVolc1980', 'noVolc1985', 'noVolc1990', 'noVolc1995', 'noVolc2000', 'noVolc2005', 'past1000', 'piControl', 'rcp26', 'rcp45', 'rcp60', 'rcp85', 'sst2020', 'sst2030', 'sst2090', 'sst2090rcp45', 'sstClim', 'sstClim4xCO2', 'sstClimAerosol', 'sstClimSulfate', 'volcIn2010']
 
-validExperiment = validCmip5Experiments + ['evaluation']
+validCordexExperiment = validCmip5Experiments + ['evaluation']
 
 
 validCordexFrequecies = ['fx','sem','mon','day','6hr','3hr']
@@ -91,19 +91,30 @@ class readVocab:
   def __init__(self,dir):
     self.dir = dir
 
-  def getSimpleList(self,file):
+  def getSimpleList(self,file,bit=None):
     ii = open('%s/%s' % (self.dir,file) )
-    return map( string.strip, ii.readlines() )
+    oo = []
+    for l in ii.readlines():
+      if l[0] != '#':
+        ll = string.strip(l)
+        if bit == None:
+          oo.append(ll)
+        else:
+          oo.append(string.split(ll)[bit])
+    return oo
 
 def getVocabs(pcfg):
   "Returns a dictionary of vocabulary details for the project provided."
   if pcfg.project == 'SPECS':
     vocabs = { 'variable':utils.mipVocab(pcfg) }
+  elif pcfg.project == 'CCMI':
+    vocabs = { 'variable':utils.mipVocab(pcfg), \
+               'project_id':utils.listControl( 'project_id', ['CORDEX'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
   else:
     vocabs = { 'variable':utils.mipVocab(pcfg), \
-           'driving_experiment_name':utils.listControl( 'driving_experiment_name', validExperiment ), \
+           'driving_experiment_name':utils.listControl( 'driving_experiment_name', validCordexExperiment ), \
            'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
            'CORDEX_domain':utils.listControl( 'CORDEX_domain',  validCordexDomains ), \
            'driving_model_id':utils.listControl( 'driving_model_id',  validGcmNames ), \
@@ -139,6 +150,16 @@ class projectConfig:
               'experiment_id']
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.controlledGlobalAttributes = [ ]
+      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.drsMappings = {'variable':'@var'}
+
+    elif project == 'CCMI':
+      lrdr = readVocab( 'ccmi_vocabs/')
+      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'product', 'creation_date', 'tracking_id', \
+              'experiment_id']
+      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      self.controlledGlobalAttributes = [ 'experiment_id', 'project' ]
       self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
@@ -199,6 +220,11 @@ class projectConfig:
        self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'SPECS_%s'
+    elif self.project == 'CCMI':
+       self.mipVocabDir = 'ccmi_vocabs/mip/'
+       self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
+       self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
+       self.mipVocabFnpat = 'CCMI1_%s_comp-v2.txt'
     else:
        self.mipVocabDir = None
        self.mipVocabTl = ['day', 't2']
@@ -213,3 +239,7 @@ class projectConfig:
       self.groupIndex = 1
 
     self.vocabs = getVocabs(self)
+    if self.project == 'CCMI':
+      self.vocabs['experiment_id'] = lrdr.getSimpleList( 'ccmi_elist.txt', bit=0 )
+
+    assert self.project != 'CCMI', 'Not completely set up for CCMI yet'

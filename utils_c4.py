@@ -644,7 +644,7 @@ class mipVocab:
      if dummy:
        self.pcfg = pcfg
        return self.dummyMipTable()
-     assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
+     ##assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
      ##if project == 'CORDEX':
        ##dir = 'cordex_vocabs/mip/'
        ##tl = ['fx','sem','mon','day','6h','3h']
