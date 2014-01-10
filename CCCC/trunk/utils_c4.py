@@ -392,8 +392,21 @@ class checkGlobalAttributes(checkBase):
     m = []
     for i in range(len(self.globalAttributesInFn)):
        if self.globalAttributesInFn[i] != None:
-         if globalAts[self.globalAttributesInFn[i]] != fnParts[i]:
-           m.append( (i,self.globalAttributesInFn[i]) )
+         if self.globalAttributesInFn[i][0] == "@":
+           if self.globalAttributesInFn[i][1:] == "mip_id":
+             thisVal = string.split( globalAts["table_id"] )[1]
+           elif self.globalAttributesInFn[i][1:] == "ensemble":
+             thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
+           elif self.globalAttributesInFn[i][1:] == "experiment_family":
+             thisVal = globalAts["experiment_id"][:-4]
+           else:
+             assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
+         
+         else:
+           thisVal = globalAts[self.globalAttributesInFn[i]]
+
+         if thisVal != fnParts[i]:
+             m.append( (i,self.globalAttributesInFn[i]) )
 
     self.test( len(m)  == 0,'File name segments do not match corresponding global attributes: %s' % str(m) )
 
@@ -717,15 +730,24 @@ class mipVocab:
       
 class patternControl:
 
-  def __init__(self,tag,pattern):
+  def __init__(self,tag,pattern,list=None):
     try:
       self.re_pat = re.compile( pattern )
     except:
       print "Failed to compile pattern >>%s<< (%s)" % (pattern, tag)
     self.pattern = pattern
+    self.list = list
 
   def check(self,val):
-    return self.re_pat.match( val ) != None
+    m = self.re_pat.match( val )
+    if self.list == None:
+      return m != None
+    else:
+      if m == None:
+        return False
+      if not m.groupdict().has_key("val"):
+        return False
+      return m.groupdict()["val"] in self.list
     
 class listControl:
   def __init__(self,tag,list):
