@@ -21,9 +21,13 @@ class dummy:
      pass
 
 p = dummy()
+ps = dummy()
 p.log = log
+ps.log = log
 p.pcfg = config.projectConfig( "CORDEX" )
+ps.pcfg = config.projectConfig( "SPECS" )
 p.abortMessageCount = -1
+ps.abortMessageCount = -1
 
 
 module = 'checkFileName'
@@ -68,6 +72,16 @@ if c.errorCount == 0:
   print 'Failed to detect bad file name: [%s] %s ' % (module,fn)
 else:
   print 'OK -- detected bad file name: [%s] %s' % (module,fn)
+
+fn = 'zos_Omon_EC-EARTH_historical1980_series1_r1i1p1_1990-1990.nc'
+testId = '#01.006'
+## switch to project = SPECS
+c = utils_c4.checkFileName(parent=ps)
+c.check( fn )
+if c.errorCount == 0:
+  print 'Passed [%s] %s: valid file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid file name' % (module,fn)
 
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'

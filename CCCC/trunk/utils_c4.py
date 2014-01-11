@@ -399,6 +399,8 @@ class checkGlobalAttributes(checkBase):
              thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
            elif self.globalAttributesInFn[i][1:] == "experiment_family":
              thisVal = globalAts["experiment_id"][:-4]
+           elif self.globalAttributesInFn[i][1:] == "series":
+             thisVal = 'series%s' % globalAts["series"]
            else:
              assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
          

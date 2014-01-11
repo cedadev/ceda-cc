@@ -111,7 +111,7 @@ def getVocabs(pcfg):
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
                'frequency':utils.listControl( 'frequency', validSpecsFrequecies ), \
-               'experiment_id':utils.patternControl( 'experiment_id', "experiment id", "(?P<val>.*)[0-9]{4}", validSpecsExpetFamilies ), \
+               'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
                'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
              }
   elif pcfg.project == 'CCMI':
