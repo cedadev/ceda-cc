@@ -20,3 +20,4 @@ source
 table_id
 title
 tracking_id
+series

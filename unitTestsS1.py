@@ -1,6 +1,6 @@
 
 
-import logging, time
+import logging, time, string
 import utils_c4
 import config_c4 as config
 
@@ -73,16 +73,6 @@ if c.errorCount == 0:
 else:
   print 'OK -- detected bad file name: [%s] %s' % (module,fn)
 
-fn = 'zos_Omon_EC-EARTH_historical1980_series1_r1i1p1_1990-1990.nc'
-testId = '#01.006'
-## switch to project = SPECS
-c = utils_c4.checkFileName(parent=ps)
-c.check( fn )
-if c.errorCount == 0:
-  print 'Passed [%s] %s: valid file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
-
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
 c.check( 'tas', 'day', {},{}, False )
@@ -153,3 +143,57 @@ if c.errorCount == 0:
   print 'Failed -- passed a bad grid'
 else:
   print 'OK -- detected a bad grid'
+
+ii = open( 'specs_vocabs/globalAtsSample001.txt' )
+fn = string.strip( ii.readline() )
+res = string.strip( ii.readline() )
+testId = '#04.001'
+## switch to project = SPECS
+c = utils_c4.checkFileName(parent=ps)
+c.check( fn )
+if c.errorCount == 0:
+  print 'Passed [%s] %s: valid file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid file name' % (module,fn)
+
+
+## note test is done on string'ed values.
+ga = {}
+for l in ii.readlines():
+  bits = string.split( string.strip(l) )
+  if bits[1] == '@int':
+    ga[bits[0]] = int( bits[2] )
+  else:
+    ga[bits[0]] = string.join( bits[1:] )
+
+va = { "tas":{ "_type":"float32", "standard_name":"air_temperature", 'long_name':'Air Temperature', 'units':'K', 'cell_methods':'time: mean'} }
+
+cga = utils_c4.checkGlobalAttributes( parent=ps,cls='SPECS')
+cga.check( ga, va, "tas", "day", ps.pcfg.vocabs, c.fnParts )
+
+ii = open( 'specs_vocabs/globalAtsSample002.txt' )
+fn = string.strip( ii.readline() )
+res = string.strip( ii.readline() )
+testId = '#04.002'
+## switch to project = SPECS
+c = utils_c4.checkFileName(parent=ps)
+c.check( fn )
+if c.errorCount == 0:
+  print 'Passed [%s] %s: valid file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid file name' % (module,fn)
+
+
+## note test is done on string'ed values.
+ga = {}
+for l in ii.readlines():
+  bits = string.split( string.strip(l) )
+  if bits[1] == '@int':
+    ga[bits[0]] = int( bits[2] )
+  else:
+    ga[bits[0]] = string.join( bits[1:] )
+
+va = { "tas":{ "_type":"float32", "standard_name":"air_temperature", 'long_name':'Air Temperature', 'units':'K', 'cell_methods':'time: mean'} }
+
+cga = utils_c4.checkGlobalAttributes( parent=ps,cls='SPECS')
+cga.check( ga, va, "tas", "day", ps.pcfg.vocabs, c.fnParts )

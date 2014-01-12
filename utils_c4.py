@@ -384,7 +384,7 @@ class checkGlobalAttributes(checkBase):
     m = []
     for a in self.controlledGlobalAttributes:
        if not vocabs[a].check( str(globalAts[a]) ):
-          m.append( (a,globalAts[a]) )
+          m.append( (a,globalAts[a],vocabs[a].note) )
 
     self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) )
 
@@ -392,22 +392,24 @@ class checkGlobalAttributes(checkBase):
     m = []
     for i in range(len(self.globalAttributesInFn)):
        if self.globalAttributesInFn[i] != None:
+         targVal = fnParts[i]
          if self.globalAttributesInFn[i][0] == "@":
            if self.globalAttributesInFn[i][1:] == "mip_id":
-             thisVal = string.split( globalAts["table_id"] )[1]
+               thisVal = string.split( globalAts["table_id"] )[1]
            elif self.globalAttributesInFn[i][1:] == "ensemble":
-             thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
+               thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
+           elif self.globalAttributesInFn[i][1:] == "series":
+               thisVal = 'series%s' % globalAts["series"]
            elif self.globalAttributesInFn[i][1:] == "experiment_family":
              thisVal = globalAts["experiment_id"][:-4]
-           elif self.globalAttributesInFn[i][1:] == "series":
-             thisVal = 'series%s' % globalAts["series"]
            else:
-             assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
+               assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
+           ##print "Generated text val: %s:: %s" % (self.globalAttributesInFn[i], thisVal)
          
          else:
-           thisVal = globalAts[self.globalAttributesInFn[i]]
+             thisVal = globalAts[self.globalAttributesInFn[i]]
 
-         if thisVal != fnParts[i]:
+         if thisVal != targVal:
              m.append( (i,self.globalAttributesInFn[i]) )
 
     self.test( len(m)  == 0,'File name segments do not match corresponding global attributes: %s' % str(m) )
@@ -741,14 +743,19 @@ class patternControl:
     self.list = list
 
   def check(self,val):
+    self.note = '-'
     m = self.re_pat.match( val )
     if self.list == None:
+      self.note = "simple test"
       return m != None
     else:
       if m == None:
+        self.note = "no match"
         return False
       if not m.groupdict().has_key("val"):
+        self.note = "no 'val' in match"
         return False
+      self.note = "val=%s" % m.groupdict()["val"]
       return m.groupdict()["val"] in self.list
     
 class listControl:
@@ -757,6 +764,9 @@ class listControl:
     self.tag = tag
 
   def check(self,val):
+    self.note = '-'
+    if len(self.list) < 4:
+      self.note = str( self.list )
     return val in self.list
 
 
