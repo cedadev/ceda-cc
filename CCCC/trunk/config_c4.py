@@ -112,11 +112,16 @@ def getVocabs(pcfg):
                'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
                'frequency':utils.listControl( 'frequency', validSpecsFrequecies ), \
                'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
-               'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
+               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
+               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
+               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
+               'project_id':utils.listControl( 'project_id', ['SPECS'] ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
+               'series':utils.listControl( 'series', ['1','2'] ), \
              }
   elif pcfg.project == 'CCMI':
     vocabs = { 'variable':utils.mipVocab(pcfg), \
-               'project_id':utils.listControl( 'project_id', ['CORDEX'] ) }
+               'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
   else:
@@ -157,8 +162,9 @@ class projectConfig:
               'experiment_id', 'series']
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
-      self.controlledGlobalAttributes = [ ]
-      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','series','@ensemble']
+      self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
+                       'initialization_method','physics_version','realization']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','@series','@ensemble']
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
