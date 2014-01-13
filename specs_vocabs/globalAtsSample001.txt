@@ -7,8 +7,7 @@ creation_date   19th JUly, 2014
 experiment_id   decadal1980
 forecast_reference_time   0001
 frequency  day
-institution  STFC
-institute_id   STFC
+institution  ECMWF
 initialization_method  1
 initialization_description  first
 model_id  EC-EARTH

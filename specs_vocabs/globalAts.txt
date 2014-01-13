@@ -6,7 +6,6 @@ experiment_id
 forecast_reference_time
 frequency
 institution
-institute_id
 initialization_method
 initialization_description
 model_id
