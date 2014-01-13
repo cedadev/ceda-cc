@@ -117,7 +117,7 @@ def getVocabs(pcfg):
                'realization':utils.patternControl( 'realization', "[0-9]+" ), \
                'project_id':utils.listControl( 'project_id', ['SPECS'] ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
-               'series':utils.listControl( 'series', ['1','2'] ), \
+               'series':utils.listControl( 'series', ['series1','series2'] ), \
              }
   elif pcfg.project == 'CCMI':
     vocabs = { 'variable':utils.mipVocab(pcfg), \
@@ -164,7 +164,7 @@ class projectConfig:
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
                        'initialization_method','physics_version','realization']
-      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','@series','@ensemble']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','series','@ensemble']
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
