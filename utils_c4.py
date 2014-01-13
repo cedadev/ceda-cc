@@ -352,9 +352,10 @@ class checkGlobalAttributes(checkBase):
 ## need to insert a check that variable is present
     self.checkId = '005'
     ok = True
-    if varAts[varName].has_key( 'missing_value' ) or varAts[varName].has_key( '_FillValue' ):
-      ok &= self.test( varAts[varName].has_key( 'missing_value' ) and varAts[varName].has_key( '_FillValue' ), \
-                'missing_value and _FillValue must both be present if one is [%s]' % varName )
+    if ( varAts[varName].get( 'missing_value', None ) != None ) or varAts[varName].has_key( '_FillValue' ):
+      print varAts[varName], varName
+      tval = ( varAts[varName].get( 'missing_value', None ) != None ) and varAts[varName].has_key( '_FillValue' )
+      ok &= self.test( tval, 'missing_value and _FillValue must both be present if one is [%s]' % varName )
       if varAts[varName].has_key( 'missing_value' ):
          msg = 'Variable [%s] has incorrect missing_value attribute' % varName
          ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
@@ -750,7 +751,7 @@ class patternControl:
       return m != None
     else:
       if m == None:
-        self.note = "no match"
+        self.note = "no match %s::%s" % (val,self.pattern)
         return False
       if not m.groupdict().has_key("val"):
         self.note = "no 'val' in match"
@@ -767,6 +768,8 @@ class listControl:
     self.note = '-'
     if len(self.list) < 4:
       self.note = str( self.list )
+    else:
+      self.note = str( self.list[:4] )
     return val in self.list
 
 

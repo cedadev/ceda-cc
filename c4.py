@@ -38,6 +38,8 @@ class fileMetadata:
     self.nc = cdms2.open( fpath )
     for k in self.nc.attributes.keys():
       self.ga[k] = self.nc.attributes[k]
+      if len( self.ga[k] ) == 1:
+        self.ga[k] = self.ga[k][0]
     for v in self.nc.variables.keys():
       self.va[v] = {}
       for k in self.nc.variables[v].attributes.keys():
