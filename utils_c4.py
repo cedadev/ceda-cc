@@ -369,7 +369,12 @@ class checkGlobalAttributes(checkBase):
     if varGroup != 'fx':
       contAts.append( 'cell_methods' )
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
-      if varAts[varName][k] != vocabs['variable'].getAttr( varName, varGroup, k ):
+      targ = varAts[varName][k]
+      val = vocabs['variable'].getAttr( varName, varGroup, k )
+      if k == "cell_methods":
+        if string.find( targ, val):
+           mm.append(k)
+      elif targ != val:
         mm.append( k )
 
     ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
@@ -454,11 +459,15 @@ class checkStandardDims(checkBase):
       ok = True
       self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
       if not isInsta:
-         ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
+        ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
 
 ## is time zone designator needed?
-      ok &= self.test( da['time'].get( 'units', 'xxx' ) in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00", "days since 1949-12-01"],
-                       'Time units [%s] attribute not set correctly to "days since 1949-12-01 00:00:00Z"' % da['time'].get( 'units', 'xxx' ), part=True )
+      tunits = da['time'].get( 'units', 'xxx' )
+      if self.project  == 'CORDEX':
+        ok &= self.test( tunits in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00", "days since 1949-12-01"],
+               'Time units [%s] attribute not set correctly to "days since 1949-12-01 00:00:00Z"' % tunits, part=True )
+      else:
+        ok &= self.test( tunits[:10] == "days since", 'time units [%s] attribute not set correctly to "days since ....."' % tunits, part=True )
 
       ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attribute calendar missing', part=True )
 

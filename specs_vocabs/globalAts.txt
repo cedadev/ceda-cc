@@ -3,7 +3,7 @@ contact
 Conventions
 creation_date
 experiment_id
-forecast_reference_time
+forecast_ref_time
 frequency
 institution
 initialization_method
