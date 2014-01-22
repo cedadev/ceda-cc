@@ -167,7 +167,7 @@ class projectConfig:
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
                        'initialization_method','physics_version','realization','institution']
-      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','series','@ensemble']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@ensemble']
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}

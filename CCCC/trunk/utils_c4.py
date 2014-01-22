@@ -346,8 +346,8 @@ class checkGlobalAttributes(checkBase):
          m.append(k)
     vaerr = not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) )
 
-    if vaerr or gaerr:
-      self.log_abort()
+    ##if vaerr or gaerr:
+      ##self.log_abort()
 
 ## need to insert a check that variable is present
     self.checkId = '005'
@@ -369,7 +369,7 @@ class checkGlobalAttributes(checkBase):
     if varGroup != 'fx':
       contAts.append( 'cell_methods' )
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
-      targ = varAts[varName][k]
+      targ = varAts[varName].get( k, 'Attribute not present' )
       val = vocabs['variable'].getAttr( varName, varGroup, k )
       if k == "cell_methods":
         if string.find( targ, val):
@@ -389,7 +389,8 @@ class checkGlobalAttributes(checkBase):
     self.checkId = '006'
     m = []
     for a in self.controlledGlobalAttributes:
-       if not vocabs[a].check( str(globalAts[a]) ):
+      if globalAts.has_key(a):
+        if not vocabs[a].check( str(globalAts[a]) ):
           m.append( (a,globalAts[a],vocabs[a].note) )
 
     self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) )
