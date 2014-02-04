@@ -147,13 +147,20 @@ class fileMetadata:
 class dummy:
    pass
 
+
+pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/',   \
+                 'SPECS':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s_%(series)s/%(start_date)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
+                 '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
+               }
+
 class recorder:
 
-  def __init__(self,fileName,type='map',dummy=False):
+  def __init__(self,project,fileName,type='map',dummy=False):
     self.dummy = dummy
     self.file = fileName
     self.type = type
     self.pathTmpl = '%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/'
+    self.pathTmpl = pathTmplDict.get(project,pathTmplDict['__def__'])
     self.records = {}
 
   def open(self):
@@ -262,7 +269,11 @@ class checker:
     self.va = self.ncReader.va
     self.da = self.ncReader.da
 
-    self.cga.check( self.ga, self.va, self.cfn.var, self.cfn.freq, self.vocabs, self.cfn.fnParts )
+    if self.cfn.freq != None:
+      vGroup = self.cfn.freq
+    else:
+      vGroup = self.info.pcfg.mipVocabVgmap.get(self.cfn.group,self.cfn.group)
+    self.cga.check( self.ga, self.va, self.cfn.var, vGroup, self.vocabs, self.cfn.fnParts )
     if not self.cga.completed:
       self.completed = False
       return
@@ -288,6 +299,7 @@ class checker:
         return
     self.completed = True
     self.drs = self.cga.getDrs()
+    self.drs['project'] = self.info.pcfg.project
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
 class c4_init:
@@ -422,7 +434,7 @@ class main:
     pcfg = config.projectConfig( c4i.project )
     ncReader = fileMetadata(dummy=isDummy)
     cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
-    rec = recorder( c4i.recordFile, dummy=isDummy )
+    rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
     if monitorFileHandles:
       self.monitor = utils.sysMonitor()
     else:
@@ -494,7 +506,7 @@ class main:
   
     cc.info.log = c4i.logger
     
-    if c4i.project != 'SPECS':
+    if c4i.project not in ['SPECS','CCMI']:
        cbv.c4i = c4i
        cbv.setLogDict( logDict )
        cbv.check( recorder=rec, calendar=cc.calendar)
