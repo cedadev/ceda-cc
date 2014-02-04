@@ -177,7 +177,7 @@ class projectConfig:
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'ensemble', 'model':'model_id', 'series':'series', 'realm':'realm', \
-                        'frequency':'frequency', \
+                        'frequency':'frequency', 'start_date':'forecast_reference_time', \
                         'project':'project_id'}
 
     elif project == 'CCMI':
