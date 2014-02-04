@@ -124,8 +124,11 @@ def getVocabs(pcfg):
                'series':utils.listControl( 'series', ['series1','series2'] ), \
              }
   elif pcfg.project == 'CCMI':
+    
+    lrdr = readVocab( 'ccmi_vocabs/')
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'frequency':utils.listControl( 'frequency', validCcmiFrequecies ), \
+               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
@@ -172,7 +175,10 @@ class projectConfig:
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@ensemble']
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var'}
+      self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
+                        'ensemble':'ensemble', 'model':'model_id', 'series':'series', 'realm':'realm', \
+                        'frequency':'frequency', \
+                        'project':'project_id'}
 
     elif project == 'CCMI':
       lrdr = readVocab( 'ccmi_vocabs/')
@@ -220,6 +226,13 @@ class projectConfig:
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = 1
+    elif self.project == 'CCMI':
+      self.fnPartsOkLen = [5,6]
+      self.fnPartsOkFixedLen = [5,]
+      self.fnPartsOkUnfixedLen = [6,]
+      self.checkTrangeLen = False
+      self.domainIndex = None
+      self.freqIndex = None
     elif self.project == '__dummy':
       self.fnPartsOkLen = [4,5]
       self.fnPartsOkFixedLen = [4,]
@@ -244,7 +257,7 @@ class projectConfig:
        self.mipVocabDir = 'ccmi_vocabs/mip/'
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
-       self.mipVocabFnpat = 'CCMI1_%s_comp-v2.txt'
+       self.mipVocabFnpat = 'CCMI1_%s_comp-v3.txt'
     else:
        self.mipVocabDir = None
        self.mipVocabTl = ['day', 't2']
@@ -255,11 +268,9 @@ class projectConfig:
 ######## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
-    elif self.project in ['SPECS','__dummy']:
+    elif self.project in ['CCMI','SPECS','__dummy']:
       self.groupIndex = 1
 
     self.vocabs = getVocabs(self)
-    if self.project == 'CCMI':
-      self.vocabs['experiment_id'] = lrdr.getSimpleList( 'ccmi_elist.txt', bit=0 )
 
-    assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
+    ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'

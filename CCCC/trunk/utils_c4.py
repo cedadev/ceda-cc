@@ -233,6 +233,12 @@ class checkFileName(checkBase):
       self.freq = self.fnParts[self.pcfg.freqIndex]
     else:
       self.freq = None
+
+    if self.pcfg.groupIndex != None:
+      self.group = self.fnParts[self.pcfg.groupIndex]
+    else:
+      self.group = None
+
     ##if self.cls == 'CORDEX':
       ##self.freq = self.fnParts[7]
     ##elif self.cls == 'SPECS':
@@ -330,7 +336,8 @@ class checkGlobalAttributes(checkBase):
     self.checkId = '002'
 
     self.test( varAts.has_key( varName ), 'Expected variable [%s] not present' % varName, abort=True, part=True )
-    self.test( vocabs['variable'].isInTable( varName, varGroup ), 'Variable %s not in table %s' % (varName,varGroup), abort=True, part=True )
+    msg = 'Variable %s not in table %s' % (varName,varGroup)
+    self.test( vocabs['variable'].isInTable( varName, varGroup ), msg, abort=True, part=True )
 
     self.checkId = '003'
 
@@ -353,7 +360,6 @@ class checkGlobalAttributes(checkBase):
     self.checkId = '005'
     ok = True
     if ( varAts[varName].get( 'missing_value', None ) != None ) or varAts[varName].has_key( '_FillValue' ):
-      print varAts[varName], varName
       tval = ( varAts[varName].get( 'missing_value', None ) != None ) and varAts[varName].has_key( '_FillValue' )
       ok &= self.test( tval, 'missing_value and _FillValue must both be present if one is [%s]' % varName )
       if varAts[varName].has_key( 'missing_value' ):
@@ -390,8 +396,12 @@ class checkGlobalAttributes(checkBase):
     m = []
     for a in self.controlledGlobalAttributes:
       if globalAts.has_key(a):
-        if not vocabs[a].check( str(globalAts[a]) ):
-          m.append( (a,globalAts[a],vocabs[a].note) )
+        try:
+          if not vocabs[a].check( str(globalAts[a]) ):
+            m.append( (a,globalAts[a],vocabs[a].note) )
+        except:
+          print 'failed trying to check global attribute %s' % a
+          raise
 
     self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) )
 
@@ -734,7 +744,7 @@ class mipVocab:
        raise 'mipVocab.lists called with bad list specifier %s' % k2
 
   def isInTable( self, v, vg ):
-    assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys()' % vg
+    assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys() [%s]' % (vg,str(self.varcons.keys()) )
     return (v in self.varcons[vg].keys())
       
   def getAttr( self, v, vg, a ):
