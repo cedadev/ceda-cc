@@ -8,6 +8,7 @@ validCordexExperiment = validCmip5Experiments + ['evaluation']
 
 validCordexFrequecies = ['fx','sem','mon','day','6hr','3hr']
 validSpecsFrequecies = ['fx','mon','day','6hr']
+validCcmiFrequecies = ['fx','yr','mon','day','hr','subhr']
 validSpecsExptFamilies = map( lambda x: string.split( x )[0], open( 'specs_vocabs/exptFamily.txt' ).readlines() )
 
 validCordexDomainsL = [ 'SAM-44', 'CAM-44', 'NAM-44', 'EUR-44', 'AFR-44', 'WAS-44', 'EAS-44', 'CAS-44', 'AUS-44', 'ANT-44', 'ARC-44', 'MED-44']
@@ -124,6 +125,7 @@ def getVocabs(pcfg):
              }
   elif pcfg.project == 'CCMI':
     vocabs = { 'variable':utils.mipVocab(pcfg), \
+               'frequency':utils.listControl( 'frequency', validCcmiFrequecies ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
@@ -144,7 +146,7 @@ def getVocabs(pcfg):
 class projectConfig:
 
   def __init__(self, project):
-    knownProjects = ['CORDEX','SPECS','__dummy']
+    knownProjects = ['CCMI','CORDEX','SPECS','__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -178,7 +180,7 @@ class projectConfig:
               'experiment_id']
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.controlledGlobalAttributes = [ 'experiment_id', 'project' ]
-      self.globalAttributesInFn = [None,'CORDEX_domain','driving_model_id','experiment_id','driving_model_ensemble_member','model_id','rcm_version_id']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','@ensemble']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
 
