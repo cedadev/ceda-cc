@@ -1,0 +1,20 @@
+REF-C1 Hindcast refC1
+REF-C1SD Hindcast – Specified Dynamics refC1SD
+REF-C2 Projection refC2
+SEN-C1-Emis Hindcast Scenario - altEmis senC1Emis
+SEN-C1SD-Emis HindcastSD Scenario - atlEmis senC1SDEmis
+SEN-C1-fEmis Hindcast Scenario- fxdEmis senC1fEmis
+SEN-C1SD-fEmis HindcastSD Scenario - fxdEmis senC1SDfEmis
+SEN-C1-SSI Hindcast Scenario - altSSI senC1SSI
+SEN-C2-RCP Projection Scenario - RCP2.6 senC2rcp26
+SEN-C2-RCP Projection Scenario - RCP4.5 senC2rcp45
+SEN-C2-RCP Projection Scenario - RCP8.5 senC2rcp85
+SEN-C2-fODS Projection Scenario - fxdODS senC2fODS
+SEN-C2-fODS2000 Projection Scenario - fxdODS2000 senC2fODS2000
+SEN-C2-fGHG Projection Scenario - fxdGHG senC2fGHG
+SEN-C2-fEmis Projection Scenario - fxdEmis senC2fEmis
+SEN-C2-GeoMIP Projection Scenario - GeoMIP-G1 senC2GeoMIPG1
+SEN-C2-GeoMIP Projection Scenario - GeoMIP-G2 senC2GeoMIPG2
+SEN-C2-GeoMIP Projection Scenario - GeoMIP-G3 senC2GeoMIPG3
+SEN-C2-GeoMIP Projection Scenario - GeoMIP-G4 senC2GeoMIPG4
+SEN-C2-SolarTrend Projection Scenario - SolarTrend senC2SlrTrnd

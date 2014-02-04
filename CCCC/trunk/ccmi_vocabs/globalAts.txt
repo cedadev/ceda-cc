@@ -1,0 +1,16 @@
+contact
+Conventions
+creation_date
+experiment_id
+frequency
+institution
+initialization_method
+model_id
+modeling_realm
+physics_version
+project_id
+realization
+source
+table_id
+title
+tracking_id
