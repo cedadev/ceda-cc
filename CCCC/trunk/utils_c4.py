@@ -304,9 +304,12 @@ class checkGlobalAttributes(checkBase):
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
+    self.globalAts['forecast_reference_time'] = 'dummy'
     for k in self.drsMappings:
       if self.drsMappings[k] == '@var':
         ee[k] = self.var
+      elif self.drsMappings[k] == '@ensemble':
+        ee[k] = "r%si%sp%s" % (self.globalAts["realization"],self.globalAts["initialization_method"],self.globalAts["physics_version"])
       else:
         ee[k] = self.globalAts[ self.drsMappings[k] ]
 
@@ -374,12 +377,14 @@ class checkGlobalAttributes(checkBase):
     contAts = ['long_name', 'standard_name', 'units']
     if varGroup != 'fx':
       contAts.append( 'cell_methods' )
+    hcm = varAts[varName].has_key( "cell_methods" )
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
       targ = varAts[varName].get( k, 'Attribute not present' )
       val = vocabs['variable'].getAttr( varName, varGroup, k )
       if k == "cell_methods":
-        if string.find( targ, val):
-           mm.append(k)
+        if val != None:
+          if string.find( targ, val):
+             mm.append(k)
       elif targ != val:
         mm.append( k )
 
@@ -387,7 +392,7 @@ class checkGlobalAttributes(checkBase):
     if ok:
        self.log_pass()
 
-    if varGroup != 'fx':
+    if varGroup != 'fx' and hcm:
       self.isInstantaneous = string.find( varAts[varName]['cell_methods'], 'time: point' ) != -1
     else:
       self.isInstantaneous = True

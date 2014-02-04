@@ -175,8 +175,8 @@ class projectConfig:
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@ensemble']
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
-                        'ensemble':'ensemble', 'model':'model_id', 'series':'series', 'realm':'realm', \
+      self.drsMappings = {'variable':'@var', 'institute':'institution', 'product':'product', 'experiment':'experiment_id', \
+                        'ensemble':'@ensemble', 'model':'model_id', 'series':'series', 'realm':'modeling_realm', \
                         'frequency':'frequency', 'start_date':'forecast_reference_time', \
                         'project':'project_id'}
 
