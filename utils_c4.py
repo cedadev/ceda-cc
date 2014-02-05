@@ -349,7 +349,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = '004'
     m = []
     reqAts = self.requiredVarAttributes[:]
-    if varGroup != 'fx':
+    if varGroup != 'fx' and self.pcfg.project in ['CORDEX']:
       reqAts.append( 'cell_methods' )
     for k in reqAts + vocabs['variable'].lists(varName, 'addRequiredAttributes'):
       if not varAts[varName].has_key(k):
