@@ -129,6 +129,9 @@ def getVocabs(pcfg):
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'frequency':utils.listControl( 'frequency', validCcmiFrequecies ), \
                'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
+## do not preserve or check relation between model and institution.
+               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=-1 ) ), \
+               'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
