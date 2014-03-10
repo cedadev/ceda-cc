@@ -119,7 +119,7 @@ def getVocabs(pcfg):
                'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
                'realization':utils.patternControl( 'realization', "[0-9]+" ), \
                'project_id':utils.listControl( 'project_id', ['SPECS'] ), \
-               'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
+               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'series':utils.listControl( 'series', ['series1','series2'] ), \
              }
@@ -169,12 +169,12 @@ class projectConfig:
 
     elif project == 'SPECS':
       lrdr = readVocab( 'specs_vocabs/')
-      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'product', 'creation_date', 'tracking_id', \
+      self.requiredGlobalAttributes = [ 'contact', 'product', 'creation_date', 'tracking_id', \
               'experiment_id', 'series']
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
-                       'initialization_method','physics_version','realization','institution']
+                       'initialization_method','physics_version','realization']
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@ensemble']
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
