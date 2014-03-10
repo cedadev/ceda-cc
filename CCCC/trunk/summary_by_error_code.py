@@ -90,11 +90,17 @@ def generateSummaryByErrorCode(dr):
         files.sort()
         print "CODE: %s (%d files)" % (k, len(files))
    
-        for f in files: print "\t%s" % f
+        if printFiles:
+          for f in files: print "\t%s" % f
+        elif printTwoFiles:
+          for f in files[:min(2,len(files))]: 
+            print "\t%s" % f
 
 
 
 if __name__ == "__main__":
 
+    printFiles = False
+    printTwoFiles = True
     dr = sys.argv[1]
     generateSummaryByErrorCode(dr)
