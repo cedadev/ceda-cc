@@ -11,6 +11,9 @@ Optional arguments:
 
   --ld <log file directory>  ## directory to take log files;
   -R <record file name> ## file name for file to take one record per file checked;
+  --cae                 ## "catch all errors": will trap exceptions and record
+                             in  log files, and then continue. Default is to
+                            stop after unrecognised exceptions.
 
 OUTPUT
 ------

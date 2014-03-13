@@ -264,6 +264,7 @@ class checker:
         return
 
     if not ncRed:
+      print fpath
       self.ncReader.loadNc( fpath )
     self.ga = self.ncReader.ga
     self.va = self.ncReader.va
@@ -316,6 +317,7 @@ class c4_init:
     
     # Set default project to "CORDEX"
     self.project = "CORDEX"
+    self.holdExceptions = False
 
     while len(args) > 0:
       next = args.pop(0)
@@ -337,6 +339,8 @@ class c4_init:
         self.recordFile = args.pop(0)
       elif next == '--ld':
         self.logDir = args.pop(0)
+      elif next in ['--catchAllExceptions','--cae']:
+        self.holdExceptions = True
       elif next == '--aMap':
         self.attributeMappingFile = args.pop(0)
         assert os.path.isfile( self.attributeMappingFile ), 'The token "--aMap" should be followed by the path or name of a file'
@@ -422,7 +426,7 @@ class c4_init:
 
 class main:
 
-  def __init__(self,args=None,holdExceptions=False,abortMessageCount=-1,printInfo=False,monitorFileHandles = False):
+  def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False):
     logDict = {}
     ecount = 0
     c4i = c4_init(args=args)
@@ -448,6 +452,7 @@ class main:
     if printInfo:
       print cbv.info
 
+    fileLogOpen = False
     for f in c4i.flist:
       if monitorFileHandles:
         nofhStart = self.monitor.get_open_fds()
@@ -459,6 +464,7 @@ class main:
           fLogger = c4i.getFileLog( fn )
           logDict[fn] = c4i.fileLogFile
           c4i.logger.info( 'Log file: %s' % c4i.fileLogFile )
+          fileLogOpen = True
         else:
           fLogger = c4i.logger
   
@@ -482,6 +488,7 @@ class main:
           else:
             fLogger.info( 'Done -- checks not completed' )
           c4i.closeFileLog( )
+          fileLogOpen = False
 
         if cc.completed:
           c4i.logger.info( 'Done -- error count %s' % cc.errorCount ) 
@@ -496,8 +503,12 @@ class main:
           rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
       except:
         c4i.logger.error("Exception has occured" ,exc_info=1)
+        if fileLogOpen:
+          fLogger.error("Exception has occured" ,exc_info=1)
+          c4i.closeFileLog( )
+          fileLogOpen = False
         rec.addErr( f, 'ERROR: Exception' )
-        if not holdExceptions:
+        if not c4i.holdExceptions:
           raise
       if monitorFileHandles:
         nofhEnd = self.monitor.get_open_fds()

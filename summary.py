@@ -3,17 +3,21 @@ import string, sys, glob
 
 idir = sys.argv[1]
 
-fl = glob.glob( '%s/*.txt' % idir )
+fl = glob.glob( '%s/*__qclog_*.txt' % idir )
 
 ee = {}
 for f in fl:
   for l in open(f).readlines():
     fn = string.split(f,'/')[-1]
-    if string.find(l, 'FAILED') != -1:
+    if string.find(l, 'FAILED') != -1 or string.find(l,'CDMSError:') != -1:
+      if string.find(l, 'FAILED') != -1:
+         kb1 = 3
+      else:
+         kb1 = 1
       bits = string.split(l, ':' )
-      if len(bits) > 3:
+      if len(bits) > kb1:
         code = bits[0]
-        msg = string.strip( string.join(bits[3:], ':' ) )
+        msg = string.strip( string.join(bits[kb1:], ':' ) )
         if code not in ee.keys():
           ee[code] = [0,{msg:[0,[]]}]
         elif msg not in ee[code][1].keys():
