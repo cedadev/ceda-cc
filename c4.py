@@ -504,7 +504,7 @@ class main:
       except:
         c4i.logger.error("Exception has occured" ,exc_info=1)
         if fileLogOpen:
-          fLogger.error("Exception has occured" ,exc_info=1)
+          fLogger.error("xxxxxx: FAILED:: Exception has occured" ,exc_info=1)
           c4i.closeFileLog( )
           fileLogOpen = False
         rec.addErr( f, 'ERROR: Exception' )
