@@ -120,7 +120,7 @@ def getVocabs(pcfg):
                'realization':utils.patternControl( 'realization', "[0-9]+" ), \
                'project_id':utils.listControl( 'project_id', ['SPECS'] ), \
                ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
                'series':utils.listControl( 'series', ['series1','series2'] ), \
              }
   elif pcfg.project == 'CCMI':
@@ -132,6 +132,8 @@ def getVocabs(pcfg):
 ## do not preserve or check relation between model and institution.
                'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=-1 ) ), \
                'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
+'atmosChem' and 'ocnBgchem'
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
@@ -185,10 +187,9 @@ class projectConfig:
 
     elif project == 'CCMI':
       lrdr = readVocab( 'ccmi_vocabs/')
-      self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'product', 'creation_date', 'tracking_id', \
-              'experiment_id']
+      self.requiredGlobalAttributes = [ 'creation_date', 'tracking_id', 'forcing', 'model_id', 'parent_experiment_id', 'parent_experiment_rip', 'branch_time', 'contact', 'institute_id' ]
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
-      self.controlledGlobalAttributes = [ 'experiment_id', 'project' ]
+      self.controlledGlobalAttributes = [ 'experiment_id', 'project', 'frequency' ]
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','@ensemble']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
@@ -260,7 +261,7 @@ class projectConfig:
        self.mipVocabDir = 'ccmi_vocabs/mip/'
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
-       self.mipVocabFnpat = 'CCMI1_%s_comp-v3.txt'
+       self.mipVocabFnpat = 'CCMI1_%s_comp-v5.txt'
     else:
        self.mipVocabDir = None
        self.mipVocabTl = ['day', 't2']

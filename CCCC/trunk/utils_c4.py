@@ -785,9 +785,11 @@ class patternControl:
       return m.groupdict()["val"] in self.list
     
 class listControl:
-  def __init__(self,tag,list):
+  def __init__(self,tag,list,split=False,splitVal=None):
     self.list = list
     self.tag = tag
+    self.split = split
+    self.splitVal = splitVal
 
   def check(self,val):
     self.note = '-'
@@ -795,7 +797,14 @@ class listControl:
       self.note = str( self.list )
     else:
       self.note = str( self.list[:4] )
-    return val in self.list
+    if self.split:
+      if self.splitVal == None:
+        vs = string.split( val )
+      else:
+        vs = string.split( val, self.spliVal )
+      return all( map( lambda x: x in self.list, vs ) )
+    else:
+      return val in self.list
 
 
 class checkByVar(checkBase):
