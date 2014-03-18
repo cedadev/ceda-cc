@@ -121,10 +121,10 @@ class checkBase:
        print msg
 
     doThis = True
-    if self.appendLogFile[0] != None and doThis:
+    if self.appendLogfile[0] != None and doThis:
       if self.monitor != None:
          nofh0 = self.monitor.get_open_fds()
-      xlog = self.c4i.getFileLog( self.appendLogFile[1], flf=self.appendLogFile[0] )
+      xlog = self.c4i.getFileLog( self.appendLogfile[1], flf=self.appendLogfile[0] )
       if error:
          xlog.error( msg )
       else:
@@ -159,8 +159,8 @@ class checkBase:
   def status(self):
     return '%s.%s' % (self.id,self.checkId)
 
-  def test(self,res,msg,abort=False,part=False,appendLogFile=(None,None)):
-    self.appendLogFile = appendLogFile
+  def test(self,res,msg,abort=False,part=False,appendLogfile=(None,None)):
+    self.appendLogfile = appendLogfile
     if res:
       if not part:
          self.log_pass()
@@ -910,7 +910,7 @@ class checkByVar(checkBase):
       for i in [0,1]:
         if not (i==0 and isFirst or i==1 and isLast):
           x = rere[i].match( t[3][i] )
-          lok &= self.test( x != None, 'Cannot match time range %s: %s [%s/%s]' % (i,fn,j,n), part=True, appendLogFile=(self.fLogDict.get(fn,None),fn) )
+          lok &= self.test( x != None, 'Cannot match time range %s: %s [%s/%s]' % (i,fn,j,n), part=True, appendLogfile=(self.fLogDict.get(fn,None),fn) )
         if not lok:
           ### print 'Cannot match time range %s:' % t[1]
           if self.recorder != None:

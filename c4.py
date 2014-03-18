@@ -264,7 +264,7 @@ class checker:
         return
 
     if not ncRed:
-      print fpath
+      ##print fpath
       self.ncReader.loadNc( fpath )
     self.ga = self.ncReader.ga
     self.va = self.ncReader.va
@@ -307,6 +307,8 @@ class c4_init:
 
   def __init__(self,args=None):
     self.logByFile = True
+    self.policyFileLogfileMode = 'w'
+    self.policyBatchLogfileMode = 'np'
     if args==None:
        args = sys.argv[1:]
     nn = 0
@@ -318,12 +320,28 @@ class c4_init:
     # Set default project to "CORDEX"
     self.project = "CORDEX"
     self.holdExceptions = False
+    forceLogOrg = None
 
     while len(args) > 0:
       next = args.pop(0)
       if next == '-f':
         flist = [args.pop(0),]
         self.logByFile = False
+      elif next == '--log':
+        x = args.pop(0)
+        assert x in ['single','multi','s','m'], 'unrecognised logging option (--log): %s' % (x)
+        if x in ['multi','m']:
+           forceLogOrg = 'multi'
+        elif x in ['single','s']:
+           forceLogOrg = 'single'
+      elif next == '--flfmode':
+        lfmk = args.pop(0)
+        assert lfmk in ['a','n','np','w','wo'], 'Unrecognised file logfile mode (--flfmode): %s' % lfmk
+        self.policyFileLogfileMode = lfmk
+      elif next == '--blfmode':
+        lfmk = args.pop(0)
+        assert lfmk in ['a','n','np','w','wo'], 'Unrecognised batch logfile mode (--blfmode): %s' % lfmk
+        self.policyBatchLogfileMode = lfmk
       elif next == '-d':
         fdir = args.pop(0)
         flist = glob.glob( '%s/*.nc' % fdir  )
@@ -350,6 +368,12 @@ class c4_init:
        print 'Unused argument: %s' % next
        nn+=1
     assert nn==0, 'Aborting because of unused arguments'
+
+    if forceLogOrg != None:
+      if forceLogOrg == 'single':
+        self.logByFile = False
+      else:
+        self.logByFile = True
 
     if self.project[:2] == '__':
        flist = []
@@ -378,10 +402,18 @@ class c4_init:
        os.mkdir(   self.logDir )
 
     tstring1 = '%4.4i%2.2i%2.2i_%2.2i%2.2i%2.2i' % time.gmtime()[0:6]
-    batchLogFile = '%s/qcBatchLog_%s.txt' % (  self.logDir,tstring1)
+    self.batchLogfile = '%s/qcBatchLog_%s.txt' % (  self.logDir,tstring1)
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
     self.logger = logging.getLogger('c4logger')
-    self.hdlr = logging.FileHandler(batchLogFile,mode='w')
+    if self.policyBatchLogfileMode in ['n','np']:
+        assert not os.path.isfile( self.batchLogfile ), '%s exists and policy set to new file' % self.batchLogfile
+    m = self.policyBatchLogfileMode[0]
+    if m == 'n':
+      m = 'w'
+    if m == 'a':
+      self.hdlr = logging.FileHandler(self.batchLogfile)
+    else:
+      self.hdlr = logging.FileHandler(self.batchLogfile,mode=m)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     self.hdlr.setFormatter(formatter)
     self.logger.setLevel(logging.INFO)
@@ -402,17 +434,21 @@ class c4_init:
   def getFileLog( self, fn, flf=None ):
     if flf == None:
       tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
-      self.fileLogFile = '%s/%s__qclog_%s.txt' % (self.logDir,fn[:-3],tstring2)
-      m = 'w'
+      self.fileLogfile = '%s/%s__qclog_%s.txt' % (self.logDir,fn[:-3],tstring2)
+      if self.policyFileLogfileMode in ['n','np']:
+        assert not os.path.isfile( self.fileLogfile ), '%s exists and policy set to new file' % self.fileLogfile
+      m = self.policyFileLogfileMode[0]
+      if m == 'n':
+        m = 'w'
     else:
       m = 'a'
-      self.fileLogFile = flf
+      self.fileLogfile = flf
 
     self.fLogger = logging.getLogger('fileLog_%s_%s' % (fn,m))
     if m == 'a':
-      self.fHdlr = logging.FileHandler(self.fileLogFile)
+      self.fHdlr = logging.FileHandler(self.fileLogfile)
     else:
-      self.fHdlr = logging.FileHandler(self.fileLogFile,mode=m)
+      self.fHdlr = logging.FileHandler(self.fileLogfile,mode=m)
     fileFormatter = logging.Formatter('%(message)s')
     self.fHdlr.setFormatter(fileFormatter)
     self.fLogger.addHandler(self.fHdlr)
@@ -422,6 +458,14 @@ class c4_init:
   def closeFileLog(self):
     self.fLogger.removeHandler(self.fHdlr)
     self.fHdlr.close()
+    if self.policyFileLogfileMode in ['wo','np']:
+      os.popen( 'chmod %s %s;' % (444, self.fileLogfile) )
+
+  def closeBatchLog(self):
+    self.logger.removeHandler(self.hdlr)
+    self.hdlr.close()
+    if self.policyBatchLogfileMode in ['wo','np']:
+      os.popen( 'chmod %s %s;' % (444, self.batchLogfile) )
 
 
 class main:
@@ -437,7 +481,7 @@ class main:
        raise
     pcfg = config.projectConfig( c4i.project )
     ncReader = fileMetadata(dummy=isDummy)
-    cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
+    self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
     if monitorFileHandles:
       self.monitor = utils.sysMonitor()
@@ -447,13 +491,16 @@ class main:
     cal = None
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
   
-    cbv = utils.checkByVar( parent=cc.info,cls=c4i.project,monitor=self.monitor)
+    cbv = utils.checkByVar( parent=self.cc.info,cls=c4i.project,monitor=self.monitor)
     cbv.impt( c4i.flist )
     if printInfo:
       print cbv.info
 
     fileLogOpen = False
+    self.resList =  []
     for f in c4i.flist:
+      rv = False
+      ec = None
       if monitorFileHandles:
         nofhStart = self.monitor.get_open_fds()
       fn = string.split(f,'/')[-1]
@@ -462,41 +509,44 @@ class main:
   ### need to have a unique name, otherwise get mixing of logs despite close statement below.
         if c4i.logByFile:
           fLogger = c4i.getFileLog( fn )
-          logDict[fn] = c4i.fileLogFile
-          c4i.logger.info( 'Log file: %s' % c4i.fileLogFile )
+          logDict[fn] = c4i.fileLogfile
+          c4i.logger.info( 'Log file: %s' % c4i.fileLogfile )
           fileLogOpen = True
         else:
           fLogger = c4i.logger
   
         fLogger.info( 'Starting file %s' % fn )
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
-        cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
+        self.cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
 
-        if cc.completed:
-          if cal not in (None, 'None') and cc.cgd.varGroup != "fx":
-            if cal != cc.calendar:
-              cal_change_err_msg = 'Error: change in calendar attribute %s --> %s' % (cal, cc.calendar)
+        if self.cc.completed:
+          if cal not in (None, 'None') and self.cc.cgd.varGroup != "fx":
+            if cal != self.cc.calendar:
+              cal_change_err_msg = 'Error: change in calendar attribute %s --> %s' % (cal, self.cc.calendar)
               c4i.logger.info(cal_change_err_msg)
               fLogger.info(cal_change_err_msg)
-              cc.errorCount += 1
+              self.cc.errorCount += 1
 
-          cal = cc.calendar
+          cal = self.cc.calendar
+          ec = self.cc.errorCount
+        rv =  ec == 0
+        self.resList.append( (rv,ec) )
 
         if c4i.logByFile:
-          if cc.completed:
-            fLogger.info( 'Done -- error count %s' % cc.errorCount )
+          if self.cc.completed:
+            fLogger.info( 'Done -- error count %s' % self.cc.errorCount )
           else:
             fLogger.info( 'Done -- checks not completed' )
           c4i.closeFileLog( )
           fileLogOpen = False
 
-        if cc.completed:
-          c4i.logger.info( 'Done -- error count %s' % cc.errorCount ) 
-          ecount += cc.errorCount
-          if cc.errorCount == 0:
-            rec.add( f, cc.drs )
+        if self.cc.completed:
+          c4i.logger.info( 'Done -- error count %s' % self.cc.errorCount ) 
+          ecount += self.cc.errorCount
+          if self.cc.errorCount == 0:
+            rec.add( f, self.cc.drs )
           else:
-            rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % cc.errorCount )
+            rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % self.cc.errorCount )
         else:
           ecount += 20
           c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
@@ -515,12 +565,12 @@ class main:
         if nofhEnd > nofhStart:
            print 'Open file handles: %s --- %s' % (nofhStart, nofhEnd)
   
-    cc.info.log = c4i.logger
+    self.cc.info.log = c4i.logger
     
     if c4i.project not in ['SPECS','CCMI']:
        cbv.c4i = c4i
        cbv.setLogDict( logDict )
-       cbv.check( recorder=rec, calendar=cc.calendar)
+       cbv.check( recorder=rec, calendar=self.cc.calendar)
        try:
          ecount += cbv.errorCount
        except:
@@ -528,7 +578,9 @@ class main:
     rec.dumpAll()
     if printInfo:
       print 'Error count %s' % ecount
-    c4i.hdlr.close()
+    ##c4i.hdlr.close()
+    c4i.closeBatchLog()
+    self.ok = all( map( lambda x: x[0], self.resList ) )
 if __name__ == '__main__':
   main(printInfo=True)
 
