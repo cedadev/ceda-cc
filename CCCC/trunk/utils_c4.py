@@ -304,12 +304,14 @@ class checkGlobalAttributes(checkBase):
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
-    self.globalAts['forecast_reference_time'] = 'dummy'
     for k in self.drsMappings:
       if self.drsMappings[k] == '@var':
         ee[k] = self.var
       elif self.drsMappings[k] == '@ensemble':
         ee[k] = "r%si%sp%s" % (self.globalAts["realization"],self.globalAts["initialization_method"],self.globalAts["physics_version"])
+      elif self.drsMappings[k] == '@forecast_reference_time':
+        x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
+        ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
       else:
         ee[k] = self.globalAts[ self.drsMappings[k] ]
 
@@ -418,8 +420,13 @@ class checkGlobalAttributes(checkBase):
          if self.globalAttributesInFn[i][0] == "@":
            if self.globalAttributesInFn[i][1:] == "mip_id":
                thisVal = string.split( globalAts["table_id"] )[1]
+           elif self.globalAttributesInFn[i][1:] == "experiment_family":
+               thisVal = globalAts["experiment_id"][:-4]
            elif self.globalAttributesInFn[i][1:] == "ensemble":
                thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
+           elif self.globalAttributesInFn[i][1:] == "forecast_reference_time":
+               x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
+               thisVal = "%s%s%s" % (x[:4],x[5:7],x[8:10])
            elif self.globalAttributesInFn[i][1:] == "series":
                thisVal = 'series%s' % globalAts["series"]
            elif self.globalAttributesInFn[i][1:] == "experiment_family":
