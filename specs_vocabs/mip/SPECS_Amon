@@ -400,7 +400,7 @@ z_bounds_factors: a: lev_bnds b: b_bnds orog: orog
 !
 !
 !============
-variable_entry: lead_time
+variable_entry: leadtime
 !============
 !----------------------------------
 ! Variable attributes:
@@ -417,7 +417,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 dimensions:     time
-out_name:         lead_time
+out_name:         leadtime
 !stored_direction: increasing
 type:             double
 !must_have_bounds: yes
@@ -657,7 +657,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_temperature
 units:             K
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Surface Temperature
 comment:           ""skin"" temperature (i.e., SST for open ocean)
@@ -773,7 +774,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_air_pressure
 units:             Pa
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Surface Air Pressure
 comment:           not, in general, the same as mean sea-level pressure
@@ -803,6 +805,7 @@ modeling_realm:    atmos
 standard_name:     eastward_wind
 units:             m s-1
 cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:         Eastward Near-Surface Wind
 !----------------------------------
 ! Additional variable information:
@@ -830,6 +833,7 @@ modeling_realm:    atmos
 standard_name:     northward_wind
 units:             m s-1
 cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:         Northward Near-Surface Wind
 !----------------------------------
 ! Additional variable information:
@@ -856,7 +860,9 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_downward_eastward_stress
 units:             Pa
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:         Surface Downward Eastward Wind Stress
 !----------------------------------
 ! Additional variable information:
@@ -884,7 +890,9 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_downward_northward_stress
 units:             Pa
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:         Surface Downward Northward Wind Stress
 !----------------------------------
 ! Additional variable information:
@@ -911,7 +919,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     precipitation_flux
 units:             kg m-2 s-1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Precipitation
 comment:           at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
@@ -940,7 +949,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     toa_incoming_shortwave_flux
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         TOA Incident Shortwave Radiation
 comment:           at the top of the atmosphere
@@ -969,7 +979,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_downwelling_shortwave_flux_in_air
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Surface Downwelling Shortwave Radiation
 !----------------------------------
@@ -997,7 +1008,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_net_downward_longwave_flux
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Net longwave surface radiation
 !----------------------------------
@@ -1021,7 +1033,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_upward_latent_heat_flux
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Surface Upward Latent Heat Flux
 comment:           includes both evaporation and sublimation
@@ -1050,7 +1063,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_net_downward_shortwave_flux 
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Net Shortwave Surface Radiation
 !----------------------------------
@@ -1071,7 +1085,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     water_evaporation_flux
 units:             kg m-2 s-1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Evaporation
 comment:           at surface; flux of water into the atmosphere due to conversion of both liquid and solid phases to vapor (from underlying surface and vegetation)
@@ -1096,7 +1111,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_upward_sensible_heat_flux
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Surface Upward Sensible Heat Flux
 !----------------------------------
@@ -1125,7 +1141,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_downwelling_longwave_flux_in_air
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Surface Downwelling Longwave Radiation
 !----------------------------------
@@ -1154,7 +1171,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     toa_outgoing_longwave_flux
 units:             W m-2
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         TOA Outgoing Longwave Radiation
 comment:           at the top of the atmosphere (to be compared with satellite measurements)
@@ -1213,7 +1231,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     air_temperature
 units:             K
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Air Temperature
 !----------------------------------
@@ -1241,7 +1260,9 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     eastward_wind
 units:             m s-1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:         Eastward Wind
 !----------------------------------
 ! Additional variable information:
@@ -1268,7 +1289,9 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     northward_wind
 units:             m s-1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:         Northward Wind
 !----------------------------------
 ! Additional variable information:
@@ -1295,7 +1318,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     specific_humidity
 units:             1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Specific Humidity
 !----------------------------------
@@ -1323,7 +1347,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     geopotential_height
 units:             m
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Geopotential Height
 !----------------------------------
@@ -1351,7 +1376,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     snowfall_flux
 units:             kg m-2 s-1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Snowfall Flux
 comment:           at surface; includes precipitation of all forms of water in the solid phase
@@ -1377,6 +1403,9 @@ variable_entry: evlwr
 !----------------------------------
 standard_name: lwe_water_evaporation_rate 
 units: m s-1
+cell_methods:      time: point
+#cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name:  evaporation      
 !----------------------------------
 ! Additional variable information:
@@ -1397,6 +1426,9 @@ variable_entry: snld
 !----------------------------------
 standard_name:    lwe_thickness_of_surface_snow_amount
 units: m
+cell_methods:      time: point
+#cell_methods:      time: mean
+cell_measures:     area: areacella
 long_name: snow depth       
 !----------------------------------
 ! Additional variable information:
@@ -1409,6 +1441,7 @@ out_name:          snld
 !out_name:          snow depth
 type:              double
 !---------------------------------
+
 !
 !============
 variable_entry: tdps
@@ -1418,6 +1451,8 @@ variable_entry: tdps
 !----------------------------------
 standard_name: dew_point_temperature 
 units: K           
+cell_methods:      time: point
+cell_measures:     area: areacella
 long_name: 2m dewpoint temperature       
 !----------------------------------
 ! Additional variable information:
@@ -1440,7 +1475,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     convective_precipitation_flux
 units:             kg m-2 s-1
-cell_methods:      time: mean
+cell_methods:      time: point
+#cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Convective Precipitation
 comment:           at surface; includes both liquid and solid phases.
@@ -1514,7 +1550,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_albedo
 units:             %
-cell_methods:      area: mean
+cell_methods:      area: point
+#cell_methods:      area: mean
 cell_measures:     area: areacello
 long_name:         Albedo
 !----------------------------------
@@ -1534,7 +1571,8 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_albedo
 units:             %
-cell_methods:      area: mean
+cell_methods:      area: point
+#cell_methods:      area: mean
 cell_measures:     area: areacello
 long_name:         Forecast Albedo
 !----------------------------------
