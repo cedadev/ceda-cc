@@ -177,12 +177,13 @@ class projectConfig:
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
                        'initialization_method','physics_version','realization']
-      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@ensemble']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','@forecast_reference_time','series','@ensemble']
+#sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_series1_r1i1p1_199501-199502.nc 
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var', 'institute':'institution', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'@ensemble', 'model':'model_id', 'series':'series', 'realm':'modeling_realm', \
-                        'frequency':'frequency', 'start_date':'forecast_reference_time', \
+                        'frequency':'frequency', 'start_date':'@forecast_reference_time', \
                         'project':'project_id'}
 
     elif project == 'CCMI':
@@ -224,9 +225,9 @@ class projectConfig:
       self.domainIndex = 1
       self.freqIndex = 7
     elif self.project == 'SPECS':
-      self.fnPartsOkLen = [6,7]
-      self.fnPartsOkFixedLen = [6,]
-      self.fnPartsOkUnfixedLen = [7,]
+      self.fnPartsOkLen = [7,8]
+      self.fnPartsOkFixedLen = [7,]
+      self.fnPartsOkUnfixedLen = [8,]
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = 1
