@@ -130,7 +130,7 @@ def getVocabs(pcfg):
                'frequency':utils.listControl( 'frequency', validCcmiFrequecies ), \
                'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
 ## do not preserve or check relation between model and institution.
-               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=-1 ) ), \
+               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
                'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
 'atmosChem' and 'ocnBgchem'

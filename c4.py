@@ -23,10 +23,18 @@ reload( utils )
 
 class fileMetadata:
 
-  def __init__(self,dummy=False):
+  def __init__(self,dummy=False,attributeMappingsLog=None):
+     
      self.dummy = dummy
+     self.atMapLog = attributeMappingsLog
+     if self.atMapLog == None:
+       self.atMapLog = open( '/tmp/cccc_atMapLog.txt', 'a' )
+
+  def close(self):
+    self.atMapLog.close()
 
   def loadNc(self,fpath):
+    self.fpath = fpath
     self.fn = string.split( fpath, '/' )[-1]
     self.fparts = string.split( self.fn[:-3], '_' )
     self.ga = {}
@@ -98,7 +106,9 @@ class fileMetadata:
               if log != None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              thisval = self.va[m[1][0][1]].get( targ, None )
               self.va[m[1][0][1]][targ] = m[2][1]
+              self.atMapLog.write( '@var:"%s","%s","%s","%s","%s"\n' % (self.fpath, m[1][0][1], targ, thisval, m[2][1] ) )
 
         elif m[1][0][0] == "@ax":
           ##print 'checking dimension ',m[1][0][1], self.da.keys()
@@ -119,7 +129,9 @@ class fileMetadata:
               if log != None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              thisval = self.va[m[1][0][1]].get( targ, None )
               self.da[m[1][0][1]][targ] = m[2][1]
+              self.atMapLog.write( '@ax:"%s","%s","%s","%s","%s"\n' % (self.fpath, m[1][0][1], targ, thisval, m[2][1]) )
         elif m[1][0][0][0] != "@":
             this = self.ga
             apThis = True
@@ -136,10 +148,16 @@ class fileMetadata:
               if log != None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              thisval = self.ga.get( targ, None )
               self.ga[targ] = m[2][1]
+              self.atMapLog.write( '@:"%s","%s","%s","%s","%s"\n' % (self.fpath, 'ga', targ, thisval, m[2][1]) )
+##
               if targ in globalAttributesInFn:
-                self.fparts[ globalAttributesInFn.index(targ) ] = m[2][1]
+                i = globalAttributesInFn.index(targ)
+                thisval = self.fparts[ i ]
+                self.fparts[ i ] = m[2][1]
                 self.fn = string.join( self.fparts, '_' ) + '.nc'
+                self.atMapLog.write( '@fn:"%s","%s","%s"\n' % (self.fpath, thisval, m[2][1]) )
         else:
           print 'Token %s not recognised' % m[1][0][0]
 
@@ -420,6 +438,7 @@ class c4_init:
     self.logger.addHandler(self.hdlr)
 
     self.attributeMappings = []
+    self.attributeMappingsLog = None
     if self.attributeMappingFile != None:
       for l in open( self.attributeMappingFile ).readlines():
         if l[0] != '#':
@@ -430,6 +449,7 @@ class c4_init:
           for b in bits:
             cl.append( string.split(b, '=' ) )
           self.attributeMappings.append( ('am001',cl, string.split(bb[1],'=') ) )
+      self.attributeMappingsLog = open( 'attributeMappingsLog.txt', 'w' )
 
   def getFileLog( self, fn, flf=None ):
     if flf == None:
@@ -480,7 +500,7 @@ class main:
        print 'Cannot proceed with non-dummy project without cdms'
        raise
     pcfg = config.projectConfig( c4i.project )
-    ncReader = fileMetadata(dummy=isDummy)
+    ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog)
     self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
     if monitorFileHandles:
@@ -491,6 +511,7 @@ class main:
     cal = None
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
   
+    self.cc.info.amapListDraft = []
     cbv = utils.checkByVar( parent=self.cc.info,cls=c4i.project,monitor=self.monitor)
     cbv.impt( c4i.flist )
     if printInfo:
@@ -575,6 +596,16 @@ class main:
          ecount += cbv.errorCount
        except:
          ecount = None
+    ncReader.close()
+    if type( self.cc.info.amapListDraft ) == type( [] ) and len(  self.cc.info.amapListDraft ) > 0:
+      ll =  self.cc.info.amapListDraft
+      ll.sort()
+      oo = open( 'amapDraft.txt', 'w' )
+      oo.write( ll[0] + '\n' )
+      for i in range( 1,len(ll) ):
+        if ll[i] != ll[i-1]:
+          oo.write( ll[i] + '\n' )
+      oo.close()
     rec.dumpAll()
     if printInfo:
       print 'Error count %s' % ecount
