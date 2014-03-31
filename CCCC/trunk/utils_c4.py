@@ -386,11 +386,17 @@ class checkGlobalAttributes(checkBase):
       if k == "cell_methods":
         if val != None:
           if string.find( targ, val):
-             mm.append(k)
+             mm.append( (k,targ,val) )
       elif targ != val:
-        mm.append( k )
+        mm.append( (k,targ,val) )
 
     ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
+    if len( mm  ) != 0:
+      if self.parent.amapListDraft == None:
+        self.parent.amapListDraft = []
+      for m in mm:
+          self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s' % (varName,m[0],m[1],m[0],m[2]) )
+
     if ok:
        self.log_pass()
 
@@ -557,8 +563,11 @@ class checkStandardDims(checkBase):
                 'height value [%s] not in specified range [%s]' % (va['height']['_data'], (self.heightRange[varName] ) ), part=True )
       
       for k in heightAtDict.keys():
-        ok &= self.test( va['height'].get( k, None ) == heightAtDict[k], \
-                         'height attribute %s absent or wrong value (should be %s)' % (k,heightAtDict[k]), part=True )
+        val =  va['height'].get( k, "none" )
+        if not self.test( val == heightAtDict[k], \
+                         'height attribute %s absent or wrong value (should be %s)' % (k,heightAtDict[k]), part=True ):
+          self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s' % ('height',k,val,k,heightAtDict[k]) )
+          ok = False
 
       if ok:
         self.log_pass()
