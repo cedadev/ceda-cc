@@ -132,13 +132,15 @@ class fileMetadata:
               thisval = self.va[m[1][0][1]].get( targ, None )
               self.da[m[1][0][1]][targ] = m[2][1]
               self.atMapLog.write( '@ax:"%s","%s","%s","%s","%s"\n' % (self.fpath, m[1][0][1], targ, thisval, m[2][1]) )
-        elif m[1][0][0][0] != "@":
+        elif m[1][0][0] == "@":
             this = self.ga
             apThis = True
-            for c in m[1]:
+## apply change where attribute absent only
+            for c in m[1][1:]:
               if c[0] not in this.keys():
-                apThis = False
-              elif c[1] != this[c[0]]:
+                if c[1] != '__absent__':
+                  apThis = False
+              elif c[1] == '__absent__' or c[1] != this[c[0]]:
                 apThis = False
             if m[2][0] != '':
               targ = m[2][0]
@@ -147,7 +149,7 @@ class fileMetadata:
             if apThis:
               if log != None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
-              print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
+              ##print 'Setting %s to %s' % (targ,m[2][1])
               thisval = self.ga.get( targ, None )
               self.ga[targ] = m[2][1]
               self.atMapLog.write( '@:"%s","%s","%s","%s","%s"\n' % (self.fpath, 'ga', targ, thisval, m[2][1]) )
