@@ -105,6 +105,8 @@ class checkBase:
     self.checks = ()
     self.messageCount = 0
     self.init()
+    if not hasattr( self.parent, 'amapListDraft' ):
+      self.parent.amapListDraft = []
 
   def isInt(self,x):
     return self.re_isInt.match( x ) != None
@@ -336,7 +338,10 @@ class checkGlobalAttributes(checkBase):
       if not globalAts.has_key(k):
          m.append(k)
 
-    gaerr = not self.test( len(m)  == 0, 'Required global attributes missing: %s' % str(m) )
+    if not self.test( len(m)  == 0, 'Required global attributes missing: %s' % str(m) ):
+      gaerr = True
+      for k in m:
+        self.parent.amapListDraft.append( '#@;%s=%s|%s=%s' % (k,'__absent__',k,'<insert attribute value and uncomment>') )
 
     self.checkId = '002'
 
@@ -356,7 +361,12 @@ class checkGlobalAttributes(checkBase):
     for k in reqAts + vocabs['variable'].lists(varName, 'addRequiredAttributes'):
       if not varAts[varName].has_key(k):
          m.append(k)
-    vaerr = not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) )
+    if not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) ):
+      vaerr = True
+      for k in m:
+        self.parent.amapListDraft.append( '#@var=%s;%s=%s|%s=%s' % (varName,k,'__absent__',k,'<insert attribute value and uncomment>') )
+        print self.parent.amapListDraft[-1]
+    ##vaerr = not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) )
 
     ##if vaerr or gaerr:
       ##self.log_abort()
@@ -416,7 +426,9 @@ class checkGlobalAttributes(checkBase):
           print 'failed trying to check global attribute %s' % a
           raise
 
-    self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) )
+    if not self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) ):
+      for t in m:
+        self.parent.amapListDraft.append( '#@;%s=%s|%s=%s' % (t[0],str(t[1]),t[0],'<insert attribute value and uncomment>' + str(t[2]) ) )
 
     self.checkId = '007'
     m = []
