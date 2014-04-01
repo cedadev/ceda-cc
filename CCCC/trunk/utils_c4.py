@@ -393,8 +393,26 @@ class checkGlobalAttributes(checkBase):
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
       targ = varAts[varName].get( k, 'Attribute not present' )
       val = vocabs['variable'].getAttr( varName, varGroup, k )
+
       if k == "cell_methods":
         if val != None:
+          parenthesies1 = []
+          targ0 = targ[:]
+          while string.find( targ, '(' ) != -1:
+            i0 = targ.index( '(' )
+            i1 = targ.index( ')' )
+            parenthesies1.append( targ[i0:i1+1] )
+            targ = targ[:i0-1] + targ[i1+1:]
+          parenthesies2 = []
+          val0 = val[:]
+          while string.find( val, '(' ) != -1:
+            i0 = val.index( '(' )
+            i1 = val.index( ')' )
+            parenthesies2.append( val[i0:i1+1] )
+            val = val[:i0-1] + val[i1+1:]
+          for p in parenthesies2:
+            if p not in parenthesies1:
+              mm.append( (k,parenthesies1,p) )
           if string.find( targ, val):
              mm.append( (k,targ,val) )
       elif targ != val:
@@ -444,7 +462,7 @@ class checkGlobalAttributes(checkBase):
                thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
            elif self.globalAttributesInFn[i][1:] == "forecast_reference_time":
                x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
-               thisVal = "%s%s%s" % (x[:4],x[5:7],x[8:10])
+               thisVal = "S%s%s%s" % (x[:4],x[5:7],x[8:10])
            elif self.globalAttributesInFn[i][1:] == "series":
                thisVal = 'series%s' % globalAts["series"]
            elif self.globalAttributesInFn[i][1:] == "experiment_family":

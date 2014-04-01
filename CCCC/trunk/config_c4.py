@@ -111,10 +111,11 @@ validSpecsInstitutions = ['IC3', 'MPI-M', 'KNMI', 'UOXF', 'CNRM-CERFACS', 'ENEA'
 def getVocabs(pcfg):
   "Returns a dictionary of vocabulary details for the project provided."
   if pcfg.project == 'SPECS':
+               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
                'frequency':utils.listControl( 'frequency', validSpecsFrequecies ), \
-               'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
+               'experiment_id':utils.listControl( 'experiment_id', validSpecsExptFamilies ), \
                'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
                'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
                'realization':utils.patternControl( 'realization', "[0-9]+" ), \
@@ -177,7 +178,7 @@ class projectConfig:
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
                        'initialization_method','physics_version','realization']
-      self.globalAttributesInFn = [None,'@mip_id','model_id','@experiment_family','@forecast_reference_time','series','@ensemble']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@forecast_reference_time','@ensemble']
 #sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_series1_r1i1p1_199501-199502.nc 
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
