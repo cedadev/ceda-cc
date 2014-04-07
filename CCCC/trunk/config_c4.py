@@ -256,7 +256,7 @@ class projectConfig:
        self.mipVocabFnpat = 'CORDEX_%s'
     elif self.project == 'SPECS':
        self.mipVocabDir = 'specs_vocabs/mip/'
-       self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
+       self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hr']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'SPECS_%s'
     elif self.project == 'CCMI':
