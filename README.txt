@@ -42,7 +42,8 @@ m = c4.main( args=[ '-p', 'CORDEX', '-f', dataFilePath, '--ld', logFileDirectory
 DEPENDENCIES
 ------------
 
-The library uses the cmds2 module to read NetCDF files.
+The library can uses the cdms2 module or the netCDF4 module to read NetCDF files.
+By default, it will use the cdms2 module if available. Support for the netCDF4 module has been added recently.
 
 OUTPUT
 ------

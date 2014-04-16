@@ -1,15 +1,16 @@
 
 # Standard library imports
-import os, string, time, logging, sys, glob
+import os, string, time, logging, sys, glob, pkgutil
 
+## pkgutil is used in file_utils
 # Third party imports
 
-try:
-  import cdms2
-  withCdms = True
-except:
-  print 'Failed to import cdms2: will not be able to read NetCDF'
-  withCdms = False
+## Local imports with 3rd party dependencies
+#### netcdf --- currently only support for cmds2 -- re-arranged to facilitate support for alternative modules
+
+import file_utils
+
+from file_utils import fileMetadata, ncLib
 
 # Local imports
 import utils_c4 as utils
@@ -21,152 +22,8 @@ reload( utils )
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
 
-class fileMetadata:
-
-  def __init__(self,dummy=False,attributeMappingsLog=None):
-     
-     self.dummy = dummy
-     self.atMapLog = attributeMappingsLog
-     if self.atMapLog == None:
-       self.atMapLog = open( '/tmp/cccc_atMapLog.txt', 'a' )
-
-  def close(self):
-    self.atMapLog.close()
-
-  def loadNc(self,fpath):
-    self.fpath = fpath
-    self.fn = string.split( fpath, '/' )[-1]
-    self.fparts = string.split( self.fn[:-3], '_' )
-    self.ga = {}
-    self.va = {}
-    self.da = {}
-    if self.dummy:
-      self.makeDummyFileImage()
-      return
-    self.nc = cdms2.open( fpath )
-    for k in self.nc.attributes.keys():
-      self.ga[k] = self.nc.attributes[k]
-      if len( self.ga[k] ) == 1:
-        self.ga[k] = self.ga[k][0]
-    for v in self.nc.variables.keys():
-      self.va[v] = {}
-      for k in self.nc.variables[v].attributes.keys():
-        self.va[v][k] = self.nc.variables[v].attributes[k]
-      self.va[v]['_type'] = str( self.nc.variables[v].dtype )
-      if v in ['plev','plev_bnds','height']:
-        self.va[v]['_data'] = self.nc.variables[v].getValue().tolist()
-
-    for v in self.nc.axes.keys():
-      self.da[v] = {}
-      for k in self.nc.axes[v].attributes.keys():
-        self.da[v][k] = self.nc.axes[v].attributes[k]
-      self.da[v]['_type'] = str( self.nc.axes[v].getValue().dtype )
-      self.da[v]['_data'] = self.nc.axes[v].getValue().tolist()
-      
-    self.nc.close()
-
-  def makeDummyFileImage(self):
-    for k in range(10):
-      self.ga['ga%s' % k] =  str(k)
-    for v in [self.fparts[0],]:
-      self.va[v] = {}
-      self.va[v]['standard_name'] = 's%s' % v
-      self.va[v]['long_name'] = v
-      self.va[v]['cell_methods'] = 'time: point'
-      self.va[v]['units'] = '1'
-      self.va[v]['_type'] = 'float32'
-
-    for v in ['lat','lon','time']:
-      self.da[v] = {}
-      self.da[v]['_type'] = 'float64'
-      self.da[v]['_data'] = range(5)
-    dlist = ['lat','lon','time']
-    svals = lambda p,q: map( lambda y,z: self.da[y].__setitem__(p, z), dlist, q )
-    svals( 'standard_name', ['latitude', 'longitude','time'] )
-    svals( 'long_name', ['latitude', 'longitude','time'] )
-    svals( 'units', ['degrees_north', 'degrees_east','days since 19590101'] )
-
-  def applyMap( self, mapList, globalAttributesInFn, log=None ):
-    for m in mapList:
-      if m[0] == 'am001':
-        if m[1][0][0] == "@var":
-          if m[1][0][1] in self.va.keys():
-            this = self.va[m[1][0][1]]
-            apThis = True
-            for c in m[1][1:]:
-              if c[0] not in this.keys():
-                apThis = False
-              elif c[1] != this[c[0]]:
-                apThis = False
-            if m[2][0] != '':
-              targ = m[2][0]
-            else:
-              targ = m[1][-1][0]
-            if apThis:
-              if log != None:
-                log.info( 'Setting %s to %s' % (targ,m[2][1]) )
-              ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
-              thisval = self.va[m[1][0][1]].get( targ, None )
-              self.va[m[1][0][1]][targ] = m[2][1]
-              self.atMapLog.write( '@var:"%s","%s","%s","%s","%s"\n' % (self.fpath, m[1][0][1], targ, thisval, m[2][1] ) )
-
-        elif m[1][0][0] == "@ax":
-          ##print 'checking dimension ',m[1][0][1], self.da.keys()
-          if m[1][0][1] in self.da.keys():
-            ##print 'checking dimension [2]',m[1][0][1]
-            this = self.da[m[1][0][1]]
-            apThis = True
-            for c in m[1][1:]:
-              if c[0] not in this.keys():
-                apThis = False
-              elif c[1] != this[c[0]]:
-                apThis = False
-            if m[2][0] != '':
-              targ = m[2][0]
-            else:
-              targ = m[1][-1][0]
-            if apThis:
-              if log != None:
-                log.info( 'Setting %s to %s' % (targ,m[2][1]) )
-              ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
-              thisval = self.va[m[1][0][1]].get( targ, None )
-              self.da[m[1][0][1]][targ] = m[2][1]
-              self.atMapLog.write( '@ax:"%s","%s","%s","%s","%s"\n' % (self.fpath, m[1][0][1], targ, thisval, m[2][1]) )
-        elif m[1][0][0] == "@":
-            this = self.ga
-            apThis = True
-## apply change where attribute absent only
-            for c in m[1][1:]:
-              if c[0] not in this.keys():
-                if c[1] != '__absent__':
-                  apThis = False
-              elif c[1] == '__absent__' or c[1] != this[c[0]]:
-                apThis = False
-            if m[2][0] != '':
-              targ = m[2][0]
-            else:
-              targ = m[1][-1][0]
-            if apThis:
-              if log != None:
-                log.info( 'Setting %s to %s' % (targ,m[2][1]) )
-              ##print 'Setting %s to %s' % (targ,m[2][1])
-              thisval = self.ga.get( targ, None )
-              self.ga[targ] = m[2][1]
-              self.atMapLog.write( '@:"%s","%s","%s","%s","%s"\n' % (self.fpath, 'ga', targ, thisval, m[2][1]) )
-##
-              if targ in globalAttributesInFn:
-                i = globalAttributesInFn.index(targ)
-                thisval = self.fparts[ i ]
-                self.fparts[ i ] = m[2][1]
-                self.fn = string.join( self.fparts, '_' ) + '.nc'
-                self.atMapLog.write( '@fn:"%s","%s","%s"\n' % (self.fpath, thisval, m[2][1]) )
-        else:
-          print 'Token %s not recognised' % m[1][0][0]
-
-
 class dummy:
    pass
-
 
 pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/',   \
                  'SPECS':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s_%(series)s/%(start_date)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
@@ -497,8 +354,8 @@ class main:
     ecount = 0
     c4i = c4_init(args=args)
     isDummy  = c4i.project[:2] == '__'
-    if (not withCdms) and isDummy:
-       print withCdms, c4i.project
+    if (ncLib == dummy) and (not isDummy):
+       print ncLib, c4i.project
        print 'Cannot proceed with non-dummy project without cdms'
        raise
     pcfg = config.projectConfig( c4i.project )
