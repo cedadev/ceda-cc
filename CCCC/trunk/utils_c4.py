@@ -92,6 +92,10 @@ class checkBase:
     self.errorCount = 0
     self.passCount = 0
     self.missingValue = 1.e20
+    from file_utils import ncLib
+    if ncLib == 'netCDF4':
+      import numpy
+      self.missingValue = numpy.float32(self.missingValue)
     self.parent = parent
     self.reportPass=reportPass
     self.pcfg = parent.pcfg
@@ -542,7 +546,7 @@ class checkStandardDims(checkBase):
       ok = True
       self.test( 'plev' in va.keys(), 'plev coordinate not found %s' % str(va.keys()), abort=True, part=True )
 
-      ok &= self.test( int( va['plev']['_data'] ) == self.plevValues[varName],  \
+      ok &= self.test( int( va['plev']['_data'][0] ) == self.plevValues[varName],  \
                   'plev value [%s] does not match required [%s]' % (va['plev']['_data'],self.plevValues[varName] ), part=True )
       
       plevAtDict = {'standard_name':"air_pressure", \
@@ -588,9 +592,13 @@ class checkStandardDims(checkBase):
       ##ok &= self.test( abs( va['height']['_data'] - self.heightValues[varName]) < 0.001, \
                 ##'height value [%s] does not match required [%s]' % (va['height']['_data'],self.heightValues[varName] ), part=True )
 
-      r = self.heightRange[varName]
-      ok &= self.test( r[0] <= va['height']['_data'] <= r[1], \
+      ok1 = self.test( len( va['height']['_data'] ) == 1, 'More height values (%s) than expected (1)' % (len( va['height']['_data'])), part=True )
+      if ok1:
+        r = self.heightRange[varName]
+        ok1 &= self.test( r[0] <= va['height']['_data'][0] <= r[1], \
                 'height value [%s] not in specified range [%s]' % (va['height']['_data'], (self.heightRange[varName] ) ), part=True )
+
+      ok &= ok1
       
       for k in heightAtDict.keys():
         val =  va['height'].get( k, "none" )
