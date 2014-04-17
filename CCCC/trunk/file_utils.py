@@ -4,13 +4,12 @@ import string, pkgutil
 
 # Third party imports
 
-#### netcdf --- currently only support for cmds2 -- re-arranged to facilitate support for alternative modules
+#### netcdf --- currently support cdms2, python-netCDF4 and Scientific
 
 l = pkgutil.iter_modules()
 ll = map( lambda x: x[1], l )
 
-supportedNetcdf = ['cdms2']
-supportedNetcdf = ['cdms2','netCDF4']
+supportedNetcdf = ['cdms2','netCDF4','Scientific']
 
 installedSupportedNetcdf = []
 
@@ -32,8 +31,10 @@ else:
          """ % str(supportedNetcdf)
   ncLib = None
 
-## end of netcdf import.
+if ncLib == 'Scientific':
+  from Scientific.IO import NetCDF as ncdf
 
+## end of netcdf import.
 
 class fileMetadata:
 
@@ -58,13 +59,15 @@ class fileMetadata:
       self.makeDummyFileImage()
       return
     if ncLib == 'cdms2':
-      self.loadNcCdms(fpath)
+      self.loadNc__Cdms(fpath)
     elif ncLib == 'netCDF4':
-      self.loadNcNetcdf4(fpath)
+      self.loadNc__Netcdf4(fpath)
+    elif ncLib == 'Scientific':
+      self.loadNc__Scientific(fpath)
     else:
       raise 'No supported netcdf module assigned'
 
-  def loadNcCdms(self,fpath):
+  def loadNc__Cdms(self,fpath):
     self.nc = cdms2.open( fpath )
     for k in self.nc.attributes.keys():
       self.ga[k] = self.nc.attributes[k]
@@ -95,7 +98,46 @@ class fileMetadata:
       
     self.nc.close()
 
-  def loadNcNetcdf4(self,fpath):
+###
+### attributes in .__dict__ dictionary
+### variables in .variables dicttionary
+### dimension lengths in .dimensions
+### <variable>.getValue() returns an numpy.ndarray
+### data type in <variable>.getValue().dtype
+### for scalar variables, <variable>.getValue().tolist() returns a scalar.
+###
+  def loadNc__Scientific(self,fpath):
+    self.nc = ncdf.NetCDFFile( fpath, 'r' )
+    for k in self.nc.__dict__.keys():
+      self.ga[k] = self.nc.__dict__[k]
+      ##if len( self.ga[k] ) == 1:
+        ##self.ga[k] = self.ga[k][0]
+    for v in self.nc.variables.keys():
+      if v not in self.nc.dimensions.keys():
+        self.va[v] = {}
+        for k in self.nc.variables[v].__dict__.keys():
+          self.va[v][k] = self.nc.variables[v].__dict__[k]
+        self.va[v]['_type'] = str( self.nc.variables[v].getValue().dtype )
+        if v in ['plev','plev_bnds','height']:
+        ### Note: returns a scalar if data has a scalar value.
+          x = self.nc.variables[v].getValue().tolist()
+          if type(x) != type([]):
+            x = [x]
+          self.va[v]['_data'] = x
+
+    for v in self.nc.dimensions.keys():
+      self.da[v] = {}
+      if v in self.nc.variables.keys():
+        for k in self.nc.variables[v].__dict__.keys():
+          self.da[v][k] = self.nc.variables[v].__dict__[k]
+        self.da[v]['_type'] = str( self.nc.variables[v].getValue().dtype )
+        self.da[v]['_data'] = self.nc.variables[v].getValue().tolist()
+      else:
+        self.da[v]['_type'] = 'index (no data variable)'
+      
+    self.nc.close()
+
+  def loadNc__Netcdf4(self,fpath):
     self.nc = netCDF4.Dataset(fpath, 'r')
     for k in self.nc.ncattrs():
       self.ga[k] = self.nc.getncattr(k)
