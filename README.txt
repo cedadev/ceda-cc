@@ -22,6 +22,13 @@ Optional arguments:
   --flfmode <mode>      # set mode for file-level log file -- see log file modes
   --aMap                # Read in some attribute mappings and run tests with virtual substitutions, see also map2nco.py
 
+After running:
+
+The log file directory may contain hundreds of files with reports of errors. To get a summary, run:
+
+python summary.py <log file directory>
+
+This will produce a listing of errors, the number of times they occur and up to two of the files which contain the error. It is hoped that inspection of one or 2 files will provide enough information to trace the problems which lead to the error reports.
 
 Called from python:
 ------------------
@@ -42,8 +49,13 @@ m = c4.main( args=[ '-p', 'CORDEX', '-f', dataFilePath, '--ld', logFileDirectory
 DEPENDENCIES
 ------------
 
-The library can uses the cdms2 module or the netCDF4 module to read NetCDF files.
-By default, it will use the cdms2 module if available. Support for the netCDF4 module has been added recently.
+The library can uses the cdms2, python-netCDF4 or Scientific module to read NetCDF files.
+By default, it will use the cdms2 module if available. Support for the netCDF4 and Scientific modules has been added recently.
+To change the default, change the order in which modules are listed in the "supportedNetcdf" list in file_utils.py
+
+Is available as part of the cdat-lite package (http://proj.badc.rl.ac.uk/cedaservices/wiki/CdatLite ).
+For python-netCDF4, see http://code.google.com/p/netcdf4-python/.
+For Scientific see http://dirac.cnrs-orleans.fr/plone/software/scientificpython/  . Note that search engines confuse "ScientificPython" with "SciPy". The SciPy package also contains a netcdf API, but when tested in April 2014 this could not read data from NetCDF 4 files, and so is not supported here.
 
 OUTPUT
 ------
