@@ -193,6 +193,7 @@ class c4_init:
     self.attributeMappingFile = None
     self.recordFile = 'Rec.txt'
     self.logDir = 'logs_02'
+    self.errs = []
     
     # Set default project to "CORDEX"
     self.project = "CORDEX"
@@ -225,10 +226,10 @@ class c4_init:
       elif next == '-D':
         flist  = []
         fdir = args.pop(0)
-        for root, dirs, files in os.walk( fdir ):
+        for root, dirs, files in os.walk( fdir, followlinks=True ):
           for f in files:
             fpath = '%s/%s' % (root,f)
-            if os.path.isfile( fpath ) and f[-3:] == '.nc':
+            if (os.path.isfile( fpath ) or os.path.islink( fpath )) and f[-3:] == '.nc':
               flist.append( fpath )
       elif next == '-R':
         self.recordFile = args.pop(0)
@@ -245,6 +246,13 @@ class c4_init:
        print 'Unused argument: %s' % next
        nn+=1
     assert nn==0, 'Aborting because of unused arguments'
+
+    if self.project == 'CMIP5':
+      fl0 = []
+      for f in flist:
+        if string.find( f, '/latest/' ) != -1:
+          fl0.append(f)
+      flist = fl0
 
     if forceLogOrg != None:
       if forceLogOrg == 'single':
@@ -264,15 +272,21 @@ class c4_init:
              flist.append( '%s_day_%s_%s_1900-1909.nc' % (v,a,b) )
     flist.sort()
     fnl = []
-    nd = 0
     for f in flist:
       fn = string.split(f, '/')[-1]
-      if fn in fnl:
-        print 'ERROR: file name duplicated %s' % fn
-        nd += 0
-      else:
-        fnl.append(fn)
-    assert nd == 0, 'Duplicate file names encountered'
+      fnl.append(fn)
+    nd = 0
+    dupl = []
+    for k in range(len(fnl)-1):
+      if fnl[k] == fnl[k-1]:
+        nd += 1
+        dupl.append( fnl[k] )
+    self.dupDict = {}
+    for f in dupl:
+      self.dupDict[f] = 0
+    if nd != 0:
+      self.errs.append( 'Duplicate file names encountered: %s' % nd )
+      self.errs.append( dupl )
     self.flist = flist
     self.fnl = fnl
     if not os.path.isdir(   self.logDir ):
@@ -313,7 +327,12 @@ class c4_init:
   def getFileLog( self, fn, flf=None ):
     if flf == None:
       tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
-      self.fileLogfile = '%s/%s__qclog_%s.txt' % (self.logDir,fn[:-3],tstring2)
+      if fn in self.dupDict.keys():
+        tag = '__%2.2i' % self.dupDict[fn]
+        self.dupDict[fn] += 1
+      else:
+        tag = ''
+      self.fileLogfile = '%s/%s%s__qclog_%s.txt' % (self.logDir,fn[:-3],tag,tstring2)
       if self.policyFileLogfileMode in ['n','np']:
         assert not os.path.isfile( self.fileLogfile ), '%s exists and policy set to new file' % self.fileLogfile
       m = self.policyFileLogfileMode[0]
@@ -369,6 +388,9 @@ class main:
 
     cal = None
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
+    if len( c4i.errs ) > 0:
+      for i in range(0,len( c4i.errs ), 2 ):
+        c4i.logger.info( c4i.errs[i] )
   
     self.cc.info.amapListDraft = []
     cbv = utils.checkByVar( parent=self.cc.info,cls=c4i.project,monitor=self.monitor)
@@ -387,6 +409,7 @@ class main:
       c4i.logger.info( 'Starting: %s' % fn )
       try:
   ### need to have a unique name, otherwise get mixing of logs despite close statement below.
+  ### if duplicate file names are present, this will be recorded in the main log, tag appended to file level log name (not yet tested).
         if c4i.logByFile:
           fLogger = c4i.getFileLog( fn )
           logDict[fn] = c4i.fileLogfile
@@ -447,7 +470,7 @@ class main:
   
     self.cc.info.log = c4i.logger
     
-    if c4i.project not in ['SPECS','CCMI']:
+    if c4i.project not in ['SPECS','CCMI','CMIP5']:
        cbv.c4i = c4i
        cbv.setLogDict( logDict )
        cbv.check( recorder=rec, calendar=self.cc.calendar)
