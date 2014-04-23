@@ -6,10 +6,14 @@ idir = sys.argv[1]
 fl = glob.glob( '%s/*__qclog_*.txt' % idir )
 
 ee = {}
+print 'Summarising error reports from %s log file' % len(fl)
+nne = 0
 for f in fl:
+  nef = 0
   for l in open(f).readlines():
     fn = string.split(f,'/')[-1]
     if string.find(l, 'FAILED') != -1 or string.find(l,'CDMSError:') != -1:
+      nef += 1
       if string.find(l, 'FAILED') != -1:
          kb1 = 3
       else:
@@ -28,6 +32,8 @@ for f in fl:
           ee[code][1][msg][1].append(fn)
       else:
         print bits
+  if nef == 0:
+    nne += 1
 
 keys = ee.keys()
 keys.sort()
@@ -45,6 +51,8 @@ for k in keys:
       for i in range(min(2,ee[k][1][k2][0])):
         print '               ',ee[k][1][k2][1][i]
 
+
+print 'Number of files with no errors: %s' % nne
 
 
 

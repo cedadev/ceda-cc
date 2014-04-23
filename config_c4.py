@@ -6,9 +6,10 @@ validCmip5Experiments = ['1pctCO2', 'abrupt4xCO2', 'amip', 'amip4K', 'amip4xCO2'
 validCordexExperiment = validCmip5Experiments + ['evaluation']
 
 
-validCordexFrequecies = ['fx','sem','mon','day','6hr','3hr']
-validSpecsFrequecies = ['fx','mon','day','6hr']
-validCcmiFrequecies = ['fx','yr','mon','day','hr','subhr']
+validCmip5Frequencies = ['fx','yr','monClim','mon','day','6hr','3hr','subhr']
+validCordexFrequencies = ['fx','sem','mon','day','6hr','3hr']
+validSpecsFrequencies = ['fx','mon','day','6hr']
+validCcmiFrequencies = ['fx','yr','mon','day','hr','subhr']
 validSpecsExptFamilies = map( lambda x: string.split( x )[0], open( 'specs_vocabs/exptFamily.txt' ).readlines() )
 
 validCordexDomainsL = [ 'SAM-44', 'CAM-44', 'NAM-44', 'EUR-44', 'AFR-44', 'WAS-44', 'EAS-44', 'CAS-44', 'AUS-44', 'ANT-44', 'ARC-44', 'MED-44']
@@ -114,7 +115,7 @@ def getVocabs(pcfg):
                ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
-               'frequency':utils.listControl( 'frequency', validSpecsFrequecies ), \
+               'frequency':utils.listControl( 'frequency', validSpecsFrequencies ), \
                'experiment_id':utils.listControl( 'experiment_id', validSpecsExptFamilies ), \
                'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
                'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
@@ -124,11 +125,25 @@ def getVocabs(pcfg):
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
                'series':utils.listControl( 'series', ['series1','series2'] ), \
              }
+  elif pcfg.project == 'CMIP5':
+               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
+    lrdr = readVocab( 'cmip5_vocabs/')
+    vocabs = { 'variable':utils.mipVocab(pcfg), \
+               'Conventions':utils.listControl( 'Conventions', ['CF-1.4','CF-1.5'] ), \
+               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'experiments.txt' ) ), \
+               'frequency':utils.listControl( 'frequency', validCmip5Frequencies ), \
+               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
+               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
+               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
+               'project_id':utils.listControl( 'project_id', ['CMIP5'] ), \
+               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
+             }
   elif pcfg.project == 'CCMI':
     
     lrdr = readVocab( 'ccmi_vocabs/')
     vocabs = { 'variable':utils.mipVocab(pcfg), \
-               'frequency':utils.listControl( 'frequency', validCcmiFrequecies ), \
+               'frequency':utils.listControl( 'frequency', validCcmiFrequencies ), \
                'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
 ## do not preserve or check relation between model and institution.
                'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
@@ -148,14 +163,14 @@ def getVocabs(pcfg):
            'rcm_version_id':utils.patternControl( 'rcm_version_id',  '[a-zA-Z0-9-]+' ), \
            'model_id':utils.listControl( 'model_id',  validRcmNames ), \
            'institute_id':utils.listControl( 'institute_id',  validInstNames ), \
-           'frequency':utils.listControl( 'frequency', validCordexFrequecies ) }
+           'frequency':utils.listControl( 'frequency', validCordexFrequencies ) }
 
   return vocabs
 
 class projectConfig:
 
   def __init__(self, project):
-    knownProjects = ['CCMI','CORDEX','SPECS','__dummy']
+    knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -185,6 +200,22 @@ class projectConfig:
       self.drsMappings = {'variable':'@var', 'institute':'institution', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'@ensemble', 'model':'model_id', 'series':'series', 'realm':'modeling_realm', \
                         'frequency':'frequency', 'start_date':'@forecast_reference_time', \
+                        'project':'project_id'}
+
+    elif project == 'CMIP5':
+      lrdr = readVocab( 'cmip5_vocabs/')
+      self.requiredGlobalAttributes = [ 'contact', 'product', 'creation_date', 'tracking_id', \
+              'experiment_id']
+      ##self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'frequency','Conventions','modeling_realm', \
+                       'initialization_method','physics_version','realization']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','@ensemble']
+#sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_series1_r1i1p1_199501-199502.nc 
+## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.drsMappings = {'variable':'@var', 'institute':'institution', 'product':'product', 'experiment':'experiment_id', \
+                        'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
+                        'frequency':'frequency',  \
                         'project':'project_id'}
 
     elif project == 'CCMI':
@@ -225,6 +256,14 @@ class projectConfig:
       self.checkTrangeLen = True
       self.domainIndex = 1
       self.freqIndex = 7
+    elif self.project == 'CMIP5':
+## cRoot_Lmon_CESM1-WACCM_rcp85_r3i1p1_200601-205512.nc
+      self.fnPartsOkLen = [5,6]
+      self.fnPartsOkFixedLen = [5,]
+      self.fnPartsOkUnfixedLen = [6,]
+      self.checkTrangeLen = False
+      self.domainIndex = None
+      self.freqIndex = None
     elif self.project == 'SPECS':
       self.fnPartsOkLen = [7,8]
       self.fnPartsOkFixedLen = [7,]
@@ -254,6 +293,11 @@ class projectConfig:
        self.mipVocabTl = ['fx','sem','mon','day','6h','3h']
        self.mipVocabVgmap = {'6h':'6hr','3h':'3hr'}
        self.mipVocabFnpat = 'CORDEX_%s'
+    elif self.project == 'CMIP5':
+       self.mipVocabDir = 'cmip5_vocabs/mip/'
+       self.mipVocabTl = ['fx','Oyr','Oclim','Omon','Amon','Lmon','OImon','cfMon','aero','cfDay','day','cfOff','cfSites','6hrLev','6hrPlev','3hr','cf3hr']
+       self.mipVocabVgmap = {}
+       self.mipVocabFnpat = 'CMIP5_%s'
     elif self.project == 'SPECS':
        self.mipVocabDir = 'specs_vocabs/mip/'
        self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hr']
@@ -274,7 +318,7 @@ class projectConfig:
 ######## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
-    elif self.project in ['CCMI','SPECS','__dummy']:
+    elif self.project in ['CMIP5','CCMI','SPECS','__dummy']:
       self.groupIndex = 1
 
     self.vocabs = getVocabs(self)
