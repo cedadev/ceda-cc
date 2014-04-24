@@ -6,7 +6,7 @@ From the command line:
 
 Required arguments:
 
-python c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI.
+python c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI, CMIP5.
 python c4.py -p <project> -d <directory>  ## check all files in directory
 python c4.py -p <project> -f <file>       ## check a single file.
 

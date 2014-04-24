@@ -1,7 +1,13 @@
 
 import string, sys, glob
 
-idir = sys.argv[1]
+args = sys.argv[1:-1]
+idir = sys.argv[-1]
+ndisp = 2
+while len(args) > 0:
+  x = args.pop(0)
+  if x == '-n':
+    ndisp = int( args.pop(0) )
 
 fl = glob.glob( '%s/*__qclog_*.txt' % idir )
 
@@ -37,18 +43,24 @@ for f in fl:
 
 keys = ee.keys()
 keys.sort()
+def cmin(x,y):
+  if x < 0:
+    return y
+  else:
+    return min(x,y)
+
 for k in keys:
   ks = ee[k][1].keys()
   if len(ks) == 1:
     print k,ee[k][0],ks[0]
-    for i in range(min(2,ee[k][0])):
+    for i in range(cmin(ndisp,ee[k][0])):
       print '               ',ee[k][1][ks[0]][1][i]
   else:
     print k,ee[k][0]
     ks.sort()
     for k2 in ks:
       print '  --- ',k2,ee[k][1][k2][0]
-      for i in range(min(2,ee[k][1][k2][0])):
+      for i in range(cmin(ndisp,ee[k][1][k2][0])):
         print '               ',ee[k][1][k2][1][i]
 
 
