@@ -1,6 +1,9 @@
 
 import string, re, os, sys, traceback
 
+def strmm3( mm ):
+  return string.join( map( lambda x: '%s="%s" [correct: "%s"]' % x, mm ), '; ' )
+
 from fcc_utils import mipTableScan
 
 class reportSection:
@@ -235,15 +238,17 @@ class checkFileName(checkBase):
 
     self.test( len(bits) in self.pcfg.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.pcfg.fnPartsOkLen),str(bits)), abort=True )
 
-    if self.pcfg.freqIndex != None:
-      self.freq = self.fnParts[self.pcfg.freqIndex]
-    else:
-      self.freq = None
-
     if self.pcfg.groupIndex != None:
       self.group = self.fnParts[self.pcfg.groupIndex]
     else:
       self.group = None
+
+    if self.pcfg.freqIndex != None:
+      self.freq = self.fnParts[self.pcfg.freqIndex]
+    elif self.group == 'fx':
+      self.freq = 'fx'
+    else:
+      self.freq = None
 
     ##if self.cls == 'CORDEX':
       ##self.freq = self.fnParts[7]
@@ -355,7 +360,9 @@ class checkGlobalAttributes(checkBase):
 
     self.checkId = '003'
 
-    self.test( varAts[varName]['_type'] == "float32", 'Variable [%s] not of type float' % varName )
+    mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
+    thisType = {'real':'float32', 'integer':'int32' }.get( mipType, mipType )
+    self.test( mipType == None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,thisType,varAts[varName]['_type']) )
 
     self.checkId = '004'
     m = []
@@ -381,12 +388,13 @@ class checkGlobalAttributes(checkBase):
     if ( varAts[varName].get( 'missing_value', None ) != None ) or varAts[varName].has_key( '_FillValue' ):
       tval = ( varAts[varName].get( 'missing_value', None ) != None ) and varAts[varName].has_key( '_FillValue' )
       ok &= self.test( tval, 'missing_value and _FillValue must both be present if one is [%s]' % varName )
-      if varAts[varName].has_key( 'missing_value' ):
-         msg = 'Variable [%s] has incorrect missing_value attribute' % varName
-         ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
-      if varAts[varName].has_key( '_FillValue' ):
-         msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
-         ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
+      if mipType == 'real':
+        if varAts[varName].has_key( 'missing_value' ):
+           msg = 'Variable [%s] has incorrect missing_value attribute' % varName
+           ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
+        if varAts[varName].has_key( '_FillValue' ):
+           msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
+           ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
 
     mm = []
     
@@ -419,10 +427,10 @@ class checkGlobalAttributes(checkBase):
               mm.append( (k,parenthesies1,p) )
           if string.find( targ, val):
              mm.append( (k,targ,val) )
-      elif targ != val:
+      elif targ != 'Attribute not present' and targ != val:
         mm.append( (k,targ,val) )
 
-    ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, str(mm)), part=True )
+    ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, strmm3(mm)), part=True )
     if len( mm  ) != 0:
       if self.parent.amapListDraft == None:
         self.parent.amapListDraft = []
@@ -763,7 +771,8 @@ class mipVocab:
         ll = open( '%s%s' % (dir,fn) ).readlines()
         ee = ms.scan_table(ll,None,asDict=True)
         for v in ee.keys():
-          eeee = {}
+## set global default: type float
+          eeee = { 'type':pcfg.defaults.get( 'variableDataType', 'float' ) }
           ar = []
           ac = []
           for a in ee[v][1].keys():
@@ -789,6 +798,7 @@ class mipVocab:
           eeee['long_name'] = ee['long_name'] % i
           eeee['cell_methods'] = 'time: point'
           eeee['units'] = ee['units']
+          eeee['type'] = 'float'
           ar = []
           ac = []
           self.varInfo[v] = {'ar':ar, 'ac':ac }

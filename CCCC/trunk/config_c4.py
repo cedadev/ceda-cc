@@ -287,6 +287,7 @@ class projectConfig:
       self.freqIndex = 1
 
 
+    self.defaults = { 'variableDataType':'float' }
 ######## used in mipVocabs
     if self.project == 'CORDEX':
        self.mipVocabDir = 'cordex_vocabs/mip/'
@@ -295,9 +296,10 @@ class projectConfig:
        self.mipVocabFnpat = 'CORDEX_%s'
     elif self.project == 'CMIP5':
        self.mipVocabDir = 'cmip5_vocabs/mip/'
-       self.mipVocabTl = ['fx','Oyr','Oclim','Omon','Amon','Lmon','OImon','cfMon','aero','cfDay','day','cfOff','cfSites','6hrLev','6hrPlev','3hr','cf3hr']
+       self.mipVocabTl = ['fx','Oyr','Oclim','Omon','Amon','Lmon','LImon','OImon','cfMon','aero','cfDay','day','cfOff','cfSites','6hrLev','6hrPlev','3hr','cf3hr']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'CMIP5_%s'
+       self.defaults['variableDataType'] = None 
     elif self.project == 'SPECS':
        self.mipVocabDir = 'specs_vocabs/mip/'
        self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hr']
