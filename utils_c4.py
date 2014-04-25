@@ -385,15 +385,17 @@ class checkGlobalAttributes(checkBase):
 ## need to insert a check that variable is present
     self.checkId = '005'
     ok = True
-    if ( varAts[varName].get( 'missing_value', None ) != None ) or varAts[varName].has_key( '_FillValue' ):
-      tval = ( varAts[varName].get( 'missing_value', None ) != None ) and varAts[varName].has_key( '_FillValue' )
-      ok &= self.test( tval, 'missing_value and _FillValue must both be present if one is [%s]' % varName )
+    hm = varAts[varName].get( 'missing_value', None ) != None
+    hf = varAts[varName].has_key( '_FillValue' )
+    if hm or hf:
+      ok &= self.test( hm, 'missing_value must be present if _FillValue is [%s]' % varName )
+      ok &= self.test( hf, '_FillValue must be present if missing_value is [%s]' % varName )
       if mipType == 'real':
         if varAts[varName].has_key( 'missing_value' ):
-           msg = 'Variable [%s] has incorrect missing_value attribute' % varName
+           msg = 'Variable [%s] has incorrect attribute missing_value=%s [correct: %s]' % (varName,varAts[varName]['missing_value'],self.missingValue)
            ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
         if varAts[varName].has_key( '_FillValue' ):
-           msg = 'Variable [%s] has incorrect _FillValue attribute' % varName
+           msg = 'Variable [%s] has incorrect attribute _FillValue=%s [correct: %s]' % (varName,varAts[varName]['_FillValue'],self.missingValue)
            ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
 
     mm = []
