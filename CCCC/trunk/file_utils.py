@@ -157,7 +157,11 @@ class fileMetadata:
       if v in self.nc.variables.keys():
         for k in self.nc.variables[v].ncattrs():
           self.da[v][k] = self.nc.variables[v].getncattr(k)
-        self.da[v]['_type'] = str( self.nc.variables[v].datatype )
+        try:
+          self.da[v]['_type'] = str( self.nc.variables[v].dtype )
+        except:
+          self.da[v]['_type'] = str( self.nc.variables[v].datatype )
+
         self.da[v]['_data'] = self.nc.variables[v][:].tolist()
       else:
         self.da[v]['_type'] = 'index (no data variable)'
