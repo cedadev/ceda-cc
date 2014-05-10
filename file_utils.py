@@ -148,7 +148,10 @@ class fileMetadata:
         self.va[v] = {}
         for k in self.nc.variables[v].ncattrs():
           self.va[v][k] = self.nc.variables[v].getncattr(k)
-        self.va[v]['_type'] = str( self.nc.variables[v].datatype )
+        try:
+          self.va[v]['_type'] = str( self.nc.variables[v].dtype )
+        except:
+          self.va[v]['_type'] = str( self.nc.variables[v].datatype )
         if v in ['plev','plev_bnds','height']:
           self.va[v]['_data'] = self.nc.variables[v][:].tolist()
 
