@@ -174,6 +174,7 @@ class projectConfig:
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
+    self.gridSpecTol = 0.01
     if project == 'CORDEX':
       self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
              'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
@@ -216,7 +217,7 @@ class projectConfig:
 ## key: DRS element name, value: global attribute name or tag for mapping from file information ("@....").
       self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
-                        'frequency':'frequency',  \
+                        'frequency':'frequency',  'table':'@mip_id',
                         'project':'project_id'}
 
     elif project == 'CCMI':

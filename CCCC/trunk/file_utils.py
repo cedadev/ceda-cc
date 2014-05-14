@@ -235,7 +235,7 @@ class fileMetadata:
               if log != None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
-              thisval = self.va[m[1][0][1]].get( targ, None )
+              thisval = self.da[m[1][0][1]].get( targ, None )
               self.da[m[1][0][1]][targ] = m[2][1]
               self.atMapLog.write( '@ax:"%s","%s","%s","%s","%s"\n' % (self.fpath, m[1][0][1], targ, thisval, m[2][1]) )
         elif m[1][0][0] == "@":
