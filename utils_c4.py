@@ -323,6 +323,8 @@ class checkGlobalAttributes(checkBase):
       elif self.drsMappings[k] == '@forecast_reference_time':
         x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
+      elif self.drsMappings[k] == '@mip_id':
+        ee[k] = string.split( self.globalAts["table_id"] )[1]
       else:
         ee[k] = self.globalAts[ self.drsMappings[k] ]
 
@@ -346,6 +348,7 @@ class checkGlobalAttributes(checkBase):
     for k in self.requiredGlobalAttributes:
       if not globalAts.has_key(k):
          m.append(k)
+         self.globalAts[k] = '__errorReported__'
 
     if not self.test( len(m)  == 0, 'Required global attributes missing: %s' % str(m) ):
       gaerr = True
@@ -488,7 +491,7 @@ class checkGlobalAttributes(checkBase):
          else:
              thisVal = globalAts[self.globalAttributesInFn[i]]
 
-         if thisVal != targVal:
+         if thisVal not in [targVal,'__errorReported__']:
              m.append( (i,self.globalAttributesInFn[i]) )
 
     self.test( len(m)  == 0,'File name segments do not match corresponding global attributes: %s' % str(m) )
@@ -666,6 +669,8 @@ class checkGrids(checkBase):
         for k2 in atDict[k].keys():
           if atDict[k][k2] != da[k].get(k2, None ):
             mm.append( (k,k2) )
+            record = '#@ax=%s;%s=%s|%s=%s <uncomment if correct>' % (k,k2,da[k].get(k2, '__missing__'),k2,atDict[k][k2]   )
+            self.parent.amapListDraft.append( record )
       self.test( len(mm) == 0, 'Required attributes of grid coordinate arrays not correct: %s' % str(mm) )
 
       self.checkId = '003'
@@ -680,10 +685,10 @@ class checkGrids(checkBase):
       b = map( lambda x: self.pcfg.rotatedPoleGrids[domain][x], ['s','n','w','e'] )
       mm = []
       for i in range(4):
-        if a[i] != b[i]:
+        if abs(a[i] - b[i]) > self.pcfg.gridSpecTol:
           mm.append( (a[i],b[i]) )
 
-      ok &= self.test( len(mm) == 0, 'Domain boundaries for rotated pole grid do not match %s' % str(mm), part=True )
+      ok &= self.test( len(mm) == 0, 'Domain boundaries for rotated pole grid do not match %s within tolerance (%s)' % (str(mm),self.pcfg.gridSpecTol), part=True )
 
       for k in ['rlat','rlon']:
         ok &= self.test( cs.check( da[k]['_data'] ), '%s values not evenly spaced -- min/max delta = %s, %s' % (k,cs.dmn,cs.dmx), part=True )
@@ -707,6 +712,8 @@ class checkGrids(checkBase):
         for k2 in atDict[k].keys():
           if atDict[k][k2] != da[k].get(k2, None ):
             mm.append( (k,k2) )
+            record = '#@ax=%s;%s=%s|%s=%s <uncomment if correct>' % (k,k2,da[k].get(k2, '__missing__'),k2,atDict[k][k2]   )
+            self.parent.amapListDraft.append( record )
 
       self.test( len(mm) == 0,  'Required attributes of grid coordinate arrays not correct: %s' % str(mm), part=True )
 
