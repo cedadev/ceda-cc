@@ -1,4 +1,5 @@
 from fcc_utils2 import mipTableScan
+from config_c4 import CC_CONFIG_DIR
 import re, os, string
 
 ml = ['CORDEX_3h', 'CORDEX_6h', 'CORDEX_Aday', 'CORDEX_day', 'CORDEX_grids', 'CORDEX_mon' ]
@@ -153,8 +154,7 @@ class comp:
         if f4:
            print 'ERROR[7]: Difference between CORDEX MIP tables and VR in positive, realm: %s:: %s,%s --- %s' % (xxx,e1[k][1].get('positive','None'),e1[k][1].get('modeling_realm','None'), self.ec1[k][4:6])
         
-base='/home/users/prototype/cordex/exarch/FCC2/trunk/work/'
-base='./'
+base=CC_CONFIG_DIR
 snl,snla = gen_sn_list( base + cfsntab )
 print 'Len snl = %s' % len(snl)
 

@@ -1,6 +1,7 @@
 
 import collections, glob, string
 from fcc_utils2 import mipTableScan
+from config_c4 import CC_CONFIG_DIR
 
 ms = mipTableScan()
 
@@ -12,7 +13,7 @@ cmip5_ignore = ['depth','depth_c','eta','nsigma','vertices_latitude','vertices_l
 
 vl0 = []
 for mip in mips:
-  dl = glob.glob( '%s%s' % (mip.dir,mip.pattern) )
+  dl = glob.glob( '%s/%s%s' % (CC_CONFIG_DIR, mip.dir,mip.pattern) )
   dl.sort()
   tl = []
   td = {}
