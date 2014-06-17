@@ -1,0 +1,8 @@
+
+153a: "__errorReported__" string placed in globalAts dictionry for missing required attributes, to avoid subsequent exception when accessing value for later tests.
+153b: Added lines to provide amapDraft records for failed tests on attribute of axes.
+153c: Debugged amap virtual substitutions for attributes of axes.
+153d: Added mip_id mapping to those recognised in construction of drs dictionary
+153e: Draft correction for CMIP5 diretory path.
+153f: Added tolerance of 0.01 degrees for rotated latitude grid specification.
+
