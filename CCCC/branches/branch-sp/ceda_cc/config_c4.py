@@ -6,14 +6,12 @@ import os.path as op
 ##############################################################################
 # Configure config-file paths
 #
-# This is an interim measure until we put all configuration files inside the 
-# ceda_cc directory and create a means of overriding them.
-#
 # All configuration directories, e.g. cmip5_vocabs, are looked for in a single
-# parent directory.  This is assumed to be the "config" relative to the current
-# directory or the value of the environment variable CC_CONFIG_DIR
+# parent directory.  This is the "config" directory within the package unless 
+# the environment variable CC_CONFIG_DIR is set.
 
-CC_CONFIG_DIR = os.environ.get('CC_CONFIG_DIR', './config')
+HERE = op.dirname(__file__)
+CC_CONFIG_DIR = os.environ.get('CC_CONFIG_DIR', op.join(HERE, 'config'))
 
 ##############################################################################
 
