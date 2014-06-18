@@ -495,8 +495,17 @@ class main:
     ##c4i.hdlr.close()
     c4i.closeBatchLog()
     self.ok = all( map( lambda x: x[0], self.resList ) )
+
+
+def main_entry():
+   """
+   Wrapper around main() for use with setuptools.
+
+   """
+   main(printInfo=True)
+
 if __name__ == '__main__':
-  main(printInfo=True)
+  main_entry()
 
 
 ##else:
