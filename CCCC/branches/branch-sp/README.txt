@@ -6,9 +6,9 @@ From the command line:
 
 Required arguments:
 
-python c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI, CMIP5.
-python c4.py -p <project> -d <directory>  ## check all files in directory
-python c4.py -p <project> -f <file>       ## check a single file.
+python ceda_cc/c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI, CMIP5.
+python ceda_cc/c4.py -p <project> -d <directory>  ## check all files in directory
+python ceda_cc/c4.py -p <project> -f <file>       ## check a single file.
 
 Optional arguments:
 
@@ -29,6 +29,20 @@ The log file directory may contain hundreds of files with reports of errors. To 
 python summary.py <log file directory>
 
 This will produce a listing of errors, the number of times they occur and up to two of the files which contain the error. It is hoped that inspection of one or 2 files will provide enough information to trace the problems which lead to the error reports.
+
+
+Installing as a package:
+------------------------
+
+You can also install the code into your Python environment and then use the "ceda-cc" command to invoke c4.py with the same arguments ans described above.
+
+ 1. If you have "pip" installed simply execute:
+    $ pip install ceda-cc
+    or after downloading the tarball
+    $ pip install ceda-cc-$VERSION.tar.gz
+
+ 2. If you have the setuptools package you can execute the following from the distribution directory:
+    $ python setup.py install
 
 Called from python:
 ------------------

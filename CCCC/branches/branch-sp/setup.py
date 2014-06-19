@@ -8,7 +8,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-setup(name='ceda_cc',
+setup(name='ceda-cc',
       version='0.1',
       description="CEDA Conformance Checker",
       #long_description="",
