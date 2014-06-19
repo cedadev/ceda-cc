@@ -315,6 +315,8 @@ class checkGlobalAttributes(checkBase):
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
+    if not self.globalAts.has_key('product'):
+        self.globalAts['product'] = 'output'
     for k in self.drsMappings:
       if self.drsMappings[k] == '@var':
         ee[k] = self.var
@@ -472,7 +474,12 @@ class checkGlobalAttributes(checkBase):
          targVal = fnParts[i]
          if self.globalAttributesInFn[i][0] == "@":
            if self.globalAttributesInFn[i][1:] == "mip_id":
-               thisVal = string.split( globalAts["table_id"] )[1]
+               bits = string.split( globalAts[ "table_id" ] ) 
+               if len( bits ) > 2 and bits[0] == "Table":
+                 thisVal = bits[1]
+               else:
+                 thisVal = globalAts[ "table_id" ]
+                 self.test( False, 'Global attribute table_id does not conform to CMOR pattern ["Table ......"]: %s' % thisVal, part=True)
            elif self.globalAttributesInFn[i][1:] == "experiment_family":
                thisVal = globalAts["experiment_id"][:-4]
            elif self.globalAttributesInFn[i][1:] == "ensemble":
