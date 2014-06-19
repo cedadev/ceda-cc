@@ -9,6 +9,7 @@ Required arguments:
 python ceda_cc/c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI, CMIP5.
 python ceda_cc/c4.py -p <project> -d <directory>  ## check all files in directory
 python ceda_cc/c4.py -p <project> -f <file>       ## check a single file.
+python ceda_cc/c4.py --copy-config <dest-dir>     ## copy the default configuration directory to <dest-dir> to enable customisation.
 
 Optional arguments:
 
@@ -21,6 +22,10 @@ Optional arguments:
   --blfmode <mode>      # set mode for batch log file -- see log file modes
   --flfmode <mode>      # set mode for file-level log file -- see log file modes
   --aMap                # Read in some attribute mappings and run tests with virtual substitutions, see also map2nco.py
+
+Environment variables:
+
+  CC_CONFIG_DIR  ## Set to the location of a custom configuration directory.  If unset the default configuration will be used.
 
 After running:
 
@@ -43,6 +48,9 @@ You can also install the code into your Python environment and then use the "ced
 
  2. If you have the setuptools package you can execute the following from the distribution directory:
     $ python setup.py install
+
+If you install ceda-cc in this way you can use the --copy-config command to export the default configuration into a directory where you can edit the configuration.
+
 
 Called from python:
 ------------------

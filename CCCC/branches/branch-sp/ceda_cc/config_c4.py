@@ -2,6 +2,7 @@ import string
 import utils_c4 as utils
 import os
 import os.path as op
+import shutil
 
 ##############################################################################
 # Configure config-file paths
@@ -11,7 +12,8 @@ import os.path as op
 # the environment variable CC_CONFIG_DIR is set.
 
 HERE = op.dirname(__file__)
-CC_CONFIG_DIR = os.environ.get('CC_CONFIG_DIR', op.join(HERE, 'config'))
+CC_CONFIG_DEFAULT_DIR = op.join(HERE, 'config')
+CC_CONFIG_DIR = os.environ.get('CC_CONFIG_DIR', CC_CONFIG_DEFAULT_DIR)
 
 ##############################################################################
 
@@ -343,3 +345,18 @@ class projectConfig:
     self.vocabs = getVocabs(self)
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
+
+
+def copy_config(dest_dir):
+   """
+   Copy the current default configuration directory into a separate directory.
+
+   The directory <ceda_cc-package-dir>/config is copied to `dest_dir`.
+   This is useful when ceda-cc is installed as a Python package and the user may
+   not know where the config directory is stored.
+
+   :param dest_dir: should be a path to a directory which does not yet exist.  
+       The configuration directory will be copied to this path.
+
+   """
+   shutil.copytree(CC_CONFIG_DEFAULT_DIR, dest_dir)

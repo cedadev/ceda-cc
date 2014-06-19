@@ -1,6 +1,7 @@
 
 # Standard library imports
 import os, string, time, logging, sys, glob, pkgutil
+import shutil
 
 ## pkgutil is used in file_utils
 # Third party imports
@@ -200,6 +201,15 @@ class c4_init:
     self.project = "CORDEX"
     self.holdExceptions = False
     forceLogOrg = None
+
+    # The --copy-config option must be the first argument if it is present.
+    if args[0] == '--copy-config':
+       args.pop(0)
+       dest_dir = args.pop(0)
+       config.copy_config(dest_dir)
+       print 'Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir
+       print
+       raise SystemExit(0)
 
     while len(args) > 0:
       next = args.pop(0)
@@ -495,6 +505,9 @@ class main:
     ##c4i.hdlr.close()
     c4i.closeBatchLog()
     self.ok = all( map( lambda x: x[0], self.resList ) )
+
+
+   
 
 
 def main_entry():
