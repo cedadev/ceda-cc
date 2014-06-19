@@ -56,7 +56,7 @@ Called from python:
 ------------------
 The code can also be called from a python script:
 
-import c4
+from ceda_cc import c4
 m = c4.main( args=argList )     # argList is a python list of command line arguments
 if not m.ok:
   print 'check failed'
