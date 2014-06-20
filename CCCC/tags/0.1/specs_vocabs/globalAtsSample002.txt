@@ -1,0 +1,24 @@
+zos_Omon_EC-EARTH_decadal_series1_r1i1p1_1990-1990.nc
+FAIL
+batch  aa001
+contact   john@home.uk
+Conventions   CF-1.6
+creation_date   19th JUly, 2014
+experiment_id   decada1980
+forecast_reference_time   0001
+frequency  day
+institution  ECMWF
+initialization_method  1
+initialization_description  first
+model_id  EC-EARTH
+associated_model  None
+modeling_realm   atmos
+physics_version   1
+physics_description  first
+project_id  SPECS
+realization  1
+source   misc
+table_id  Table Omon
+title   sample
+tracking_id 1093890138391
+series @int 1
