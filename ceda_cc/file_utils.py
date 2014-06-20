@@ -2,6 +2,8 @@
 # Standard library imports
 import string, pkgutil
 
+from xceptions import *
+
 # Third party imports
 
 #### netcdf --- currently support cdms2, python-netCDF4 and Scientific
@@ -36,7 +38,7 @@ if ncLib == 'Scientific':
 
 ## end of netcdf import.
 
-class fileMetadata:
+class fileMetadata(object):
 
   def __init__(self,dummy=False,attributeMappingsLog=None):
      
@@ -65,7 +67,7 @@ class fileMetadata:
     elif ncLib == 'Scientific':
       self.loadNc__Scientific(fpath)
     else:
-      raise 'No supported netcdf module assigned'
+      raise baseException( 'No supported netcdf module assigned' )
 
   def loadNc__Cdms(self,fpath):
     self.nc = cdms2.open( fpath )

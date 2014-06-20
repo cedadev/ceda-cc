@@ -3,6 +3,7 @@ import logging, time
 import utils_c4
 import config_c4 as config
 from c4 import fileMetadata, dummy, main
+from xceptions import *
 
 #### set up log file ####
 tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
@@ -19,7 +20,7 @@ try:
   fmd.loadNc( '/dummyPath/v1_day_a_b_1990-1991.nc')
 except:
   print 'Failed to parse a simple dummy file path'
-  raise
+  raise baseException( 'Failed to parse a simple dummy file path' )
 print 'OK: instantiated fileMetaData and parsed a simple dummy path'
 
 p = dummy()
@@ -46,7 +47,7 @@ try:
   print 'OK [%s]: dummy run completed without exception' % testId
 except:
   print 'Failed [%s]: dummy run triggered exception' % testId
-  raise
+  raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
 
 testId = '#11.002'
 if m.monitor.fhCountMax < 10:

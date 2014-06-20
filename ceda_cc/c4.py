@@ -26,11 +26,13 @@ import config_c4 as config
 
 reload( utils )
 
+from xceptions import baseException
+
 
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
 
-class dummy:
+class dummy(object):
    pass
 
 pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/',   \
@@ -39,7 +41,7 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
 
-class recorder:
+class recorder(object):
 
   def __init__(self,project,fileName,type='map',dummy=False):
     self.dummy = dummy
@@ -107,7 +109,7 @@ class recorder:
     fn = string.split( fpath, '/' )[-1]
     self.records[fn] = record
 
-class checker:
+class checker(object):
   def __init__(self, pcfg, cls,reader,abortMessageCount=-1):
     self.info = dummy()
     self.info.pcfg = pcfg
@@ -189,7 +191,7 @@ class checker:
     self.drs['project'] = self.info.pcfg.project
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
-class c4_init:
+class c4_init(object):
 
   def __init__(self,args=None):
     self.logByFile = True
@@ -388,7 +390,7 @@ class c4_init:
       os.popen( 'chmod %s %s;' % (444, self.batchLogfile) )
 
 
-class main:
+class main(object):
 
   def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False):
     logDict = {}
@@ -396,10 +398,8 @@ class main:
     c4i = c4_init(args=args)
       
     isDummy  = c4i.project[:2] == '__'
-    if (ncLib == dummy) and (not isDummy):
-       print ncLib, c4i.project
-       print 'Cannot proceed with non-dummy project without cdms'
-       raise
+    if (ncLib == None) and (not isDummy):
+       raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
     pcfg = config.projectConfig( c4i.project )
     ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog)
     self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
