@@ -1,12 +1,12 @@
-
 import string, re, os, sys, traceback
 
 def strmm3( mm ):
   return string.join( map( lambda x: '%s="%s" [correct: "%s"]' % x, mm ), '; ' )
 
 from fcc_utils import mipTableScan
+from xceptions import *
 
-class reportSection:
+class reportSection(object):
 
   def __init__(self,id,cls,parent=None, description=None):
     self.id = id
@@ -54,22 +54,7 @@ class reportSection:
       else:
         self.fail += 1
 
-class abortChecks(Exception):
-  pass
-class loggedException(Exception):
-  pass
-class baseException(Exception):
- 
-  def __init__(self,msg):
-    self.msg = 'utils_c4:: %s' % msg
-
-  def __str__(self):
-        return unicode(self).encode('utf-8')
-
-  def __unicode__(self):
-        return self.msg % tuple([force_unicode(p, errors='replace')
-                                 for p in self.params])
-class checkSeq:
+class checkSeq(object):
   def __init__(self):
     pass
 
@@ -82,7 +67,7 @@ class checkSeq:
 
 cs = checkSeq()
 
-class checkBase:
+class checkBase(object):
 
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None,monitor=None):
     self.cls = cls
@@ -461,7 +446,7 @@ class checkGlobalAttributes(checkBase):
             m.append( (a,globalAts[a],vocabs[a].note) )
         except:
           print 'failed trying to check global attribute %s' % a
-          raise
+          raise baseException( 'failed trying to check global attribute %s' % a )
 
     if not self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) ):
       for t in m:
@@ -758,7 +743,7 @@ class checkGrids(checkBase):
       if ok:
         self.log_pass()
 
-class mipVocab:
+class mipVocab(object):
 
   def __init__(self,pcfg,dummy=False):
      project = pcfg.project
@@ -826,7 +811,7 @@ class mipVocab:
      elif k2 == 'addControlledAttributes':
        return self.varInfo[k]['ac']
      else:
-       raise 'mipVocab.lists called with bad list specifier %s' % k2
+       raise baseException( 'mipVocab.lists called with bad list specifier %s' % k2 )
 
   def isInTable( self, v, vg ):
     assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys() [%s]' % (vg,str(self.varcons.keys()) )
@@ -838,7 +823,7 @@ class mipVocab:
       
     return self.varcons[vg][v][a]
       
-class patternControl:
+class patternControl(object):
 
   def __init__(self,tag,pattern,list=None):
     try:
@@ -864,7 +849,7 @@ class patternControl:
       self.note = "val=%s" % m.groupdict()["val"]
       return m.groupdict()["val"] in self.list
     
-class listControl:
+class listControl(object):
   def __init__(self,tag,list,split=False,splitVal=None):
     self.list = list
     self.tag = tag
@@ -1001,7 +986,7 @@ class checkByVar(checkBase):
            print 'Open file handles: %s --- %s [%s]' % (nofh0, nofh9, j )
 
 ### http://stackoverflow.com/questions/2023608/check-what-files-are-open-in-python
-class sysMonitor:
+class sysMonitor(object):
 
   def __init__(self):
     self.fhCountMax = 0

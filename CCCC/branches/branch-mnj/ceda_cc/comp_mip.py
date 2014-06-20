@@ -43,7 +43,7 @@ def tlist_to_dict( ll ):
      ee[l[0]] = ( l[1], l[2] )
    return ee
 
-class comp:
+class comp(object):
 
   def __init__(self, snl, snla=None, ec1=None,tag=None):
     self.id = 'comp'

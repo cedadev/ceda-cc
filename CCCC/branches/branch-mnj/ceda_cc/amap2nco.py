@@ -1,9 +1,10 @@
 
 import os, string, random, time
+from xceptions import *
 
 xx='abcdefghijklmnopqrstuvwxyz1234567890$%-=+*'
 
-class map2nco:
+class map2nco(object):
 
 
   def __init__(self,ifile,ipth,opth,newtid=True):
@@ -21,10 +22,10 @@ class map2nco:
         elif l[:2] == '@:':
           self.directives.append( ('ga',l[2:] ) )
         else:
-          raise 'unrecognised directive:\n %s' % l
+          raise baseException( 'unrecognised directive:\n %s' % l )
       elif l[0] != '#':
         if string.strip(l) != '':
-           raise 'unrecognised line:\n %s' % l
+           raise baseException( 'unrecognised line:\n %s' % l )
     self.ipth = ipth
     self.opth = opth
     self.newtid = newtid

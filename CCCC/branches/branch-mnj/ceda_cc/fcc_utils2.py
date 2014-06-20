@@ -4,7 +4,9 @@ ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'
 ##
 
-class mipTableScan:
+from xceptions import *
+
+class mipTableScan(object):
 
   def __init__(self, vats = ['standard_name','long_name','units','cell_methods'] ):
     self.vats = vats
@@ -85,7 +87,7 @@ class mipTableScan:
           if log != None:
              log.warn(  'Mistake?? in scan_table %s' % str(mm) )
           ds = mm
-          raise 'Mistake?? in scan_table %s' % str(mm)
+          raise baseException( 'Mistake?? in scan_table %s' % str(mm) )
         ee.append( (var,ds,aa,tag) )
 
       for k in range(len(ee) ):

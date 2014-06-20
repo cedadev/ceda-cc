@@ -107,7 +107,7 @@ for l in ii[18:33]:
     i += 1
     interpolatedGrids[bits[1]] = ee
 
-class readVocab:
+class readVocab(object):
 
   def __init__(self,dir):
     self.dir = dir
@@ -184,7 +184,7 @@ def getVocabs(pcfg):
 
   return vocabs
 
-class projectConfig:
+class projectConfig(object):
 
   def __init__(self, project):
     knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','__dummy']

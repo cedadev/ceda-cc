@@ -4,7 +4,9 @@ ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'
 ##
 
-class mipTableScan:
+from xceptions import *
+
+class mipTableScan(object):
 
   def __init__(self, vats = ['standard_name','long_name','units','cell_methods'] ):
     self.vats = vats
@@ -74,7 +76,7 @@ class mipTableScan:
           if log != None:
              log.warn(  'Mistake?? in scan_table %s' % str(mm) )
           ds = mm
-          raise 'Mistake?? in scan_table %s' % str(mm)
+          raise baseException( 'Mistake?? in scan_table %s' % str(mm) )
         ee.append( (var,ds,aa,tag) )
 
       for k in range(len(ee) ):
@@ -105,7 +107,7 @@ class mipTableScan:
 ##
 ## this class carries a logging method, and is used to carry information about datasets being parsed.
 ##
-class qcHandler:
+class qcHandler(object):
 
   def __init__( self, qcc, log, baseDir, logPasses=True ):
     self.datasets = {}
@@ -178,7 +180,7 @@ class qcHandler:
              
     self.msgk[key] += 1
 
-class dirParser:
+class dirParser(object):
 
   def __init__(self, qcc, linksOnly=True):
     self.nclevs = []
@@ -330,7 +332,7 @@ class dirParser:
            pass
          else:
            print 'segment test id %s not recognised' % qfns.segments[k][0]
-           raise 'segment test id %s not recognised' % qfns.segments[k][0]
+           raise baseException( 'segment test id %s not recognised' % qfns.segments[k][0] )
 ##################################
        versionned = False
        if not versionned:
@@ -342,7 +344,7 @@ class dirParser:
               dsId = self.qcc.datasets[k].getDatasetId( fbits, dbits )
             except:
               print 'Failed to get dsID:',fbits,dbits
-              raise
+              raise baseException( 'Failed to get dsID: %s,%s' % (fbits,dbits) )
           else:
             assert False, 'datasetIdMethod %s not supported yet' % self.qcc.datasets[k].datasetIdMethod
             
@@ -352,7 +354,7 @@ class dirParser:
             handler.datasets[k][dsId] = []
           handler.datasets[k][dsId].append( (dir,f, handler.nofail, ns) )
 
-class dataSetParser:
+class dataSetParser(object):
 
   def __init__(self,qcc, log, handler):
     self.qcc = qcc
@@ -368,7 +370,7 @@ class dataSetParser:
         fns = map( lambda x: x[1], self.qcc.fileNameSegments.segments )
       except:
         print self.qcc.fileNameSegments.segments
-        raise
+        raise baseException(  str( self.qcc.fileNameSegments.segments ) )
       dsok = True
       for dir,f, fok, ns in files:
         dsok &= fok
@@ -520,11 +522,11 @@ class dataSetParser:
                     self.h._log( 'CQC.102.002.008', f, '%s [%s::%s]'% (var,v[1],v[2]), isPresent )
        
 
-class dataset:
+class dataset(object):
    def __init__(self,name):
      self.name = name
 
-class qcConfigParse:
+class qcConfigParse(object):
 
   def __init__( self, file, log=None ):
     assert os.path.isfile( file ), '%s not found' % file
@@ -593,7 +595,7 @@ regv = re.compile( 'version=([0-9.]+)' )
 refs = re.compile( 'separator=(.+)' )
 revsc = re.compile( 'validSectionCount,(.+)' )
 
-class section_parser_l1:
+class section_parser_l1(object):
 
   def __init__(self,parent):
      self.parent = parent
@@ -711,7 +713,7 @@ class section_parser_l1:
                      except:
                        print 'Error trying to compile: ', v % self.gc
                        print 'Pattern: ',v
-                       raise
+                       raise baseException(  'Error trying to compile: %s [%s]' % ( v % self.gc, v) )
                      ## print 'compiled ' +  v % self.gc, tt
                  cr.append( (cc,cr0) )
             else:
@@ -906,7 +908,7 @@ class section_parser_l1:
         else:
           self.parent.datasets[bb[k]].child = self.parent.datasets[bb[k+1]]
           
-class dsid1:
+class dsid1(object):
 
   def __init__(self,slice,sep):
     self.slice = slice
@@ -915,7 +917,7 @@ class dsid1:
   def get(self,x):
     return string.join( x[self.slice], self.sep ) 
 
-class cmip5_dsid:
+class cmip5_dsid(object):
 
   def __init__(self,slice,sep):
     self.slice = slice
@@ -925,7 +927,7 @@ class cmip5_dsid:
     return '%s_%s.%s' % (string.join( x[self.slice], self.sep ) , y[-2], y[-1] )
 
 
-class get_trange:
+class get_trange(object):
  
   def __init__(self,pat,kseg):
     self.kseg = kseg
@@ -973,7 +975,7 @@ class get_trange:
       return True, (None,None)
     return self._get( l[self.kseg] )
          
-class fileNameSegments:
+class fileNameSegments(object):
   def __init__(self, parent, sep, nn ):
     self.sep = sep
     self.nn = nn
@@ -993,7 +995,7 @@ class fileNameSegments:
         regex = re.compile( string.strip( bits[3], "'") )
       except:
         print 'Failed to compile (in re): %s' % bits[3]
-        raise
+        raise baseException(  'Failed to compile (in re): %s' % bits[3] )
       self.__segments[k] = (bits[1],bits[2], regex)
     else:
       self.__segments[k] = tuple( bits[1:] )
@@ -1008,7 +1010,7 @@ class fileNameSegments:
       sl.append( self.__segments.get( k, None ) )
     self.segments = tuple( sl )
 
-class Constraint__CordexInterpolatedGrid:
+class Constraint__CordexInterpolatedGrid(object):
 
   def __init__(self):
      self.code = 'CQC.999.999.999'
@@ -1028,7 +1030,7 @@ class Constraint__CordexInterpolatedGrid:
     self.msg = 'WARNING -- check not implemented'
     return ('PASS',self.msg)
 
-class Constraint__IdentityChecker:
+class Constraint__IdentityChecker(object):
 
   def __init__(self, ref1, ref2 ):
      self.code = 'CQC.102.002.006'
@@ -1099,7 +1101,7 @@ def parse_ref(ref):
      elif bits[0] == 'VALUE':
            return ('VALUE', bits[1])
 
-class Constraint__OnlyOnce:
+class Constraint__OnlyOnce(object):
 
   def __init__(self, ref1):
      self.code = 'CQC.102.004.005'
@@ -1125,7 +1127,7 @@ class Constraint__OnlyOnce:
 
 #### Mip table variable attribute check
 
-class Constraint__VarDimsCordexHardWired:
+class Constraint__VarDimsCordexHardWired(object):
   def __init__(self, attribVocabs,  kpat, keys, logger=None):
      self.code = 'CQC.102.002.010'
      self.name = 'VarAtts'
@@ -1135,7 +1137,7 @@ class Constraint__VarDimsCordexHardWired:
      self.logger = logger
      self.plev_vars = ['clh','clm','cll','ua850','va850']
 
-class Constraint__VarAtts:
+class Constraint__VarAtts(object):
 
   def __init__(self, attribVocabs,  kpat, keys, logger=None):
      self.code = 'CQC.102.002.010'
@@ -1201,7 +1203,7 @@ class Constraint__VarAtts:
        return  ('PASS','%s attributes checked' % len(self.keys) )
 
 #### check whether a NS element is constant
-class Constraint__Constant:
+class Constraint__Constant(object):
 
   def __init__(self, ref1, required=False):
      self.code = 'CQC.102.002.006'
@@ -1243,7 +1245,7 @@ def ref_to_key(ref):
      elif bits[0] == 'VALUE':
            return ('VALUE',bits[1])
 
-class section_parser_l0:
+class section_parser_l0(object):
 
   def __init__(self,parent,sectionName):
      self.sname = sectionName
