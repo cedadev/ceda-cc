@@ -1,7 +1,15 @@
 
+import sys
+
+## callout to summary.py: if this option is selected, imports of libraries are not needed.
+if __name__ == '__main__' and sys.argv[1] == '--sum':
+      import summary
+      summary.main()
+      raise SystemExit(0)
+
 # Standard library imports
 import os, string, time, logging, sys, glob, pkgutil
-
+import shutil
 ## pkgutil is used in file_utils
 # Third party imports
 
@@ -201,6 +209,19 @@ class c4_init:
     self.holdExceptions = False
     forceLogOrg = None
 
+    # The --copy-config option must be the first argument if it is present.
+    if args[0] == '--copy-config':
+       args.pop(0)
+       dest_dir = args.pop(0)
+       config.copy_config(dest_dir)
+       print 'Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir
+       print
+       raise SystemExit(0)
+
+    self.summarymode = args[0] == '--sum'
+    if self.summarymode:
+      return
+
     while len(args) > 0:
       next = args.pop(0)
       if next == '-f':
@@ -373,6 +394,7 @@ class main:
     logDict = {}
     ecount = 0
     c4i = c4_init(args=args)
+      
     isDummy  = c4i.project[:2] == '__'
     if (ncLib == dummy) and (not isDummy):
        print ncLib, c4i.project
@@ -495,8 +517,24 @@ class main:
     ##c4i.hdlr.close()
     c4i.closeBatchLog()
     self.ok = all( map( lambda x: x[0], self.resList ) )
+
+
+   
+
+
+def main_entry():
+   """
+   Wrapper around main() for use with setuptools.
+
+   """
+   main(printInfo=True)
+
 if __name__ == '__main__':
-  main(printInfo=True)
+  if sys.argv[1] == '--sum':
+      import summary
+      summary.main()
+      raise SystemExit(0)
+  main_entry()
 
 
 ##else:

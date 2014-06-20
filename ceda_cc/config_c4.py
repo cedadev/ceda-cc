@@ -1,5 +1,21 @@
 import string
 import utils_c4 as utils
+import os
+import os.path as op
+import shutil
+
+##############################################################################
+# Configure config-file paths
+#
+# All configuration directories, e.g. cmip5_vocabs, are looked for in a single
+# parent directory.  This is the "config" directory within the package unless 
+# the environment variable CC_CONFIG_DIR is set.
+
+HERE = op.dirname(__file__)
+CC_CONFIG_DEFAULT_DIR = op.join(HERE, 'config')
+CC_CONFIG_DIR = os.environ.get('CC_CONFIG_DIR', CC_CONFIG_DEFAULT_DIR)
+
+##############################################################################
 
 validCmip5Experiments = ['1pctCO2', 'abrupt4xCO2', 'amip', 'amip4K', 'amip4xCO2', 'amipFuture', 'aqua4K', 'aqua4xCO2', 'aquaControl', 'decadal1959', 'decadal1960', 'decadal1961', 'decadal1962', 'decadal1963', 'decadal1964', 'decadal1965', 'decadal1966', 'decadal1967', 'decadal1968', 'decadal1969', 'decadal1970', 'decadal1971', 'decadal1972', 'decadal1973', 'decadal1974', 'decadal1975', 'decadal1976', 'decadal1977', 'decadal1978', 'decadal1979', 'decadal1980', 'decadal1981', 'decadal1982', 'decadal1983', 'decadal1984', 'decadal1985', 'decadal1986', 'decadal1987', 'decadal1988', 'decadal1989', 'decadal1990', 'decadal1991', 'decadal1992', 'decadal1993', 'decadal1994', 'decadal1995', 'decadal1996', 'decadal1997', 'decadal1998', 'decadal1999', 'decadal2000', 'decadal2001', 'decadal2002', 'decadal2003', 'decadal2004', 'decadal2005', 'decadal2006', 'decadal2007', 'decadal2008', 'decadal2009', 'decadal2010', 'decadal2011', 'decadal2012', 'esmControl', 'esmFdbk1', 'esmFdbk2', 'esmFixClim1', 'esmFixClim2', 'esmHistorical', 'esmrcp85', 'historical', 'historicalExt', 'historicalGHG', 'historicalMisc', 'historicalNat', 'lgm', 'midHolocene', 'noVolc1960', 'noVolc1965', 'noVolc1970', 'noVolc1975', 'noVolc1980', 'noVolc1985', 'noVolc1990', 'noVolc1995', 'noVolc2000', 'noVolc2005', 'past1000', 'piControl', 'rcp26', 'rcp45', 'rcp60', 'rcp85', 'sst2020', 'sst2030', 'sst2090', 'sst2090rcp45', 'sstClim', 'sstClim4xCO2', 'sstClimAerosol', 'sstClimSulfate', 'volcIn2010']
 
@@ -10,7 +26,8 @@ validCmip5Frequencies = ['fx','yr','monClim','mon','day','6hr','3hr','subhr']
 validCordexFrequencies = ['fx','sem','mon','day','6hr','3hr']
 validSpecsFrequencies = ['fx','mon','day','6hr']
 validCcmiFrequencies = ['fx','yr','mon','day','hr','subhr']
-validSpecsExptFamilies = map( lambda x: string.split( x )[0], open( 'specs_vocabs/exptFamily.txt' ).readlines() )
+validSpecsExptFamilies = map( lambda x: string.split( x )[0], 
+                              open( op.join(CC_CONFIG_DIR, 'specs_vocabs/exptFamily.txt' )).readlines() )
 
 validCordexDomainsL = [ 'SAM-44', 'CAM-44', 'NAM-44', 'EUR-44', 'AFR-44', 'WAS-44', 'EAS-44', 'CAS-44', 'AUS-44', 'ANT-44', 'ARC-44', 'MED-44']
 validCordexDomainsLi = map( lambda x: x + 'i', validCordexDomainsL )
@@ -22,13 +39,13 @@ plevBndsRequired = ['clh', 'clm', 'cll']
 heightRequired = ['tas','tasmax','tasmin','huss','sfcWind','sfcWindmax','wsgsmax','uas','vas']
 
 
-ii = open( 'cordex_vocabs/GCMModelName.txt' ).readlines()
+ii = open( op.join(CC_CONFIG_DIR, 'cordex_vocabs/GCMModelName.txt' )).readlines()
 validGcmNames = []
 for l in ii:
   if l[0] != '#' and len( string.strip(l) ) > 0:
     validGcmNames.append( string.split(l)[0] )
 
-ii = open( 'cordex_vocabs/RCMModelName.txt' ).readlines()
+ii = open( op.join(CC_CONFIG_DIR, 'cordex_vocabs/RCMModelName.txt' )).readlines()
 validRcmNames = []
 validInstNames = []
 for l in ii:
@@ -53,7 +70,7 @@ for v in heightRequired:
     heightValues[v] = 10
   heightRange[v] = (1.5,10.)
 
-ii = open( 'cordex_vocabs/cordex_domains.csv' ).readlines()
+ii = open( op.join(CC_CONFIG_DIR, 'cordex_vocabs/cordex_domains.csv' )).readlines()
 keys = ['name','tag','res','grid_np_lon','grid_np_lat','nlon','nlat','w','e','s','n']
 rotatedPoleGrids = {}
 for l in ii[2:16]:
@@ -96,7 +113,7 @@ class readVocab:
     self.dir = dir
 
   def getSimpleList(self,file,bit=None):
-    ii = open('%s/%s' % (self.dir,file) )
+    ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
     oo = []
     for l in ii.readlines():
       if l[0] != '#':
@@ -292,23 +309,23 @@ class projectConfig:
     self.defaults = { 'variableDataType':'float' }
 ######## used in mipVocabs
     if self.project == 'CORDEX':
-       self.mipVocabDir = 'cordex_vocabs/mip/'
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cordex_vocabs/mip/')
        self.mipVocabTl = ['fx','sem','mon','day','6h','3h']
        self.mipVocabVgmap = {'6h':'6hr','3h':'3hr'}
        self.mipVocabFnpat = 'CORDEX_%s'
     elif self.project == 'CMIP5':
-       self.mipVocabDir = 'cmip5_vocabs/mip/'
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cmip5_vocabs/mip/')
        self.mipVocabTl = ['fx','Oyr','Oclim','Omon','Amon','Lmon','LImon','OImon','cfMon','aero','cfDay','day','cfOff','cfSites','6hrLev','6hrPlev','3hr','cf3hr']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'CMIP5_%s'
        self.defaults['variableDataType'] = None 
     elif self.project == 'SPECS':
-       self.mipVocabDir = 'specs_vocabs/mip/'
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'specs_vocabs/mip/')
        self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hr']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'SPECS_%s'
     elif self.project == 'CCMI':
-       self.mipVocabDir = 'ccmi_vocabs/mip/'
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi_vocabs/mip/')
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
        self.mipVocabFnpat = 'CCMI1_%s_comp-v5.txt'
@@ -328,3 +345,18 @@ class projectConfig:
     self.vocabs = getVocabs(self)
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
+
+
+def copy_config(dest_dir):
+   """
+   Copy the current default configuration directory into a separate directory.
+
+   The directory <ceda_cc-package-dir>/config is copied to `dest_dir`.
+   This is useful when ceda-cc is installed as a Python package and the user may
+   not know where the config directory is stored.
+
+   :param dest_dir: should be a path to a directory which does not yet exist.  
+       The configuration directory will be copied to this path.
+
+   """
+   shutil.copytree(CC_CONFIG_DEFAULT_DIR, dest_dir)
