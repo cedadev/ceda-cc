@@ -1,4 +1,5 @@
 import string, os, re, stat, sys
+from config_c4 import CC_CONFIG_DIR
 
 ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'
@@ -120,3 +121,33 @@ class mipTableScan(object):
         return appendTo
       else:
         return ff
+
+
+class snlist:
+
+  def __init__(self,dir=None,tab='cf-standard-name-table.xml' ):
+    if dir  == None:
+      dir = os.path.join(CC_CONFIG_DIR, 'cf/')
+    self.re_sn = re.compile( 'entry id="(.*)"' )
+    self.re_sna = re.compile( 'alias id="(.*)"' )
+    self.dir = dir
+    self.tab = tab
+
+##alias id="atmosphere_water_vapor_content"
+##entry id="age_of_sea_ice"'
+
+  def gen_sn_list(self ):
+    pathn = self.dir + self.tab
+    assert os.path.isfile( pathn ), '%s not found ' % pathn
+    snl = []
+    snla = []
+    for l in open(pathn).readlines():
+      m = self.re_sn.findall(l )
+      if len(m) > 0:
+        for i in m:
+          snl.append( i )
+      m = self.re_sna.findall(l )
+      if len(m) > 0:
+        for i in m:
+          snla.append( i )
+    return (snl,snla)
