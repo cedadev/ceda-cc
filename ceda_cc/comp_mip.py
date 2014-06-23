@@ -155,14 +155,15 @@ class comp(object):
            print 'ERROR[7]: Difference between CORDEX MIP tables and VR in positive, realm: %s:: %s,%s --- %s' % (xxx,e1[k][1].get('positive','None'),e1[k][1].get('modeling_realm','None'), self.ec1[k][4:6])
         
 base=CC_CONFIG_DIR
-snl,snla = gen_sn_list( base + cfsntab )
+print base
+snl,snla = gen_sn_list( os.path.join(base, cfsntab) )
 print 'Len snl = %s' % len(snl)
 
 dkrz_cordex_version = 4
 ec1 = {}
 if newMip == 'CORDEX':
  if dkrz_cordex_version == 1:
-  ll = open( base + cordex_dkrz ).readlines()
+  ll = open( os.path.join(base, cordex_dkrz) ).readlines()
   for l in ll[9:74]:
     bits = string.split( l, ',' )
     var = bits[1]
@@ -173,7 +174,7 @@ if newMip == 'CORDEX':
     ec1[var] = ( sn,ln)
  elif dkrz_cordex_version == 2:
   for tab in ['3hr','6hr','day','mon','sem','fx']:
-     ll = open( base + cordex_dkrz_pat % tab ).readlines()
+     ll = open( os.path.join(base, cordex_dkrz_pat % tab) ).readlines()
      for l in ll[3:]:
         bits = string.split( l, ',' )
         if (tab != 'fx' and len( bits ) != 7) or (tab == 'fx' and len( bits ) != 5):
@@ -190,7 +191,7 @@ if newMip == 'CORDEX':
  elif dkrz_cordex_version in [3,4]:
   eeee = {}
   eca = {}
-  ll = open( base + cordex_dkrz_pat % 'all' ).readlines()
+  ll = open( os.path.join(base, cordex_dkrz_pat % 'all') ).readlines()
   for l in ll[2:]:
         bits = string.split( string.strip(l), ',' )
         if dkrz_cordex_version == 4:
@@ -207,7 +208,7 @@ if newMip == 'CORDEX':
 
   for tab in ['3hr','6hr','day','mon','sem','fx']:
      ee  = {}
-     ll = open( base + cordex_dkrz_pat % tab ).readlines()
+     ll = open( os.path.join(base, cordex_dkrz_pat % tab) ).readlines()
      for l in ll[2:]:
         bits = string.split( l, ',' )
         if dkrz_cordex_version == 4:
@@ -223,16 +224,16 @@ if newMip == 'CORDEX':
      eeee[tab] = ee
 
 if newMip == 'SPECS':
-  newMipDir = '/specs_vocabs/mip/'
+  newMipDir = 'specs_vocabs/mip/'
   mpat = 'SPECS_%s'
   ml = ['SPECS_Amon', 'SPECS_fx', 'SPECS_Lmon', 'SPECS_Omon', 'SPECS_6hrLev', 'SPECS_day', 'SPECS_OImon']
 elif newMip == 'CCMI':
   ml = ['CCMI1_Amon_v2_complete']
   ml = ['CCMI1_annual_comp-v3.txt', 'CCMI1_daily_comp-v3.txt', 'CCMI1_fixed_comp-v2.txt', 'CCMI1_hourly_comp-v3.txt', 'CCMI1_monthly_comp-v3.txt']
-  newMipDir = '/ccmi_vocabs/mip/'
+  newMipDir = 'ccmi_vocabs/mip/'
   mpat = 'CCMI1_%s_v1_complete'
 elif newMip == 'CORDEX':
-  newMipDir = '/cordex_vocabs/mip/'
+  newMipDir = 'cordex_vocabs/mip/'
   mpat = 'CORDEX_%s'
 
 def validate( t,cc ):
@@ -240,19 +241,20 @@ def validate( t,cc ):
     l1 = {}
     l2 = {}
     for m in ml:
-      l1 = ms.scan_table( open( base + newMipDir + m ).readlines(), None, asDict=True, appendTo=l1, lax=True, tag=m, project=newMip)
+      print 'base: ',base
+      l1 = ms.scan_table( open( os.path.join(base, newMipDir + m) ).readlines(), None, asDict=True, appendTo=l1, lax=True, tag=m, project=newMip)
     ms.nn_tab = len(ml)
     for m in ml2:
-      l2 = ms.scan_table( open( base + '/cmip5_vocabs/mip/' + m ).readlines(), None, asDict=True, appendTo=l2, lax=True, tag=m, warn=False)
+      l2 = ms.scan_table( open( os.path.join(base, 'cmip5_vocabs/mip/' + m) ).readlines(), None, asDict=True, appendTo=l2, lax=True, tag=m, warn=False)
     ms.nn_tab2 = len(ml2)
     ccm = False
     tag = " vs. cmip5"
   else:
     l2 = {}
     for m in ml2:
-      l2 = ms.scan_table( open( base + '/cmip5_vocabs/mip/' + m ).readlines(), None, asDict=True, appendTo=l2, lax=True, tag=m, warn=False)
+      l2 = ms.scan_table( open( os.path.join(base, 'cmip5_vocabs/mip/' + m) ).readlines(), None, asDict=True, appendTo=l2, lax=True, tag=m, warn=False)
     k = { '3hr':'3h', '6hr':'6h' }.get( t,t )
-    l1 = ms.scan_table( open( base + newMipDir + mpat % k ).readlines(), None, asDict=True, project=newMip)
+    l1 = ms.scan_table( open( os.path.join(base, newMipDir + mpat % k) ).readlines(), None, asDict=True, project=newMip)
     ccm = True
     tag = t
   cc.comp( l1, l2, checkCellMethods=ccm, tag=tag )
