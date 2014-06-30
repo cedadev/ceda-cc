@@ -6,9 +6,10 @@ From the command line:
 
 Required arguments:
 
-python c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI, CMIP5.
-python c4.py -p <project> -d <directory>  ## check all files in directory
-python c4.py -p <project> -f <file>       ## check a single file.
+python ceda_cc/c4.py -p <project> -D <directory>  ## check all files in directory tree, for project in SPECS, CORDEX, CCMI, CMIP5.
+python ceda_cc/c4.py -p <project> -d <directory>  ## check all files in directory
+python ceda_cc/c4.py -p <project> -f <file>       ## check a single file.
+python ceda_cc/c4.py --copy-config <dest-dir>     ## copy the default configuration directory to <dest-dir> to enable customisation.
 
 Optional arguments:
 
@@ -22,6 +23,10 @@ Optional arguments:
   --flfmode <mode>      # set mode for file-level log file -- see log file modes
   --aMap                # Read in some attribute mappings and run tests with virtual substitutions, see also map2nco.py
 
+Environment variables:
+
+  CC_CONFIG_DIR  ## Set to the location of a custom configuration directory.  If unset the default configuration will be used.
+
 After running:
 
 The log file directory may contain hundreds of files with reports of errors. To get a summary, run:
@@ -30,11 +35,28 @@ python summary.py <log file directory>
 
 This will produce a listing of errors, the number of times they occur and up to two of the files which contain the error. It is hoped that inspection of one or 2 files will provide enough information to trace the problems which lead to the error reports.
 
+
+Installing as a package:
+------------------------
+
+You can also install the code into your Python environment and then use the "ceda-cc" command to invoke c4.py with the same arguments ans described above.
+
+ 1. If you have "pip" installed simply execute:
+    $ pip install ceda-cc
+    or after downloading the tarball
+    $ pip install ceda-cc-$VERSION.tar.gz
+
+ 2. If you have the setuptools package you can execute the following from the distribution directory:
+    $ python setup.py install
+
+If you install ceda-cc in this way you can use the --copy-config command to export the default configuration into a directory where you can edit the configuration.
+
+
 Called from python:
 ------------------
 The code can also be called from a python script:
 
-import c4
+from ceda_cc import c4
 m = c4.main( args=argList )     # argList is a python list of command line arguments
 if not m.ok:
   print 'check failed'
@@ -82,7 +104,7 @@ Vocabulary lists GCMModelName.txt and RCMModelName.txt are held on the DMI CORDE
   http://cordex.dmi.dk/joomla/images/CORDEX/RCMModelName.txt
 
 To update the CMOR tables use: 
-"git clone git://uv-cdat.llnl.gov/gitweb/cordex-cmor-tables.git"
+"git clone https://github.com/PCMDI/cordex-cmor-tables"
 
 VIRTUAL MODE
 ------------
