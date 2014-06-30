@@ -151,3 +151,30 @@ class snlist:
         for i in m:
           snla.append( i )
     return (snl,snla)
+
+class tupsort:
+   def __init__(self,k=0):
+     self.k = k
+   def cmp(self,x,y):
+     return cmp( x[self.k], y[self.k] )
+
+class tupsort2:
+   def __init__(self,k0,k1):
+     self.k0 = k0
+     self.k1 = k1
+   def cmp(self,x,y):
+     if x[self.k0] == y[self.k0]:
+       return cmp( x[self.k1], y[self.k1] )
+     return cmp( x[self.k0], y[self.k0] )
+
+class tupsort3:
+   def __init__(self,k0,k1,k2):
+     self.k0 = k0
+     self.k1 = k1
+     self.k2 = k2
+   def cmp(self,x,y):
+     if x[self.k0] == y[self.k0]:
+       if x[self.k1] == y[self.k1]:
+         return cmp( x[self.k2], y[self.k2] )
+       return cmp( x[self.k1], y[self.k1] )
+     return cmp( x[self.k0], y[self.k0] )

@@ -104,7 +104,7 @@ Vocabulary lists GCMModelName.txt and RCMModelName.txt are held on the DMI CORDE
   http://cordex.dmi.dk/joomla/images/CORDEX/RCMModelName.txt
 
 To update the CMOR tables use: 
-"git clone git://uv-cdat.llnl.gov/gitweb/cordex-cmor-tables.git"
+"git clone https://github.com/PCMDI/cordex-cmor-tables"
 
 VIRTUAL MODE
 ------------
