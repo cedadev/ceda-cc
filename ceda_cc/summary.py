@@ -21,7 +21,7 @@ class main(object):
     fl = glob.glob( '%s/*__qclog_*.txt' % idir )
 
     ee = {}
-    print 'Summarising error reports from %s log file' % len(fl)
+    self.write( 'Summarising error reports from %s log file' % len(fl) )
     nne = 0
     for f in fl:
       nef = 0
@@ -46,30 +46,31 @@ class main(object):
             if ee[code][1][msg][0] < 10:
               ee[code][1][msg][1].append(fn)
           else:
-            print bits
+            self.write( str(bits) )
       if nef == 0:
         nne += 1
 
     keys = ee.keys()
     keys.sort()
 
-
     for k in keys:
       ks = ee[k][1].keys()
       if len(ks) == 1:
-        print k,ee[k][0],ks[0]
+        self.write( '%s:  %s  %s' % (k,ee[k][0],ks[0]) )
         for i in range(cmin(ndisp,ee[k][0])):
-          print '               ',ee[k][1][ks[0]][1][i]
+          self.write( '               %s' % ee[k][1][ks[0]][1][i] )
       else:
-        print k,ee[k][0]
+        self.write( '%s: %s' % (k,ee[k][0])  )
         ks.sort()
         for k2 in ks:
-          print '  --- ',k2,ee[k][1][k2][0]
+          self.write( '  --- %s: %s' % (k2,ee[k][1][k2][0]) )
           for i in range(cmin(ndisp,ee[k][1][k2][0])):
-            print '               ',ee[k][1][k2][1][i]
+            self.write( '               %s' % ee[k][1][k2][1][i] )
 
+    self.write( 'Number of files with no errors: %s' % nne )
 
-    print 'Number of files with no errors: %s' % nne
+  def write( self, s ):
+    print s
 
 if __name__ == '__main__':
   main()
