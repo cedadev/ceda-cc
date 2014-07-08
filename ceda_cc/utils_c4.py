@@ -138,12 +138,12 @@ class checkBase(object):
   def log_error( self, msg ):
     self.lastError = msg
     self.errorCount += 1
-    self.logMessage( '%s.%s: FAILED:: %s' % (self.id,self.checkId,msg), error=True )
+    self.logMessage( '%s.%s: FAILED:: %s' % (self.id,self.getCheckId(),msg), error=True )
 
   def log_pass( self ):
     self.passCount = True
     if self.reportPass:
-      self.logMessage(  '%s.%s: OK' % (self.id,self.checkId) )
+      self.logMessage(  '%s.%s: OK' % (self.id,self.getCheckId()) )
 
   def log_abort( self ):
     self.completed = False
@@ -151,7 +151,16 @@ class checkBase(object):
     raise abortChecks
 
   def status(self):
-    return '%s.%s' % (self.id,self.checkId)
+    return '%s.%s' % (self.id,self.getCheckId())
+
+  def getCheckId(self,full=True):
+    if type( self.checkId ) == type( 'x' ):
+      return self.checkId
+    else:
+      if full:
+        return '%s: [%s]' % self.checkId
+      else:
+        return self.checkId[0]
 
   def test(self,res,msg,abort=False,part=False,appendLogfile=(None,None)):
     self.appendLogfile = appendLogfile
@@ -373,7 +382,7 @@ class checkGlobalAttributes(checkBase):
       ##self.log_abort()
 
 ## need to insert a check that variable is present
-    self.checkId = '005'
+    self.checkId = ('005','variable_ncattribute_mipvalues')
     ok = True
     hm = varAts[varName].get( 'missing_value', None ) != None
     hf = varAts[varName].has_key( '_FillValue' )

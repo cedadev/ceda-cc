@@ -83,11 +83,21 @@ class main(object):
 
   def htmlout( self, ee, ff, esum ):
     about = "Output from CEDA CC"
-    data = "Demonstration using test data"
+    data = """<p>Demonstration using test data</p>
+<p>This report contains a list of errors for each file, and a list of files associated with each error.</p>
+"""
     results = """<ul><li>Number of files tested: %s: <a href="files/findex.html">index by file</a></li>
                      <li>Number of errors: %s: <a href="errors/eindex.html">index by error</a></li>
                      <li>Number of error free files: %s</li></ul>
 """ % esum
+
+    keys = ee.keys()
+    keys.sort()
+    list = []
+    for k in keys:
+      list.append( '<li>%s: %s</li>' % (k,ee[k][0]) )
+    res2 = '<ul>%s</ul>' % string.join(list, '\n' )
+    results += res2
 
     maincontent = """<h1>The test</h1>
                          %s
