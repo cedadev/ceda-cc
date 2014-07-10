@@ -1,5 +1,7 @@
 
-import string, sys, glob
+import string, sys, glob, os
+
+HERE = os.path.dirname(__file__)
 
 def cmin(x,y):
   if x < 0:
@@ -13,10 +15,13 @@ class main(object):
     args = sys.argv[1:-1]
     idir = sys.argv[-1]
     ndisp = 2
+    dohtml = False
     while len(args) > 0:
       x = args.pop(0)
       if x == '-n':
         ndisp = int( args.pop(0) )
+      elif x == '-html':
+        dohtml = True
 
     fl = glob.glob( '%s/*__qclog_*.txt' % idir )
 
@@ -84,10 +89,11 @@ class main(object):
     self.write( 'Number of files with no errors: %s' % nne )
     esum = (len(fl), nerr, nne )
     self.testnames()
-    self.htmlout( ee, ff, esum )
+    if dohtml:
+      self.htmlout( ee, ff, esum )
 
   def testnames(self):
-    tnfile = 'config/testStandardNames.txt'
+    tnfile = '%s/config/testStandardNames.txt' % HERE
     ii = open( tnfile ).readlines()
     self.tests = []
     thistest = None
