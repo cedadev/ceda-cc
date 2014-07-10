@@ -30,26 +30,33 @@ class main(object):
       elist = []
       for l in open(f).readlines():
         fn = string.split(f,'/')[-1]
-        if string.find(l, 'FAILED') != -1 or string.find(l,'CDMSError:') != -1:
+        if (l[:3] == 'C4.' and string.find(l, 'FAILED') != -1) or string.find(l,'CDMSError:') != -1:
           nef += 1
           nerr += 1
-          if string.find(l, 'FAILED') != -1:
-             kb1 = 3
+          bits = map( string.strip, string.split(l, ':' ) )
+          if 'FAILED' in bits:
+             kb1 = bits.index('FAILED') + 1
           else:
              kb1 = 1
-          bits = string.split(l, ':' )
           if len(bits) > kb1:
             code = bits[0]
-            msg = string.strip( string.join(bits[kb1:], ':' ) )
+            if kb1 == 3:
+              msg0 = string.join(bits[kb1:], ':' )
+              msg = string.strip( bits[1] + ' ' + msg0 )
+              se = bits[1][1:-1]
+            else:
+              msg = string.strip( string.join(bits[kb1:], ':' ) )
+              msg0 = msg
+              se = None
             if code not in ee.keys():
-              ee[code] = [0,{msg:[0,[]]}]
+              ee[code] = [0,{msg:[0,[]]},se]
             elif msg not in ee[code][1].keys():
               ee[code][1][msg] = [0,[]]
             ee[code][0] += 1
             ee[code][1][msg][0] += 1
             if ee[code][1][msg][0]:
               ee[code][1][msg][1].append(fn)
-            elist.append( (code,msg) )
+            elist.append( (code,msg,se) )
           else:
             self.write( str(bits) )
       if nef == 0:
@@ -76,15 +83,40 @@ class main(object):
 
     self.write( 'Number of files with no errors: %s' % nne )
     esum = (len(fl), nerr, nne )
+    self.testnames()
     self.htmlout( ee, ff, esum )
 
+  def testnames(self):
+    tnfile = 'config/testStandardNames.txt'
+    ii = open( tnfile ).readlines()
+    self.tests = []
+    thistest = None
+    for l in ii:
+      if l[0] == '=':
+        name = string.strip(l)[1:-1]
+        if thistest != None:
+          thistest.append(defn)
+          self.tests.append( thistest )
+        thistest = [name,]
+        defn = ''
+      elif l[0] == '*':
+        thistest.append( string.strip(l)[1:] )
+      elif string.strip(l) != '':
+        defn += l
+    thistest.append(defn)
+    self.tests.append( thistest )
+    self.testdict = {}
+    for t in self.tests:
+      self.testdict[t[0]] = (t[1],t[2])
+    
   def write( self, s ):
     print s
 
   def htmlout( self, ee, ff, esum ):
-    about = "Output from CEDA CC"
-    data = """<p>Demonstration using test data</p>
+    about = """<p>Output from CEDA CC</p>
 <p>This report contains a list of errors for each file, and a list of files associated with each error.</p>
+"""
+    data = """<p>Demonstration using test data</p>
 """
     results = """<ul><li>Number of files tested: %s: <a href="files/findex.html">index by file</a></li>
                      <li>Number of errors: %s: <a href="errors/eindex.html">index by error</a></li>
@@ -95,7 +127,11 @@ class main(object):
     keys.sort()
     list = []
     for k in keys:
-      list.append( '<li>%s: %s</li>' % (k,ee[k][0]) )
+      if ee[k][2] == None:
+        list.append( '<li>%s: %s</li>' % (k,ee[k][0]) )
+      else:
+        assert ee[k][2] in self.testdict.keys(), 'unrecognised test name: %s' % ee[k][2]
+        list.append( '<li>%s [%s:%s]: %s</li>' % (self.testdict[ee[k][2]][0],k,ee[k][2],ee[k][0]) )
     res2 = '<ul>%s</ul>' % string.join(list, '\n' )
     results += res2
 
@@ -147,7 +183,7 @@ Code[number of files with error]: result
       list.append( fItemTmpl % (hfn, knc, len(ff[k]) ) )
       l2 = []
       for f in ff[k]:
-        l2.append( '<li>%s: %s</li>' % f )
+        l2.append( '<li>%s: %s</li>' % f[:2] )
       fPage = """<h1>Errors in %s.nc</h1>
 <ul>%s</ul>
 """ % (fs,string.join( l2, '\n' ) )

@@ -210,7 +210,7 @@ class checkFileName(checkBase):
     self.completed = False
 
 ## check basic parsing of file name
-    self.checkId = '001'
+    self.checkId = ('001','parse_filename')
     self.test( fn[-3:] == '.nc', 'File name ending ".nc" expected', abort=True, part=True )
     bits = string.split( fn[:-3], '_' )
     self.fnParts = bits[:]
@@ -219,16 +219,6 @@ class checkFileName(checkBase):
       self.domain = self.fnParts[self.pcfg.domainIndex]
     else:
       self.domain = None
-    ##if self.cls == 'CORDEX':
-      ##self.fnPartsOkLen = [8,9]
-      ##self.fnPartsOkFixedLen = [8,]
-      ##self.fnPartsOkUnfixedLen = [9,]
-      ##checkTrangeLen = True
-    ##elif self.cls == 'SPECS':
-      ##self.fnPartsOkLen = [6,7]
-      ##self.fnPartsOkFixedLen = [6,]
-      ##self.fnPartsOkUnfixedLen = [7,]
-      ##checkTrangeLen = False
 
     self.test( len(bits) in self.pcfg.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.pcfg.fnPartsOkLen),str(bits)), abort=True )
 
@@ -252,8 +242,10 @@ class checkFileName(checkBase):
     self.var = self.fnParts[0]
 
     self.isFixed = self.freq == 'fx'
+    if self.isFixed:
+      self.test( len(self.fnParts) in self.pcfg.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
-    self.checkId = '002'
+    self.checkId = ('002','parse_filename_timerange')
     if not self.isFixed:
 
 ## test time segment
@@ -268,11 +260,9 @@ class checkFileName(checkBase):
       self.fnTimeParts = bits[:]
 
     self.checkId = '003'
-    if self.isFixed:
-      self.test( len(self.fnParts) in self.pcfg.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
-    self.checkId, ok = ('004',True)
-    if len(self.fnParts) == 9 and self.pcfg.checkTrangeLen:
+    self.checkId, ok = (('004','filename_timerange_length'),True)
+    if (not self.isFixed) and self.pcfg.checkTrangeLen:
       ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':[10,12], '6hr':10 }
       ok &=self.test( self.freq in ltr.keys(), 'Frequency [%s] not recognised' % self.freq, part=True )
       if ok:
@@ -339,7 +329,7 @@ class checkGlobalAttributes(checkBase):
     fnParts = self.fnParts
 
     self.completed = False
-    self.checkId = '001'
+    self.checkId = ('001','global_ncattribute_present')
     m = []
     for k in self.requiredGlobalAttributes:
       if not globalAts.has_key(k):
@@ -351,19 +341,19 @@ class checkGlobalAttributes(checkBase):
       for k in m:
         self.parent.amapListDraft.append( '#@;%s=%s|%s=%s' % (k,'__absent__',k,'<insert attribute value and uncomment>') )
 
-    self.checkId = '002'
+    self.checkId = ('002','variable_in_group')
 
     self.test( varAts.has_key( varName ), 'Expected variable [%s] not present' % varName, abort=True, part=True )
     msg = 'Variable %s not in table %s' % (varName,varGroup)
     self.test( vocabs['variable'].isInTable( varName, varGroup ), msg, abort=True, part=True )
 
-    self.checkId = '003'
+    self.checkId = ('003','variable_type')
 
     mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
     thisType = {'real':'float32', 'integer':'int32' }.get( mipType, mipType )
     self.test( mipType == None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,thisType,varAts[varName]['_type']) )
 
-    self.checkId = '004'
+    self.checkId = ('004','variable_ncattribute_present')
     m = []
     reqAts = self.requiredVarAttributes[:]
     if varGroup != 'fx' and self.pcfg.project in ['CORDEX']:
@@ -446,7 +436,7 @@ class checkGlobalAttributes(checkBase):
     else:
       self.isInstantaneous = True
 
-    self.checkId = '006'
+    self.checkId = ('006','global_ncattribute_cv' )
     m = []
     for a in self.controlledGlobalAttributes:
       if globalAts.has_key(a):
@@ -461,7 +451,7 @@ class checkGlobalAttributes(checkBase):
       for t in m:
         self.parent.amapListDraft.append( '#@;%s=%s|%s=%s' % (t[0],str(t[1]),t[0],'<insert attribute value and uncomment>' + str(t[2]) ) )
 
-    self.checkId = '007'
+    self.checkId = ('007','filename_filemetadata_consistency')
     m = []
     for i in range(len(self.globalAttributesInFn)):
        if self.globalAttributesInFn[i] != None:
@@ -531,7 +521,7 @@ class checkStandardDims(checkBase):
 
     self.errorCount = 0
     self.completed = False
-    self.checkId = '001'
+    self.checkId = ('001','time_attributes')
     if varGroup != 'fx':
       ok = True
       self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
@@ -555,7 +545,8 @@ class checkStandardDims(checkBase):
       self.calendar = da['time'].get( 'calendar', 'None' )
     else:
       self.calendar = 'None'
-    self.checkId = '002'
+
+    self.checkId = ('002','pressure_levels')
     if varName in self.plevRequired:
       ok = True
       self.test( 'plev' in va.keys(), 'plev coordinate not found %s' % str(va.keys()), abort=True, part=True )
@@ -598,7 +589,7 @@ class checkStandardDims(checkBase):
       if ok:
         self.log_pass()
 
-    self.checkId = '003'
+    self.checkId = ('003','height_levels')
     if varName in self.heightRequired:
       heightAtDict = {'long_name':"height", 'standard_name':"height", 'units':"m", 'positive':"up", 'axis':"Z" }
       ok = True
@@ -654,13 +645,13 @@ class checkGrids(checkBase):
     da = self.da
     va = self.va
     if va[varName].get( 'grid_mapping', None ) == "rotated_pole":
-      self.checkId = '001'
+      self.checkId = ('001','grid_mapping')
       atDict = { 'grid_mapping_name':'rotated_latitude_longitude' }
       atDict['grid_north_pole_latitude'] = self.pcfg.rotatedPoleGrids[domain]['grid_np_lat']
       if self.pcfg.rotatedPoleGrids[domain]['grid_np_lon'] != 'N/A':
         atDict['grid_north_pole_longitude'] = self.pcfg.rotatedPoleGrids[domain]['grid_np_lon']
 
-      self.checkId = '002'
+      self.checkId = ('002','rotated_latlon_attributes')
       self.test( 'rlat' in da.keys() and 'rlon' in da.keys(), 'rlat and rlon not found (required for grid_mapping = rotated_pole )', abort=True, part=True )
 
       atDict = {'rlat':{'long_name':"rotated latitude", 'standard_name':"grid_latitude", 'units':"degrees", 'axis':"Y", '_type':'float64'},
@@ -674,7 +665,7 @@ class checkGrids(checkBase):
             self.parent.amapListDraft.append( record )
       self.test( len(mm) == 0, 'Required attributes of grid coordinate arrays not correct: %s' % str(mm) )
 
-      self.checkId = '003'
+      self.checkId = ('003','rotated_latlon_domain')
       ok = True
       for k in ['rlat','rlon']:
         res = len(da[k]['_data']) == self.pcfg.rotatedPoleGrids[domain][ {'rlat':'nlat','rlon':'nlon' }[k] ]
@@ -703,7 +694,7 @@ class checkGrids(checkBase):
     da = self.da
     va = self.va
     if domain[-1] == 'i':
-      self.checkId = '002'
+      self.checkId = ('004','regular_grid_attributes')
       self.test( 'lat' in da.keys() and 'lon' in da.keys(), 'lat and lon not found (required for interpolated data)', abort=True, part=True )
 
       atDict = {'lat':{'long_name':"latitude", 'standard_name':"latitude", 'units':"degrees_north", '_type':'float64'},
@@ -719,6 +710,7 @@ class checkGrids(checkBase):
       self.test( len(mm) == 0,  'Required attributes of grid coordinate arrays not correct: %s' % str(mm), part=True )
 
       ok = True
+      self.checkId = ('005','regular_grid_domain')
       for k in ['lat','lon']:
         res = len(da[k]['_data']) >= self.pcfg.interpolatedGrids[domain][ {'lat':'nlat','lon':'nlon' }[k] ]
         if not res:
@@ -972,7 +964,7 @@ class checkByVar(checkBase):
     rere = (re.compile( ps[0] ), re.compile( ps[1] ) )
 
     n = len(tt)
-    self.checkId = '001'
+    self.checkId = ('001','filename_timerange_value')
     for j in range(n):
       if self.monitor != None:
          nofh0 = self.monitor.get_open_fds()
