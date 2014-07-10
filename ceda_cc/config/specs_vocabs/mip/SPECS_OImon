@@ -564,7 +564,7 @@ type:              real
 !============
 variable_entry: snld
 !============
-modeling_realm:    atmos seaIce
+modeling_realm:    seaIce
 !----------------------------------
 ! Variable attributes:
 !----------------------------------
@@ -578,7 +578,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 dimensions:     longitude latitude time
-out_name: snow depth
+out_name: snld
 type:             double
 !---------------------------------
 !
