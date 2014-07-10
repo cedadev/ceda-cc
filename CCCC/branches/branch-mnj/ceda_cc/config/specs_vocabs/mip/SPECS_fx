@@ -757,7 +757,7 @@ modeling_realm:    ocean
 ! Variable attributes:
 !----------------------------------
 standard_name:     surface_geopotential
-units:             m-2 s-2
+units:             m2 s-2
 cell_methods:      area: mean 
 cell_measures:     area: areacello
 long_name:         Orography 

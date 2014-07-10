@@ -796,7 +796,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 standard_name:     ocean_meridional_overturning_mass_streamfunction
-units:             kg s-1
+units:             m3 s-1
 long_name:         Meridional Mass Streamfunction in the Atlantic
 !----------------------------------
 !
@@ -811,7 +811,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 standard_name:     ocean_meridional_overturning_mass_streamfunction_due_to_bolus_advection 
-units:             kg s-1
+units:             m3 s-1
 long_name:         Meridional Mass Streamfunction in the Atlantic Due to Bolus Advection
 !----------------------------------
 !
@@ -827,7 +827,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 standard_name:     ocean_meridional_overturning_mass_streamfunction 
-units:             kg s-1
+units:             m3 s-1
 long_name:         Meridional Mass Streamfunction
 !----------------------------------
 !
@@ -843,7 +843,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 standard_name:     ocean_meridional_overturning_mass_streamfunction_due_to_bolus_advection 
-units:             kg s-1
+units:             m3 s-1
 long_name:         Meridional Mass Streamfunction Due to Bolus Advection
 !----------------------------------
 !
