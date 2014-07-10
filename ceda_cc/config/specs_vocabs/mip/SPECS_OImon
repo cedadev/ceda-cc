@@ -579,7 +579,7 @@ deflate:           1
 deflate_level:     6
 dimensions:     longitude latitude time
 out_name: snld
-type:             double
+type:             real
 !---------------------------------
 !
 
