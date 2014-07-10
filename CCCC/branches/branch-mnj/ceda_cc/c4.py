@@ -210,20 +210,27 @@ class c4_init(object):
     self.project = "CORDEX"
     self.holdExceptions = False
     forceLogOrg = None
+    argsIn = args[:]
 
     # The --copy-config option must be the first argument if it is present.
     if args[0] == '--copy-config':
+       if len(args) < 2:
+         self.commandHints( argsIn )
        args.pop(0)
        dest_dir = args.pop(0)
        config.copy_config(dest_dir)
        print 'Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir
        print
        raise SystemExit(0)
+    elif args[0] == '-h':
+       print 'Help command not implemented yet'
+       raise SystemExit(0)
 
     self.summarymode = args[0] == '--sum'
     if self.summarymode:
       return
 
+    argu = []
     while len(args) > 0:
       next = args.pop(0)
       if next == '-f':
@@ -268,8 +275,11 @@ class c4_init(object):
         self.project = args.pop(0)
       else:
        print 'Unused argument: %s' % next
+       argu.append( next )
        nn+=1
-    assert nn==0, 'Aborting because of unused arguments'
+    if nn != 0:
+      print 'Unused arguments: ', argu
+      self.commandHints( argsIn )
 
     if self.project == 'CMIP5':
       fl0 = []
@@ -347,6 +357,22 @@ class c4_init(object):
             cl.append( string.split(b, '=' ) )
           self.attributeMappings.append( ('am001',cl, string.split(bb[1],'=') ) )
       self.attributeMappingsLog = open( 'attributeMappingsLog.txt', 'w' )
+
+  def commandHints(self, args):
+    if args[0] in ['-h','--sum']:
+      print 'Arguments look OK'
+    elif args[0] == '--copy-config':
+      print 'Usage [configuration copy]: ceda_cc --copy-config <target directory path>'
+    else:
+      if not( '-f' in args or '-d' in args or '-D' in args):
+        print 'No file or target directory specified'
+        print """USAGE:
+ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root of directory tree>] [other options]
+
+With the "-D" option, all files in the directory tree beneath the given diretory will be checked. With the "-d" option, only files in the given directory will be checked.
+"""
+    raise SystemExit(0)
+   
 
   def getFileLog( self, fn, flf=None ):
     if flf == None:
@@ -480,7 +506,7 @@ class main(object):
       except:
         c4i.logger.error("Exception has occured" ,exc_info=1)
         if fileLogOpen:
-          fLogger.error("xxxxxx: FAILED:: Exception has occured" ,exc_info=1)
+          fLogger.error("C4.100.001: [exception]: FAILED:: Exception has occured" ,exc_info=1)
           c4i.closeFileLog( )
           fileLogOpen = False
         rec.addErr( f, 'ERROR: Exception' )

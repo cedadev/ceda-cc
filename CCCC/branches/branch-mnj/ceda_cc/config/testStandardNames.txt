@@ -1,3 +1,78 @@
 =variable_ncattribute_mipvalues=
 *Consistency of variable NetCDF attributes with MIP tables
 *Test of the consistency of the NetCDF attributes of a variable with those specified in a MIP tables entry. The attributes tested will generally include the standard_name, long_name, units, cell_methods, _FillValue and missingvalue. The last 3 have special treatment. The "cell_methods" attribute has a compound structure. The test should parse the structure to evaluate whether the information specified in the MIP tables is given correctly. Inclusion of additional information in the "cell_methods" attribute should be allowed. The two attributes "_FillValue" and "missingvalue" provide the same information. "_FillValue" is given special treatment by the NetCDF libraries, "missingvalue" is included for compatibility with earlier standards. They should be both present or both omitted (for some MIPs it may be specified that they should always be present) and if present, they should have the same value (generally specified in the MIP requirements).
+
+=global_ncattribute_present=
+*Presence of required NetCDF global attributes
+*Test that required global NetCDF attributes are present in the data file.
+
+=variable_ncattribute_present=
+*Presence of required NetCDF variable attributes
+*Test that required NetCDF variable attributes are present in the data file.
+
+=variable_in_group=
+*The data variable is a valid member of the indicated collection of variables
+*Test that the data variable is in a list of variables associated with a specified collection: in the context of MIPs this means checking that the variable is present in the relevant MIP table.
+
+=variable_type=
+*Data type of variable
+*Verify that the data variable is of the appropriate data type (e.g. single precision or double precision)
+
+=global_ncattribute_cv=
+*Global NetCDF attribute controlled vocabularies
+*Verify that NetCDF global attributes are consistent with controlled vocabulary constraints.
+
+=filename_filemetadata_consistency=
+*Consistency of NetCDF global attributes and variable name with file name.
+Verify the consistency between the file name and the internal metadata of the file.
+
+=exception=
+*Compliance checker failed to run as designed
+An exception error code indicates that the software crashed while running checks. Details should be in the processing log files.
+
+=parse_filename=
+*Parse the file name into component elements
+File names will generally consist of a sequence of elements separated by a special character. This test checks that the correct number of elements are present.
+
+=parse_filename_timerange=
+*Parse the time range specified in the file name
+If the file name contains a time range, this test will check that the given element has the correct syntax.
+
+=filename_timerange_length=
+*Verify the number of characters used to specify the time range
+Verify the number of characters used to specify the time range
+
+=time_attributes=
+*Verify that the time variable is present (if needed) with the appropriate attributes
+Check that a "time" variable is present and has appopriate attributes, including units and bounds.
+
+=pressure_levels=
+*Check attributes, bounds and values of pressure levels
+Check attributes, bounds and values of pressure levels
+
+=height_levels=
+*Check attributes, bounds and values of height levels
+
+=grid_mapping=
+*Check the grid_mapping attributes
+Check the attributes specifying the grid in the grid_mappign variable
+
+=rotated_latlon_attributes=
+*Check the attributes of the rotated latitude and longitude variables
+Check the attributes of the rotated latitude and longitude variables
+
+=rotated_latlon_domain=
+*Check the domain specified by rotated latitude and longitude variables
+Check the domain specified by rotated latitude and longitude variables
+
+=regular_grid_attributes=
+*Check the attributes of the latitude and longitude variables
+Check the attributes of the latitude and longitude variables
+
+=regular_grid_domain=
+*Check the domain specified by latitude and longitude variables
+Check the domain specified by latitude and longitude variables
+
+=filename_timerange_value=
+*Check the time range specified in the file name
+Check the time range specified in the file name
