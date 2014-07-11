@@ -2,6 +2,9 @@
 import string, sys, glob, os
 
 HERE = os.path.dirname(__file__)
+if HERE == '':
+  HERE = '.'
+print '############################ %s' % HERE
 
 def cmin(x,y):
   if x < 0:
@@ -119,6 +122,10 @@ class main(object):
     print s
 
   def htmlout( self, ee, ff, esum ):
+    if not os.path.isdir( 'html' ):
+      os.mkdir( 'html' )
+      os.mkdir( 'html/files' )
+      os.mkdir( 'html/errors' )
     about = """<p>Output from CEDA CC</p>
 <p>This report contains a list of errors for each file, and a list of files associated with each error.</p>
 """
