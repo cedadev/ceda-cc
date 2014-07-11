@@ -1,0 +1,2 @@
+recursive-include ceda_cc/config *
+include LICENSE
