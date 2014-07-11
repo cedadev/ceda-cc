@@ -215,9 +215,10 @@ class projectConfig(object):
 #sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_series1_r1i1p1_199501-199502.nc 
 ## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var', 'institute':'institution', 'product':'product', 'experiment':'experiment_id', \
+      self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'@ensemble', 'model':'model_id', 'series':'series', 'realm':'modeling_realm', \
                         'frequency':'frequency', 'start_date':'@forecast_reference_time', \
+                        'table':'@mip_id',
                         'project':'project_id'}
 
     elif project == 'CMIP5':
