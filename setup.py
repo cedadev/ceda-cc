@@ -14,7 +14,7 @@ readme_txt = os.path.join(here, 'README.txt')
 long_description = '\n\n' + open(readme_txt).read()
 
 setup(name='ceda-cc',
-      version='1.1',
+      version='1.1.1',
       description="CEDA Conformance Checker",
       long_description=long_description,
       classifiers=[

@@ -45,7 +45,7 @@ class fileMetadata(object):
      self.dummy = dummy
      self.atMapLog = attributeMappingsLog
      if self.atMapLog == None:
-       self.atMapLog = open( '/tmp/cccc_atMapLog.txt', 'a' )
+       self.atMapLog = open( 'cccc_atMapLog.txt', 'a' )
 
   def close(self):
     self.atMapLog.close()

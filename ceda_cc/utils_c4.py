@@ -886,35 +886,44 @@ class checkByVar(checkBase):
 
   def impt(self,flist):
     ee = {}
+    elist = []
     for f in flist:
       fn = string.split(f, '/' )[-1]
       fnParts = string.split( fn[:-3], '_' )
-      ##if self.cls == 'CORDEX':
-        ##isFixed = fnParts[7] == 'fx'
-        ##group = fnParts[7]
-      ##elif self.cls == 'SPECS':
-        ##isFixed = fnParts[1] == 'fx'
-        ##group = fnParts[1]
+      
+      try:
+        if self.pcfg.freqIndex != None:
+          freq = fnParts[self.pcfg.freqIndex]
+        else:
+          freq = None
 
-      if self.pcfg.freqIndex != None:
-        freq = fnParts[self.pcfg.freqIndex]
-      else:
-        freq = None
+        isFixed = freq == 'fx'
+        group = fnParts[ self.pcfg.groupIndex ]
 
-      isFixed = freq == 'fx'
-      group = fnParts[ self.pcfg.groupIndex ]
-
-      if isFixed:
-        trange = None
-      else:
-        trange = string.split( fnParts[-1], '-' )
-      var = fnParts[0]
-      thisKey = string.join( fnParts[:-1], '.' )
-      if group not in ee.keys():
-        ee[group] = {}
-      if thisKey not in ee[group].keys():
-        ee[group][thisKey] = []
-      ee[group][thisKey].append( (f,fn,group,trange) )
+        if isFixed:
+          trange = None
+        else:
+          trange = string.split( fnParts[-1], '-' )
+        var = fnParts[0]
+        thisKey = string.join( fnParts[:-1], '.' )
+        if group not in ee.keys():
+          ee[group] = {}
+        if thisKey not in ee[group].keys():
+          ee[group][thisKey] = []
+        ee[group][thisKey].append( (f,fn,group,trange) )
+      except:
+        print 'Cannot parse file name: %s' % (f) 
+        elist.append(f)
+## this ee entry is not used, except in bookkeeping check below. 
+## parsing of file name is repeated later, and a error log entry is created at that stage -- this could be improved.
+## in order to improve, need to clarify flow of program: the list here is used to provide preliminary info before log files etc are set up.
+        group = '__error__'
+        thisKey = fn
+        if group not in ee.keys():
+          ee[group] = {}
+        if thisKey not in ee[group].keys():
+          ee[group][thisKey] = []
+        ee[group][thisKey].append( (f,fn,group) )
 
     nn = len(flist)
     n2 = 0
@@ -923,7 +932,12 @@ class checkByVar(checkBase):
         n2 += len( ee[k][k2] )
 
     assert nn==n2, 'some file lost!!!!!!'
-    self.info =  '%s files, %s frequencies' % (nn,len(ee.keys()) )
+    if len(elist) == 0:
+      self.info =  '%s files, %s frequencies' % (nn,len(ee.keys()) )
+    else:
+      self.info =  '%s files, %s frequencies, severe errors in file names: %s' % (nn,len(ee.keys()),len(elist) )
+      for e in elist:
+        self.info += '\n%s' % e
     self.ee = ee
 
   def check(self, recorder=None,calendar='None',norun=False):
