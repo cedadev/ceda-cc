@@ -28,6 +28,8 @@ reload( utils )
 
 from xceptions import baseException
 
+from fcc_utils2 import tupsort
+
 
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
 #rcm_version_id = <RCMVersionID>                     
@@ -50,6 +52,7 @@ class recorder(object):
     self.pathTmpl = '%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/'
     self.pathTmpl = pathTmplDict.get(project,pathTmplDict['__def__'])
     self.records = {}
+    self.tidtupl = []
 
   def open(self):
     if self.type == 'map':
@@ -75,11 +78,13 @@ class recorder(object):
       fdate = "na"
       sz = 0
     record = '%s | OK | %s | modTime = %s | target = %s ' % (fpath,sz,fdate,tpath)
+    fn = string.split( fpath, '/' )[-1]
     for k in ['creation_date','tracking_id']:
       if k in drs.keys():
         record += ' | %s = %s' % (k,drs[k])
+        if k == 'tracking_id':
+          self.tidtupl.append( (fn,drs[k]) )
 
-    fn = string.split( fpath, '/' )[-1]
     self.records[fn] = record
   
   def modify(self,fn,msg):
@@ -90,6 +95,25 @@ class recorder(object):
     s = string.replace( self.records[fn], '| OK |', '| %s |' % msg )
     ##print '--> ',s
     self.records[fn] = s
+
+  def checktids(self):
+## sort by tracking id
+    self.tidtupl.sort( cmp=tupsort(k=1).cmp )
+    nd = 0
+    fnl = []
+    for k in range(len(self.tidtupl)-1):
+      if self.tidtupl[k][1] == self.tidtupl[k+1][1]:
+        print 'Duplicate tracking_id: %s, %s:: %s' % (self.tidtupl[k][0],self.tidtupl[k+1][0],self.tidtupl[k][1])
+        nd += 1
+        if len(fnl) == 0 or fnl[-1] != self.tidtupl[k][0]:
+          fnl.append( self.tidtupl[k][0])
+        fnl.append( self.tidtupl[k+1][0])
+    if nd == 0:
+      print 'No duplicate tracking ids found in %s files' % len(self.tidtupl)
+    else:
+      print '%s duplicate tracking ids' % nd
+      for f in fnl:
+        self.modify( f, 'ERROR: duplicate tid' )
 
   def dumpAll(self,safe=True):
     keys = self.records.keys()
@@ -449,7 +473,11 @@ class main(object):
 
     fileLogOpen = False
     self.resList =  []
+    stdoutsum = 2000
+    npass = 0
+    kf = 0
     for f in c4i.flist:
+      kf += 1
       rv = False
       ec = None
       if monitorFileHandles:
@@ -482,6 +510,8 @@ class main(object):
           cal = self.cc.calendar
           ec = self.cc.errorCount
         rv =  ec == 0
+        if rv:
+          npass += 1
         self.resList.append( (rv,ec) )
 
         if c4i.logByFile:
@@ -512,6 +542,8 @@ class main(object):
         rec.addErr( f, 'ERROR: Exception' )
         if not c4i.holdExceptions:
           raise
+      if stdoutsum > 0 and kf%stdoutsum == 0:
+         print '%s files checked; %s passed this round' % (kf,npass)
       if monitorFileHandles:
         nofhEnd = self.monitor.get_open_fds()
         if nofhEnd > nofhStart:
@@ -537,6 +569,8 @@ class main(object):
         if ll[i] != ll[i-1]:
           oo.write( ll[i] + '\n' )
       oo.close()
+    if c4i.project in ['SPECS','CCMI','CMIP5']:
+      rec.checktids()
     rec.dumpAll()
     if printInfo:
       print 'Error count %s' % ecount
