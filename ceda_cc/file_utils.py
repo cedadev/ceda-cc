@@ -38,6 +38,11 @@ if ncLib == 'Scientific':
 
 ## end of netcdf import.
 
+## utility function to convert "type" to string and standardise terminology
+def tstr( x ):
+  x1 = str(x)
+  return {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( x1, x1 )
+
 class fileMetadata(object):
 
   def __init__(self,dummy=False,attributeMappingsLog=None):
@@ -83,7 +88,7 @@ class fileMetadata(object):
         if type(x) == type([]) and len(x) == 1:
           x = x[0]
         self.va[v][k] = x
-      self.va[v]['_type'] = str( self.nc.variables[v].dtype )
+      self.va[v]['_type'] = tstr( self.nc.variables[v].dtype )
       if v in ['plev','plev_bnds','height']:
         x = self.nc.variables[v].getValue().tolist()
         if type(x) != type([]):
@@ -95,7 +100,7 @@ class fileMetadata(object):
       self.da[v] = {}
       for k in self.nc.axes[v].attributes.keys():
         self.da[v][k] = self.nc.axes[v].attributes[k]
-      self.da[v]['_type'] = str( self.nc.axes[v].getValue().dtype )
+      self.da[v]['_type'] = tstr( self.nc.axes[v].getValue().dtype )
       self.da[v]['_data'] = self.nc.axes[v].getValue().tolist()
       
     self.nc.close()
@@ -119,7 +124,7 @@ class fileMetadata(object):
         self.va[v] = {}
         for k in self.nc.variables[v].__dict__.keys():
           self.va[v][k] = self.nc.variables[v].__dict__[k]
-        self.va[v]['_type'] = str( self.nc.variables[v].getValue().dtype )
+        self.va[v]['_type'] = tstr( self.nc.variables[v].getValue().dtype )
         if v in ['plev','plev_bnds','height']:
         ### Note: returns a scalar if data has a scalar value.
           x = self.nc.variables[v].getValue().tolist()
@@ -132,7 +137,7 @@ class fileMetadata(object):
       if v in self.nc.variables.keys():
         for k in self.nc.variables[v].__dict__.keys():
           self.da[v][k] = self.nc.variables[v].__dict__[k]
-        self.da[v]['_type'] = str( self.nc.variables[v].getValue().dtype )
+        self.da[v]['_type'] = tstr( self.nc.variables[v].getValue().dtype )
         self.da[v]['_data'] = self.nc.variables[v].getValue().tolist()
       else:
         self.da[v]['_type'] = 'index (no data variable)'
@@ -151,9 +156,9 @@ class fileMetadata(object):
         for k in self.nc.variables[v].ncattrs():
           self.va[v][k] = self.nc.variables[v].getncattr(k)
         try:
-          self.va[v]['_type'] = str( self.nc.variables[v].dtype )
+          self.va[v]['_type'] = tstr( self.nc.variables[v].dtype )
         except:
-          self.va[v]['_type'] = str( self.nc.variables[v].datatype )
+          self.va[v]['_type'] = tstr( self.nc.variables[v].datatype )
         if v in ['plev','plev_bnds','height']:
           self.va[v]['_data'] = self.nc.variables[v][:].tolist()
 
@@ -163,9 +168,9 @@ class fileMetadata(object):
         for k in self.nc.variables[v].ncattrs():
           self.da[v][k] = self.nc.variables[v].getncattr(k)
         try:
-          self.da[v]['_type'] = str( self.nc.variables[v].dtype )
+          self.da[v]['_type'] = tstr( self.nc.variables[v].dtype )
         except:
-          self.da[v]['_type'] = str( self.nc.variables[v].datatype )
+          self.da[v]['_type'] = tstr( self.nc.variables[v].datatype )
 
         self.da[v]['_data'] = self.nc.variables[v][:].tolist()
       else:
