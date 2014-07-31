@@ -350,7 +350,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('003','variable_type')
 
     mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
-    thisType = {'real':'float32', 'integer':'int32', 'float':'float32' }.get( mipType, mipType )
+    thisType = {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( mipType, mipType )
     self.test( mipType == None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),varAts[varName]['_type']) )
 
     self.checkId = ('004','variable_ncattribute_present')
