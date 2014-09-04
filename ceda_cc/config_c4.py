@@ -26,7 +26,7 @@ validCmip5Frequencies = ['fx','yr','monClim','mon','day','6hr','3hr','subhr']
 validCordexFrequencies = ['fx','sem','mon','day','6hr','3hr']
 validSpecsFrequencies = ['fx','mon','day','6hr']
 validCcmiFrequencies = ['fx','yr','mon','day','hr','subhr']
-validSpecsExptFamilies = map( lambda x: string.split( x )[0], 
+validSpecsExptFamilies = map( lambda x: string.strip( x ), 
                               open( op.join(CC_CONFIG_DIR, 'specs_vocabs/exptFamily.txt' )).readlines() )
 
 validCordexDomainsL = [ 'SAM-44', 'CAM-44', 'NAM-44', 'EUR-44', 'AFR-44', 'WAS-44', 'EAS-44', 'CAS-44', 'AUS-44', 'ANT-44', 'ARC-44', 'MED-44']
@@ -137,10 +137,11 @@ def getVocabs(pcfg):
                'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
                'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
                'realization':utils.patternControl( 'realization', "[0-9]+" ), \
-               'project_id':utils.listControl( 'project_id', ['SPECS'] ), \
+               'startdate':utils.patternControl( 'startdate', "S[0-9]{8}" ), \
+               'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
+               'project_id':utils.listControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
                ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
-               'series':utils.listControl( 'series', ['series1','series2'] ), \
              }
   elif pcfg.project == 'CMIP5':
                ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
@@ -205,15 +206,13 @@ class projectConfig(object):
 
     elif project == 'SPECS':
       lrdr = readVocab( 'specs_vocabs/')
-      self.requiredGlobalAttributes = [ 'contact', 'product', 'creation_date', 'tracking_id', \
-              'experiment_id', 'series']
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
-      self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'series','frequency','Conventions','modeling_realm', \
-                       'initialization_method','physics_version','realization']
-      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','series','@forecast_reference_time','@ensemble']
-#sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_series1_r1i1p1_199501-199502.nc 
-## mip_id derived from global attribute Table_id (CMOR convention); experiment family derived from experiment_id, ensemble derived from rip attributes.
+      self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'frequency','Conventions','modeling_realm', \
+                       'initialization_method','physics_version','realization','associated_experiment']
+      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','startdate','@ensemble']
+#sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_r1i1p1_199501-199502.nc 
+## mip_id derived from global attribute Table_id (CMOR convention); ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'@ensemble', 'model':'model_id', 'series':'series', 'realm':'modeling_realm', \
@@ -285,9 +284,9 @@ class projectConfig(object):
       self.domainIndex = None
       self.freqIndex = None
     elif self.project == 'SPECS':
-      self.fnPartsOkLen = [7,8]
-      self.fnPartsOkFixedLen = [7,]
-      self.fnPartsOkUnfixedLen = [8,]
+      self.fnPartsOkLen = [6,7]
+      self.fnPartsOkFixedLen = [6,]
+      self.fnPartsOkUnfixedLen = [7,]
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = 1
