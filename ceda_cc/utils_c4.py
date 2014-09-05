@@ -538,7 +538,7 @@ class checkStandardDims(checkBase):
 
       ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attribute calendar missing', part=True )
 
-      ok &= self.test( da['time']['_type'] == "float64", 'Time: data type not float64', part=True )
+      ok &= self.test( da['time']['_type'] in ["float64","double"], 'Time: data type not float64 [%s]' % da['time']['_type'], part=True )
        
       if ok:
         self.log_pass()

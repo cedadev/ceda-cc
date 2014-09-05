@@ -254,12 +254,15 @@ class c4_init(object):
     if self.summarymode:
       return
 
+    fltype = None
     argu = []
     while len(args) > 0:
       next = args.pop(0)
       if next == '-f':
+        print '###########',args[0]
         flist = [args.pop(0),]
         self.logByFile = False
+        fltype = '-f'
       elif next == '--log':
         x = args.pop(0)
         assert x in ['single','multi','s','m'], 'unrecognised logging option (--log): %s' % (x)
@@ -305,7 +308,7 @@ class c4_init(object):
       print 'Unused arguments: ', argu
       self.commandHints( argsIn )
 
-    if self.project == 'CMIP5':
+    if self.project == 'CMIP5' and fltype != '-f':
       fl0 = []
       for f in flist:
         if string.find( f, '/latest/' ) != -1:
