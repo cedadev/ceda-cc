@@ -14,7 +14,7 @@ ll = map( lambda x: x[1], l )
 supportedNetcdf = ['cdms2','netCDF4','Scientific','ncq3']
 
 installedSupportedNetcdf = []
-##ll = []
+ll = []
 
 for x in supportedNetcdf:
   if x in ll:
@@ -75,20 +75,21 @@ class fileMetadata(object):
     elif ncLib == 'Scientific':
       self.loadNc__Scientific(fpath)
     else:
-      raise baseException( 'No supported netcdf module assigned' )
+      self.loadNc__ncq(fpath)
+      ##raise baseException( 'No supported netcdf module assigned' )
 
-  def loadNc_ncq(self,fpath):
+  def loadNc__ncq(self,fpath):
     self.nc0 = ncq3.open( fpath )
     self.nc0.getDigest()
     self.nc0.info()
     self.nc = ncq3.Browse( self.nc0.digest )
-    for a in self.nc._ga:
+    for a in self.nc._gal:
        self.ga[a.name] = a.value
     for v in self.nc._vdict.keys():
-      thisv = self.nc._vdict[v]
+      thisv = self.nc._vdict[v][0]
       if v not in self.nc._ddict.keys():
         self.va[v] = {}
-        for a in self.nc._ll[thisv[0].id]:
+        for a in self.nc._ll[thisv.id]:
           self.va[v][a.name] = a.value
         self.va[v]['_type'] = tstr( thisv.type )
         if v in ['plev','plev_bnds','height']:
@@ -99,7 +100,7 @@ class fileMetadata(object):
       else:
         self.da[v] = {}
         thisa = self.nc._ddict[v]
-        for a in self.nc._ll[thisv[0].id]:
+        for a in self.nc._ll[thisv.id]:
           self.da[v][a.name] = a.value
         self.da[v]['_type'] = tstr( thisv.type )
         self.da[v]['_data'] = thisv.data

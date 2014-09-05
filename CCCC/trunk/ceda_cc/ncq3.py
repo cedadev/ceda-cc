@@ -61,6 +61,13 @@ ncmappings.tdict = { NC_BYTE:c_byte,
       NC_FLOAT:c_float,
       NC_DOUBLE:c_double }
 
+ncmappings.tdict2 = { NC_BYTE:"byte",
+      NC_SHORT:"short",
+      NC_INT:"int",
+      NC_LONG:"long",
+      NC_FLOAT:"float",
+      NC_DOUBLE:"double" }
+
 NC_MAX_NAME = 256
 
 class NCError (Exception):
@@ -113,7 +120,6 @@ class Browse(object):
     tl = None
     ti = -2
     for a in self.nc.attributes:
-      print a.id, a.vid, a.name, len(self._ll[a.vid])
       if a.vid != -1:
         assert a.id == len(self._ll[a.vid]), 'Unexpected attribute id: %s -- %s' % (str(a),str(self._ll[a.vid]) )
         self._ll[a.vid].append( a )
@@ -197,9 +203,9 @@ class File(object):
             if ndims.value <= maxrank:
               data = (c_double*len)()
               err = libnetcdf.nc_get_var_double(self.id, i, data)
-              self.vars.append( Variable( name.value, 0, i, type.value, natts.value, ndims.value, list(dimids), data[:] ) )
+              self.vars.append( Variable( name.value, 0, i, ncmappings.tdict2[type.value], natts.value, ndims.value, list(dimids), data[:] ) )
             else:
-              self.vars.append( Variable( name.value, 0, i, type.value, natts.value, ndims.value, list(dimids), None ) )
+              self.vars.append( Variable( name.value, 0, i, ncmappings.tdict2[type.value], natts.value, ndims.value, list(dimids), None ) )
           else:
             self.vars.append( VarInfo( name.value, 0, i, type.value, natts.value, ndims.value, list(dimids) ) )
      return self.vars
@@ -254,16 +260,22 @@ class File(object):
     else:
       tt = ncmappings.tdict.get( type, None )
       if tt == None: raise NCError("unknown data type")
+      t2 = ncmappings.tdict2.get( type, None )
       if len > 1:
         data = (tt*len)()
         err = libnetcdf.nc_get_att(self.id, vid, c_char_p(name), data)
         if err != 0: raise NCError( 'Error reading attribute value %s, type:%s' % (name,type) )
-        return Attribute( name, 0, vid, aid, type, len, data )
+        return Attribute( name, 0, vid, aid, t2, len, data )
       else:
         data = tt()
         err = libnetcdf.nc_get_att(self.id, vid, c_char_p(name), byref(data))
         if err != 0: raise NCError( 'Error reading attribute value %s, type:%s' % (name,type) )
-        return Attribute( name, 0, vid, aid, type, len, data.value )
+        print name, data.value, t2, type, float(data.value)
+        if type == 5:
+          dv = c_float( data.value ).value
+        else:
+          dv = data.value
+        return Attribute( name, 0, vid, aid, t2, len, dv )
 
 ## end of extension ##
 
