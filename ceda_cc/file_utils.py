@@ -14,7 +14,7 @@ ll = map( lambda x: x[1], l )
 supportedNetcdf = ['cdms2','netCDF4','Scientific','ncq3']
 
 installedSupportedNetcdf = []
-ll = []
+##ll = []
 
 for x in supportedNetcdf:
   if x in ll:
