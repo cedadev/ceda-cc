@@ -11,9 +11,10 @@ from xceptions import *
 l = pkgutil.iter_modules()
 ll = map( lambda x: x[1], l )
 
-supportedNetcdf = ['cdms2','netCDF4','Scientific']
+supportedNetcdf = ['cdms2','netCDF4','Scientific','ncq3']
 
 installedSupportedNetcdf = []
+##ll = []
 
 for x in supportedNetcdf:
   if x in ll:
@@ -29,9 +30,11 @@ if len(installedSupportedNetcdf) > 0:
 else:
   print """No supported netcdf module found.
          Supported modules are %s.
-         Execution my fail, depending on options chosen.
+         Attempting to run with experimental ncq3
+         Execution may fail, depending on options chosen.
          """ % str(supportedNetcdf)
-  ncLib = None
+  import ncq3
+  ncLib = 'ncq3'
 
 if ncLib == 'Scientific':
   from Scientific.IO import NetCDF as ncdf
@@ -74,6 +77,33 @@ class fileMetadata(object):
     else:
       raise baseException( 'No supported netcdf module assigned' )
 
+  def loadNc_ncq(self,fpath):
+    self.nc0 = ncq3.open( fpath )
+    self.nc0.getDigest()
+    self.nc0.info()
+    self.nc = ncq3.Browse( self.nc0.digest )
+    for a in self.nc._ga:
+       self.ga[a.name] = a.value
+    for v in self.nc._vdict.keys():
+      thisv = self.nc._vdict[v]
+      if v not in self.nc._ddict.keys():
+        self.va[v] = {}
+        for a in self.nc._ll[thisv[0].id]:
+          self.va[v][a.name] = a.value
+        self.va[v]['_type'] = tstr( thisv.type )
+        if v in ['plev','plev_bnds','height']:
+          x = thisv.data
+          if type(x) != type([]):
+            x = [x]
+          self.va[v]['_data'] = x
+      else:
+        self.da[v] = {}
+        thisa = self.nc._ddict[v]
+        for a in self.nc._ll[thisv[0].id]:
+          self.da[v][a.name] = a.value
+        self.da[v]['_type'] = tstr( thisv.type )
+        self.da[v]['_data'] = thisv.data
+    
   def loadNc__Cdms(self,fpath):
     self.nc = cdms2.open( fpath )
     for k in self.nc.attributes.keys():
