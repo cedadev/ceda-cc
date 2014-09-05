@@ -259,7 +259,6 @@ class c4_init(object):
     while len(args) > 0:
       next = args.pop(0)
       if next == '-f':
-        print '###########',args[0]
         flist = [args.pop(0),]
         self.logByFile = False
         fltype = '-f'

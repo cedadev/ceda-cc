@@ -1,4 +1,4 @@
-import string, re, os, sys, traceback
+import string, re, os, sys, traceback, ctypes
 
 def strmm3( mm ):
   return string.join( map( lambda x: '%s="%s" [correct: "%s"]' % x, mm ), '; ' )
@@ -80,6 +80,7 @@ class checkBase(object):
     self.errorCount = 0
     self.passCount = 0
     self.missingValue = 1.e20
+    self.missingValue = ctypes.c_float(1.00000002004e+20).value
     from file_utils import ncLib
     if ncLib == 'netCDF4':
       import numpy
@@ -382,7 +383,9 @@ class checkGlobalAttributes(checkBase):
       if mipType == 'real':
         if varAts[varName].has_key( 'missing_value' ):
            msg = 'Variable [%s] has incorrect attribute missing_value=%s [correct: %s]' % (varName,varAts[varName]['missing_value'],self.missingValue)
-           ok &= self.test( varAts[varName]['missing_value'] == self.missingValue, msg, part=True )
+           ## print varAts[varName]['missing_value'], type(varAts[varName]['missing_value'])
+           ## print self.missingValue, type(self.missingValue)
+           ok &= self.test( ctypes.c_float(varAts[varName]['missing_value']).value == ctypes.c_float(self.missingValue).value, msg, part=True )
         if varAts[varName].has_key( '_FillValue' ):
            msg = 'Variable [%s] has incorrect attribute _FillValue=%s [correct: %s]' % (varName,varAts[varName]['_FillValue'],self.missingValue)
            ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
