@@ -385,6 +385,7 @@ class checkGlobalAttributes(checkBase):
            msg = 'Variable [%s] has incorrect attribute missing_value=%s [correct: %s]' % (varName,varAts[varName]['missing_value'],self.missingValue)
            ## print varAts[varName]['missing_value'], type(varAts[varName]['missing_value'])
            ## print self.missingValue, type(self.missingValue)
+### need to use ctypes here when using ncq3 to read files -- appears OK for other libraries.
            ok &= self.test( ctypes.c_float(varAts[varName]['missing_value']).value == ctypes.c_float(self.missingValue).value, msg, part=True )
         if varAts[varName].has_key( '_FillValue' ):
            msg = 'Variable [%s] has incorrect attribute _FillValue=%s [correct: %s]' % (varName,varAts[varName]['_FillValue'],self.missingValue)

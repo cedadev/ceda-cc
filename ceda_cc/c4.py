@@ -98,6 +98,8 @@ class recorder(object):
 
   def checktids(self):
 ## sort by tracking id
+    if len( self.tidtupl ) == 1:
+      return
     self.tidtupl.sort( cmp=tupsort(k=1).cmp )
     nd = 0
     fnl = []
@@ -254,6 +256,7 @@ class c4_init(object):
     if self.summarymode:
       return
 
+    self.forceNetcdfLib = None
     fltype = None
     argu = []
     while len(args) > 0:
@@ -269,6 +272,14 @@ class c4_init(object):
            forceLogOrg = 'multi'
         elif x in ['single','s']:
            forceLogOrg = 'single'
+      elif next == '--force-ncq':
+        self.forceNetcdfLib = 'ncq3'
+      elif next == '--force-cdms2':
+        self.forceNetcdfLib = 'cdms2'
+      elif next == '--force-pync4':
+        self.forceNetcdfLib = 'netCDF4'
+      elif next == '--force-scientific':
+        self.forceNetcdfLib = 'Scientific'
       elif next == '--flfmode':
         lfmk = args.pop(0)
         assert lfmk in ['a','n','np','w','wo'], 'Unrecognised file logfile mode (--flfmode): %s' % lfmk
@@ -453,7 +464,7 @@ class main(object):
     if (ncLib == None) and (not isDummy):
        raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
     pcfg = config.projectConfig( c4i.project )
-    ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog)
+    ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
     self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
     if monitorFileHandles:

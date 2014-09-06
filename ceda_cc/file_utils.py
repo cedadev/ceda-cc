@@ -33,7 +33,6 @@ else:
          Attempting to run with experimental ncq3
          Execution may fail, depending on options chosen.
          """ % str(supportedNetcdf)
-  import ncq3
   ncLib = 'ncq3'
 
 if ncLib == 'Scientific':
@@ -48,10 +47,11 @@ def tstr( x ):
 
 class fileMetadata(object):
 
-  def __init__(self,dummy=False,attributeMappingsLog=None):
+  def __init__(self,dummy=False,attributeMappingsLog=None,forceLib=None):
      
      self.dummy = dummy
      self.atMapLog = attributeMappingsLog
+     self.forceLib = forceLib
      if self.atMapLog == None:
        self.atMapLog = open( 'cccc_atMapLog.txt', 'a' )
 
@@ -68,21 +68,41 @@ class fileMetadata(object):
     if self.dummy:
       self.makeDummyFileImage()
       return
-    if ncLib == 'cdms2':
+    if self.forceLib == 'ncq3':
+      import ncq3
+      self.ncq3 = ncq3
+      self.loadNc__ncq(fpath)
+    elif self.forceLib == 'cdms2':
+      import cdms2
+      self.cdms2 = cdms2
+      self.loadNc__Cdms(fpath)
+    elif self.forceLib == 'netCDF4':
+      import netCDF4
+      self.netCDF4 = netCDF4
+      self.loadNc__Netcdf4(fpath)
+    elif self.forceLib == 'Scientific':
+      import Scientific
+      from Scientific.IO import NetCDF as ncdf
+      self.ncdf = ncdf
+      self.loadNc__Scientific(fpath)
+    elif ncLib == 'cdms2':
+      self.cdms2 = cdms2
       self.loadNc__Cdms(fpath)
     elif ncLib == 'netCDF4':
+      self.netCDF4 = netCDF4
       self.loadNc__Netcdf4(fpath)
     elif ncLib == 'Scientific':
+      self.ncdf = ncdf
       self.loadNc__Scientific(fpath)
     else:
       self.loadNc__ncq(fpath)
       ##raise baseException( 'No supported netcdf module assigned' )
 
   def loadNc__ncq(self,fpath):
-    self.nc0 = ncq3.open( fpath )
+    self.nc0 = self.ncq3.open( fpath )
     self.nc0.getDigest()
-    self.nc0.info()
-    self.nc = ncq3.Browse( self.nc0.digest )
+    self.ncq3.close( self.nc0 )
+    self.nc = self.ncq3.Browse( self.nc0.digest )
     for a in self.nc._gal:
        self.ga[a.name] = a.value
     for v in self.nc._vdict.keys():
@@ -106,7 +126,7 @@ class fileMetadata(object):
         self.da[v]['_data'] = thisv.data
     
   def loadNc__Cdms(self,fpath):
-    self.nc = cdms2.open( fpath )
+    self.nc = self.cdms2.open( fpath )
     for k in self.nc.attributes.keys():
       self.ga[k] = self.nc.attributes[k]
       if len( self.ga[k] ) == 1:
@@ -145,11 +165,11 @@ class fileMetadata(object):
 ### for scalar variables, <variable>.getValue().tolist() returns a scalar.
 ###
   def loadNc__Scientific(self,fpath):
-    self.nc = ncdf.NetCDFFile( fpath, 'r' )
+    self.nc = self.ncdf.NetCDFFile( fpath, 'r' )
     for k in self.nc.__dict__.keys():
       self.ga[k] = self.nc.__dict__[k]
-      ##if len( self.ga[k] ) == 1:
-        ##self.ga[k] = self.ga[k][0]
+      if type(self.ga[k]) not in [type('x'),type(1),type(1.)] and len(self.ga[k]) == 1:
+        self.ga[k] = self.ga[k][0]
     for v in self.nc.variables.keys():
       if v not in self.nc.dimensions.keys():
         self.va[v] = {}
@@ -176,11 +196,12 @@ class fileMetadata(object):
     self.nc.close()
 
   def loadNc__Netcdf4(self,fpath):
-    self.nc = netCDF4.Dataset(fpath, 'r')
+    self.nc = self.netCDF4.Dataset(fpath, 'r')
     for k in self.nc.ncattrs():
       self.ga[k] = self.nc.getncattr(k)
-      if len( self.ga[k] ) == 1:
-        self.ga[k] = self.ga[k][0]
+      if type( self.ga[k] ) in [ type([]),type(()) ]:
+        if len( self.ga[k] ) == 1:
+          self.ga[k] = self.ga[k][0]
     for v in self.nc.variables.keys():
       if v not in self.nc.dimensions.keys():
         self.va[v] = {}
