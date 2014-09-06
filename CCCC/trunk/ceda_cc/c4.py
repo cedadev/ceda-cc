@@ -43,6 +43,10 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
 
+## Core DRS: list of vocab names
+## Path template: -- current version puts upper case in "project"
+## Dataset template:  
+
 class recorder(object):
 
   def __init__(self,project,fileName,type='map',dummy=False):

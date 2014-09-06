@@ -64,7 +64,8 @@ except:
 
 
 extras = [
-( '/data/work/cmip5/output1/pr_20110323/pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc', 'CMIP5', 0 ) ]
+( '/data/work/cmip5/output1/pr_20110323/pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc', 'CMIP5', 0 ),
+('/badc/cmip5/data/cmip5/output1/MOHC/HadGEM2-ES/historical/mon/atmos/Amon/r1i1p1/files/pr_20110329/pr_Amon_HadGEM2-ES_historical_r1i1p1_185912-188411.nc', 'CMIP5', 0 ) ]
 
 
 kt = 0
