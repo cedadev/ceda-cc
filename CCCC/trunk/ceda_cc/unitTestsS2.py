@@ -1,9 +1,10 @@
-
-import logging, time
+import logging, time, os
 import utils_c4
 import config_c4 as config
 from c4 import fileMetadata, dummy, main
 from xceptions import *
+
+from file_utils import installedSupportedNetcdf
 
 #### set up log file ####
 tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
@@ -40,7 +41,6 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
 
-
 testId = '#11.001'
 try:
   m = main( args=['-p', '__dummy'], monitorFileHandles=True )
@@ -61,3 +61,45 @@ try:
   print 'Failed [%s]: did not trigger exception' % testId
 except:
   print 'OK [%s]: attempt to trigger exception successful' % testId
+
+
+extras = [
+( '/data/work/cmip5/output1/pr_20110323/pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc', 'CMIP5', 0 ) ]
+
+
+kt = 0
+for e in extras:
+  kt += 1
+  if os.path.isfile( e[0] ):
+    if 'cdms2' in installedSupportedNetcdf:
+      testId = '#20.%3.3i' % kt
+      m = main( args=['-p', e[1], '-f', e[0], '--force-cdms2','--ld', 'ld_test1' ], abortMessageCount=10 )
+      if m.ok:
+         print 'OK [%s]: successfully checked test file with cdms2' % testId
+      else:
+         print 'Failed [%s]: incorrect test results' % testId
+
+    testId = '#21.%3.3i' % kt
+    m = main( args=['-p', e[1], '-f', e[0], '--force-ncq','--ld', 'ld_test2' ], abortMessageCount=10 )
+    if m.ok:
+       print 'OK [%s]: successfully checked test file with ncq3' % testId
+    else:
+       print 'Failed [%s]: incorrect test results' % testId
+
+    if 'netCDF4' in installedSupportedNetcdf:
+      testId = '#22.%3.3i' % kt
+      m = main( args=['-p', e[1], '-f', e[0], '--force-pync4','--ld', 'ld_test3' ], abortMessageCount=10 )
+      if m.ok:
+         print 'OK [%s]: successfully checked test file with python NetCDF4' % testId
+      else:
+         print 'Failed [%s]: incorrect test results' % testId
+
+    if 'Scientific' in installedSupportedNetcdf:
+      testId = '#23.%3.3i' % kt
+      m = main( args=['-p', e[1], '-f', e[0], '--force-scientific','--ld', 'ld_test4' ], abortMessageCount=10 )
+      if m.ok:
+         print 'OK [%s]: successfully checked test file with python Scientific' % testId
+      else:
+         print 'Failed [%s]: incorrect test results' % testId
+      
+    

@@ -270,10 +270,7 @@ class File(object):
         data = tt()
         err = libnetcdf.nc_get_att(self.id, vid, c_char_p(name), byref(data))
         if err != 0: raise NCError( 'Error reading attribute value %s, type:%s' % (name,type) )
-        if type == 5:
-          dv = c_float( data.value ).value
-        else:
-          dv = data.value
+        dv = data.value
         return Attribute( name, 0, vid, aid, t2, len, dv )
 
 ## end of extension ##
