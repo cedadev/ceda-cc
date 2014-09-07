@@ -22,7 +22,9 @@ for x in supportedNetcdf:
 
 if len(installedSupportedNetcdf) > 0:
   try: 
-    exec 'import %s' % installedSupportedNetcdf[0]
+    cmd = 'import %s' % installedSupportedNetcdf[0]
+    print '>>>>>>>>>', cmd
+    exec cmd
     ncLib = installedSupportedNetcdf[0]
   except:
     print 'Failed to install %s' % installedSupportedNetcdf[0]
@@ -86,15 +88,20 @@ class fileMetadata(object):
       self.ncdf = ncdf
       self.loadNc__Scientific(fpath)
     elif ncLib == 'cdms2':
+      import cdms2
       self.cdms2 = cdms2
       self.loadNc__Cdms(fpath)
     elif ncLib == 'netCDF4':
+      import netCDF4
       self.netCDF4 = netCDF4
       self.loadNc__Netcdf4(fpath)
     elif ncLib == 'Scientific':
+      from Scientific.IO import NetCDF as ncdf
       self.ncdf = ncdf
       self.loadNc__Scientific(fpath)
     else:
+      import ncq3
+      self.ncq3 = ncq3
       self.loadNc__ncq(fpath)
       ##raise baseException( 'No supported netcdf module assigned' )
 

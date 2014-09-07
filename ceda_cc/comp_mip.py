@@ -72,9 +72,9 @@ class comp(object):
       f4 = False
       if e1[k][1]['standard_name'] in [None,'None']:
         if e1[k][1].get('long_name',None) not in [None,'None']:
-          print 'ERROR[A]: standard name for %s [%s] not set' % (k,e1[k][1].get('long_name') )
+          print 'WARNING[A]: standard name for %s [%s] not set' % (k,e1[k][1].get('long_name') )
         else:
-          print 'ERROR[A]: standard name for %s not set' % k
+          print 'WARNING[A]: standard name for %s not set' % k
       else:
         if e1[k][1]['standard_name'] not in self.snl:
           if e1[k][1]['standard_name'] not in self.snla:
@@ -230,8 +230,10 @@ if newMip == 'SPECS':
 elif newMip == 'CCMI':
   ml = ['CCMI1_Amon_v2_complete']
   ml = ['CCMI1_annual_comp-v3.txt', 'CCMI1_daily_comp-v3.txt', 'CCMI1_fixed_comp-v2.txt', 'CCMI1_hourly_comp-v3.txt', 'CCMI1_monthly_comp-v3.txt']
+  ml = ['CCMI1_annual', 'CCMI1_daily', 'CCMI1_fixed', 'CCMI1_hourly', 'CCMI1_monthly']
   newMipDir = 'ccmi_vocabs/mip/'
   mpat = 'CCMI1_%s_v1_complete'
+  newMipDir = 'ccmi1-cmor-tables/Tables/'
 elif newMip == 'CORDEX':
   newMipDir = 'cordex_vocabs/mip/'
   mpat = 'CORDEX_%s'

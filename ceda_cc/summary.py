@@ -27,6 +27,21 @@ class main(object):
         dohtml = True
 
     fl = glob.glob( '%s/*__qclog_*.txt' % idir )
+    fb = glob.glob( '%s/qcBatchLog*' % idir )
+    fb.sort()
+    fb = fb[-1]
+    ii = open( fb )
+    jj = []
+    for k in range(10):
+      jj.append( string.strip(ii.readline()) )
+    ii.close()
+    i0 = jj[0].index( ' INFO ' )
+    tstart = jj[0][:i0]
+    m1 = jj[0][i0+6:]
+    m2 = jj[1][i0+6:]
+    self.info = (tstart, m1, m2)
+##2014-09-06 18:42:24,109 INFO Starting batch -- number of file: 338
+##2014-09-06 18:42:24,109 INFO Source: /data/work/cordex/early/AFR-44i/SMHI/ECMWF-ERAINT/evaluation//.....
 
     ee = {}
     self.write( 'Summarising error reports from %s log file' % len(fl) )
@@ -129,8 +144,10 @@ class main(object):
     about = """<p>Output from CEDA CC</p>
 <p>This report contains a list of errors for each file, and a list of files associated with each error.</p>
 """
-    data = """<p>Demonstration using test data</p>
-"""
+    data = """<p>%s<br/>
+     %s<br/>
+     Start of checks: %s</p>
+""" % (self.info[1], self.info[2], self.info[0] )
     results = """<ul><li>Number of files tested: %s: <a href="files/findex.html">index by file</a></li>
                      <li>Number of errors: %s: <a href="errors/eindex.html">index by error</a></li>
                      <li>Number of error free files: %s</li></ul>

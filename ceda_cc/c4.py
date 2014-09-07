@@ -269,6 +269,7 @@ class c4_init(object):
         flist = [args.pop(0),]
         self.logByFile = False
         fltype = '-f'
+        self.source = flist[0]
       elif next == '--log':
         x = args.pop(0)
         assert x in ['single','multi','s','m'], 'unrecognised logging option (--log): %s' % (x)
@@ -295,6 +296,7 @@ class c4_init(object):
       elif next == '-d':
         fdir = args.pop(0)
         flist = glob.glob( '%s/*.nc' % fdir  )
+        self.source = '%s/*.nc' % fdir
       elif next == '-D':
         flist  = []
         fdir = args.pop(0)
@@ -303,6 +305,7 @@ class c4_init(object):
             fpath = '%s/%s' % (root,f)
             if (os.path.isfile( fpath ) or os.path.islink( fpath )) and f[-3:] == '.nc':
               flist.append( fpath )
+        self.source = '%s/.....' % fdir
       elif next == '-R':
         self.recordFile = args.pop(0)
       elif next == '--ld':
@@ -478,6 +481,7 @@ class main(object):
 
     cal = None
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
+    c4i.logger.info( 'Source: %s' % c4i.source )
     if len( c4i.errs ) > 0:
       for i in range(0,len( c4i.errs ), 2 ):
         c4i.logger.info( c4i.errs[i] )
