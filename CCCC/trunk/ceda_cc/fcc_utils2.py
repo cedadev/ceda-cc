@@ -101,8 +101,9 @@ class mipTableScan(object):
       return tuple( eee )
     else:
       ff = {}
+## l[0] = var name, l[1] = dimensions, l[2] = attributes, l[3] = tag
       for l in eee:
-        ff[l[0]] = ( l[1], l[2], l[3] )
+        ff[l[0]] = ( l[1], l[2], l[3], tag )
       if appendTo != None:
         for k in ff.keys():
           assert ff[k][1].has_key( 'standard_name' ), 'No standard name in %s:: %s' % (k,str(ff[k][1].keys()))
@@ -110,10 +111,25 @@ class mipTableScan(object):
             if lax:
               if ff[k][1]['standard_name'] != appendTo[k][1]['standard_name']:
                 if warn:
-                  print 'ERROR[X1]%s: Inconsistent standard_names %s:: %s [%s] --- %s [%s]' % (tag,k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
+                  print 'ERROR[X1]%s - %s : Inconsistent standard_names %s:: %s [%s] --- %s [%s]' % (tag,appendTo[k][3],k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
               if ff[k][1]['long_name'] != appendTo[k][1]['long_name']:
                 if warn:
-                  print 'WARNING[X1]%s: Inconsistent long_names %s:: %s --- %s' % (tag,k,ff[k][1]['long_name'],appendTo[k][1]['long_name'])
+                  print 'WARNING[X1]%s -- %s: Inconsistent long_names %s:: %s --- %s' % (tag,appendTo[k][3],k,ff[k][1]['long_name'],appendTo[k][1]['long_name'])
+
+              p1 = ff[k][1].get('positive','not set')
+              p2 = appendTo[k][1].get('positive','not set')
+              if p1 != p2:
+                if warn:
+                  print 'WARNING[X1]%s -- %s: Inconsistent positive attributes %s:: %s --- %s' % (tag,appendTo[k][3],k,p1,p2)
+
+              for k2 in ff[k][1].keys():
+                if k2 not in ['standard_name','long_name','positive']:
+                    p1 = ff[k][1].get(k2,'not set')
+                    p2 = appendTo[k][1].get(k2,'not set')
+                    if p1 != p2:
+                      if warn:
+                        print 'WARNING[Y1]%s -- %s: Inconsistent %s attributes %s:: %s --- %s' % (tag,appendTo[k][3],k2,k,p1,p2)
+
             if not lax:
               assert ff[k][1] == appendTo[k][1], 'Inconsistent entry definitions %s:: %s [%s] --- %s [%s]' % (k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
           else:
