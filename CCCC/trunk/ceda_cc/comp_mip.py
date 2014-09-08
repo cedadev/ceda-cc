@@ -18,13 +18,17 @@ cordex_dkrz = 'CORDEX_variables_requirement_table_all.csv'
 cordex_dkrz_pat = 'cordex_dkrz/CORDEX_variables_requirement_table_%s.csv'
 cordex_dkrz_pat = 'cordex_dkrz_oct/CORDEX_variables_requirement_table_%s.csv'
 re_sn = re.compile( 'entry id="(.*)"' )
+re_snax = re.compile( '</alias>' )
+re_snar = re.compile( '<entry_id>(.*)<' )
 re_sna = re.compile( 'alias id="(.*)"' )
 ##alias id="atmosphere_water_vapor_content"
 ##entry id="age_of_sea_ice"'
 def gen_sn_list( pathn ):
   assert os.path.isfile( pathn ), '%s not found ' % pathn
+  inAlias = False
   snl = []
   snla = []
+  aliasses = {}
   for l in open(pathn).readlines():
     m = re_sn.findall(l )
     if len(m) > 0:
@@ -32,9 +36,22 @@ def gen_sn_list( pathn ):
         snl.append( i )
     m = re_sna.findall(l )
     if len(m) > 0:
+      inAlias = True
       for i in m:
         snla.append( i )
-  return (snl,snla)
+    if inAlias:
+      m = re_snax.findall(l )
+      if len(m) > 0:
+        inAlias = False
+      else:
+        m = re_snar.findall(l )
+        if len(m) > 0:
+          aliasses[snla[-1]] = m[0]
+          assert len(m) == 1, 'Unexpected length of results, %s [%s]' % (str(m),l)
+  ##<alias id="station_wmo_id">
+    ##<entry_id>platform_id</entry_id>
+  ##</alias>
+  return (snl,snla,aliasses)
 
 def tlist_to_dict( ll ):
 
@@ -127,7 +144,20 @@ class comp(object):
           if ne1 > 0:
                 v1 = map( lambda x: e1[k][1][x], nmm )
                 v2 = map( lambda x: e2[k][1][x], nmm )
-                print 'ERROR[4A]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag )
+                ##if k == 'clivi':
+                  ##print k, nmm, v1, v2
+                  ##print snaliasses.keys()
+                  ##print snaliasses.get(v1[0],'xxx')
+                  ##print snaliasses.get(v2[0],'xxx')
+                  ##raise
+                weakmatch = False
+                if nmm[0] == 'standard_name':
+                  if snaliasses.get(v1[0],'xxx') == v2[0] or snaliasses.get(v2[0],'xxx') == v1[0]:
+                    weakmatch = True
+                if weakmatch:
+                  print 'WARNING[4A*]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag )
+                else:
+                  print 'ERROR[4A]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag )
           else:
              if not suppress4B:
                 print 'ERROR[4B]: Anomaly between MIP tables: %s:: %s -- %s [%s]' % (k, str(e1[k][1]), str( e2[k][1] ), vrln )
@@ -156,7 +186,7 @@ class comp(object):
         
 base=CC_CONFIG_DIR
 print base
-snl,snla = gen_sn_list( os.path.join(base, cfsntab) )
+snl,snla, snaliasses = gen_sn_list( os.path.join(base, cfsntab) )
 print 'Len snl = %s' % len(snl)
 
 dkrz_cordex_version = 4
