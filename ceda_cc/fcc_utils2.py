@@ -10,6 +10,7 @@ from xceptions import *
 class mipTableScan(object):
 
   def __init__(self, vats = ['standard_name','long_name','units','cell_methods'] ):
+    self.al = []
     self.vats = vats
     self.re_cmor_mip2 = re.compile( 'dimensions:(?P<dims>.*?):::' )
     self.re_vats = { }
@@ -35,6 +36,7 @@ class mipTableScan(object):
       sll[-1][1].append(l)
 
     eee = []
+    nal = []
     for s in sll:
       if s[0] == 'variable_entry':
          bits = string.split(s[1][0],':')
@@ -50,6 +52,7 @@ class mipTableScan(object):
              ds = string.split(v)
            else:
              aa[k] = v
+             nal.append(k)
          if self.project == 'CMIP5':
            if var == 'tos':
              if aa['standard_name'] != 'sea_surface_temperature':
@@ -61,6 +64,14 @@ class mipTableScan(object):
                aa['long_name'] = 'Surface Air Pressure'
          eee.append( (var,ds,aa,tag) )
 
+
+    nal.sort()
+    nalu = [nal[0],]
+    for a in nal[1:]:
+      if a != nalu[-1]:
+        nalu.append(a)
+        if a not in self.al:
+          self.al.append( a )
 
     checkOldMethod = False
     if checkOldMethod:
