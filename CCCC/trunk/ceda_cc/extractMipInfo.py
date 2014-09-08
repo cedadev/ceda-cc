@@ -102,54 +102,70 @@ mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
 
 cmip5_ignore = ['pfull','phalf','depth','depth_c','eta','nsigma','vertices_latitude','vertices_longitude','ztop','ptop','p0','z1','z2','href','k_c','a','a_bnds','ap','ap_bnds','b','b_bnds','sigma','sigma_bnds','zlev','zlev_bnds','zfull','zhalf']
 
-vl0 = []
-tl = []
-td = {}
+class mipCo:
 
-for mip in mips:
+  def __init__(self,mips):
+    self.vl0 = []
+    self.tl = []
+    self.td = {}
+    for mip in mips:
+      self._scan(mip)
+
+  def _scan(self,mip):
+    
  ## dl = glob.glob( '%s%s' % (mip.dir,mip.pattern) )
-  dl = glob.glob( '%s/%s%s' % (CC_CONFIG_DIR, mip.dir,mip.pattern) )
-  dl.sort()
-  for d in dl:
-    tab = string.split( d, '/')[-1]
-    isoceanic = tab[:7] == "CMIP5_O"
-    l2 = ms.scan_table( open( d ).readlines(), None, asDict=True, lax=True, tag="x", warn=True)
-    l2k = []
-    for k in l2.keys():
-      if k not in cmip5_ignore:
-        l2k.append(k)
-    l2k.sort()
-    vl0 += l2k
-    tl.append( [tab,l2, l2k,isoceanic] )
-    td[tab] = l2
+    dl = glob.glob( '%s/%s%s' % (CC_CONFIG_DIR, mip.dir,mip.pattern) )
+    dl.sort()
+    for d in dl:
+      tab = string.split( d, '/')[-1]
+      isoceanic = tab[:7] == "CMIP5_O"
+      l2 = ms.scan_table( open( d ).readlines(), None, asDict=True, lax=True, tag="x", warn=True)
+      l2k = []
+      for k in l2.keys():
+        if k not in cmip5_ignore:
+          l2k.append(k)
+      l2k.sort()
+      self.vl0 += l2k
+      self.tl.append( [tab,l2, l2k,isoceanic] )
+      self.td[tab] = l2
 
-vl0.sort()
-vl = []
-vl.append( vl0[0] )
-vdict = { vl[0]:[] }
-for v in vl0[1:]:
-  if v != vl[-1]:
-    vl.append(v)
-    vdict[v] = []
+    self.vl0.sort()
+    self.vl = []
+    self.vl.append( self.vl0[0] )
+    self.vdict = { self.vl[0]:[] }
+    for v in self.vl0[1:]:
+      if v != self.vl[-1]:
+        self.vl.append(v)
+        self.vdict[v] = []
 
-for t in tl:
-  print t[0],t[2]
-  for k in t[2]:
-    vdict[k].append(t[0])
+    for t in self.tl:
+      for k in t[2]:
+        self.vdict[k].append(t[0])
 
-vars = vdict.keys()
-vars.sort()
-for v in vars:
-  l = vdict[v]
-  l.sort()
+    self.vars = self.vdict.keys()
+    self.vars.sort()
+    ##for v in self.vars:
+      ##l = self.vdict[v]
+      ##l.sort()
 ##  print v, l, td[l[0]][v][1].get('standard_name','__NO_STANDARD_NAME__')
+m = mipCo( mips )  
+vars = m.vars
+vdict = m.vdict
+td = m.td
+
+allatts = ms.al
+thisatts = ['standard_name','units','long_name']
+## need to have standard name first.
+for a in allatts:
+  if a not in thisatts:
+    thisatts.append(a)
 
 vd2 = {}
 for v in vars:
   l = vdict[v]
   l.sort()
   if len(l) > 1:
-    for att in ['standard_name','units','long_name']:
+    for att in thisatts:
     ##for att in ['standard_name','units']:
       atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
       atl.sort()
@@ -170,17 +186,21 @@ for v in vars:
         isol = []
         for x in l:
           a = td[x][v][1].get(att,'__ABSENT__')
-          if att == 'standard_name' or ( att == 'long_name' and vd2[v][0] == 2):
+          try:
+           if att == 'standard_name' or ( att == 'long_name' and vd2[v][0] == 2):
             iso = x[:7] == 'CMIP5_O'
             tt = snsubber.isFalseSn( v, a )
-          elif att == 'long_name':
+           elif att == 'long_name':
             tt = snsubber.isFalseLn( v, a )
             dims = td[x][v][0]
             iso = 'depth0m' in dims
-          else:
+           else:
             iso = False
             tt = (False,)
       ##    iso = False
+          except:
+            print att,v
+            raise
           isol.append((iso,x))
           if tt[0]:
             print 'Substituting ',v,a,tt
@@ -196,11 +216,14 @@ for v in vars:
                 ok = False
 
           if not ok:
-             print 'Multiple values : ',att,v
+             print 'E001: Multiple values : ',att,v
              for t in isol:
                if t[0] == a:
                  tab = t[1]
-                 print tab,td[tab][v][1].get('standard_name','__ABSENT__'),td[tab][v][1].get('long_name','__ABSENT__')
+                 if att in ['standard_name','long_name']:
+                   print tab,td[tab][v][1].get('standard_name','__ABSENT__'),td[tab][v][1].get('long_name','__ABSENT__')
+                 else:
+                   print tab,td[tab][v][1].get(att,'__ABSENT__')
                 
         if att == "standard_name":
           vd2[v] = (2,[ee[True],ee[False]] )

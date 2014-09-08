@@ -301,6 +301,7 @@ if doAll:
     c = comp( snl,snla=snla, ec1=ec1)
     validate('all',c)
     print """Number of tables=%s\nNumber of variables=%s\nNumber of standard names=%s\n""" % (ms.nn_tab,c.nn_var,c.nn_sn)
+    print ms.al
 else:
   for tab in tlist:
     ms = mipTableScan()
