@@ -97,17 +97,19 @@ class snsub:
 
 snsubber = snsub()
 
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
+         NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
 
 cmip5_ignore = ['pfull','phalf','depth','depth_c','eta','nsigma','vertices_latitude','vertices_longitude','ztop','ptop','p0','z1','z2','href','k_c','a','a_bnds','ap','ap_bnds','b','b_bnds','sigma','sigma_bnds','zlev','zlev_bnds','zfull','zhalf']
 
 vl0 = []
+tl = []
+td = {}
+
 for mip in mips:
  ## dl = glob.glob( '%s%s' % (mip.dir,mip.pattern) )
   dl = glob.glob( '%s/%s%s' % (CC_CONFIG_DIR, mip.dir,mip.pattern) )
   dl.sort()
-  tl = []
-  td = {}
   for d in dl:
     tab = string.split( d, '/')[-1]
     isoceanic = tab[:7] == "CMIP5_O"
@@ -210,7 +212,7 @@ for v in vars:
             vd2[v] = (1, tt[1])
           else:
             vd2[v] = (1, av)
-  else:
+  elif len(l) == 1:
         tab = vdict[v][0]
         a = td[tab][v][1].get('standard_name','__ABSENT__')
         tt = snsubber.isFalseSn( v, a )
@@ -220,6 +222,8 @@ for v in vars:
         else:
           vd2[v] = (1, a)
         ##print 'MULTIPLE VALUES: ',v,att,av
+  else:
+   print 'Zero length element: %s' % v
    
 
 
