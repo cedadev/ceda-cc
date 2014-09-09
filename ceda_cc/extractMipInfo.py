@@ -99,6 +99,8 @@ snsubber = snsub()
 
 mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
          NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
+mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
+          )
 
 cmip5_ignore = ['pfull','phalf','depth','depth_c','eta','nsigma','vertices_latitude','vertices_longitude','ztop','ptop','p0','z1','z2','href','k_c','a','a_bnds','ap','ap_bnds','b','b_bnds','sigma','sigma_bnds','zlev','zlev_bnds','zfull','zhalf']
 
@@ -148,106 +150,249 @@ class mipCo:
       ##l = self.vdict[v]
       ##l.sort()
 ##  print v, l, td[l[0]][v][1].get('standard_name','__NO_STANDARD_NAME__')
+
+class runcheck1:
+  def __init__( self, m, thisatts):
+    vars = m.vars
+    vdict = m.vdict
+    td = m.td
+    vd2 = {}
+    for v in vars:
+     l = vdict[v]
+     l.sort()
+     if len(l) > 1:
+       for att in thisatts:
+       ##for att in ['standard_name','units']:
+         if att == '__dimensions__':
+           atl = map( lambda x: string.join( td[x][v][0] ), l )
+           print '#######', v,l,atl
+         else:
+           atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
+         atl.sort()
+         av = [atl[0],]
+         for a in atl[1:]:
+           if a != av[-1]:
+             av.append(a)
+         if att == 'standard_name':
+           for a in av:
+             if a not in snl and a not in snla:
+               print "INVALID STANDARD NAME: ",a
+         if len(av) > 1:
+           ee = {}
+   
+           for a in [True,False]:
+             ee[a] = []
+   
+           isol = []
+           for x in l:
+             a = td[x][v][1].get(att,'__ABSENT__')
+             try:
+              if att == 'standard_name' or ( att == 'long_name' and vd2[v][0] == 2):
+               iso = x[:7] == 'CMIP5_O'
+               tt = snsubber.isFalseSn( v, a )
+              elif att == 'long_name':
+               tt = snsubber.isFalseLn( v, a )
+               dims = td[x][v][0]
+               iso = 'depth0m' in dims
+              else:
+               iso = False
+               tt = (False,)
+         ##    iso = False
+             except:
+               print att,v
+               raise
+             isol.append((iso,x))
+             if tt[0]:
+               print 'Substituting ',v,a,tt
+               ee[iso].append( tt[1] )
+             else:
+               ee[iso].append( a )
+   
+           for a in [True,False]:
+             ok = True
+             if len(ee[a]) > 1 :
+               for x in ee[a][1:]:
+                 if x != ee[a][0]:
+                   ok = False
+   
+             if not ok:
+                print 'E001: Multiple values : ',att,v
+                for t in isol:
+                  if t[0] == a:
+                    tab = t[1]
+                    if att in ['standard_name','long_name']:
+                      print tab,td[tab][v][1].get('standard_name','__ABSENT__'),td[tab][v][1].get('long_name','__ABSENT__')
+                    else:
+                      print tab,td[tab][v][1].get(att,'__ABSENT__')
+                   
+           if att == "standard_name":
+             vd2[v] = (2,[ee[True],ee[False]] )
+         else:
+           if att == "standard_name":
+             tt = snsubber.isFalseSn( v, av[0] )
+             if tt[0]:
+               print 'Substituting ',v,av[0],tt
+               vd2[v] = (1, tt[1])
+             else:
+               vd2[v] = (1, av)
+     elif len(l) == 1:
+           tab = vdict[v][0]
+           a = td[tab][v][1].get('standard_name','__ABSENT__')
+           tt = snsubber.isFalseSn( v, a )
+           if tt[0]:
+             print 'Substituting ',v,a,tt
+             vd2[v] = (1, tt[1])
+           else:
+             vd2[v] = (1, a)
+           ##print 'MULTIPLE VALUES: ',v,att,av
+     else:
+      print 'Zero length element: %s' % v
+      
+   
+class typecheck1:
+  def __init__( self, m, thisatts):
+    self.type2Atts = ['positive','comment', 'long_name', 'modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
+    self.type3Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
+    self.type4Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
+    self.m = m
+    vars = m.vars
+    vdict = m.vdict
+    td = m.td
+    vd2 = {}
+    type1, type2, type3, type4, type5 = [[],[],[],[],[],] 
+    for v in vars:
+     l = vdict[v]
+     l.sort()
+     if len(l) == 1: 
+       type1.append(v)
+     elif len(l) > 1:
+       adict = {}
+       for att in thisatts:
+         if att == '__dimensions__':
+           atl = map( lambda x: string.join( td[x][v][0] ), l )
+           print '#######', v,l,atl
+         else:
+           atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
+         atl.sort()
+         av = [atl[0],]
+         for a in atl[1:]:
+           if a != av[-1]:
+             av.append(a)
+         adict[att] = av
+       
+## check for type 2
+       tval = None
+       ##if adict[ 'positive' ] == ['__ABSENT__']:
+       if all( map( lambda x: len(adict[x]) == 1, self.type2Atts )):
+           tval = 2
+       elif all( map( lambda x: len(adict[x]) == 1, self.type3Atts )):
+           tval = 3
+       else:
+           l = map( lambda x: '%s:%s, ' % (x,len(adict[x]) ), self.type2Atts )
+           ## print '%s: t3:: ' % v,string.join(l)
+       if tval == 2:
+         type2.append( v)
+       elif tval == 3:
+         type3.append( v)
+       else:
+         type4.append(v)
+    xx = float( len(vars) )
+    print string.join( map( lambda x: '%s (%5.1f%%);' % (x,x/xx*100), [len(type1), len(type2), len(type3), len(type4)] ) )
+    self.type1 = type1
+    self.type2 = type2
+    self.type3 = type3
+    self.type4 = type4
+
+  def exportHtml( self, typecode ):
+
+    allAtts = ['__dimensions__', 'cell_methods', 'comment', 'long_name', 'modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'valid_max', 'valid_min', 'positive', 'ok_max_mean_abs', 'ok_min_mean_abs', 'flag_meanings', 'flag_values']
+    fixedType1Tmpl = """:%(standard_name)s [%(units)s]</h3>
+        %(__dimensions__)s<br/>
+        %(long_name)s<br/>
+       realm: %(modeling_realm)s; out_name: %(out_name)s; type: %(type)s, <br/>
+       cell_methods: %(cell_methods)s; comment: %(comment)s<br/>
+"""
+    fixedType2TmplA = """:%(standard_name)s [%(units)s]</h3>
+        %(long_name)s<br/>
+       realm: %(modeling_realm)s; out_name: %(out_name)s; type: %(type)s, <br/>
+       comment: %(comment)s<br/>
+"""
+    fixedType2TmplB = "<li>%s [%s]: %s -- (%s,%s,%s,%s)</li>\n"
+        
+    fixedType3TmplA = """:%(standard_name)s [%(units)s]</h3>
+       realm: %(modeling_realm)s; out_name: %(out_name)s; type: %(type)s <br/>
+"""
+    fixedType3TmplB = "<li>%s [%s]: %s: %s [%s]</li>\n"
+        
+    if typecode == 1:
+      oo = open( 'type1.html', 'w' )
+      self.type1.sort()
+      ee = {}
+      for v in self.type1:
+        tab = self.m.vdict[v][0]
+        if not ee.has_key(tab):
+          ee[tab] = []
+        ee[tab].append( v )
+      keys = ee.keys()
+      keys.sort()
+      for k in keys:
+         oo.write( '<h2>Table %s</h2>\n' % k )
+         for v in ee[k]:
+            try:
+              etmp = {}
+              for a in allAtts:
+                etmp[a] = self.m.td[k][v][1].get( a, 'unset' )
+              etmp['__dimensions__'] = string.join( self.m.td[k][v][0] )
+              oo.write( '<h3>' + v + (fixedType1Tmpl % etmp) )
+            except:
+              print k, self.m.td[k][v][1].keys()
+              raise
+      oo.close()
+    elif typecode == 2:
+      oo = open( 'type2.html', 'w' )
+      self.type2.sort()
+      oo.write( '<h2>Variables with fixed attributes</h2>\n' )
+      for v in self.type2:
+            l = self.m.vdict[v]
+            etmp = {}
+            for a in allAtts:
+                etmp[a] = self.m.td[l[0]][v][1].get( a, 'unset' )
+            oo.write( '<h3>' + v + (fixedType2TmplA % etmp) )
+            oo.write( '<ul>\n' )
+            for t in l:
+              dims = string.join( self.m.td[t][v][0] )
+              sa = tuple( [t,dims,] + map( lambda x: self.m.td[t][v][1].get( x, 'unset' ), ['cell_methods','valid_max', 'valid_min', 'ok_max_mean_abs', 'ok_min_mean_abs'] ) )
+              oo.write( fixedType2TmplB % sa )
+            oo.write( '</ul>\n' )
+      oo.close()
+           
+    elif typecode == 3:
+      oo = open( 'type3.html', 'w' )
+      self.type3.sort()
+      oo.write( '<h2>Variables with varying long_name/comment</h2>\n' )
+      for v in self.type3:
+            l = self.m.vdict[v]
+            etmp = {}
+            for a in allAtts:
+                etmp[a] = self.m.td[l[0]][v][1].get( a, 'unset' )
+            oo.write( '<h3>' + v + (fixedType3TmplA % etmp) )
+            oo.write( '<ul>\n' )
+            for t in l:
+              dims = string.join( self.m.td[t][v][0] )
+              sa = tuple( [t,dims,] + map( lambda x: self.m.td[t][v][1].get( x, 'unset' ), ['long_name','comment','cell_methods'] ) )
+              oo.write( fixedType3TmplB % sa )
+            oo.write( '</ul>\n' )
+      oo.close()
+           
 m = mipCo( mips )  
-vars = m.vars
-vdict = m.vdict
-td = m.td
 
 allatts = ms.al
-thisatts = ['standard_name','units','long_name']
+thisatts = ['standard_name','units','long_name','__dimensions__']
 ## need to have standard name first.
 for a in allatts:
   if a not in thisatts:
     thisatts.append(a)
-
-vd2 = {}
-for v in vars:
-  l = vdict[v]
-  l.sort()
-  if len(l) > 1:
-    for att in thisatts:
-    ##for att in ['standard_name','units']:
-      atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
-      atl.sort()
-      av = [atl[0],]
-      for a in atl[1:]:
-        if a != av[-1]:
-          av.append(a)
-      if att == 'standard_name':
-        for a in av:
-          if a not in snl and a not in snla:
-            print "INVALID STANDARD NAME: ",a
-      if len(av) > 1:
-        ee = {}
-
-        for a in [True,False]:
-          ee[a] = []
-
-        isol = []
-        for x in l:
-          a = td[x][v][1].get(att,'__ABSENT__')
-          try:
-           if att == 'standard_name' or ( att == 'long_name' and vd2[v][0] == 2):
-            iso = x[:7] == 'CMIP5_O'
-            tt = snsubber.isFalseSn( v, a )
-           elif att == 'long_name':
-            tt = snsubber.isFalseLn( v, a )
-            dims = td[x][v][0]
-            iso = 'depth0m' in dims
-           else:
-            iso = False
-            tt = (False,)
-      ##    iso = False
-          except:
-            print att,v
-            raise
-          isol.append((iso,x))
-          if tt[0]:
-            print 'Substituting ',v,a,tt
-            ee[iso].append( tt[1] )
-          else:
-            ee[iso].append( a )
-
-        for a in [True,False]:
-          ok = True
-          if len(ee[a]) > 1 :
-            for x in ee[a][1:]:
-              if x != ee[a][0]:
-                ok = False
-
-          if not ok:
-             print 'E001: Multiple values : ',att,v
-             for t in isol:
-               if t[0] == a:
-                 tab = t[1]
-                 if att in ['standard_name','long_name']:
-                   print tab,td[tab][v][1].get('standard_name','__ABSENT__'),td[tab][v][1].get('long_name','__ABSENT__')
-                 else:
-                   print tab,td[tab][v][1].get(att,'__ABSENT__')
-                
-        if att == "standard_name":
-          vd2[v] = (2,[ee[True],ee[False]] )
-      else:
-        if att == "standard_name":
-          tt = snsubber.isFalseSn( v, av[0] )
-          if tt[0]:
-            print 'Substituting ',v,av[0],tt
-            vd2[v] = (1, tt[1])
-          else:
-            vd2[v] = (1, av)
-  elif len(l) == 1:
-        tab = vdict[v][0]
-        a = td[tab][v][1].get('standard_name','__ABSENT__')
-        tt = snsubber.isFalseSn( v, a )
-        if tt[0]:
-          print 'Substituting ',v,a,tt
-          vd2[v] = (1, tt[1])
-        else:
-          vd2[v] = (1, a)
-        ##print 'MULTIPLE VALUES: ',v,att,av
-  else:
-   print 'Zero length element: %s' % v
-   
-
-
-
+s =typecheck1( m, thisatts)
+s.exportHtml( 1 )
+s.exportHtml( 2 )
+s.exportHtml( 3 )
