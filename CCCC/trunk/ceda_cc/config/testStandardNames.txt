@@ -20,7 +20,7 @@ Verify that the data variable is of the appropriate data type (e.g. single preci
 
 =global_ncattribute_cv=
 *Global NetCDF attribute controlled vocabularies
-Verify that NetCDF global attributes are consistent with controlled vocabulary constraints.
+Verify that NetCDF global attribute values are consistent with controlled vocabulary constraints.
 
 =filename_filemetadata_consistency=
 *Consistency of NetCDF global attributes and variable name with file name.
@@ -32,48 +32,48 @@ An exception error code indicates that the software crashed while running checks
 
 =parse_filename=
 *Parse the file name into component elements
-File names will generally consist of a sequence of elements separated by a special character. This test checks that the correct number of elements are present.
+File names will generally consist of a sequence of elements separated by a special character. This test checks that the correct number of elements are present (or that the number of elements is in the correct range).
 
 =parse_filename_timerange=
 *Parse the time range specified in the file name
-If the file name contains a time range, this test will check that the given element has the correct syntax.
+If the file name contains a time range, this test will check that the given element has the correct syntax (usually "start-end", where "start" and "end" are strings such as "19900101" or "199001").
 
 =filename_timerange_length=
 *Verify the number of characters used to specify the time range
-Verify the number of characters used to specify the time range
+Verify that the number of characters used to specify the time range fits the requirements. This will be 6 if the time range is specified to the nearest month, 8 if it is specified to the nearest day.
 
 =time_attributes=
 *Verify that the time variable is present (if needed) with the appropriate attributes
-Check that a "time" variable is present and has appopriate attributes, including units and bounds.
+Check that a "time" variable is present and has appopriate attributes, including units and, if required, bounds. The bounds attribute is required if the "cell_methods" attribute on the data variable specifies that the data is not instantaneous.
 
 =pressure_levels=
 *Check attributes, bounds and values of pressure levels
-Check attributes, bounds and values of pressure levels
+Check attributes, bounds and values of pressure levels. Where data is interpolated to pressure levels, the MIP data request generally defines the levels required.
 
 =height_levels=
 *Check attributes, bounds and values of height levels
-Check properties of the vertical coordinate
+Check properties of the height vertical coordinate
 
 =grid_mapping=
 *Check the grid_mapping attributes
-Check the attributes specifying the grid in the grid_mappign variable
+Check the attributes specifying the grid in the grid_mapping variable. The usage of the "grid_mapping" variable is defined in the etCDF CF Convention.
 
 =rotated_latlon_attributes=
 *Check the attributes of the rotated latitude and longitude coordinate variables
-Check the attributes of the rotated latitude and longitude coordinate variables
+Check the attributes of the rotated latitude and longitude coordinate variables. This test checks variable attributes (e.g. long_name, standard_name, units, and axis attributes) and the type of the variable.
 
 =rotated_latlon_domain=
 *Check the domain specified by rotated latitude and longitude coordinate variables
-Check the domain specified by rotated latitude and longitude coordinate variables
+Check the domain specified by rotated latitude and longitude coordinate variables. There may be some tolerance specified, rather than requiring an exact match.
 
 =regular_grid_attributes=
 *Check the attributes of the latitude and longitude coordinate variables
-Check the attributes of the latitude and longitude coordinate variables
+Check the attributes of the latitude and longitude coordinate variables.
 
 =regular_grid_domain=
 *Check the domain specified by latitude and longitude coordinate variables
-Check the domain specified by latitude and longitude coordinate variables
+Check the domain specified by latitude and longitude coordinate variables. This may also include a check on the grid spacing.
 
 =filename_timerange_value=
 *Check the time range specified in the file name
-Check the time range specified in the file name
+Check that the time range specified in the file name is consistent with the data request (e.g. some variables should be in blocks of 10 years, starting on January 1st in the 1st year of a decade).
