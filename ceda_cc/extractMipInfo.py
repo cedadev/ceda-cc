@@ -1,6 +1,6 @@
 
-import collections, glob, string
-from fcc_utils2 import mipTableScan, snlist
+import collections, glob, string, re
+from fcc_utils2 import mipTableScan, snlist, tupsort
 from config_c4 import CC_CONFIG_DIR
 
 ms = mipTableScan()
@@ -8,6 +8,7 @@ snc = snlist()
 
 snl, snla = snc.gen_sn_list( )
 NT_mip = collections.namedtuple( 'mip',['label','dir','pattern'] )
+NT_canvari = collections.namedtuple( 'canonicalVariation',['conditions','text', 'ref'] )
 vlist = [
 ('uas',
 "eastward_wind",
@@ -75,6 +76,49 @@ vlist = [
 'Hydrometeor Effective Radius of Stratiform Cloud Liquid Water',
 'INCONSISTENT LONG NAMES' ) ]
 
+
+class helper:
+
+  def __init__(self):
+    self.applycv = True
+    self.re1 = re.compile( '"(.*)"=="(.*)"' )
+
+    self.cmip5Tables= ['CMIP5_3hr', 'CMIP5_6hrPlev', 'CMIP5_Amon', 'CMIP5_cfDay', 'CMIP5_cfOff', 'CMIP5_day', 'CMIP5_grids', 'CMIP5_Lmon', 'CMIP5_OImon', 'CMIP5_Oyr',
+  'CMIP5_6hrLev', 'CMIP5_aero', ' CMIP5_cf3hr', 'CMIP5_cfMon', 'CMIP5_cfSites', 'CMIP5_fx', 'CMIP5_LImon', 'CMIP5_Oclim', 'CMIP5_Omon' ]
+    self.cmip5DefPoint = ['CMIP5_3hr', 'CMIP5_6hrPlev', 'CMIP5_cfOff', 'CMIP5_6hrLev', ' CMIP5_cf3hr', 'CMIP5_cfSites' ]
+
+    self.canonvar = [ NT_canvari( (('table','CMIP5_3hr'),), 'This is sampled synoptically.', '' ),
+                      NT_canvari( (), 'The flux is computed as the mass divided by the area of the grid cell.', 'This is calculated as the convective mass flux divided by the area of the whole grid cell (not just the area of the cloud).' ),
+            ]
+
+    self.canonvar = []
+    for l in open( 'canonicalVariations.txt' ).readlines():
+      if l[0] != '#':
+        ix = l.index(':')
+        s = string.strip( l[ix:] )
+        r = self.re1.findall( s )
+        assert len(r) == 1, 'Cannot parse: %s' % s
+        self.canonvar.append( NT_canvari( (), r[0][0], r[0][1] ) )
+
+  def match(self,a,b):
+      if type(a) == type( 'X' ) and type(b) == type( 'X' ):
+        a0,b0 = map( lambda x: string.replace(x, '__ABSENT__',''), [a,b] )
+        return string.strip( string.replace(a0, '  ', ' '), '"') == string.strip( string.replace(b0, '  ', ' '), '"')
+      else:
+        return a == b
+
+  def checkCond( self, table, var, conditions ):
+    val = True
+    for ck, cv in conditions:
+      if ck == 'table':
+        val &= table == cv
+      elif ck == 'var':
+        val &= var == cv
+
+    return val
+        
+      
+
 class snsub:
 
   def __init__(self):
@@ -97,19 +141,16 @@ class snsub:
 
 snsubber = snsub()
 
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
-         NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
-          )
 
 cmip5_ignore = ['pfull','phalf','depth','depth_c','eta','nsigma','vertices_latitude','vertices_longitude','ztop','ptop','p0','z1','z2','href','k_c','a','a_bnds','ap','ap_bnds','b','b_bnds','sigma','sigma_bnds','zlev','zlev_bnds','zfull','zhalf']
 
 class mipCo:
 
-  def __init__(self,mips):
+  def __init__(self,mips,helper=None):
     self.vl0 = []
     self.tl = []
     self.td = {}
+    self.helper = helper
     for mip in mips:
       self._scan(mip)
 
@@ -165,7 +206,6 @@ class runcheck1:
        ##for att in ['standard_name','units']:
          if att == '__dimensions__':
            atl = map( lambda x: string.join( td[x][v][0] ), l )
-           print '#######', v,l,atl
          else:
            atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
          atl.sort()
@@ -250,13 +290,17 @@ class runcheck1:
       
    
 class typecheck1:
-  def __init__( self, m, thisatts):
+  def __init__( self, m, thisatts,helper=None):
     self.type2Atts = ['positive','comment', 'long_name', 'modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
-    self.type3Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
+    self.type3Atts = ['positive','long_name','modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
     self.type4Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
+    self.type2Atts = ['positive','comment', 'long_name', 'modeling_realm', 'out_name', 'standard_name', 'type', 'units']
+    self.type3Atts = ['positive','long_name','modeling_realm', 'out_name', 'standard_name', 'type', 'units']
+    self.type4Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units']
     self.m = m
     vars = m.vars
     vdict = m.vdict
+    self.helper=helper
     td = m.td
     vd2 = {}
     type1, type2, type3, type4, type5 = [[],[],[],[],[],] 
@@ -269,16 +313,42 @@ class typecheck1:
        adict = {}
        for att in thisatts:
          if att == '__dimensions__':
-           atl = map( lambda x: string.join( td[x][v][0] ), l )
-           print '#######', v,l,atl
+           atl = map( lambda x: (string.join( td[x][v][0] ),x), l )
          else:
-           atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
-         atl.sort()
-         av = [atl[0],]
-         for a in atl[1:]:
+           atl = map( lambda x: (td[x][v][1].get(att,'__ABSENT__'),x), l )
+         atl.sort( tupsort(0).cmp )
+         a0 = atl[0][0]
+         if a0 == None:
+           a0 = ""
+         av = [a0,]
+         for a,tab in atl[1:]:
+           if a == None:
+             a = ""
            if a != av[-1]:
-             av.append(a)
+             if self.helper != None and self.helper.applycv:
+               thisok=False
+               pmatch = False
+               for cond,src,targ in self.helper.canonvar:
+                 if string.find(a,src) != -1 or  string.find(av[-1],src) != -1:
+                   ##print 'Potential match ---- ',a
+                   ##print src,'###',targ
+                   ##print av[-1]
+                   pmatch = True
+                 if self.helper.checkCond( tab, v, cond ):
+                   if self.helper.match(string.replace( a, src, targ ), av[-1]) or self.helper.match(string.replace( av[-1], src, targ ), a):
+                     thisok = True
+               if thisok:
+                 print '############### conditional match found', tab, v
+               else:
+                 if pmatch:
+                   ##print '########### no matvh found'
+                   pass
+                 av.append(a)
+             else:
+               av.append(a)
          adict[att] = av
+         if v == "snd":
+           print adict
        
 ## check for type 2
        tval = None
@@ -287,6 +357,8 @@ class typecheck1:
            tval = 2
        elif all( map( lambda x: len(adict[x]) == 1, self.type3Atts )):
            tval = 3
+       elif all( map( lambda x: len(adict[x]) == 1, self.type4Atts )):
+           tval = 4
        else:
            l = map( lambda x: '%s:%s, ' % (x,len(adict[x]) ), self.type2Atts )
            ## print '%s: t3:: ' % v,string.join(l)
@@ -294,14 +366,17 @@ class typecheck1:
          type2.append( v)
        elif tval == 3:
          type3.append( v)
+       elif tval == 4:
+         type4.append( v)
        else:
-         type4.append(v)
+         type5.append(v)
     xx = float( len(vars) )
-    print string.join( map( lambda x: '%s (%5.1f%%);' % (x,x/xx*100), [len(type1), len(type2), len(type3), len(type4)] ) )
+    print string.join( map( lambda x: '%s (%5.1f%%);' % (x,x/xx*100), [len(type1), len(type2), len(type3), len(type4), len(type5)] ) )
     self.type1 = type1
     self.type2 = type2
     self.type3 = type3
     self.type4 = type4
+    self.type5 = type5
 
   def exportHtml( self, typecode ):
 
@@ -323,6 +398,11 @@ class typecheck1:
        realm: %(modeling_realm)s; out_name: %(out_name)s; type: %(type)s <br/>
 """
     fixedType3TmplB = "<li>%s [%s]: %s: %s [%s]</li>\n"
+    fixedType4TmplB = "<li>%s [%s]: %s [%s]</li>\n"
+    fixedType5TmplA = """ [%(units)s]</h3>
+       out_name: %(out_name)s; type: %(type)s <br/>
+"""
+    fixedType5TmplB = "<li>%s [%s]: %s, %s [%s]: %s</li>\n"
         
     if typecode == 1:
       oo = open( 'type1.html', 'w' )
@@ -366,25 +446,33 @@ class typecheck1:
             oo.write( '</ul>\n' )
       oo.close()
            
-    elif typecode == 3:
-      oo = open( 'type3.html', 'w' )
-      self.type3.sort()
-      oo.write( '<h2>Variables with varying long_name/comment</h2>\n' )
-      for v in self.type3:
+    elif typecode in [3,4,5]:
+      oo = open( 'type%s.html' % typecode, 'w' )
+      thistype,h2,al,tmplA,tmplB = { 3:(self.type3,"Variables with varying comment",['long_name','comment','cell_methods'], fixedType3TmplA, fixedType3TmplB),
+                      4:(self.type4,"Variables with varying long_name",['long_name','cell_methods'],fixedType3TmplA, fixedType4TmplB),
+                      5:(self.type5,"Remaining variables",['standard_name','long_name','cell_methods','realm'],fixedType5TmplA, fixedType5TmplB) }[typecode]
+      thistype.sort()
+      oo.write( '<h2>%s</h2>\n' % h2 )
+      for v in thistype:
             l = self.m.vdict[v]
             etmp = {}
             for a in allAtts:
                 etmp[a] = self.m.td[l[0]][v][1].get( a, 'unset' )
-            oo.write( '<h3>' + v + (fixedType3TmplA % etmp) )
+            oo.write( '<h3>' + v + (tmplA % etmp) )
             oo.write( '<ul>\n' )
             for t in l:
               dims = string.join( self.m.td[t][v][0] )
-              sa = tuple( [t,dims,] + map( lambda x: self.m.td[t][v][1].get( x, 'unset' ), ['long_name','comment','cell_methods'] ) )
-              oo.write( fixedType3TmplB % sa )
+              sa = tuple( [t,dims,] + map( lambda x: self.m.td[t][v][1].get( x, 'unset' ), al ) )
+              oo.write( tmplB % sa )
             oo.write( '</ul>\n' )
       oo.close()
            
+mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
+         NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
+mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
 m = mipCo( mips )  
+h = helper()
 
 allatts = ms.al
 thisatts = ['standard_name','units','long_name','__dimensions__']
@@ -392,7 +480,9 @@ thisatts = ['standard_name','units','long_name','__dimensions__']
 for a in allatts:
   if a not in thisatts:
     thisatts.append(a)
-s =typecheck1( m, thisatts)
+s =typecheck1( m, thisatts, helper=h)
 s.exportHtml( 1 )
 s.exportHtml( 2 )
 s.exportHtml( 3 )
+s.exportHtml( 4 )
+s.exportHtml( 5 )

@@ -1,10 +1,30 @@
 
 import string, sys, glob, os
+import collections
 
 HERE = os.path.dirname(__file__)
 if HERE == '':
   HERE = '.'
 print '############################ %s' % HERE
+
+NT_esn = collections.namedtuple( 'errorShortName', ['name', 'long_name', 'description' ] )
+class errorShortNames(object):
+
+  def __init__(self,file='config/testStandardNames.txt' ):
+    assert os.path.isfile(file), 'File %s not found' % file
+    ii = map( string.strip, open(file).readlines() )
+    ll = [[ii[0],]]
+    for l in ii[1:]:
+      if len(l) > 0 and l[0] == '=':
+        ll.append( [l,] )
+      else:
+        ll[-1].append( l )
+    self.ll = []
+    for l in ll:
+      if len(l) < 2:
+        print l
+      else:
+        self.ll.append( NT_esn( string.strip(l[0],'='), l[1][1:], string.join(l[2:]) ) )
 
 def cmin(x,y):
   if x < 0:
@@ -108,6 +128,7 @@ class main(object):
     esum = (len(fl), nerr, nne )
     self.testnames()
     if dohtml:
+      self.htmlEsn( )
       self.htmlout( ee, ff, esum )
 
   def testnames(self):
@@ -136,9 +157,22 @@ class main(object):
   def write( self, s ):
     print s
 
+  def htmlEsn( self ):
+    esn = errorShortNames()
+    cnt = '<h1>Error Short Names</h1>\n'
+    for l in esn.ll:
+      cnt += '''<a name="%s"><h2>%s</h2></a>
+            <p><i>%s</i><br/>
+             %s
+             </p>
+             ''' % (l.name,l.name, l.long_name, l.description )
+    
+    self.__htmlPageWrite( 'html/ref/errorShortNames.html', cnt )
+
   def htmlout( self, ee, ff, esum ):
     if not os.path.isdir( 'html' ):
       os.mkdir( 'html' )
+      os.mkdir( 'html/ref' )
       os.mkdir( 'html/files' )
       os.mkdir( 'html/errors' )
     about = """<p>Output from CEDA CC</p>
@@ -183,8 +217,13 @@ class main(object):
     for k in keys:
       ks = ee[k][1].keys()
       ks.sort()
+      sect_esn = None
       for k2 in ks:
         nn += 1
+        this_esn = string.split(k2,']')[0][1:]
+        if this_esn != sect_esn:
+          sect_esn = this_esn
+          list.append( '<h2>%s: %s<a href="../ref/errorShortNames.html#%s">(definition)</a></h2>' % (k,this_esn, this_esn) )
         list.append( eItemTmpl % (nn,k, ee[k][1][k2][0], k2  ) )
         l2 = []
         for ss in ee[k][1][k2][1]:
@@ -195,7 +234,9 @@ class main(object):
         efp = 'html/errors/rep.%3.3i.html' % nn 
         self.__htmlPageWrite( efp, ePage )
     eIndexContent = """<h1>List of detected errors</h1>
-Code[number of files with error]: result 
+<p>Code[number of files with error]: result <br/>
+Click on the code to see a list of the files in which each error is detected.
+</p>
 <ul>%s</ul>
 """  % (string.join(list, '\n' ) )
     self.__htmlPageWrite( 'html/errors/eindex.html', eIndexContent )
