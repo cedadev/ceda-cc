@@ -128,8 +128,8 @@ class main(object):
     esum = (len(fl), nerr, nne )
     self.testnames()
     if dohtml:
-      self.htmlEsn( )
       self.htmlout( ee, ff, esum )
+      self.htmlEsn( )
 
   def testnames(self):
     tnfile = '%s/config/testStandardNames.txt' % HERE
