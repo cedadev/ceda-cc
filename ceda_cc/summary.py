@@ -45,6 +45,7 @@ class main(object):
         ndisp = int( args.pop(0) )
       elif x == '-html':
         dohtml = True
+    assert os.path.isdir( idir ), 'Directory %s not found' % idir
 
     fl = glob.glob( '%s/*__qclog_*.txt' % idir )
     fb = glob.glob( '%s/qcBatchLog*' % idir )
