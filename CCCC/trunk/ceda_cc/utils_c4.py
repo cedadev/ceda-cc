@@ -937,7 +937,7 @@ class checkByVar(checkBase):
 
     assert nn==n2, 'some file lost!!!!!!'
     if len(elist) == 0:
-      self.info =  '%s files, %s frequencies' % (nn,len(ee.keys()) )
+      self.info =  '%s files, %s' % (nn,str(ee.keys()) )
     else:
       self.info =  '%s files, %s frequencies, severe errors in file names: %s' % (nn,len(ee.keys()),len(elist) )
       for e in elist:
