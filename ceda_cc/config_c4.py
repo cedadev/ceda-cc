@@ -215,7 +215,7 @@ class projectConfig(object):
 ## mip_id derived from global attribute Table_id (CMOR convention); ensemble derived from rip attributes.
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
-                        'ensemble':'@ensemble', 'model':'model_id', 'series':'series', 'realm':'modeling_realm', \
+                        'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
                         'frequency':'frequency', 'start_date':'@forecast_reference_time', \
                         'table':'@mip_id',
                         'project':'project_id'}
