@@ -1,0 +1,21 @@
+# list of RCMModelName values for CORDEX
+# name   institute  status
+AWI-HIRHAM5  DMI confirmed 
+CCCma-CanRCM4  CCCma  confirmed
+CHMI-ALADIN52 CHMI confirmed
+CLMcom-CCLM4-8-17  CLMcom  confirmed   
+CNRM-ALADIN52  CNRM  confirmed
+CNRM-ARPEGE52  CNRM  confirmed
+DHMZ-REGCM42 DHMZ confirmed
+DMI-HIRHAM5  DMI confirmed 
+KNMI-RACMO21P  KNMI confirmed 
+KNMI-RACMO22T  KNMI confirmed 
+MOHC-HadGEM3-RA MOHC confirmed
+MOHC-HadRM3P MOHC confirmed
+MPI-CSC-REMO2009 MPI-CSC confirmed
+SMHI-RCA4  SMHI  confirmed
+SMHI-RCA4-SN  SMHI  confirmed
+SMHI-RCAO  SMHI  confirmed
+SMHI-RCAO-SN  SMHI  confirmed
+UCLM-PROMES  UCLM  confirmed  
+UQAM-CRCM5  UQAM confirmed 
