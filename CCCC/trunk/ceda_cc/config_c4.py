@@ -328,7 +328,7 @@ class projectConfig(object):
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi_vocabs/mip/')
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
-       self.mipVocabFnpat = 'CCMI1_%s_comp-v5.txt'
+       self.mipVocabFnpat = 'CCMI1_%s.txt'
     else:
        self.mipVocabDir = None
        self.mipVocabTl = ['day', 't2']

@@ -1,7 +1,16 @@
 
-import collections, glob, string, re
+import collections, glob, string, re, json
 from fcc_utils2 import mipTableScan, snlist, tupsort
 from config_c4 import CC_CONFIG_DIR
+
+def uniquify( ll ):
+  ll.sort()
+  l0 = [ll[0],]
+  for l in ll[1:]:
+    if l != l0[-1]:
+      l0.append(l)
+  return l0
+  
 
 ms = mipTableScan()
 snc = snlist()
@@ -304,6 +313,12 @@ class typecheck1:
     td = m.td
     vd2 = {}
     type1, type2, type3, type4, type5 = [[],[],[],[],[],] 
+    vd2 = {}
+    for v in vars:
+     l = vdict[v]
+     dl = map( lambda x: string.join( td[x][v][0] ), l )
+     vd2[v] = str( uniquify( dl ) )
+    json.dump( vd2, open( 'mipInfo.json', 'w' ) )
     for v in vars:
      l = vdict[v]
      l.sort()
@@ -467,10 +482,13 @@ class typecheck1:
             oo.write( '</ul>\n' )
       oo.close()
            
+
 mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
          NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
+cordex_mip = NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*')
+mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 m = mipCo( mips )  
 h = helper()
 
