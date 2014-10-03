@@ -474,6 +474,10 @@ class main(object):
     ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
     self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
+
+    # This list will record the drs dictionaries of all checked files for export to JSON
+    drs_list = []
+
     if monitorFileHandles:
       self.monitor = utils.sysMonitor()
     else:
@@ -548,6 +552,7 @@ class main(object):
           ecount += self.cc.errorCount
           if self.cc.errorCount == 0:
             rec.add( f, self.cc.drs )
+            drs_list.append({'path': f, 'drs': self.cc.drs})
           else:
             rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % self.cc.errorCount )
         else:
@@ -593,6 +598,13 @@ class main(object):
     if c4i.project in ['SPECS','CCMI','CMIP5']:
       rec.checktids()
     rec.dumpAll()
+
+    #!TODO: the recorder class could export JSON if it recorded the full drs dictionaries.
+    #       This lightweight solution re-uses the filename from the rec class and dumps
+    #       JSON in a separate function.
+    json_file = os.path.splitext(rec.file)[0] + '.json'
+    dump_drs_list(drs_list, json_file)
+
     if printInfo:
       print 'Error count %s' % ecount
     ##c4i.hdlr.close()
@@ -600,7 +612,11 @@ class main(object):
     self.ok = all( map( lambda x: x[0], self.resList ) )
 
 
-   
+def dump_drs_list(drs_list, filename):
+    import json
+    fh = open(filename, 'w')
+    json.dump(drs_list, fh)
+    fh.close()
 
 
 def main_entry():
