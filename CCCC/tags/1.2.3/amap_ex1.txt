@@ -1,0 +1,4 @@
+#####
+#####
+@var=height;long_name=height above the surface|long_name=height
+##model_id=SMHI-RCA4|model_id=SMHI-RCA4x
