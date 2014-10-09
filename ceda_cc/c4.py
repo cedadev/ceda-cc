@@ -614,9 +614,10 @@ class main(object):
 
 def dump_drs_list(drs_list, filename):
     import json
-    fh = open(filename, 'w')
-    json.dump(drs_list, fh)
-    fh.close()
+    with open(filename, 'a+' as fh):
+          for drs in drs_list:
+                fh.write(json.dumps(drs))
+                fh.write('\n')
 
 
 def main_entry():
