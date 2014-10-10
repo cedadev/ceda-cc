@@ -157,8 +157,11 @@ class mipCo:
 
   def __init__(self,mips,helper=None):
     self.vl0 = []
+    self.al0 = []
     self.tl = []
+    self.dl = []
     self.td = {}
+    self.dd = {}
     self.helper = helper
     for mip in mips:
       self._scan(mip)
@@ -169,17 +172,38 @@ class mipCo:
     dl = glob.glob( '%s/%s%s' % (CC_CONFIG_DIR, mip.dir,mip.pattern) )
     dl.sort()
     for d in dl:
+     if d[-5:] != 'grids':
       tab = string.split( d, '/')[-1]
       isoceanic = tab[:7] == "CMIP5_O"
       l2 = ms.scan_table( open( d ).readlines(), None, asDict=True, lax=True, tag="x", warn=True)
       l2k = []
+      usedDims = []
       for k in l2.keys():
         if k not in cmip5_ignore:
           l2k.append(k)
+          if l2[k][0] != 'scalar':
+            usedDims += l2[k][0]
       l2k.sort()
+      usedDims.sort()
+      usedDims = uniquify( usedDims )
+      
+      ##self.al0 += ms.adict.keys()
       self.vl0 += l2k
       self.tl.append( [tab,l2, l2k,isoceanic] )
       self.td[tab] = l2
+      ##self.dd[tab] = ms.adict.copy()
+      self.dd[tab] = {}
+      for k in ms.adict.keys():
+        if k not in usedDims:
+          print "WARNING: axis %s declared and not used in table %s" % (k,tab)
+      for u in usedDims:
+        if ms.adict.has_key(u):
+           self.dd[tab][u] = ms.adict[u]
+        else:
+           print 'USED DIMENSION %s not in table %s' % (u,tab)
+      ##self.dl.append( [tab, ms.adict.copy()] )
+      self.dl.append( [tab, self.dd[tab].copy() ] )
+      self.al0 += self.dd[tab].keys()
 
     self.vl0.sort()
     self.vl = []
@@ -189,11 +213,25 @@ class mipCo:
       if v != self.vl[-1]:
         self.vl.append(v)
         self.vdict[v] = []
+    self.al0.sort()
+    self.al = [self.al0[0],]
+    self.adict = { self.al[0]:[] }
+    for v in self.al0[1:]:
+      if v != self.al[-1]:
+        self.al.append(v)
+        self.adict[v] = []
 
     for t in self.tl:
       for k in t[2]:
         self.vdict[k].append(t[0])
 
+## create list of tables for each dimension.
+    for a in self.dl:
+      for k in a[1].keys():
+        self.adict[k].append(a[0])
+
+    self.dims = self.adict.keys()
+    self.dims.sort()
     self.vars = self.vdict.keys()
     self.vars.sort()
     ##for v in self.vars:
@@ -202,10 +240,20 @@ class mipCo:
 ##  print v, l, td[l[0]][v][1].get('standard_name','__NO_STANDARD_NAME__')
 
 class runcheck1:
-  def __init__( self, m, thisatts):
-    vars = m.vars
-    vdict = m.vdict
-    td = m.td
+  def __init__( self, m, thisatts, isAxes=False):
+    self.errors = []
+    if not isAxes:
+      vars = m.vars
+      vdict = m.vdict
+      td = m.td
+      ix = 1
+      xxx = ''
+    else:
+      vars = m.dims
+      vdict = m.adict
+      td = m.dd
+      ix = 0
+      xxx = 'dim: '
     vd2 = {}
     for v in vars:
      l = vdict[v]
@@ -216,7 +264,7 @@ class runcheck1:
          if att == '__dimensions__':
            atl = map( lambda x: string.join( td[x][v][0] ), l )
          else:
-           atl = map( lambda x: td[x][v][1].get(att,'__ABSENT__'), l )
+           atl = map( lambda x: td[x][v][ix].get(att,'__ABSENT__'), l )
          atl.sort()
          av = [atl[0],]
          for a in atl[1:]:
@@ -225,7 +273,8 @@ class runcheck1:
          if att == 'standard_name':
            for a in av:
              if a not in snl and a not in snla:
-               print "INVALID STANDARD NAME: ",a
+               print xxx,"INVALID STANDARD NAME: ",a,v
+               self.errors.append( "INVALID STANDARD NAME: %s [%s]" % (a,v) )
          if len(av) > 1:
            ee = {}
    
@@ -234,7 +283,7 @@ class runcheck1:
    
            isol = []
            for x in l:
-             a = td[x][v][1].get(att,'__ABSENT__')
+             a = td[x][v][ix].get(att,'__ABSENT__')
              try:
               if att == 'standard_name' or ( att == 'long_name' and vd2[v][0] == 2):
                iso = x[:7] == 'CMIP5_O'
@@ -265,14 +314,14 @@ class runcheck1:
                    ok = False
    
              if not ok:
-                print 'E001: Multiple values : ',att,v
+                print xxx,'E001: Multiple values : ',att,v
                 for t in isol:
                   if t[0] == a:
                     tab = t[1]
                     if att in ['standard_name','long_name']:
-                      print tab,td[tab][v][1].get('standard_name','__ABSENT__'),td[tab][v][1].get('long_name','__ABSENT__')
+                      print xxx,tab,td[tab][v][ix].get('standard_name','__ABSENT__'),td[tab][v][ix].get('long_name','__ABSENT__')
                     else:
-                      print tab,td[tab][v][1].get(att,'__ABSENT__')
+                      print xxx,tab,td[tab][v][ix].get(att,'__ABSENT__')
                    
            if att == "standard_name":
              vd2[v] = (2,[ee[True],ee[False]] )
@@ -286,7 +335,7 @@ class runcheck1:
                vd2[v] = (1, av)
      elif len(l) == 1:
            tab = vdict[v][0]
-           a = td[tab][v][1].get('standard_name','__ABSENT__')
+           a = td[tab][v][ix].get('standard_name','__ABSENT__')
            tt = snsubber.isFalseSn( v, a )
            if tt[0]:
              print 'Substituting ',v,a,tt
@@ -295,8 +344,7 @@ class runcheck1:
              vd2[v] = (1, a)
            ##print 'MULTIPLE VALUES: ',v,att,av
      else:
-      print 'Zero length element: %s' % v
-      
+      print xxx, 'Zero length element: %s' % v
    
 class typecheck1:
   def __init__( self, m, thisatts,helper=None):
@@ -362,8 +410,8 @@ class typecheck1:
              else:
                av.append(a)
          adict[att] = av
-         if v == "snd":
-           print adict
+         ##if v == "snd":
+           ##print adict
        
 ## check for type 2
        tval = None
@@ -376,7 +424,6 @@ class typecheck1:
            tval = 4
        else:
            l = map( lambda x: '%s:%s, ' % (x,len(adict[x]) ), self.type2Atts )
-           ## print '%s: t3:: ' % v,string.join(l)
        if tval == 2:
          type2.append( v)
        elif tval == 3:
@@ -485,12 +532,32 @@ class typecheck1:
 
 mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
          NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
-mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
 cordex_mip = NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*')
+specs_mip = NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*')
 mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( cordex_mip, )
+mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
 mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( specs_mip, )
 m = mipCo( mips )  
 h = helper()
+
+al = []
+for k0 in m.dd.keys():
+  for k1 in m.dd[k0].keys():
+    al += m.dd[k0][k1][0].keys()
+ald = uniquify( al )
+ald.sort()
+i = ald.index('standard_name')
+ald.pop(i)
+ald = ['standard_name', ] + ald
+
+cmip5AxesAtts = ['axis', 'bounds_values', 'climatology', 'coords_attrib', 'formula', 'index_only', 'long_name', 'must_call_cmor_grid', 'must_have_bounds', 'out_name', 'positive', 'requested', 'requested_bounds', 'standard_name', 'stored_direction', 'tolerance', 'type', 'units', 'valid_max', 'valid_min', 'value', 'z_bounds_factors', 'z_factors']
+
+## check consistency of dimensions
+r = runcheck1( m, ald, isAxes=True )
+for e in r.errors:
+  print e
 
 allatts = ms.al
 thisatts = ['standard_name','units','long_name','__dimensions__']

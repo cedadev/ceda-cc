@@ -339,6 +339,7 @@ class c4_init(object):
         self.logByFile = True
 
     if self.project[:2] == '__':
+       self.source = 'dummy'
        flist = []
        ss = 'abcdefgijk'
        ss = 'abcdefgijklmnopqrstuvwxyz'
@@ -614,7 +615,7 @@ class main(object):
 
 def dump_drs_list(drs_list, filename):
     import json
-    with open(filename, 'a+' as fh):
+    with open(filename, 'a+') as fh:
           for drs in drs_list:
                 fh.write(json.dumps(drs))
                 fh.write('\n')

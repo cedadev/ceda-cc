@@ -36,35 +36,18 @@ class mipTableScan(object):
       sll[-1][1].append(l)
 
     eee = []
+    fff = []
     nal = []
     for s in sll:
-      if s[0] == 'variable_entry':
-         bits = string.split(s[1][0],':')
-         assert len(bits) == 2, 'Can not unpack: %s' % str(s[1])
-         k,var =  map( string.strip, string.split(s[1][0],':') )
-         aa = {'standard_name':None, 'long_name':None,'units':None,'cell_methods':None }
-         ds = 'scalar'
-         for l in s[1][1:]:
-           bits = string.split(l,':')
-           k = string.strip(bits[0])
-           v = string.strip( string.join( bits[1:], ':' ) )
-           if k == 'dimensions':
-             ds = string.split(v)
-           else:
-             aa[k] = v
-             nal.append(k)
-         if self.project == 'CMIP5':
-           if var == 'tos':
-             if aa['standard_name'] != 'sea_surface_temperature':
-               print 'Overriding incorrect CMIP5 standard_name for %s' % var
-               aa['standard_name'] = 'sea_surface_temperature'
-           elif var == 'ps':
-             if aa['long_name'] != 'Surface Air Pressure':
-               print 'Overriding inconsistent CMIP5 long_name for %s' % var
-               aa['long_name'] = 'Surface Air Pressure'
-         eee.append( (var,ds,aa,tag) )
+      if s[0] in ['variable_entry','axis_entry']:
+        x = self.scan_entry_01( s,tag )
+        if s[0] == 'variable_entry':
+           eee.append(x[0])
+           nal += x[1]
+        else:
+           fff.append(x[0])
 
-
+    self.axes = fff
     nal.sort()
     nalu = [nal[0],]
     for a in nal[1:]:
@@ -114,7 +97,11 @@ class mipTableScan(object):
       ff = {}
 ## l[0] = var name, l[1] = dimensions, l[2] = attributes, l[3] = tag
       for l in eee:
-        ff[l[0]] = ( l[1], l[2], l[3], tag )
+        ff[l[0]] = ( l[1], l[2], l[3] )
+      self.adict = {}
+## l[0] = axis name, l[1] = attributes, l[2] = tag
+      for l in fff:
+        self.adict[l[0]] = ( l[1], l[2] )
       if appendTo != None:
         for k in ff.keys():
           assert ff[k][1].has_key( 'standard_name' ), 'No standard name in %s:: %s' % (k,str(ff[k][1].keys()))
@@ -149,6 +136,40 @@ class mipTableScan(object):
       else:
         return ff
 
+  def scan_entry_01(self,s,tag):
+      assert s[0] in ['variable_entry','axis_entry'],'scan_entry_01 called with unsupported entry type: %s' % s[0]
+      bits = string.split(s[1][0],':')
+      assert len(bits) == 2, 'Can not unpack: %s' % str(s[1])
+      k,var =  map( string.strip, string.split(s[1][0],':') )
+      nal = []
+      if s[0] == 'variable_entry':
+         aa = {'standard_name':None, 'long_name':None,'units':None,'cell_methods':None }
+         ds = 'scalar'
+      else:
+         aa = {'standard_name':None, 'long_name':None,'units':None }
+         ds = None
+      for l in s[1][1:]:
+           bits = string.split(l,':')
+           k = string.strip(bits[0])
+           v = string.strip( string.join( bits[1:], ':' ) )
+           if k == 'dimensions':
+             ds = string.split(v)
+           else:
+             aa[k] = v
+             nal.append(k)
+      if self.project == 'CMIP5':
+           if var == 'tos':
+             if aa['standard_name'] != 'sea_surface_temperature':
+               print 'Overriding incorrect CMIP5 standard_name for %s' % var
+               aa['standard_name'] = 'sea_surface_temperature'
+           elif var == 'ps':
+             if aa['long_name'] != 'Surface Air Pressure':
+               print 'Overriding inconsistent CMIP5 long_name for %s' % var
+               aa['long_name'] = 'Surface Air Pressure'
+      if s[0] == 'variable_entry':
+        return ((var,ds,aa,tag), nal)
+      else:
+        return ((var,aa,tag), nal)
 
 class snlist:
 
