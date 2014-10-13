@@ -92,7 +92,7 @@ must_have_bounds: yes
 
 
 !============
-axis_entry: plevs
+axis_entry: plev
 !============
 !----------------------------------
 ! Axis attributes:
@@ -122,9 +122,9 @@ axis_entry: time
 ! Axis attributes:
 !----------------------------------
 standard_name:    time
-units:            days since ?
+units:            days since 1850-01-01
 axis:             T             ! X, Y, Z, T (default: undeclared)
-long_name:        time
+long_name:        Verification time of the forecast
 !----------------------------------
 ! Additional axis information:
 !----------------------------------
@@ -143,9 +143,9 @@ axis_entry: time2
 ! Axis attributes:
 !----------------------------------
 standard_name:    time
-units:            days since ?
+units:            days since 1850-01-01
 axis:             T             ! X, Y, Z, T (default: undeclared)
-long_name:        time
+long_name:        Verification time of the forecast
 !----------------------------------
 ! Additional axis information:
 !----------------------------------
@@ -1264,7 +1264,7 @@ long_name:         Air Temperature
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
@@ -1293,7 +1293,7 @@ long_name:         Eastward Wind
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
@@ -1322,7 +1322,7 @@ long_name:         Northward Wind
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
@@ -1351,7 +1351,7 @@ long_name:         Specific Humidity
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
@@ -1380,7 +1380,7 @@ long_name:         Geopotential Height
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
