@@ -101,7 +101,7 @@ class helper:
             ]
 
     self.canonvar = []
-    for l in open( 'canonicalVariations.txt' ).readlines():
+    for l in open( 'config/canonicalVariations.txt' ).readlines():
       if l[0] != '#':
         ix = l.index(':')
         s = string.strip( l[ix:] )
@@ -541,6 +541,15 @@ mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 mips = ( specs_mip, )
 m = mipCo( mips )  
 h = helper()
+
+keys = m.adict.keys()
+keys.sort()
+fh = open( 'axes_json.txt', 'w' )
+for k in keys:
+  ee = m.dd[m.adict[k][0]][k][0]
+  ee["__name__"] = k
+  fh.write( json.dumps( ee ) + "\n" )
+fh.close()
 
 al = []
 for k0 in m.dd.keys():
