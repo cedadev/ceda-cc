@@ -88,7 +88,7 @@ must_have_bounds: yes
 
 
 !============
-axis_entry: plevs
+axis_entry: plev
 !============
 !----------------------------------
 ! Axis attributes:
@@ -101,7 +101,7 @@ long_name:        pressure
 !----------------------------------
 ! Additional axis information:
 !----------------------------------
-out_name:         plevs
+out_name:         plev
 stored_direction: decreasing
 tolerance:        0.001
 type:             double
@@ -789,7 +789,7 @@ long_name:         Air Temperature
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
@@ -812,7 +812,7 @@ long_name:         Northward Wind
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
@@ -837,7 +837,7 @@ long_name:         Geopotential Height
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
-dimensions:        longitude latitude plevs time
+dimensions:        longitude latitude plev time
 shuffle:           1
 deflate:           1
 deflate_level:     6
