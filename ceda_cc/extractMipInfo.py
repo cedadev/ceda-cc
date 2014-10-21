@@ -537,8 +537,8 @@ specs_mip = NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*')
 mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 mips = ( cordex_mip, )
 mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 mips = ( specs_mip, )
+mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 m = mipCo( mips )  
 h = helper()
 
@@ -548,7 +548,7 @@ fh = open( 'axes_json.txt', 'w' )
 for k in keys:
   ee = m.dd[m.adict[k][0]][k][0]
   ee["__name__"] = k
-  fh.write( json.dumps( ee ) + "\n" )
+  fh.write( json.dumps( ee ) + '\n' )
 fh.close()
 
 al = []
