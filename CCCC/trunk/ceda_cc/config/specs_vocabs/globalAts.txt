@@ -4,6 +4,7 @@ Conventions
 creation_date
 experiment_id
 forecast_reference_time
+associated_experiment
 startdate
 frequency
 institution
