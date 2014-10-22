@@ -240,11 +240,14 @@ class projectConfig(object):
     elif project == 'CCMI':
       lrdr = readVocab( 'ccmi_vocabs/')
       self.requiredGlobalAttributes = [ 'creation_date', 'tracking_id', 'forcing', 'model_id', 'parent_experiment_id', 'parent_experiment_rip', 'branch_time', 'contact', 'institute_id' ]
-      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'experiment_id', 'project', 'frequency' ]
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','@ensemble']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var'}
+      self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
+                        'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
+                        'frequency':'frequency',  'table':'@mip_id',
+                        'project':'project_id'}
 
     elif project == '__dummy':
       self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
@@ -328,7 +331,7 @@ class projectConfig(object):
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi_vocabs/mip/')
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
-       self.mipVocabFnpat = 'CCMI1_%s.txt'
+       self.mipVocabFnpat = 'CCMI1_%s'
     else:
        self.mipVocabDir = None
        self.mipVocabTl = ['day', 't2']
