@@ -18,17 +18,19 @@ installedSupportedNetcdf = []
 
 for x in supportedNetcdf:
   if x in ll:
-    installedSupportedNetcdf.append( x )
+    if len(installedSupportedNetcdf) == 0:
+      try: 
+        cmd = 'import %s' % x
+        print '>>>>>>>>>', cmd
+        exec cmd
+        installedSupportedNetcdf.append( x )
+      except:
+        print 'Failed to install %s' % x
+    else:
+      installedSupportedNetcdf.append( x )
 
 if len(installedSupportedNetcdf) > 0:
-  try: 
-    cmd = 'import %s' % installedSupportedNetcdf[0]
-    print '>>>>>>>>>', cmd
-    exec cmd
-    ncLib = installedSupportedNetcdf[0]
-  except:
-    print 'Failed to install %s' % installedSupportedNetcdf[0]
-    ncLib = None
+  ncLib = installedSupportedNetcdf[0]
 else:
   print """No supported netcdf module found.
          Supported modules are %s.
