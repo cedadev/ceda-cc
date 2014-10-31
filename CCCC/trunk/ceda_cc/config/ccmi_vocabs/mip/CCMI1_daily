@@ -2,7 +2,7 @@ cmor_version: 2.5.0    ! minimum version of CMOR that can read this table
 cf_version:   1.4      ! version of CF that output conforms to
 project_id:   CCMI1    ! project id
 table_id:     daily    ! table id
-table_date:   6 August 2014 ! date this table was constructed
+table_date:   31 October 2014 ! date this table was constructed
 modeling_realm: atmos
 frequency: day
 
@@ -2014,7 +2014,7 @@ comment:           at surface; includes both liquid and solid phases from all ty
 dimensions:        longitude latitude time1
 type:              real
 valid_min:         0.0
-valid_max:         1000.0
+valid_max:         0.1
 !----------------------------------
 !
 
@@ -2390,7 +2390,7 @@ standard_name:     mole_fraction_of_ozone_in_air
 units:             mole mole-1
 cell_methods:      time: point
 cell_measures:     area: areacella
-long_name:         O3 Volume Mixing Ratio
+long_name:         Ozone Volume Mixing Ratio
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -2482,7 +2482,7 @@ standard_name:     mole_fraction_of_water_vapor_in_air
 units:             mole mole-1
 cell_methods:      time: point
 cell_measures:     area: areacella
-long_name:         H2O Volume Mixing Ratio
+long_name:         Water Vapour Volume Mixing Ratio
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -2505,7 +2505,7 @@ modeling_realm:    atmos
 units:             mole mole-1
 cell_methods:      time: point
 cell_measures:     area: areacella
-long_name:         Passive O3 Volume Mixing Ratio
+long_name:         Passive Ozone Volume Mixing Ratio
 comment:           Passive O3 (if available): The model runs should include a tracer to diagnose polar chemical ozone loss in winter and spring. As most models will advect (and integrate) O3 as part of the 'odd oxygen' (Ox=O3 + O(3P) + O(1D)) family we will call this the 'passive Ox tracer'. This will be a global tracer which is reset during each polar winter (i.e. twice per year). Given the relatively slow transport and long chemical lifetime (without PSC processing etc) of O3 in the polar regions this will provide a useful diagnostic over the timescale of a few months in the lower stratosphere. The model tracer should be set equal to your advected 'odd oxygen' tracer on December 1 and June 1 every year. Then, the tracer is simply advected without any further chemical change. If your advection scheme stores other variables for each tracer (e.g. higher order moments) remember to set sum of these species. The passive Ox tracer should be ouput according to the other instructions. The re-initialisation dates are selected so that we diagnose most of the chemical loss over the course of the winter, some of which would be missed by a later date.
 !----------------------------------
 ! Additional variable information:
@@ -3353,7 +3353,7 @@ modeling_realm:    atmos
 ! Variable attributes:
 !----------------------------------
 standard_name:     age_of_stratospheric_air
-units:             years
+units:             year
 cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Mean Age of Stratospheric Air
@@ -3495,7 +3495,7 @@ units:             %
 cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Cloud Area Fraction
-comment:           Include both large-scale and convective cloud.
+comment:           Include both large-scale and convective clouds.
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
@@ -3518,7 +3518,7 @@ units:             %
 cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Convective Cloud Area Fraction
-comment:           Convective cloud fraction
+comment:           Include only convective cloud.
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
@@ -3631,7 +3631,7 @@ modeling_realm:    atmos
 standard_name:     air_temperature
 units:             K
 cell_methods:      longitude: mean
-long_name:         Air Temperature
+long_name:         Zonal Mean Air Temperature
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -3653,7 +3653,7 @@ modeling_realm:    atmos
 standard_name:     geopotential_height
 units:             m
 cell_methods:      longitude: mean
-long_name:         Geopotential Height
+long_name:         Zonal Mean Geopotential Height
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -3675,7 +3675,7 @@ modeling_realm:    atmos
 standard_name:     eastward_wind
 units:             m s-1
 cell_methods:      longitude: mean
-long_name:         Eastward Wind
+long_name:         Zonal Mean Eastward Wind
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -3807,7 +3807,7 @@ modeling_realm:    atmos
 standard_name:     mole_fraction_of_ozone_in_air
 units:             mole mole-1
 cell_methods:      longitude: mean
-long_name:         Ozone Volume Mixing Ratio
+long_name:         Zonal Mean Ozone Volume Mixing Ratio
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -3829,7 +3829,7 @@ modeling_realm:    atmos
 standard_name:     mole_fraction_of_water_vapor_in_air
 units:             mole mole-1
 cell_methods:      longitude: mean
-long_name:         Water Vapour Volume Mixing Ratio
+long_name:         Zonal Mean Water Vapour Volume Mixing Ratio
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -3851,7 +3851,7 @@ modeling_realm:    atmos
 standard_name:     mole_fraction_of_total_reactive_nitrogen_in_air
 units:             mole mole-1
 cell_methods:      longitude: mean
-long_name:         Total Reactive Nitrogen Volume Mixing Ratio
+long_name:         Zonal Mean Total Reactive Nitrogen (NOy) Volume Mixing Ratio
 comment:           Total family (the sum of all appropriate species in the model); list the species in the netCDF header, e.g. NOy = N + NO + NO2 + NO3 + HNO3 + 2N2O5 + HNO4 + ClONO2 + BrONO2.  Definition: Total reactive nitrogen; usually includes atomic nitrogen (N), nitric oxide (NO), NO2, nitrogen trioxide (NO3), dinitrogen radical (N2O5), nitric acid (HNO3), peroxynitric acid (HNO4), BrONO2, ClONO2
 !----------------------------------
 ! Additional variable information:
@@ -3873,7 +3873,7 @@ modeling_realm:    atmos
 standard_name:     mole_fraction_of_chlorine_monoxide_in_air
 units:             mole mole-1
 cell_methods:      longitude: mean
-long_name:         ClO volume mixing ratio
+long_name:         Zonal Mean ClO volume mixing ratio
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -3895,7 +3895,7 @@ modeling_realm:    atmos
 standard_name:     mole_fraction_of_bromine_monoxide_in_air
 units:             mole mole-1
 cell_methods:      longitude: mean
-long_name:         BrO volume mixing ratio
+long_name:         Zonal Mean BrO volume mixing ratio
 comment:           
 !----------------------------------
 ! Additional variable information:

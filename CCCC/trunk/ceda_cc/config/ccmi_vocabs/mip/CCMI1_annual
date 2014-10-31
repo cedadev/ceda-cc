@@ -2,7 +2,7 @@ cmor_version: 2.5.0    ! minimum version of CMOR that can read this table
 cf_version:   1.4      ! version of CF that output conforms to
 project_id:   CCMI1    ! project id
 table_id:     annual   ! table id
-table_date:   6 August 2014 ! date this table was constructed
+table_date:   31 October 2014 ! date this table was constructed
 modeling_realm: atmos
 frequency: yr
 
