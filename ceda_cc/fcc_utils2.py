@@ -112,13 +112,15 @@ class mipTableScan(object):
                   print 'ERROR[X1]%s - %s : Inconsistent standard_names %s:: %s [%s] --- %s [%s]' % (tag,appendTo[k][3],k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
               if ff[k][1]['long_name'] != appendTo[k][1]['long_name']:
                 if warn:
-                  print 'WARNING[X1]%s -- %s: Inconsistent long_names %s:: %s --- %s' % (tag,appendTo[k][3],k,ff[k][1]['long_name'],appendTo[k][1]['long_name'])
+                  k3 = min( 3, len(appendTo[k])-1 )
+                  print 'WARNING[X1]%s -- %s: Inconsistent long_names %s:: %s --- %s' % (tag,appendTo[k][k3],k,ff[k][1]['long_name'],appendTo[k][1]['long_name'])
 
               p1 = ff[k][1].get('positive','not set')
               p2 = appendTo[k][1].get('positive','not set')
               if p1 != p2:
                 if warn:
-                  print 'WARNING[X1]%s -- %s: Inconsistent positive attributes %s:: %s --- %s' % (tag,appendTo[k][3],k,p1,p2)
+                  k3 = min( 3, len(appendTo[k])-1 )
+                  print 'WARNING[X1]%s -- %s: Inconsistent positive attributes %s:: %s --- %s' % (tag,appendTo[k][k3],k,p1,p2)
 
               for k2 in ff[k][1].keys():
                 if k2 not in ['standard_name','long_name','positive']:
@@ -126,7 +128,8 @@ class mipTableScan(object):
                     p2 = appendTo[k][1].get(k2,'not set')
                     if p1 != p2:
                       if warn:
-                        print 'WARNING[Y1]%s -- %s: Inconsistent %s attributes %s:: %s --- %s' % (tag,appendTo[k][3],k2,k,p1,p2)
+                        k3 = min( 3, len(appendTo[k])-1 )
+                        print 'WARNING[Y1]%s -- %s: Inconsistent %s attributes %s:: %s --- %s' % (tag,appendTo[k][k3],k2,k,p1,p2)
 
             if not lax:
               assert ff[k][1] == appendTo[k][1], 'Inconsistent entry definitions %s:: %s [%s] --- %s [%s]' % (k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])

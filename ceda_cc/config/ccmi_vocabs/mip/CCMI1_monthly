@@ -2,7 +2,7 @@ cmor_version: 2.5.0    ! minimum version of CMOR that can read this table
 cf_version:   1.4      ! version of CF that output conforms to
 project_id:   CCMI1    ! project id
 table_id:     monthly  ! table id
-table_date:   6 August 2014 ! date this table was constructed
+table_date:   31 October 2014 ! date this table was constructed
 modeling_realm: atmos
 frequency: mon
 
@@ -725,18 +725,18 @@ modeling_realm:    atmos
 ! Variable attributes:
 !----------------------------------
 standard_name:     cloud_area_fraction
-units:             1
+units:             %
 cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Total Cloud Fraction
-comment:           cloud area fraction
+comment:           For the whole atmospheric column, as seen from the surface or the top of the atmosphere. Include both large-scale and convective cloud.
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
 dimensions:        longitude latitude time
 type:              real
 valid_min:         0.0
-valid_max:         1.0
+valid_max:         101.0
 !----------------------------------
 !
 
@@ -748,18 +748,18 @@ modeling_realm:    atmos
 ! Variable attributes:
 !----------------------------------
 standard_name:     convective_cloud_area_fraction
-units:             1
+units:             %
 cell_methods:      time: mean
 cell_measures:     area: areacella
-long_name:         Convective Cloud Area Fraction
-comment:           Convective cloud fraction
+long_name:         Convective Cloud Fraction
+comment:           For the whole atmospheric column, as seen from the surface or the top of the atmosphere. Include only convective cloud.
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
 dimensions:        longitude latitude time
 type:              real
 valid_min:         0.0
-valid_max:         1.0
+valid_max:         101.0
 !----------------------------------
 !
 
@@ -844,15 +844,14 @@ units:             kg m-2 s-1
 cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Precipitation
-comment:           includes both liquid and solid phases
+comment:           at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
 dimensions:        longitude latitude time
 type:              real
-positive:          down
 valid_min:         0.0
-valid_max:         10000.0
+valid_max:         0.1
 !----------------------------------
 !
 
@@ -1933,7 +1932,7 @@ standard_name:     tendency_of_atmosphere_mass_content_of_ozone_due_to_dry_depos
 units:             kg m-2 s-1
 cell_methods:      time: mean
 cell_measures:     area: areacella
-long_name:         Dry Deposition Rate of O3
+long_name:         Dry Deposition Rate of Ozone
 comment:           dry deposition includes gravitational settling, impact scavenging, and turbulent deposition.
 !----------------------------------
 ! Additional variable information:
@@ -1957,7 +1956,7 @@ standard_name:     tendency_of_atmosphere_mass_content_of_ozone_due_to_dry_depos
 units:             kg m-2 s-1
 cell_methods:      time: mean
 cell_measures:     area: areacella
-long_name:         Dry Deposition Rate of O3 in Stomata
+long_name:         Dry Deposition Rate of Ozone in Stomata
 comment:           (dry deposition includes gravitational settling, impact scavenging, and turbulent deposition).
 !----------------------------------
 ! Additional variable information:
@@ -4127,7 +4126,7 @@ modeling_realm:    atmos
 units:             kg m-2 s-1
 cell_methods:      time: mean
 cell_measures:     area: areacella
-long_name:         STE O3 Flux
+long_name:         STE Ozone Flux
 comment:           estimated strat-trop flux of ozone, i.e., the reset tendency of o3ste to o3 in the lowermost layers. See tracer o3ste on the monthly-mean 3d sheet for details.
 !----------------------------------
 ! Additional variable information:
@@ -4658,7 +4657,7 @@ units:             %
 cell_methods:      time: mean
 cell_measures:     area: areacella
 long_name:         Cloud Area Fraction
-comment:           Report on model layers (not standard pressures).  Include both large-scale and convective clouds.
+comment:           Report on model layers. Include both large-scale and convective clouds.
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
@@ -6673,7 +6672,7 @@ modeling_realm:     atmos
 standard_name:     mole_fraction_of_water_vapor_in_air
 units:             mole mole-1
 cell_methods:      time: mean longitude: mean
-long_name:         Zonal Mean H2O Volume Mixing Ratio
+long_name:         Zonal Mean Water Vapour Volume Mixing Ratio
 comment:           
 !----------------------------------
 ! Additional variable information:
@@ -6693,7 +6692,7 @@ modeling_realm:     atmos
 ! Variable attributes:
 !----------------------------------
 standard_name:     age_of_stratospheric_air
-units:             years
+units:             year
 cell_methods:      time: mean longitude: mean
 long_name:         Zonal Mean Mean Age of Stratospheric Air
 comment:           The mean age of air is defined as the mean time that a stratospheric air mass has been out of contact with the well-mixed troposphere.
@@ -7729,7 +7728,7 @@ modeling_realm:     atmos
 standard_name:     tendency_of_eastward_wind_due_to_orographic_gravity_wave_drag
 units:             m s-2
 cell_methods:      time: mean longitude: mean
-long_name:         Tendency of Eastward Wind from OGWD
+long_name:         Tendency of Eastward Wind from Oro-GWD
 comment:           Eastward acceleration from the parameterized orographic gravity wave drag (OGWD) derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available). Use the accelerations as applied in your model.
 !----------------------------------
 ! Additional variable information:
@@ -7751,8 +7750,8 @@ modeling_realm:     atmos
 standard_name:     upward_eastward_momentum_flux_in_air_due_to_orographic_gravity_waves
 units:             Pa
 cell_methods:      time: mean longitude: mean
-long_name:         
-comment:           Zonal orographic gravity wave stress (momentum flux), including any flux out of the top of the model (e.g., add additional level to the output file for model top. Set flux at this level to zero if nothing escapes to outer space in your model), derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available).
+long_name:         Zonal Component of Upward Momentum Flux by Oro-GWs
+comment:           Zonal (positive eastward) orographic gravity wave stress (momentum flux), including any flux out of the top of the model (e.g., add additional level to the output file for model top. Set flux at this level to zero if nothing escapes to outer space in your model), derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available).
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
@@ -7773,30 +7772,8 @@ modeling_realm:     atmos
 standard_name:     tendency_of_eastward_wind_due_to_nonorographic_gravity_wave_drag
 units:             m s-2
 cell_methods:      time: mean longitude: mean
-long_name:         Tendency of Eastward Wind from Non-OGWD
+long_name:         Tendency of Eastward Wind from Non-Oro GWD
 comment:           Eastward acceleration from the parameterized non-orographic gravity wave drag (NOGWD) derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available). Use the accelerations as applied in your model.
-!----------------------------------
-! Additional variable information:
-!----------------------------------
-dimensions:        longitude latitude plevs time
-type:              real
-valid_min:         -10000.0
-valid_max:         10000.0
-!----------------------------------
-!
-
-!============
-variable_entry:    nogwfluxw
-!============
-modeling_realm:     atmos
-!----------------------------------
-! Variable attributes:
-!----------------------------------
-standard_name:     upward_eastward_momentum_flux_in_air_due_to_nonorographic_eastward_gravity_waves
-units:             Pa
-cell_methods:      time: mean longitude: mean
-long_name:         
-comment:           Westward component of the zonal non-orographic gravity wave momentum flux, including any flux out of the top of the model (e.g., add additional level to the output file for model top. Set flux at this level to zero if nothing escapes to outer space in your model), derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available).
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
@@ -7814,11 +7791,33 @@ modeling_realm:     atmos
 !----------------------------------
 ! Variable attributes:
 !----------------------------------
+standard_name:     upward_eastward_momentum_flux_in_air_due_to_nonorographic_eastward_gravity_waves
+units:             Pa
+cell_methods:      time: mean longitude: mean
+long_name:         Zonal Component of Upward Momentum Flux by Eastward Propagating Non-Oro GWs
+comment:           Zonal component (positive eastward) of the non-orographic gravity wave momentum flux carried by eastward propagating waves, including any flux out of the top of the model (e.g., add additional level to the output file for model top. Set flux at this level to zero if nothing escapes to outer space in your model). Derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available).
+!----------------------------------
+! Additional variable information:
+!----------------------------------
+dimensions:        longitude latitude plevs time
+type:              real
+valid_min:         -10000.0
+valid_max:         10000.0
+!----------------------------------
+!
+
+!============
+variable_entry:    nogwfluxw
+!============
+modeling_realm:     atmos
+!----------------------------------
+! Variable attributes:
+!----------------------------------
 standard_name:     upward_eastward_momentum_flux_in_air_due_to_nonorographic_westward_gravity_waves
 units:             Pa
 cell_methods:      time: mean longitude: mean
-long_name:         
-comment:           Eastward component of the zonal non-orographic gravity wave momentum flux, including any flux out of the top of the model (e.g., add additional level to the output file for model top. Set flux at this level to zero if nothing escapes to outer space in your model), derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available).
+long_name:         Zonal Component of Upward Momentum Flux by Westward Propagating Non-Oro GWs
+comment:           Zonal component (positive eastward) of the non-orographic gravity wave momentum flux carried by westward propagating waves, including any flux out of the top of the model (e.g., add additional level to the output file for model top. Set flux at this level to zero if nothing escapes to outer space in your model). Derived either from daily means or 6hr fields (use instantaneous daily fields or 12 hr fields if the 6 hr data are not available).
 !----------------------------------
 ! Additional variable information:
 !----------------------------------
@@ -7839,7 +7838,7 @@ modeling_realm:     atmos
 standard_name:     tendency_of_eastward_wind_due_to_numerical_artefacts
 units:             m s-2
 cell_methods:      time: mean longitude: mean
-long_name:         
+long_name:         Tendency of Eastward Wind from Numerical Artefacts
 comment:           Other sub-grid scale/numerical zonal drag excluding that already provided for the parameterized orographic and non-ororgraphic gravity waves. This would be used to calculate the total 'diabatic drag'. Contributions to this additional drag such Rayleigh friction and diffusion that can be calculated from the monthly mean wind fields should not be included, but details (e.g. coefficients) of the friction and/or diffusion used in the model should be provided separately.
 !----------------------------------
 ! Additional variable information:

@@ -2,7 +2,7 @@ cmor_version: 2.5.0    ! minimum version of CMOR that can read this table
 cf_version:   1.4      ! version of CF that output conforms to
 project_id:   CCMI1    ! project id
 table_id:     hourly   ! table id
-table_date:   6 August 2014 ! date this table was constructed
+table_date:   31 October 2014 ! date this table was constructed
 modeling_realm: atmos
 frequency: hr
 
@@ -620,6 +620,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     surface_air_pressure
 units:             Pa
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Surface Air Pressure
 comment:           surface pressure (not mean sea-level pressure), 2-D field to calculate the 3-D pressure field from hybrid coordinates
@@ -642,6 +643,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     mole_fraction_of_ozone_in_air
 units:             mole mole-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Ozone Volume Mixing Ratio in the Lowest Model Layer
 comment:           
@@ -664,6 +666,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     mole_fraction_of_nitrogen_dioxide_in_air
 units:             mole mole-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         NO2 Volume Mixing Ratio in the Lowest Model Layer
 comment:           
@@ -686,6 +689,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     mole_fraction_of_carbon_monoxide_in_air
 units:             mole mole-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         CO Volume Mixing Ratio in the Lowest Model Layer
 comment:           
@@ -708,6 +712,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     mass_fraction_of_pm2p5_ambient_aerosol_in_air
 units:             kg kg-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         PM2.5 Mass Mixing Ratio in the Lowest Model Layer
 comment:           
@@ -730,6 +735,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     tendency_of_atmosphere_mass_content_of_ozone_due_to_dry_deposition
 units:             kg m-2 s-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Dry Deposition Rate of O3
 comment:           Only for year 2006. dry deposition includes gravitational settling, impact scavenging, and turbulent deposition.
@@ -753,6 +759,7 @@ modeling_realm:    atmos
 !----------------------------------
 !FAILS CF25 standard_name:     stomatal_conductance_of_water_vapour_per_unit_leaf_area
 units:             mmol m-2 s-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Stomatal Conductance of Water Vapour
 comment:           Only for year 2006.  Full units are mmol H2O/m^2 leaf area/sec. 
@@ -775,6 +782,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     tendency_of_atmosphere_mass_content_of_ozone_due_to_dry_deposition_into_stomata
 units:             kg m-2 s-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Dry Deposition Rate of O3 in Stomata
 comment:           Only for year 2006
@@ -798,6 +806,7 @@ modeling_realm:    atmos
 !----------------------------------
 standard_name:     mole_fraction_of_ozone_in_air
 units:             mole mole-1
+cell_methods:      time: point
 cell_measures:     area: areacella
 long_name:         Ozone Volume Mixing Ratio at Canopy Height
 comment:           Only for year 2006

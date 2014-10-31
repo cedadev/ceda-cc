@@ -195,12 +195,12 @@ class mipCo:
       self.dd[tab] = {}
       for k in ms.adict.keys():
         if k not in usedDims:
-          print "WARNING: axis %s declared and not used in table %s" % (k,tab)
+          print "WARNING[X1]: axis %s declared and not used in table %s" % (k,tab)
       for u in usedDims:
         if ms.adict.has_key(u):
            self.dd[tab][u] = ms.adict[u]
         else:
-           print 'USED DIMENSION %s not in table %s' % (u,tab)
+           print 'WARNING[X2]: USED DIMENSION %s not in table %s' % (u,tab)
       ##self.dl.append( [tab, ms.adict.copy()] )
       self.dl.append( [tab, self.dd[tab].copy() ] )
       self.al0 += self.dd[tab].keys()
@@ -260,6 +260,7 @@ class runcheck1:
      l.sort()
      if len(l) > 1:
        for att in thisatts:
+        if att != "__name__":
        ##for att in ['standard_name','units']:
          if att == '__dimensions__':
            atl = map( lambda x: string.join( td[x][v][0] ), l )
@@ -273,7 +274,7 @@ class runcheck1:
          if att == 'standard_name':
            for a in av:
              if a not in snl and a not in snla:
-               print xxx,"INVALID STANDARD NAME: ",a,v
+               print "ERROR[A1]: ",xxx,"INVALID STANDARD NAME: ",a,v
                self.errors.append( "INVALID STANDARD NAME: %s [%s]" % (a,v) )
          if len(av) > 1:
            ee = {}
@@ -301,7 +302,7 @@ class runcheck1:
                raise
              isol.append((iso,x))
              if tt[0]:
-               print 'Substituting ',v,a,tt
+               print 'INFO[Y1]: Substituting ',v,a,tt
                ee[iso].append( tt[1] )
              else:
                ee[iso].append( a )
@@ -314,14 +315,14 @@ class runcheck1:
                    ok = False
    
              if not ok:
-                print xxx,'E001: Multiple values : ',att,v
+                print xxx,'E001: Multiple values : ',att,v,ee
                 for t in isol:
                   if t[0] == a:
                     tab = t[1]
                     if att in ['standard_name','long_name']:
-                      print xxx,tab,td[tab][v][ix].get('standard_name','__ABSENT__'),td[tab][v][ix].get('long_name','__ABSENT__')
+                      print "E002",xxx,tab,td[tab][v][ix].get('standard_name','__ABSENT__'),td[tab][v][ix].get('long_name','__ABSENT__')
                     else:
-                      print xxx,tab,td[tab][v][ix].get(att,'__ABSENT__')
+                      print "E003",xxx,tab,td[tab][v][ix].get(att,'__ABSENT__')
                    
            if att == "standard_name":
              vd2[v] = (2,[ee[True],ee[False]] )
@@ -329,7 +330,7 @@ class runcheck1:
            if att == "standard_name":
              tt = snsubber.isFalseSn( v, av[0] )
              if tt[0]:
-               print 'Substituting ',v,av[0],tt
+               print 'INFO[A2]: Substituting ',v,av[0],tt
                vd2[v] = (1, tt[1])
              else:
                vd2[v] = (1, av)
@@ -338,13 +339,13 @@ class runcheck1:
            a = td[tab][v][ix].get('standard_name','__ABSENT__')
            tt = snsubber.isFalseSn( v, a )
            if tt[0]:
-             print 'Substituting ',v,a,tt
+             print 'INFO[A3]: Substituting ',v,a,tt
              vd2[v] = (1, tt[1])
            else:
              vd2[v] = (1, a)
            ##print 'MULTIPLE VALUES: ',v,att,av
      else:
-      print xxx, 'Zero length element: %s' % v
+      print "WARNING[X4]: ",xxx, 'Zero length element: %s' % v
    
 class typecheck1:
   def __init__( self, m, thisatts,helper=None):
@@ -401,7 +402,7 @@ class typecheck1:
                    if self.helper.match(string.replace( a, src, targ ), av[-1]) or self.helper.match(string.replace( av[-1], src, targ ), a):
                      thisok = True
                if thisok:
-                 print '############### conditional match found', tab, v
+                 print 'INFO ############### conditional match found', tab, v
                else:
                  if pmatch:
                    ##print '########### no matvh found'
@@ -433,7 +434,7 @@ class typecheck1:
        else:
          type5.append(v)
     xx = float( len(vars) )
-    print string.join( map( lambda x: '%s (%5.1f%%);' % (x,x/xx*100), [len(type1), len(type2), len(type3), len(type4), len(type5)] ) )
+    print "INFO[XXX]", string.join( map( lambda x: '%s (%5.1f%%);' % (x,x/xx*100), [len(type1), len(type2), len(type3), len(type4), len(type5)] ) )
     self.type1 = type1
     self.type2 = type2
     self.type3 = type3
@@ -536,9 +537,9 @@ cordex_mip = NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*')
 specs_mip = NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*')
 mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 mips = ( cordex_mip, )
-mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
 mips = ( specs_mip, )
 mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
 m = mipCo( mips )  
 h = helper()
 
@@ -566,7 +567,7 @@ cmip5AxesAtts = ['axis', 'bounds_values', 'climatology', 'coords_attrib', 'formu
 ## check consistency of dimensions
 r = runcheck1( m, ald, isAxes=True )
 for e in r.errors:
-  print e
+  print ".....",e
 
 allatts = ms.al
 thisatts = ['standard_name','units','long_name','__dimensions__']
