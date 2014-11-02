@@ -138,7 +138,7 @@ def getVocabs(pcfg):
                'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
                'realization':utils.patternControl( 'realization', "[0-9]+" ), \
                'startdate':utils.patternControl( 'startdate', "S[0-9]{8}" ), \
-               'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
+               ## 'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
                'project_id':utils.listControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
                ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
@@ -168,6 +168,7 @@ def getVocabs(pcfg):
                'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
+
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
   else:
