@@ -167,7 +167,6 @@ def getVocabs(pcfg):
                'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
                'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
-'atmosChem' and 'ocnBgchem'
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
   elif pcfg.project == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
@@ -209,7 +208,7 @@ class projectConfig(object):
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'frequency','Conventions','modeling_realm', \
-                       'initialization_method','physics_version','realization','associated_experiment']
+                       'initialization_method','physics_version','realization']
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','startdate','@ensemble']
 #sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_r1i1p1_199501-199502.nc 
 ## mip_id derived from global attribute Table_id (CMOR convention); ensemble derived from rip attributes.
