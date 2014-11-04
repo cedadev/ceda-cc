@@ -176,7 +176,7 @@ class checker(object):
     if not self.cfn.completed:
       self.completed = False
       return
-    if not self.info.pcfg.project[:2] == '__':
+    if not self.info.pcfg.projectV.id[:2] == '__':
       if not os.path.isfile( fpath ):
         print 'File %s not found [2]' % fpath
         self.completed = False
@@ -219,7 +219,7 @@ class checker(object):
         return
     self.completed = True
     self.drs = self.cga.getDrs()
-    self.drs['project'] = self.info.pcfg.project
+    self.drs['project'] = self.info.pcfg.projectV.id
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
 class c4_init(object):
@@ -473,6 +473,7 @@ class main(object):
     if (ncLib == None) and (not isDummy):
        raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
     pcfg = config.projectConfig( c4i.project )
+    assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
     ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
     self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
