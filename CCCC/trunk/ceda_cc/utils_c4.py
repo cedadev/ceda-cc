@@ -357,7 +357,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('004','variable_ncattribute_present')
     m = []
     reqAts = self.requiredVarAttributes[:]
-    if varGroup != 'fx' and self.pcfg.project in ['CORDEX']:
+    if varGroup != 'fx' and self.pcfg.projectV.id in ['CORDEX']:
       reqAts.append( 'cell_methods' )
     for k in reqAts + vocabs['variable'].lists(varName, 'addRequiredAttributes'):
       if not varAts[varName].has_key(k):
@@ -751,7 +751,7 @@ class checkGrids(checkBase):
 class mipVocab(object):
 
   def __init__(self,pcfg,dummy=False):
-     project = pcfg.project
+     project = pcfg.projectV.id
      if dummy:
        self.pcfg = pcfg
        return self.dummyMipTable()

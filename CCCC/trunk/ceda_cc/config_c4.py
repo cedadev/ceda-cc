@@ -2,7 +2,10 @@ import string
 import utils_c4 as utils
 import os
 import os.path as op
-import shutil
+import shutil, collections
+
+NT_project = collections.namedtuple( 'project', ['id','v'] )
+NT_fnParts = collections.namedtuple( 'fnParts', ['len','fxLen','unfLen','checkTLen','ixDomain','ixFreq'] )
 
 ##############################################################################
 # Configure config-file paths
@@ -128,7 +131,7 @@ validSpecsInstitutions = ['IC3', 'MPI-M', 'KNMI', 'UOXF', 'CNRM-CERFACS', 'ENEA'
 
 def getVocabs(pcfg):
   "Returns a dictionary of vocabulary details for the project provided."
-  if pcfg.project == 'SPECS':
+  if pcfg.projectV.id == 'SPECS':
                ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
@@ -143,7 +146,7 @@ def getVocabs(pcfg):
                ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
              }
-  elif pcfg.project == 'CMIP5':
+  elif pcfg.projectV.id == 'CMIP5':
                ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
     lrdr = readVocab( 'cmip5_vocabs/')
     vocabs = { 'variable':utils.mipVocab(pcfg), \
@@ -157,7 +160,7 @@ def getVocabs(pcfg):
                ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
              }
-  elif pcfg.project == 'CCMI':
+  elif pcfg.projectV.id == 'CCMI':
     
     lrdr = readVocab( 'ccmi_vocabs/')
     vocabs = { 'variable':utils.mipVocab(pcfg), \
@@ -169,7 +172,7 @@ def getVocabs(pcfg):
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
 
-  elif pcfg.project == '__dummy':
+  elif pcfg.projectV.id == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
   else:
     vocabs = { 'variable':utils.mipVocab(pcfg), \
@@ -187,11 +190,12 @@ def getVocabs(pcfg):
 
 class projectConfig(object):
 
-  def __init__(self, project):
+  def __init__(self, project, version=-1):
     knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
+    self.projectV = NT_project(project,version)
     self.gridSpecTol = 0.01
     if project == 'CORDEX':
       self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
@@ -267,18 +271,19 @@ class projectConfig(object):
 ####### used in checkGrids
     self.rotatedPoleGrids = rotatedPoleGrids
     self.interpolatedGrids = interpolatedGrids
-    self.doCheckGrids = self.project in ['CORDEX',]
+    self.doCheckGrids = self.projectV.id in ['CORDEX',]
 
 ####### used in checkFileName (freqIndex also used in checkByVar)
 
-    if self.project == 'CORDEX':
+    if self.projectV.id == 'CORDEX':
+      self.fnParts = NT_fnParts( len=[8,9], fxLen=[8,],  unfLen=[9,], checkTLen=True, ixDomain=1, ixFreq=7 )
       self.fnPartsOkLen = [8,9]
       self.fnPartsOkFixedLen = [8,]
       self.fnPartsOkUnfixedLen = [9,]
       self.checkTrangeLen = True
       self.domainIndex = 1
       self.freqIndex = 7
-    elif self.project == 'CMIP5':
+    elif self.projectV.id == 'CMIP5':
 ## cRoot_Lmon_CESM1-WACCM_rcp85_r3i1p1_200601-205512.nc
       self.fnPartsOkLen = [5,6]
       self.fnPartsOkFixedLen = [5,]
@@ -286,21 +291,21 @@ class projectConfig(object):
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = None
-    elif self.project == 'SPECS':
+    elif self.projectV.id == 'SPECS':
       self.fnPartsOkLen = [6,7]
       self.fnPartsOkFixedLen = [6,]
       self.fnPartsOkUnfixedLen = [7,]
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = 1
-    elif self.project == 'CCMI':
+    elif self.projectV.id == 'CCMI':
       self.fnPartsOkLen = [5,6]
       self.fnPartsOkFixedLen = [5,]
       self.fnPartsOkUnfixedLen = [6,]
       self.checkTrangeLen = False
       self.domainIndex = None
       self.freqIndex = None
-    elif self.project == '__dummy':
+    elif self.projectV.id == '__dummy':
       self.fnPartsOkLen = [4,5]
       self.fnPartsOkFixedLen = [4,]
       self.fnPartsOkUnfixedLen = [5,]
@@ -311,23 +316,23 @@ class projectConfig(object):
 
     self.defaults = { 'variableDataType':'float' }
 ######## used in mipVocabs
-    if self.project == 'CORDEX':
+    if self.projectV.id == 'CORDEX':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cordex_vocabs/mip/')
        self.mipVocabTl = ['fx','sem','mon','day','6h','3h']
        self.mipVocabVgmap = {'6h':'6hr','3h':'3hr'}
        self.mipVocabFnpat = 'CORDEX_%s'
-    elif self.project == 'CMIP5':
+    elif self.projectV.id == 'CMIP5':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cmip5_vocabs/mip/')
        self.mipVocabTl = ['fx','Oyr','Oclim','Omon','Amon','Lmon','LImon','OImon','cfMon','aero','cfDay','day','cfOff','cfSites','6hrLev','6hrPlev','3hr','cf3hr']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'CMIP5_%s'
        self.defaults['variableDataType'] = None 
-    elif self.project == 'SPECS':
+    elif self.projectV.id == 'SPECS':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'specs_vocabs/mip/')
        self.mipVocabTl = ['fx','Omon','Amon','Lmon','OImon','day','6hr']
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'SPECS_%s'
-    elif self.project == 'CCMI':
+    elif self.projectV.id == 'CCMI':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi_vocabs/mip/')
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
