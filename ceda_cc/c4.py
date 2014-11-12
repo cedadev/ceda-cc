@@ -472,6 +472,8 @@ class main(object):
     logDict = {}
     ecount = 0
     c4i = c4_init(args=args)
+    c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
+    c4i.logger.info( 'Source: %s' % c4i.source )
       
     isDummy  = c4i.project[:2] == '__'
     if (ncLib == None) and (not isDummy):
@@ -479,6 +481,7 @@ class main(object):
     pcfg = config.projectConfig( c4i.project )
     assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
     ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
+    c4i.logger.info( 'Python netcdf: %s' % ncReader.ncLib )
     self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount, experimental=c4i.experimental)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
     self.ncLib = ncLib
@@ -492,8 +495,6 @@ class main(object):
       self.monitor = None
 
     cal = None
-    c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
-    c4i.logger.info( 'Source: %s' % c4i.source )
     if len( c4i.errs ) > 0:
       for i in range(0,len( c4i.errs ), 2 ):
         c4i.logger.info( c4i.errs[i] )
