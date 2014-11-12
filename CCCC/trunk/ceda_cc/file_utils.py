@@ -74,18 +74,22 @@ class fileMetadata(object):
       return
     if self.forceLib == 'ncq3':
       import ncq3
+      print 'Using ncq3'
       self.ncq3 = ncq3
       self.loadNc__ncq(fpath)
     elif self.forceLib == 'cdms2':
       import cdms2
+      print 'Using using cdms2'
       self.cdms2 = cdms2
       self.loadNc__Cdms(fpath)
     elif self.forceLib == 'netCDF4':
       import netCDF4
+      print 'Using netCDF4'
       self.netCDF4 = netCDF4
       self.loadNc__Netcdf4(fpath)
     elif self.forceLib == 'Scientific':
       import Scientific
+      print 'Using scientific python'
       from Scientific.IO import NetCDF as ncdf
       self.ncdf = ncdf
       self.loadNc__Scientific(fpath)

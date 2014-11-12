@@ -141,8 +141,9 @@ class recorder(object):
     self.records[fn] = record
 
 class checker(object):
-  def __init__(self, pcfg, cls,reader,abortMessageCount=-1):
+  def __init__(self, pcfg, cls,reader,abortMessageCount=-1,experimental=False):
     self.info = dummy()
+    self.info.experimental=experimental
     self.info.pcfg = pcfg
     self.info.abortMessageCount = abortMessageCount
     self.calendar = 'None'
@@ -203,7 +204,7 @@ class checker(object):
     ##self.cgd.heightRequired = config.heightRequired
     ##self.cgd.heightValues = config.heightValues
     ##self.cgd.heightRange = config.heightRange
-    self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous )
+    self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous, self.vocabs )
     self.calendar = self.cgd.calendar
     if not self.cgd.completed:
       self.completed = False
@@ -261,6 +262,7 @@ class c4_init(object):
     if self.summarymode:
       return
 
+    self.experimental = False
     self.forceNetcdfLib = None
     fltype = None
     argu = []
@@ -278,6 +280,8 @@ class c4_init(object):
            forceLogOrg = 'multi'
         elif x in ['single','s']:
            forceLogOrg = 'single'
+      elif next == '--experimental':
+        self.experimental = True
       elif next == '--force-ncq':
         self.forceNetcdfLib = 'ncq3'
       elif next == '--force-cdms2':
@@ -475,8 +479,9 @@ class main(object):
     pcfg = config.projectConfig( c4i.project )
     assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
     ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
-    self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount)
+    self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount, experimental=c4i.experimental)
     rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
+    self.ncLib = ncLib
 
     # This list will record the drs dictionaries of all checked files for export to JSON
     drs_list = []

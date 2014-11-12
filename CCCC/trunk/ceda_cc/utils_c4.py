@@ -468,17 +468,16 @@ class checkGlobalAttributes(checkBase):
                else:
                  thisVal = globalAts[ "table_id" ]
                  self.test( False, 'Global attribute table_id does not conform to CMOR pattern ["Table ......"]: %s' % thisVal, part=True)
-           elif self.globalAttributesInFn[i][1:] == "experiment_family":
-               thisVal = globalAts["experiment_id"][:-4]
            elif self.globalAttributesInFn[i][1:] == "ensemble":
                thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
+## following mappings are depricated -- introduced for SPECS and withdrawn ---
+           elif self.globalAttributesInFn[i][1:] == "experiment_family":
+               thisVal = globalAts["experiment_id"][:-4]
            elif self.globalAttributesInFn[i][1:] == "forecast_reference_time":
                x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
                thisVal = "S%s%s%s" % (x[:4],x[5:7],x[8:10])
            elif self.globalAttributesInFn[i][1:] == "series":
                thisVal = 'series%s' % globalAts["series"]
-           elif self.globalAttributesInFn[i][1:] == "experiment_family":
-             thisVal = globalAts["experiment_id"][:-4]
            else:
                assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
            ##print "Generated text val: %s:: %s" % (self.globalAttributesInFn[i], thisVal)
@@ -506,7 +505,7 @@ class checkStandardDims(checkBase):
     self.heightValues = self.pcfg.heightValues
     self.heightRange = self.pcfg.heightRange
 
-  def check(self,varName,varGroup, da, va, isInsta):
+  def check(self,varName,varGroup, da, va, isInsta,vocabs):
     self.errorCount = 0
     assert type(varName) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
     self.var = varName
@@ -514,6 +513,7 @@ class checkStandardDims(checkBase):
     self.da = da
     self.va = va
     self.isInsta = isInsta
+    self.vocabs = vocabs
     self.runChecks()
 
   def do_check(self):
@@ -594,7 +594,13 @@ class checkStandardDims(checkBase):
         self.log_pass()
 
     self.checkId = ('003','height_levels')
-    if varName in self.heightRequired:
+    hreq = varName in self.heightRequired
+    if self.parent.experimental:
+      print 'utils_c4: ', varName, self.vocabs['variable'].varcons[varGroup][varName].get( '_dimension',[])
+      hreq = "height2m" in self.vocabs['variable'].varcons[varGroup][varName].get( '_dimension',[])
+      if hreq:
+        print 'testing height, var=%s' % varName
+    if hreq:
       heightAtDict = {'long_name':"height", 'standard_name':"height", 'units':"m", 'positive':"up", 'axis':"Z" }
       ok = True
       ok &= self.test( 'height' in va.keys(), 'height coordinate not found %s' % str(va.keys()), abort=True, part=True )
@@ -779,6 +785,7 @@ class mipVocab(object):
         for v in ee.keys():
 ## set global default: type float
           eeee = { 'type':pcfg.defaults.get( 'variableDataType', 'float' ) }
+          eeee['_dimension'] = ee[v][0]
           ar = []
           ac = []
           for a in ee[v][1].keys():
