@@ -277,41 +277,50 @@ class projectConfig(object):
 
     if self.projectV.id == 'CORDEX':
       self.fnParts = NT_fnParts( len=[8,9], fxLen=[8,],  unfLen=[9,], checkTLen=True, ixDomain=1, ixFreq=7 )
-      self.fnPartsOkLen = [8,9]
-      self.fnPartsOkFixedLen = [8,]
-      self.fnPartsOkUnfixedLen = [9,]
-      self.checkTrangeLen = True
-      self.domainIndex = 1
-      self.freqIndex = 7
+    ##  self.fnPartsOkLen = [5,6]
+      ##self.fnPartsOkFixedLen = [5,]
+      ##self.fnPartsOkUnfixedLen = [6,]
+      ##self.checkTrangeLen = True
+      ##self.domainIndex = 1
+      ##self.freqIndex = 7
     elif self.projectV.id == 'CMIP5':
-## cRoot_Lmon_CESM1-WACCM_rcp85_r3i1p1_200601-205512.nc
-      self.fnPartsOkLen = [5,6]
-      self.fnPartsOkFixedLen = [5,]
-      self.fnPartsOkUnfixedLen = [6,]
-      self.checkTrangeLen = False
-      self.domainIndex = None
-      self.freqIndex = None
+      self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
+      ##self.fnPartsOkLen = [5,6]
+      ##self.fnPartsOkFixedLen = [5,]
+      ##self.fnPartsOkUnfixedLen = [6,]
+      ##self.checkTrangeLen = False
+      ##self.domainIndex = None
+      ##self.freqIndex = None
     elif self.projectV.id == 'SPECS':
-      self.fnPartsOkLen = [6,7]
-      self.fnPartsOkFixedLen = [6,]
-      self.fnPartsOkUnfixedLen = [7,]
-      self.checkTrangeLen = False
-      self.domainIndex = None
-      self.freqIndex = 1
+      self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=1 )
+      ##self.fnPartsOkLen = [6,7]
+      ##self.fnPartsOkFixedLen = [6,]
+      ##self.fnPartsOkUnfixedLen = [7,]
+      ##self.checkTrangeLen = False
+      ##self.domainIndex = None
+      ##self.freqIndex = 1
     elif self.projectV.id == 'CCMI':
-      self.fnPartsOkLen = [5,6]
-      self.fnPartsOkFixedLen = [5,]
-      self.fnPartsOkUnfixedLen = [6,]
-      self.checkTrangeLen = False
-      self.domainIndex = None
-      self.freqIndex = None
+      self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
+      ##self.fnPartsOkLen = [5,6]
+      ##self.fnPartsOkFixedLen = [5,]
+      ##self.fnPartsOkUnfixedLen = [6,]
+      ##self.checkTrangeLen = False
+      ##self.domainIndex = None
+      ##self.freqIndex = None
     elif self.projectV.id == '__dummy':
-      self.fnPartsOkLen = [4,5]
-      self.fnPartsOkFixedLen = [4,]
-      self.fnPartsOkUnfixedLen = [5,]
-      self.checkTrangeLen = False
-      self.domainIndex = None
-      self.freqIndex = 1
+      self.fnParts = NT_fnParts( len=[4,5], fxLen=[4,],  unfLen=[5,], checkTLen=False, ixDomain=None, ixFreq=1 )
+      ##self.fnPartsOkLen = [4,5]
+      ##self.fnPartsOkFixedLen = [4,]
+      ##self.fnPartsOkUnfixedLen = [5,]
+      ##self.checkTrangeLen = False
+      ##self.domainIndex = None
+      ##self.freqIndex = 1
+    self.fnPartsOkLen = self.fnParts.len
+    self.fnPartsOkFixedLen = self.fnParts.fxLen
+    self.fnPartsOkUnfixedLen = self.fnParts.unfLen
+    self.checkTrangeLen = self.fnParts.checkTLen
+    self.domainIndex = self.fnParts.ixDomain
+    self.freqIndex = self.fnParts.ixFreq
 
 
     self.defaults = { 'variableDataType':'float' }
@@ -351,6 +360,13 @@ class projectConfig(object):
       self.groupIndex = 1
 
     self.vocabs = getVocabs(self)
+    test = False
+    if test:
+      for k in self.vocabs['variable'].varcons.keys():
+        for k2 in self.vocabs['variable'].varcons[k].keys():
+          if "height2m" in self.vocabs['variable'].varcons[k][k2].get( '_dimension',[]):
+            print 'config_c4: %s , %s: %s' % (k,k2,str(self.vocabs['variable'].varcons[k][k2]['_dimension'] ) )
+      
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
 

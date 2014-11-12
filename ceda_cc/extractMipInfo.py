@@ -10,7 +10,8 @@ def uniquify( ll ):
     if l != l0[-1]:
       l0.append(l)
   return l0
-  
+
+heightRequired = ['tas','tasmax','tasmin','huss','sfcWind','sfcWindmax','wsgsmax','uas','vas']
 
 ms = mipTableScan()
 snc = snlist()
@@ -254,6 +255,12 @@ class runcheck1:
       td = m.dd
       ix = 0
       xxx = 'dim: '
+
+    self.ix = ix
+    self.vars = vars
+    self.vdict = vdict
+# dictionary td[tab][var][ix][attribute]
+    self.td = td
     vd2 = {}
     for v in vars:
      l = vdict[v]
@@ -346,6 +353,9 @@ class runcheck1:
            ##print 'MULTIPLE VALUES: ',v,att,av
      else:
       print "WARNING[X4]: ",xxx, 'Zero length element: %s' % v
+
+  def chkDims( self, reqh=None):
+    pass
    
 class typecheck1:
   def __init__( self, m, thisatts,helper=None):
@@ -564,7 +574,8 @@ ald = ['standard_name', ] + ald
 
 cmip5AxesAtts = ['axis', 'bounds_values', 'climatology', 'coords_attrib', 'formula', 'index_only', 'long_name', 'must_call_cmor_grid', 'must_have_bounds', 'out_name', 'positive', 'requested', 'requested_bounds', 'standard_name', 'stored_direction', 'tolerance', 'type', 'units', 'valid_max', 'valid_min', 'value', 'z_bounds_factors', 'z_factors']
 
-## check consistency of dimensions
+v = runcheck1( m, ald, isAxes=False )
+## check consistency of dimension
 r = runcheck1( m, ald, isAxes=True )
 for e in r.errors:
   print ".....",e

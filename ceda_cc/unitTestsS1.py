@@ -22,12 +22,15 @@ class dummy(object):
 
 p = dummy()
 ps = dummy()
-p.log = log
-ps.log = log
+pcmip5 = dummy()
+pccmi = dummy()
+for x in (p,ps,pcmip5,pccmi):
+  x.log = log
+  x.abortMessageCount = -1
 p.pcfg = config.projectConfig( "CORDEX" )
 ps.pcfg = config.projectConfig( "SPECS" )
-p.abortMessageCount = -1
-ps.abortMessageCount = -1
+pcmip5.pcfg = config.projectConfig( "CMIP5" )
+pccmi.pcfg = config.projectConfig( "CCMI" )
 
 
 module = 'checkFileName'
@@ -37,45 +40,79 @@ fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_20060101-2010123
 testId = '#01.001'
 c.check( fn )
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (module,fn)
+  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
 else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
+  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
 
 testId = '#01.002'
 fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_fx.nc'
 c.check(fn)
 if c.errorCount == 0 and c.isFixed:
-  print 'OK: [%s] %s: valid file name' % (module,fn)
+  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
 else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
+  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
 
 testId = '#01.003'
 fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_3hr_2006010100-2010123100.nc'
 c.check(fn)
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (module,fn)
+  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
 else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
+  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
 
 testId = '#01.004'
 fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_3hr_200601010030-201012310030.nc'
 c.check(fn)
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (module,fn)
+  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
 else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
+  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
 
 testId = '#01.005'
 fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_200601010030-201012310030.nc'
 c.check(fn)
 if c.errorCount == 0:
-  print 'Failed to detect bad file name: [%s] %s ' % (module,fn)
+  print 'Failed to detect bad CORDEX file name: [%s] %s ' % (module,fn)
 else:
-  print 'OK: -- detected bad file name: [%s] %s' % (module,fn)
+  print 'OK: -- detected bad CORDEX file name: [%s] %s' % (module,fn)
+
+fn = "pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc"
+c = utils_c4.checkFileName(parent=pcmip5)
+c.check(fn)
+if c.errorCount == 0:
+  print 'OK: [%s] %s: valid CMIP5 file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid CMIP5 file name' % (module,fn)
+
+fn = "clivi_monthly_CESM1-CAM4Chem_refC1sd_r1i1p1_197501-197912.nc"
+c = utils_c4.checkFileName(parent=pccmi)
+c.check(fn)
+if c.errorCount == 0:
+  print 'OK: [%s] %s: valid CCMI file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid CCMI file name' % (module,fn)
+
+fn = "tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc"
+c = utils_c4.checkFileName(parent=ps)
+c.check(fn)
+if c.errorCount == 0:
+  print 'Failed [%s] %s: passed invalid SPECS file name' % (module,fn)
+else:
+  print 'OK: [%s] %s: detected invalid SPECS file name' % (module,fn)
+
+fn = "tas_Amon_EC-EARTH3_seaIceClimInit_S19930501_r1i1p1_199306-199306.nc"
+c = utils_c4.checkFileName(parent=ps)
+c.check(fn)
+if c.errorCount == 0:
+  print 'OK: [%s] %s: valid SPECS file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid SPECS file name' % (module,fn)
+
 
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
-c.check( 'tas', 'day', {},{}, False )
+## note last argument is "vocabs", but only used in "experimental" mode
+c.check( 'tas', 'day', {},{}, False, None )
 if c.errorCount == 0:
   print 'Failed [%s]: failed to detect empty dictionaries' % module
 else:
