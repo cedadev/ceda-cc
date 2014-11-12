@@ -21,7 +21,6 @@ for x in supportedNetcdf:
     if len(installedSupportedNetcdf) == 0:
       try: 
         cmd = 'import %s' % x
-        print '>>>>>>>>>', cmd
         exec cmd
         installedSupportedNetcdf.append( x )
       except:
@@ -62,12 +61,10 @@ class fileMetadata(object):
 
     if self.forceLib == 'ncq3':
       import ncq3
-      print 'Using ncq3'
       self.ncq3 = ncq3
       self.ncLib = 'ncq3'
     elif self.forceLib == 'cdms2':
       import cdms2
-      print 'Using using cdms2'
       self.cdms2 = cdms2
       self.ncLib = 'cdms2'
     elif self.forceLib == 'netCDF4':
@@ -76,7 +73,6 @@ class fileMetadata(object):
       self.ncLib = 'netCDF4 [%s]' % netCDF4.__version__
     elif self.forceLib == 'Scientific':
       import Scientific
-      print 'Using scientific python'
       from Scientific.IO import NetCDF as ncdf
       self.ncdf = ncdf
       self.ncLib = 'Scientific [%s]' % Scientific.__version__
@@ -100,11 +96,11 @@ class fileMetadata(object):
       import cdms2
       self.cdms2 = cdms2
       self.loadNc__Cdms(fpath)
-    elif self.ncLib == 'netCDF4':
+    elif self.ncLib[:7] == 'netCDF4':
       import netCDF4
       self.netCDF4 = netCDF4
       self.loadNc__Netcdf4(fpath)
-    elif self.ncLib == 'Scientific':
+    elif self.ncLib[:10] == 'Scientific':
       from Scientific.IO import NetCDF as ncdf
       self.ncdf = ncdf
       self.loadNc__Scientific(fpath)
@@ -229,6 +225,8 @@ class fileMetadata(object):
           self.va[v]['_type'] = tstr( self.nc.variables[v].datatype )
         if v in ['plev','plev_bnds','height']:
           self.va[v]['_data'] = self.nc.variables[v][:].tolist()
+          if type( self.va[v]['_data'] ) != type( [] ):
+            self.va[v]['_data'] = [self.va[v]['_data'],]
 
     for v in self.nc.dimensions.keys():
       self.da[v] = {}
@@ -241,6 +239,8 @@ class fileMetadata(object):
           self.da[v]['_type'] = tstr( self.nc.variables[v].datatype )
 
         self.da[v]['_data'] = self.nc.variables[v][:].tolist()
+        if type( self.da[v]['_data'] ) != type( [] ):
+            self.da[v]['_data'] = [self.da[v]['_data'],]
       else:
         self.da[v]['_type'] = 'index (no data variable)'
       
