@@ -53,11 +53,35 @@ class fileMetadata(object):
 
   def __init__(self,dummy=False,attributeMappingsLog=None,forceLib=None):
      
-     self.dummy = dummy
-     self.atMapLog = attributeMappingsLog
-     self.forceLib = forceLib
-     if self.atMapLog == None:
+    self.dummy = dummy
+    self.atMapLog = attributeMappingsLog
+    self.forceLib = forceLib
+    self.ncLib = ncLib
+    if self.atMapLog == None:
        self.atMapLog = open( 'cccc_atMapLog.txt', 'a' )
+
+    if self.forceLib == 'ncq3':
+      import ncq3
+      print 'Using ncq3'
+      self.ncq3 = ncq3
+      self.ncLib = 'ncq3'
+    elif self.forceLib == 'cdms2':
+      import cdms2
+      print 'Using using cdms2'
+      self.cdms2 = cdms2
+      self.ncLib = 'cdms2'
+    elif self.forceLib == 'netCDF4':
+      import netCDF4
+      self.netCDF4 = netCDF4
+      self.ncLib = 'netCDF4 [%s]' % netCDF4.__version__
+    elif self.forceLib == 'Scientific':
+      import Scientific
+      print 'Using scientific python'
+      from Scientific.IO import NetCDF as ncdf
+      self.ncdf = ncdf
+      self.ncLib = 'Scientific [%s]' % Scientific.__version__
+    else:
+      self.ncLib = ncLib
 
   def close(self):
     self.atMapLog.close()
@@ -72,36 +96,15 @@ class fileMetadata(object):
     if self.dummy:
       self.makeDummyFileImage()
       return
-    if self.forceLib == 'ncq3':
-      import ncq3
-      print 'Using ncq3'
-      self.ncq3 = ncq3
-      self.loadNc__ncq(fpath)
-    elif self.forceLib == 'cdms2':
-      import cdms2
-      print 'Using using cdms2'
-      self.cdms2 = cdms2
-      self.loadNc__Cdms(fpath)
-    elif self.forceLib == 'netCDF4':
-      import netCDF4
-      print 'Using netCDF4'
-      self.netCDF4 = netCDF4
-      self.loadNc__Netcdf4(fpath)
-    elif self.forceLib == 'Scientific':
-      import Scientific
-      print 'Using scientific python'
-      from Scientific.IO import NetCDF as ncdf
-      self.ncdf = ncdf
-      self.loadNc__Scientific(fpath)
-    elif ncLib == 'cdms2':
+    elif self.ncLib == 'cdms2':
       import cdms2
       self.cdms2 = cdms2
       self.loadNc__Cdms(fpath)
-    elif ncLib == 'netCDF4':
+    elif self.ncLib == 'netCDF4':
       import netCDF4
       self.netCDF4 = netCDF4
       self.loadNc__Netcdf4(fpath)
-    elif ncLib == 'Scientific':
+    elif self.ncLib == 'Scientific':
       from Scientific.IO import NetCDF as ncdf
       self.ncdf = ncdf
       self.loadNc__Scientific(fpath)
