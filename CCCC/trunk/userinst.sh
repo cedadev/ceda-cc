@@ -1,7 +1,20 @@
 
 
 
-target=$HOME/bin/ceda_cc
+targetDir=$HOME/bin
+target=$targetDir/ceda_cc
+
+#### 1. Make target directory is not present
+###############################################
+
+if [ ! -d "$targetDir" ]; then
+  # Control will enter here if $targetDir doesn't exist.
+  echo creating directory $targetDir
+  mkdir $targetDir
+fi
+
+#### 2. Create a script
+###############################################
 
 echo Creating bash script in $target
 cat > $target << EOF
@@ -20,4 +33,6 @@ fi
 python $PWD/ceda_cc/c4.py \$*
 EOF
 
+#### 2. Make the script executable
+###############################################
 chmod u+x $target 
