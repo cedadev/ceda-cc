@@ -623,10 +623,11 @@ class main(object):
 
 def dump_drs_list(drs_list, filename):
     import json
-    with open(filename, 'a+') as fh:
-          for drs in drs_list:
+    fh = open(filename, 'a+')
+    for drs in drs_list:
                 fh.write(json.dumps(drs))
                 fh.write('\n')
+    fh.close()
 
 
 def main_entry():
