@@ -195,13 +195,15 @@ class checkFileName(checkBase):
     self.id = 'C4.001'
     self.checkId = 'unset'
     self.step = 'Initialised'
-    self.checks = (self.do_check_fn,)
+    self.checks = (self.do_check_fn,self.do_check_fnextra)
+    self.re_c1 = re.compile( '^[0-9]*$' )
 ####
 
   def check(self,fn):
     self.errorCount = 0
     assert type(fn) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(fn)
     self.fn = fn
+    self.fnsep = self.pcfg.fNameSep
 
     self.runChecks()
 ###
@@ -213,7 +215,7 @@ class checkFileName(checkBase):
 ## check basic parsing of file name
     self.checkId = ('001','parse_filename')
     self.test( fn[-3:] == '.nc', 'File name ending ".nc" expected', abort=True, part=True )
-    bits = string.split( fn[:-3], '_' )
+    bits = string.split( fn[:-3], self.fnsep )
     self.fnParts = bits[:]
 
     if self.pcfg.domainIndex != None:
@@ -223,6 +225,35 @@ class checkFileName(checkBase):
 
     self.test( len(bits) in self.pcfg.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.pcfg.fnPartsOkLen),str(bits)), abort=True )
 
+    if self.pcfg.projectV.id in ['ESA-CCI']:
+      self.test( 'ESACCI' in bits[:2], 'File name not a valid ESA-CCI file name: %s' % fn, abort=True )
+      if bits[0] == 'ESACCI':
+        self.esaFnId = 1
+      else:
+        self.esaFnId = 0
+      self.pcfg.setEsaCciFNType(self.esaFnId)
+
+    self.fnDict = {}
+    if self.pcfg.projectV.id in ['ESA-CCI']:
+      l0 = {0:6, 1:5}[self.esaFnId]  
+      for i in range(l0):
+        x = self.pcfg.globalAttributesInFn[i]
+        if x != None and x[0] == '*':
+          self.fnDict[x[1:]] = bits[i]
+      self.fnDict['version'] = bits[-1]
+      if self.esaFnId == 0:
+        if len(bits) == 9:
+          self.fnDict['additional'] = bits[-3]
+          self.fnDict['gdsv'] = bits[-2]
+        elif len(bits) == 8:
+          if bits[-2][0] == 'v':
+            self.fnDict['gdsv'] = bits[-2]
+          else:
+            self.fnDict['additional'] = bits[-2]
+      elif self.esaFnId == 1:
+        if len(bits) == 8:
+          self.fnDict['additional'] = bits[-3]
+        
     if self.pcfg.groupIndex != None:
       self.group = self.fnParts[self.pcfg.groupIndex]
     else:
@@ -250,15 +281,34 @@ class checkFileName(checkBase):
     if not self.isFixed:
 
 ## test time segment
-      bits = string.split( self.fnParts[-1], '-' )
-      self.test( len(bits) == 2, 'File time segment [%s] will not parse into 2 elements' % (self.fnParts[-1] ), abort=True, part=True )
+      if self.pcfg.trangeType == 'CMIP':
+        bits = string.split( self.fnParts[-1], '-' )
+        self.test( len(bits) == 2, 'File time segment [%s] will not parse into 2 elements' % (self.fnParts[-1] ), abort=True, part=True )
 
-      self.test(  len(bits[0]) == len(bits[1]), 'Start and end time specified in file name [%s] of unequal length' % (self.fnParts[-1] ), abort=True, part=True  )
+        self.test(  len(bits[0]) == len(bits[1]), 'Start and end time specified in file name [%s] of unequal length' % (self.fnParts[-1] ), abort=True, part=True  )
 
-      for b in bits:
-        self.test( self.isInt(b), 'Time segment in filename [%s] contains non integer characters' % (self.fnParts[-1] ),  abort=True, part=True  )
-      self.log_pass()
-      self.fnTimeParts = bits[:]
+        for b in bits:
+          self.test( self.isInt(b), 'Time segment in filename [%s] contains non integer characters' % (self.fnParts[-1] ),  abort=True, part=True  )
+        self.log_pass()
+        self.fnTimeParts = bits[:]
+      elif self.pcfg.trangeType == 'ESA-CCI':
+        self.pcfg.checkTrangeLen = False
+        tt = self.fnParts[self.pcfg.trangeIndex] 
+        if self.test( len(tt) in [4,6,8,10,12,14] and self.re_c1.match(tt) != None, 'Length of indicative date/time not consistent with YYYY[MM[DD[HH[MM[SS]]]]] specification: %s' % self.fnParts[-1], part=True  ):
+          ll = [tt[:4],]
+          tt = tt[4:]
+          for j in range(5):
+            if len(tt) > 0:
+              ll.append( tt[:2] )
+              tt = tt[2:]
+            else:
+              ll.append( '00' )
+          indDateTime = map( int, ll )
+          self.test( indDateTime[1] in range(1,13), 'Invalid Month in indicative date time %s' % str(ll), part=True )
+          self.test( indDateTime[2] in range(1,32), 'Invalid Day in indicative date time %s' % str(ll), part=True )
+          self.test( indDateTime[3] in range(25), 'Invalid hour in indicative date time %s' % str(ll), part=True )
+          self.test( indDateTime[4] in range(60), 'Invalid minute in indicative date time %s' % str(ll), part=True )
+          self.test( indDateTime[5] in range(60), 'Invalid second in indicative date time %s' % str(ll), part=True )
 
     self.checkId = '003'
 
@@ -276,7 +326,23 @@ class checkFileName(checkBase):
 
       if ok:
         self.log_pass()
-    self.completed = True
+
+  def do_check_fnextra(self):
+    self.checkId = ('004','file_name_extra' )
+    vocabs = self.pcfg.vocabs
+    m = []
+    for a in self.pcfg.controlledFnParts:
+      if self.fnDict.has_key(a):
+        try:
+          if not vocabs[a].check( str(self.fnDict[a]) ):
+            m.append( (a,self.fnDict[a],vocabs[a].note) )
+        except:
+          print 'failed trying to check file name component %s' % a
+          raise
+          ##raise baseException1( 'failed trying to check file name component %s' % a )
+
+    self.test( len(m)  == 0, 'File name components do not match constraints: %s' % str(m) )
+
 
 class checkGlobalAttributes(checkBase):
 
@@ -458,7 +524,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('007','filename_filemetadata_consistency')
     m = []
     for i in range(len(self.globalAttributesInFn)):
-       if self.globalAttributesInFn[i] != None:
+       if self.globalAttributesInFn[i] != None and self.globalAttributesInFn[i][0] != '*':
          targVal = fnParts[i]
          if self.globalAttributesInFn[i][0] == "@":
            if self.globalAttributesInFn[i][1:] == "mip_id":
@@ -886,11 +952,12 @@ class listControl(object):
 
 class checkByVar(checkBase):
 
-  def init(self):
+  def init(self,fileNameSeparator='_'):
     self.id = 'C5.001'
     self.checkId = 'unset'
     self.step = 'Initialised'
     self.checks = (self.checkTrange,)
+    self.fnsep = fileNameSeparator
 
   def setLogDict( self,fLogDict ):
     self.fLogDict = fLogDict
@@ -900,7 +967,7 @@ class checkByVar(checkBase):
     elist = []
     for f in flist:
       fn = string.split(f, '/' )[-1]
-      fnParts = string.split( fn[:-3], '_' )
+      fnParts = string.split( fn[:-3], self.fnsep )
       
       try:
         if self.pcfg.freqIndex != None:

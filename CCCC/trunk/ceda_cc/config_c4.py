@@ -172,6 +172,11 @@ def getVocabs(pcfg):
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
 
+  elif pcfg.projectV.id == 'ESA-CCI':
+    lrdr = readVocab( 'esacci_vocabs/')
+    vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True), \
+               'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ) \
+             }
   elif pcfg.projectV.id == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
   else:
@@ -191,12 +196,16 @@ def getVocabs(pcfg):
 class projectConfig(object):
 
   def __init__(self, project, version=-1):
-    knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','__dummy']
+    knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
+    self.fNameSep = '_'
     self.projectV = NT_project(project,version)
     self.gridSpecTol = 0.01
+## default encoding of time range in file names: YYYY[MM[DD[HH]]]-YYYY[MM[DD[HH]]]
+    self.trangeType = 'CMIP'
+    self.controlledFnParts = []
     if project == 'CORDEX':
       self.requiredGlobalAttributes = [ 'institute_id', 'contact', 'rcm_version_id', 'product', 'CORDEX_domain', 'creation_date', \
              'frequency', 'model_id', 'driving_model_id', 'driving_experiment', 'driving_model_ensemble_member', 'experiment_id']
@@ -253,6 +262,14 @@ class projectConfig(object):
                         'frequency':'frequency',  'table':'@mip_id',
                         'project':'project_id'}
 
+    elif project == 'ESA-CCI':
+      self.fNameSep = '-'
+      self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
+      self.controlledGlobalAttributes = [ ]
+      self.controlledFnParts = ['level']
+      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.drsMappings = {'variable':'@var'}
+      self.globalAttributesInFn = [None,]
     elif project == '__dummy':
       self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
       self.controlledGlobalAttributes = [ ]
@@ -307,14 +324,12 @@ class projectConfig(object):
       ##self.checkTrangeLen = False
       ##self.domainIndex = None
       ##self.freqIndex = None
+    elif self.projectV.id == 'ESA-CCI':
+      self.fnParts = NT_fnParts( len=[7,8,9], fxLen=[0,],  unfLen=[7,8,9,], checkTLen=False, ixDomain=None, ixFreq=1 )
+      self.trangeType = 'ESA-CCI'
     elif self.projectV.id == '__dummy':
       self.fnParts = NT_fnParts( len=[4,5], fxLen=[4,],  unfLen=[5,], checkTLen=False, ixDomain=None, ixFreq=1 )
-      ##self.fnPartsOkLen = [4,5]
-      ##self.fnPartsOkFixedLen = [4,]
-      ##self.fnPartsOkUnfixedLen = [5,]
-      ##self.checkTrangeLen = False
-      ##self.domainIndex = None
-      ##self.freqIndex = 1
+
     self.fnPartsOkLen = self.fnParts.len
     self.fnPartsOkFixedLen = self.fnParts.fxLen
     self.fnPartsOkUnfixedLen = self.fnParts.unfLen
@@ -358,6 +373,14 @@ class projectConfig(object):
       self.groupIndex = 7
     elif self.project in ['CMIP5','CCMI','SPECS','__dummy']:
       self.groupIndex = 1
+    elif self.project in ['ESA-CCI']:
+      self.fnoptions = {'groupIndex':[3,1], 'trangeIndex':[0,-2] }
+      self.fnoptions['inFn'] = [[None,'*activity','*level','*project','*var','*product','*additional','*gdsv','*version'],
+                                ['*activity','*project','*level','*var','*additional',None,'*version']]
+##Indicative Date>[<Indicative Time>]-ESACCI-<Processing Level>_<CCI Project>-<Data Type>-<Product String>[- <Additional Segregator>][-v<GDS version>]-fv<File version>.nc
+##ESACCI-<CCI Project>-<Processing Level>-<Data Type>-<Product String>[-<Additional Segregator>]-<IndicativeDate>[<Indicative Time>]-fv<File version>.nc
+
+    self.trangeIndex = -1
 
     self.vocabs = getVocabs(self)
     test = False
@@ -366,9 +389,13 @@ class projectConfig(object):
         for k2 in self.vocabs['variable'].varcons[k].keys():
           if "height2m" in self.vocabs['variable'].varcons[k][k2].get( '_dimension',[]):
             print 'config_c4: %s , %s: %s' % (k,k2,str(self.vocabs['variable'].varcons[k][k2]['_dimension'] ) )
-      
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
+
+  def setEsaCciFNType(self,id):
+      self.groupIndex =  self.fnoptions['groupIndex'][id]
+      self.trangeIndex = self.fnoptions['trangeIndex'][id]
+      self.globalAttributesInFn = self.fnoptions['inFn'][id]
 
 
 def copy_config(dest_dir):
