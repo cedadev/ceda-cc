@@ -1,5 +1,5 @@
 
-import collections, glob, string, re, json
+import collections, glob, string, re, json, sys
 from fcc_utils2 import mipTableScan, snlist, tupsort
 from config_c4 import CC_CONFIG_DIR
 
@@ -18,6 +18,7 @@ snc = snlist()
 
 snl, snla = snc.gen_sn_list( )
 NT_mip = collections.namedtuple( 'mip',['label','dir','pattern'] )
+NT_var = collections.namedtuple( 'var',['name','sn','snStat','realm','units','longName','comment','mip'] )
 NT_canvari = collections.namedtuple( 'canonicalVariation',['conditions','text', 'ref'] )
 vlist = [
 ('uas',
@@ -364,7 +365,7 @@ class typecheck1:
     self.type4Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units', 'flag_meanings', 'flag_values']
     self.type2Atts = ['positive','comment', 'long_name', 'modeling_realm', 'out_name', 'standard_name', 'type', 'units']
     self.type3Atts = ['positive','long_name','modeling_realm', 'out_name', 'standard_name', 'type', 'units']
-    self.type4Atts = ['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units']
+    self.type4Atts = ['positive','modeling_realm', 'standard_name', 'type', 'units']
     self.m = m
     vars = m.vars
     vdict = m.vdict
@@ -475,7 +476,7 @@ class typecheck1:
     fixedType5TmplA = """ [%(units)s]</h3>
        out_name: %(out_name)s; type: %(type)s <br/>
 """
-    fixedType5TmplB = "<li>%s [%s]: %s, %s [%s]: %s</li>\n"
+    fixedType5TmplB = "<li>%s [%s]: %s, %s [%s]: %s, %s:: %s, %s</li>\n"
         
     if typecode == 1:
       oo = open( 'type1.html', 'w' )
@@ -523,7 +524,8 @@ class typecheck1:
       oo = open( 'type%s.html' % typecode, 'w' )
       thistype,h2,al,tmplA,tmplB = { 3:(self.type3,"Variables with varying comment",['long_name','comment','cell_methods'], fixedType3TmplA, fixedType3TmplB),
                       4:(self.type4,"Variables with varying long_name",['long_name','cell_methods'],fixedType3TmplA, fixedType4TmplB),
-                      5:(self.type5,"Remaining variables",['standard_name','long_name','cell_methods','realm'],fixedType5TmplA, fixedType5TmplB) }[typecode]
+                      5:(self.type5,"Remaining variables",['standard_name','long_name','out_name', 'modeling_realm','positive','type','units'],fixedType5TmplA, fixedType5TmplB) }[typecode]
+ ##['positive','modeling_realm', 'out_name', 'standard_name', 'type', 'units']
       thistype.sort()
       oo.write( '<h2>%s</h2>\n' % h2 )
       for v in thistype:
@@ -545,11 +547,11 @@ mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
          NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
 cordex_mip = NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*')
 specs_mip = NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*')
-mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
 mips = ( cordex_mip, )
 mips = ( specs_mip, )
 mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
 mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
+mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), specs_mip)
 m = mipCo( mips )  
 h = helper()
 
@@ -573,6 +575,40 @@ ald.pop(i)
 ald = ['standard_name', ] + ald
 
 cmip5AxesAtts = ['axis', 'bounds_values', 'climatology', 'coords_attrib', 'formula', 'index_only', 'long_name', 'must_call_cmor_grid', 'must_have_bounds', 'out_name', 'positive', 'requested', 'requested_bounds', 'standard_name', 'stored_direction', 'tolerance', 'type', 'units', 'valid_max', 'valid_min', 'value', 'z_bounds_factors', 'z_factors']
+
+def getTupList(m):
+  vl = []
+  keys = m.vdict.keys()
+  keys.sort()
+  for k in keys:
+    for t in m.vdict[k]:
+##NT_var = collections.namedtuple( 'mip',['name','sn','snStat','realm','units','longName','comment'] )
+      sn, r, units, ln, c = map( lambda x: m.td[t][k][1].get(x,None), ['standard_name','modeling_realm','units','long_name','comment'] ) 
+      mipid = string.split(t,'_')[0]
+      if c == '':
+        c = None
+      v = NT_var( k, sn, 'exists', r, units, ln, c,mipid )
+      vl.append(v)
+  return vl
+
+tl = getTupList(m)
+tl1 = uniquify(tl)
+tl2 = [tl1[0],]
+for t in tl1[1:]:
+  if t[:7] == tl2[-1][:7]:
+    pass
+  elif t[:3] == tl2[-1][:3] and t[4:6] == tl2[-1][4:6]:
+    if (t.mip == 'CMIP5' and tl2[-1].mip == 'CCMI1') or (t.mip == 'CCMI1' and tl2[-1].mip == 'CMIP5'):
+      tl2[-1] = t
+    else:
+      print 'What to do??'
+      print tl2[-1]
+      print t
+  else:
+    tl2.append(t)
+print len(tl),len(tl1)
+for t in tl1[:20]:
+  print t
 
 v = runcheck1( m, ald, isAxes=False )
 ## check consistency of dimension
