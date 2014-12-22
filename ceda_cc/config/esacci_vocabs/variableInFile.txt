@@ -1,0 +1,2 @@
+#  Names of variables in file for each product
+SSTskin sea_surface_temperature  sea_surface_skin_temperature
