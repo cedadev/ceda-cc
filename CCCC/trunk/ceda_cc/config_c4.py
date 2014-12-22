@@ -174,8 +174,15 @@ def getVocabs(pcfg):
 
   elif pcfg.projectV.id == 'ESA-CCI':
     lrdr = readVocab( 'esacci_vocabs/')
-    vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True), \
-               'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ) \
+    vocabs = { 'variable':utils.mipVocab(pcfg), \
+               'version':utils.patternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$' ), \
+               'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
+               'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0 ) ), \
+               'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$' ), \
+               'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
+               'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency'] ), \
+               'cciProject':utils.listControl( 'project', lrdr.getSimpleList( 'cciProject.txt', bit=-1 ) ), \
+               'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
              }
   elif pcfg.projectV.id == '__dummy':
     vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
@@ -201,6 +208,10 @@ class projectConfig(object):
 
     self.project = project
     self.fNameSep = '_'
+    self.varIndex = 0
+    self.fnvdict = None
+    self.varTables='CMIP'
+    self.checkVarType = True
     self.projectV = NT_project(project,version)
     self.gridSpecTol = 0.01
 ## default encoding of time range in file names: YYYY[MM[DD[HH]]]-YYYY[MM[DD[HH]]]
@@ -263,12 +274,15 @@ class projectConfig(object):
                         'project':'project_id'}
 
     elif project == 'ESA-CCI':
+      lrdr = readVocab( 'esacci_vocabs/')
+      self.varTables='FLAT'
       self.fNameSep = '-'
-      self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
-      self.controlledGlobalAttributes = [ ]
-      self.controlledFnParts = ['level']
+      self.checkVarType = False
+      self.requiredGlobalAttributes = lrdr.getSimpleList( 'requiredGlobalAts.txt', bit=0 )
+      self.controlledGlobalAttributes = ['platform','sensor','project','Conventions' ]
+      self.controlledFnParts = ['level','cciProject','var','version']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var'}
+      self.drsMappings = {'variable':'@var','platform':'platform','sensor':'sensor','level':'@level'}
       self.globalAttributesInFn = [None,]
     elif project == '__dummy':
       self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
@@ -361,6 +375,11 @@ class projectConfig(object):
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
        self.mipVocabFnpat = 'CCMI1_%s'
+    elif self.projectV.id == 'ESA-CCI':
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'esacci_vocabs/')
+       self.mipVocabTl = []
+       self.mipVocabVgmap = 'ESACCI'
+       self.mipVocabFnpat = 'variableInFile.txt'
     else:
        self.mipVocabDir = None
        self.mipVocabTl = ['day', 't2']
@@ -374,9 +393,11 @@ class projectConfig(object):
     elif self.project in ['CMIP5','CCMI','SPECS','__dummy']:
       self.groupIndex = 1
     elif self.project in ['ESA-CCI']:
+      self.fnvdict = { 'SSTskin':{'v':'sea_surface_temperature', 'sn':'sea_surface_skin_temperature'} }
       self.fnoptions = {'groupIndex':[3,1], 'trangeIndex':[0,-2] }
       self.fnoptions['inFn'] = [[None,'*activity','*level','*project','*var','*product','*additional','*gdsv','*version'],
                                 ['*activity','*project','*level','*var','*additional',None,'*version']]
+      self.fnoptions['varIndex'] = [4,3]
 ##Indicative Date>[<Indicative Time>]-ESACCI-<Processing Level>_<CCI Project>-<Data Type>-<Product String>[- <Additional Segregator>][-v<GDS version>]-fv<File version>.nc
 ##ESACCI-<CCI Project>-<Processing Level>-<Data Type>-<Product String>[-<Additional Segregator>]-<IndicativeDate>[<Indicative Time>]-fv<File version>.nc
 
@@ -396,6 +417,7 @@ class projectConfig(object):
       self.groupIndex =  self.fnoptions['groupIndex'][id]
       self.trangeIndex = self.fnoptions['trangeIndex'][id]
       self.globalAttributesInFn = self.fnoptions['inFn'][id]
+      self.varIndex = self.fnoptions['varIndex'][id]
 
 
 def copy_config(dest_dir):

@@ -1,0 +1,48 @@
+*Level 0
+L0
+Unprocessed instrument and payload data at full resolution. CCI does not make recommendations regarding formats or content for data at this processing level.
+GHRSST
+*Level 1A
+L1A
+Reconstructed unprocessed instrument data at full resolution, time referenced, and annotated with ancillary information, including radiometric and geometric calibration coefficients and georeferencing parameters, computed and appended, but not applied, to L0 data.
+GHRSST
+*Level 1B
+L1B
+Level 1A data that have been processed to sensor units.
+GHRSST
+*Level 1C
+L1C
+Level 1b data that have been further processed, eg by correcting radiances or by mapping onto a spatial grid, prior to deriving geophysical variables from the data.
+SMOS data products definition and ESACCI discussions
+*Level 2
+L2
+Retrieved environmental variables at the same resolution and location as the level 1 source
+CEOS handbook (http://wiki.ieee-earth.org/@api/deki/files/7/=Handbook_0802.pdf)
+*Level 2 Preprocessed
+L2P
+Geophysical variables derived from Level 1 source data at the same resolution and location as the level 1 data, typically in a satellite projection with geographic information. These data form the fundamental basis for higher level CCI products.
+GHRSST
+*Level 3
+L3
+Level 2 variables mapped on a defined grid with reduced requirements for ancillary data. Three types of L3 products are defined:
+GHRSST
+*Level 3 Uncollated
+L3U
+Uncollated (L3U): L2 data granules remapped to a space grid without combining any observations from overlapping orbits.
+GHRSST
+*Level 3 Collated
+L3C
+Collated (L3C): Observations combined from a single instrument into a space-time grid.
+GHRSST
+*Level 3 Super-collated
+L3S
+Super-collated (L3S): observations combined from multiple instruments into a space-time grid.
+GHRSST
+*Level 4
+L4
+Data sets created from the analysis of lower level data that result in gridded, gap-free products. 
+GHRSST
+*Indicator
+IND
+Indicators derived from satellite data.
+ESACCI

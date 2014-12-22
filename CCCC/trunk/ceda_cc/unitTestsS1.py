@@ -110,7 +110,7 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid SPECS file name' % (module,fn)
 
-fn = "20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc"
+fn = "20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc"
 c = utils_c4.checkFileName(parent=pcci)
 c.check(fn)
 if c.errorCount == 0:
@@ -118,7 +118,15 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid ESA-CCI file name' % (module,fn)
 
-fn = "20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc"
+fn = "20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc"
+c = utils_c4.checkFileName(parent=pcci)
+c.check(fn)
+if c.errorCount == 0:
+  print 'Failed: [%s] %s: Passed invalid ESA-CCI file name' % (module,fn)
+else:
+  print 'OK [%s] %s: Detected invalid ESA-CCI file name' % (module,fn)
+
+fn = "20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv.1.nc"
 c = utils_c4.checkFileName(parent=pcci)
 c.check(fn)
 if c.errorCount == 0:

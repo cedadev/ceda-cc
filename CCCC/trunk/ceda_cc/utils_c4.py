@@ -197,6 +197,7 @@ class checkFileName(checkBase):
     self.step = 'Initialised'
     self.checks = (self.do_check_fn,self.do_check_fnextra)
     self.re_c1 = re.compile( '^[0-9]*$' )
+    self.fnDict = {}
 ####
 
   def check(self,fn):
@@ -206,6 +207,7 @@ class checkFileName(checkBase):
     self.fnsep = self.pcfg.fNameSep
 
     self.runChecks()
+    self.parent.fnDict = self.fnDict
 ###
   def do_check_fn(self):
     fn = self.fn
@@ -216,14 +218,13 @@ class checkFileName(checkBase):
     self.checkId = ('001','parse_filename')
     self.test( fn[-3:] == '.nc', 'File name ending ".nc" expected', abort=True, part=True )
     bits = string.split( fn[:-3], self.fnsep )
-    self.fnParts = bits[:]
 
+    self.fnParts = bits[:]
     if self.pcfg.domainIndex != None:
       self.domain = self.fnParts[self.pcfg.domainIndex]
     else:
       self.domain = None
 
-    self.test( len(bits) in self.pcfg.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.pcfg.fnPartsOkLen),str(bits)), abort=True )
 
     if self.pcfg.projectV.id in ['ESA-CCI']:
       self.test( 'ESACCI' in bits[:2], 'File name not a valid ESA-CCI file name: %s' % fn, abort=True )
@@ -231,7 +232,13 @@ class checkFileName(checkBase):
         self.esaFnId = 1
       else:
         self.esaFnId = 0
+        bb = string.split( bits[2], '_' )
+        self.test( bits[2][0] == 'L' and len(bb) == 2, 'Cannot parse ESA-CCI file name: %s' % fn, abort=True )
+        bits = bits[:2] + bb + bits[3:]
+        self.fnParts = bits[:]
+        
       self.pcfg.setEsaCciFNType(self.esaFnId)
+    self.test( len(bits) in self.pcfg.fnPartsOkLen, 'File name not parsed in %s elements [%s]' % (str(self.pcfg.fnPartsOkLen),str(bits)), abort=True )
 
     self.fnDict = {}
     if self.pcfg.projectV.id in ['ESA-CCI']:
@@ -271,7 +278,11 @@ class checkFileName(checkBase):
     ##elif self.cls == 'SPECS':
       ##self.freq = self.fnParts[1]
 
-    self.var = self.fnParts[0]
+    self.var = self.fnParts[self.pcfg.varIndex]
+
+    if self.pcfg.fnvdict != None:
+      if self.pcfg.fnvdict.has_key( self.var ):
+        self.var = self.pcfg.fnvdict.get( self.var )['v']
 
     self.isFixed = self.freq == 'fx'
     if self.isFixed:
@@ -378,6 +389,8 @@ class checkGlobalAttributes(checkBase):
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
       elif self.drsMappings[k] == '@mip_id':
         ee[k] = string.split( self.globalAts["table_id"] )[1]
+      elif self.drsMappings[k] == '@level':
+        ee[k] = self.parent.fnDict['level']
       else:
         ee[k] = self.globalAts[ self.drsMappings[k] ]
 
@@ -414,11 +427,14 @@ class checkGlobalAttributes(checkBase):
     msg = 'Variable %s not in table %s' % (varName,varGroup)
     self.test( vocabs['variable'].isInTable( varName, varGroup ), msg, abort=True, part=True )
 
-    self.checkId = ('003','variable_type')
+    if self.pcfg.checkVarType:
+      self.checkId = ('003','variable_type')
 
-    mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
-    thisType = {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( mipType, mipType )
-    self.test( mipType == None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),varAts[varName]['_type']) )
+      mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
+      thisType = {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( mipType, mipType )
+      self.test( mipType == None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),varAts[varName]['_type']) )
+    else:
+      mipType = None
 
     self.checkId = ('004','variable_ncattribute_present')
     m = []
@@ -444,8 +460,11 @@ class checkGlobalAttributes(checkBase):
     hm = varAts[varName].get( 'missing_value', None ) != None
     hf = varAts[varName].has_key( '_FillValue' )
     if hm or hf:
-      ok &= self.test( hm, 'missing_value must be present if _FillValue is [%s]' % varName )
-      ok &= self.test( hf, '_FillValue must be present if missing_value is [%s]' % varName )
+      if self.pcfg.varTables=='CMIP':
+        ok &= self.test( hm, 'missing_value must be present if _FillValue is [%s]' % varName )
+        ok &= self.test( hf, '_FillValue must be present if missing_value is [%s]' % varName )
+      else:
+        ok = True
       if mipType == 'real':
         if varAts[varName].has_key( 'missing_value' ):
            msg = 'Variable [%s] has incorrect attribute missing_value=%s [correct: %s]' % (varName,varAts[varName]['missing_value'],self.missingValue)
@@ -459,9 +478,12 @@ class checkGlobalAttributes(checkBase):
 
     mm = []
     
-    contAts = ['long_name', 'standard_name', 'units']
-    if varGroup != 'fx':
-      contAts.append( 'cell_methods' )
+    if self.pcfg.varTables=='CMIP':
+      contAts = ['long_name', 'standard_name', 'units']
+      if varGroup != 'fx':
+        contAts.append( 'cell_methods' )
+    else:
+      contAts = ['standard_name']
     hcm = varAts[varName].has_key( "cell_methods" )
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
       targ = varAts[varName].get( k, 'Attribute not present' )
@@ -546,7 +568,6 @@ class checkGlobalAttributes(checkBase):
                thisVal = 'series%s' % globalAts["series"]
            else:
                assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
-           ##print "Generated text val: %s:: %s" % (self.globalAttributesInFn[i], thisVal)
          
          else:
              thisVal = globalAts[self.globalAttributesInFn[i]]
@@ -592,29 +613,29 @@ class checkStandardDims(checkBase):
     self.errorCount = 0
     self.completed = False
     self.checkId = ('001','time_attributes')
+    self.calendar = 'None'
     if varGroup != 'fx':
       ok = True
       self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
-      if not isInsta:
-        ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
+      if self.pcfg.varTables=='CMIP':
+        if not isInsta:
+          ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
 
 ## is time zone designator needed?
-      tunits = da['time'].get( 'units', 'xxx' )
-      if self.project  == 'CORDEX':
-        ok &= self.test( tunits in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00", "days since 1949-12-01"],
+        tunits = da['time'].get( 'units', 'xxx' )
+        if self.project  == 'CORDEX':
+          ok &= self.test( tunits in ["days since 1949-12-01 00:00:00Z", "days since 1949-12-01 00:00:00", "days since 1949-12-01"],
                'Time units [%s] attribute not set correctly to "days since 1949-12-01 00:00:00Z"' % tunits, part=True )
-      else:
-        ok &= self.test( tunits[:10] == "days since", 'time units [%s] attribute not set correctly to "days since ....."' % tunits, part=True )
+        else:
+          ok &= self.test( tunits[:10] == "days since", 'time units [%s] attribute not set correctly to "days since ....."' % tunits, part=True )
 
-      ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attribute calendar missing', part=True )
+        ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attribute calendar missing', part=True )
 
-      ok &= self.test( da['time']['_type'] in ["float64","double"], 'Time: data type not float64 [%s]' % da['time']['_type'], part=True )
+        ok &= self.test( da['time']['_type'] in ["float64","double"], 'Time: data type not float64 [%s]' % da['time']['_type'], part=True )
        
-      if ok:
-        self.log_pass()
-      self.calendar = da['time'].get( 'calendar', 'None' )
-    else:
-      self.calendar = 'None'
+        if ok:
+          self.log_pass()
+        self.calendar = da['time'].get( 'calendar', 'None' )
 
     self.checkId = ('002','pressure_levels')
     if varName in self.plevRequired:
@@ -823,22 +844,16 @@ class checkGrids(checkBase):
 class mipVocab(object):
 
   def __init__(self,pcfg,dummy=False):
-     project = pcfg.projectV.id
+     self.pcfg = pcfg
      if dummy:
-       self.pcfg = pcfg
-       return self.dummyMipTable()
-     ##assert project in ['CORDEX','SPECS'],'Project %s not recognised' % project
-     ##if project == 'CORDEX':
-       ##dir = 'cordex_vocabs/mip/'
-       ##tl = ['fx','sem','mon','day','6h','3h']
-       ##vgmap = {'6h':'6hr','3h':'3hr'}
-       ##fnpat = 'CORDEX_%s'
-     ##elif project == 'SPECS':
-       ##dir = 'specs_vocabs/mip/'
-       ##tl = ['fx','Omon','Amon','Lmon','OImon','day','6hrLev']
-       ##vgmap = {}
-       ##fnpat = 'SPECS_%s'
-     dir, tl, vgmap, fnpat = pcfg.mipVocabPars
+       self.dummyMipTable()
+     elif pcfg.varTables=='CMIP':
+       self.ingestMipTables()
+     elif pcfg.varTables=='FLAT':
+       self.flatTable()
+    
+  def ingestMipTables(self):
+     dir, tl, vgmap, fnpat = self.pcfg.mipVocabPars
      ms = mipTableScan()
      self.varInfo = {}
      self.varcons = {}
@@ -850,7 +865,7 @@ class mipVocab(object):
         ee = ms.scan_table(ll,None,asDict=True)
         for v in ee.keys():
 ## set global default: type float
-          eeee = { 'type':pcfg.defaults.get( 'variableDataType', 'float' ) }
+          eeee = { 'type':self.pcfg.defaults.get( 'variableDataType', 'float' ) }
           eeee['_dimension'] = ee[v][0]
           ar = []
           ac = []
@@ -882,6 +897,21 @@ class mipVocab(object):
           ac = []
           self.varInfo[v] = {'ar':ar, 'ac':ac }
           self.varcons[vg][v] = eeee
+
+  def flatTable(self):
+     self.varInfo = {}
+     self.varcons = {}
+     dir, tl, vg, fn = self.pcfg.mipVocabPars
+     ee = { 'standard_name':'sn%s', 'long_name':'n%s', 'units':'1' }
+     ll = open( '%s%s' % (dir,fn) ).readlines()
+     self.varcons[vg] = {}
+     for l in ll:
+       if l[0] != '#':
+          dt, v, sn = string.split( string.strip(l) )
+          ar = []
+          ac = []
+          self.varInfo[v] = {'ar':ar, 'ac':ac }
+          self.varcons[vg][v] = {'standard_name':sn, 'type':'float' }
 
   def lists( self, k, k2 ):
      if k2 == 'addRequiredAttributes':
@@ -982,7 +1012,7 @@ class checkByVar(checkBase):
           trange = None
         else:
           trange = string.split( fnParts[-1], '-' )
-        var = fnParts[0]
+        var = fnParts[self.pcfg.varIndex]
         thisKey = string.join( fnParts[:-1], '.' )
         if group not in ee.keys():
           ee[group] = {}
@@ -1070,7 +1100,6 @@ class checkByVar(checkBase):
           x = rere[i].match( t[3][i] )
           lok &= self.test( x != None, 'Cannot match time range %s: %s [%s/%s]' % (i,fn,j,n), part=True, appendLogfile=(self.fLogDict.get(fn,None),fn) )
         if not lok:
-          ### print 'Cannot match time range %s:' % t[1]
           if self.recorder != None:
             self.recorder.modify( t[1], 'ERROR: time range' )
       if self.monitor != None:

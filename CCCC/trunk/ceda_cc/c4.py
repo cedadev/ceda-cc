@@ -41,6 +41,7 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  'SPECS':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(start_date)s/%(frequency)s/%(realm)s/%(table)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                  'CMIP5':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'CCMI':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
+                 'ESA-CCI':'%(level)s/%(platform)s/%(sensor)s/%(variable)s/', \
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
 
@@ -501,9 +502,10 @@ class main(object):
   
     self.cc.info.amapListDraft = []
     cbv = utils.checkByVar( parent=self.cc.info,cls=c4i.project,monitor=self.monitor)
-    cbv.impt( c4i.flist )
-    if printInfo:
-      print cbv.info
+    if c4i.project not in ['ESA-CCI']:
+      cbv.impt( c4i.flist )
+      if printInfo:
+        print cbv.info
 
     fileLogOpen = False
     self.resList =  []
@@ -586,7 +588,7 @@ class main(object):
   
     self.cc.info.log = c4i.logger
     
-    if c4i.project not in ['SPECS','CCMI','CMIP5']:
+    if c4i.project not in ['SPECS','CCMI','CMIP5','ESA-CCI']:
        cbv.c4i = c4i
        cbv.setLogDict( logDict )
        cbv.check( recorder=rec, calendar=self.cc.calendar)

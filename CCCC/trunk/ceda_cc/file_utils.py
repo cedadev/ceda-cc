@@ -143,6 +143,12 @@ class fileMetadata(object):
       self.ga[k] = self.nc.attributes[k]
       if len( self.ga[k] ) == 1:
         self.ga[k] = self.ga[k][0]
+## nasty fix to deal with fact that cdms2 does not read the 'id' global attribute
+    try:
+      thisid = self.nc.id
+      self.ga['id'] = thisid
+    except:
+      pass
     for v in self.nc.variables.keys():
       self.va[v] = {}
       for k in self.nc.variables[v].attributes.keys():
