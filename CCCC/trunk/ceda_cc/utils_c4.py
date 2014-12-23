@@ -908,6 +908,7 @@ class mipVocab(object):
      for l in ll:
        if l[0] != '#':
           dt, v, sn = string.split( string.strip(l) )
+          self.pcfg.fnvdict[dt] = { 'v':v, 'sn':sn }
           ar = []
           ac = []
           self.varInfo[v] = {'ar':ar, 'ac':ac }
