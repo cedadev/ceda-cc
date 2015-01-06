@@ -2,3 +2,4 @@
 #   in file name / name in file /  CF standard_name
 SSTskin sea_surface_temperature  sea_surface_skin_temperature
 SSTdepth analysed_sst       sea_water_temperature
+BA    burned_area burned_area
