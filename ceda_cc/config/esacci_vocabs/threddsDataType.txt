@@ -1,0 +1,11 @@
+## THREDDS Data Type
+Grid
+Image
+Point
+Radial
+Station
+Swath
+Trajectory
+## variants used in GHRSST data specification -- kept for backward compatibility
+swath  deprecated
+grid  deprecated

@@ -1,0 +1,74 @@
+##Institution (for use in required metadata attribute 'institution') Also known as:
+Aristotle University of Thessalonikii AUTH
+Atmospheric, Oceanic and Planetary Physics, University of Oxford   N/A
+Belgian Institute for Space Aeronomy BIRA
+Brockmann Consult GmbH BC
+Centre National de la Recherche Scientific CNRS
+Centre National d'Etudes Spatiales CNES
+Chalmers University of Technology, Göteberg, Sweden CHA
+Collecte Localisation Satellites CLS
+Department of Geography, University of Zurich GIUZ
+Department of Geosciences, University of Oslo GUIO
+Deutscher Wetterdienst DWD
+Deutsches Zentrum fuer Luft- und Raumfahrt DLR
+DTU Space DTU-S
+Environmental Earth Observation ENVEO
+European Space Agency ESA
+Finnish Meteorological Institute FMI
+Freie Universitaet Berlin FUB
+Gamma Remote Sensing Gamma
+The Geological Survey of Denmark and Greenland GEUS
+GMV  GMV
+Helmholtz-Zentrum Geesthacht HZG
+HYGEOS, Euratechnologies  N/A
+ICARE  N/A
+Institut für Meterologie und Klimaforschung, KIT and Instituto de Astrofisca de Andalucia, Granada  IMKIAA
+Institut für Meterologie und Klimaforschung, KIT, Karlsruhe IMK
+Institute for Atmospheric and Climate Science IAC
+Institute for Environment and Sustainability IES-JRC
+Institute of Environmental Physics IUP
+Instituto de Astrofisca de Andalucia, Granada IAA
+Instituto Nacional de Investigacion y Tecnologia Agraria y Alimentaria INIA
+Instituto Superior de Agronomia ISA
+International Centre for Integrated Mountain Development ICIMOD
+Juelich Forschungszentrum  N/A
+Kommission fuer Erdmessung und Glaziologie KEG
+Laboratoire Atmospheres, Milieux, Observations Spatiales LATMOS
+Laboratoire d'Etudes en Geodesie et Oceanographie Spatiales LEGOS
+Laboratoire d'Optique Atmosphérique  LOA
+Laboratoire des Sciences du Climat et L'Environement LSCE
+Max-Planck Institute for Meteorology MPI-M
+Met Office Hadley Centre MOHC
+Meteo Swiss  N/A
+Nansen Environmental and Remote Sensing Center NERSC
+National Snow and Ice Data Center NSIDC
+Netherlands Institute for Space Research SRON
+Norwegian Institute for Air Research NILU
+Norwegian Meteorological Institute MetNo
+Norwegian Water Resources and Energy Directorate NVE
+Paul-Scherrer-Institut PSI
+Plymouth Marine Laboratory  PML
+Royal Meteorological Institute of Belgium RMIB
+Royal Netherlands Meteorological Institute KNMI
+Rutherford Appleton Laboratory RAL
+School of Earth and Environment, University of Leeds SEEL
+School of Geographical Sciences, University of Bristol SGS
+Science [&] Technology AS S[&]T
+Swansea University  N/A
+Swiss Federal Laboratories for Material Testing and Research EMPA
+Universite Catholique de Louvain UCL
+University of Alcala de Henares UAH
+University of Athens NKUA
+University of Bremen  N/A
+University of Cambridge  N/A
+University of Edinburgh  N/A
+University of Jena UJENA
+University of Leicester  N/A
+University of Leeds UL
+University of Saskatchewan, Canada SASK
+University of York UoY
+University of Zurich UZH
+Vienna University of Technology TU Wien
+VU University Amsterdam VUA
+Wageningen University  N/A
+World Glacier Monitoring Service  WGMS

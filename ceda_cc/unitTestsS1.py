@@ -207,9 +207,23 @@ if c.errorCount == 0:
 else:
   print 'OK: -- detected a bad grid'
 
-ii = open( op.join(config.CC_CONFIG_DIR, 'specs_vocabs/globalAtsSample001.txt') )
-fn = string.strip( ii.readline() )
-res = string.strip( ii.readline() )
+##ii = open( op.join(config.CC_CONFIG_DIR, 'specs_vocabs/globalAtsSample001.txt') )
+def readSampleGa( ifile ):
+  ii = open( op.join(config.CC_CONFIG_DIR, ifile) )
+  fn = string.strip( ii.readline() )
+  res = string.strip( ii.readline() )
+  ga = {}
+  for l in ii.readlines():
+    bits = string.split( string.strip(l) )
+    if bits[1] == '@int':
+      ga[bits[0]] = int( bits[2] )
+    else:
+      ga[bits[0]] = string.join( bits[1:] )
+  return res, fn, ga
+
+gafile = 'specs_vocabs/globalAtsSample001.txt'
+res, fn, ga = readSampleGa( gafile )
+
 testId = '#04.001'
 ## switch to project = SPECS
 c = utils_c4.checkFileName(parent=ps)
@@ -219,44 +233,59 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
 
-
 ## note test is done on string'ed values.
-ga = {}
-for l in ii.readlines():
-  bits = string.split( string.strip(l) )
-  if bits[1] == '@int':
-    ga[bits[0]] = int( bits[2] )
-  else:
-    ga[bits[0]] = string.join( bits[1:] )
-
 va = { "tas":{ "_type":"float32", "standard_name":"air_temperature", 'long_name':'Air Temperature', 'units':'K', 'cell_methods':'time: mean'} }
 
+testId = '#04.002'
 cga = utils_c4.checkGlobalAttributes( parent=ps,cls='SPECS')
 cga.check( ga, va, "tas", "day", ps.pcfg.vocabs, c.fnParts )
+if cga.errorCount == 0:
+  print 'OK: [%s]: global attributes check (%s)' % (testId,gafile)
+else:
+  print 'Failed [%s]: global attributes check (%s)' % (testId,gafile)
 
-ii = open( op.join(config.CC_CONFIG_DIR, 'specs_vocabs/globalAtsSample002.txt') )
-fn = string.strip( ii.readline() )
-res = string.strip( ii.readline() )
-testId = '#04.002'
+gafile = 'specs_vocabs/globalAtsSample002.txt'
+res, fn, ga = readSampleGa( gafile )
+testId = '#04.003'
 ## switch to project = SPECS
 c = utils_c4.checkFileName(parent=ps)
 c.check( fn )
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (module,fn)
+  print 'OK: [%s] %s: valid file name' % (testId,fn)
 else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
-
+  print 'Failed [%s] %s: valid file name' % (testId,fn)
 
 ## note test is done on string'ed values.
-ga = {}
-for l in ii.readlines():
-  bits = string.split( string.strip(l) )
-  if bits[1] == '@int':
-    ga[bits[0]] = int( bits[2] )
-  else:
-    ga[bits[0]] = string.join( bits[1:] )
 
 va = { "tas":{ "_type":"float32", "standard_name":"air_temperature", 'long_name':'Air Temperature', 'units':'K', 'cell_methods':'time: mean'} }
 
+testId = '#04.004'
 cga = utils_c4.checkGlobalAttributes( parent=ps,cls='SPECS')
 cga.check( ga, va, "tas", "day", ps.pcfg.vocabs, c.fnParts )
+if cga.errorCount == 0:
+  print 'Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile)
+else:
+  print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)
+
+gafile = 'esacci_vocabs/sampleGlobalAts.txt'
+res, fn, ga = readSampleGa( gafile )
+testId = '#04.005'
+## switch to project = ESA-CCI
+c = utils_c4.checkFileName(parent=pcci)
+c.check( fn )
+if c.errorCount == 0:
+  print 'OK: [%s] %s: valid file name' % (testId,fn)
+else:
+  print 'Failed [%s] %s: valid file name' % (testId,fn)
+
+## note test is done on string'ed values.
+
+va = { "burned_area":{ "_type":"float32", "standard_name":"burned_area"} }
+
+testId = '#04.004'
+cga = utils_c4.checkGlobalAttributes( parent=pcci,cls='ESA-CCI')
+cga.check( ga, va, "burned_area", "ESACCI", pcci.pcfg.vocabs, c.fnParts )
+if cga.errorCount == 0:
+  print 'Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile)
+else:
+  print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)

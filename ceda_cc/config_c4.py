@@ -115,13 +115,15 @@ class readVocab(object):
   def __init__(self,dir):
     self.dir = dir
 
-  def getSimpleList(self,file,bit=None):
+  def getSimpleList(self,file,bit=None,omt=None):
     ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
     oo = []
     for l in ii.readlines():
       if l[0] != '#':
         ll = string.strip(l)
-        if bit == None:
+        if omt == 'last':
+          oo.append(string.join(string.split(ll)[:-1]))
+        elif bit == None:
           oo.append(ll)
         else:
           oo.append(string.split(ll)[bit])
@@ -178,8 +180,11 @@ def getVocabs(pcfg):
                'version':utils.patternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$' ), \
                'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
                'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0 ) ), \
+               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
                'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$' ), \
                'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
+               'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
+               'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO' ), \
                'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency'] ), \
                'cciProject':utils.listControl( 'project', lrdr.getSimpleList( 'cciProject.txt', bit=-1 ) ), \
                'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
@@ -279,7 +284,7 @@ class projectConfig(object):
       self.fNameSep = '-'
       self.checkVarType = False
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'requiredGlobalAts.txt', bit=0 )
-      self.controlledGlobalAttributes = ['platform','sensor','project','Conventions' ]
+      self.controlledGlobalAttributes = ['platform','sensor','project','Conventions','institution','cdm_data_type','time_coverage_duration' ]
       self.controlledFnParts = ['level','cciProject','var','version']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var','platform':'platform','sensor':'sensor','level':'@level'}
