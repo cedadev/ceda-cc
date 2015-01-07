@@ -1,24 +1,27 @@
-zos_Omon_EC-EARTH_decadal_series1_r1i1p1_1990-1990.nc
-FAIL
+zos_Omon_EC-EARTH_decadal_S199010101_r1i1p1_1990-1990.nc
+PASS
 batch  aa001
 contact   john@home.uk
 Conventions   CF-1.6
 creation_date   19th JUly, 2014
-experiment_id   decada1980
+experiment_id   decadal
 forecast_reference_time   0001
 frequency  day
 institution  ECMWF
+institute_id ECMWF
 initialization_method  1
 initialization_description  first
-model_id  EC-EARTH
+model_id  Ec-EARTH
 associated_model  None
-modeling_realm   atmos
+modeling_realm   atm
 physics_version   1
 physics_description  first
 project_id  SPECS
 realization  1
 source   misc
-table_id  Table Omon
+table_id  Table Omon aghhajakakka
 title   sample
 tracking_id 1093890138391
 series @int 1
+associated_experiment  N/A
+startdate  S199010101

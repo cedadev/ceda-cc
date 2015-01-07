@@ -934,13 +934,24 @@ class mipVocab(object):
       
 class patternControl(object):
 
-  def __init__(self,tag,pattern,list=None):
-    try:
-      self.re_pat = re.compile( pattern )
-    except:
-      print "Failed to compile pattern >>%s<< (%s)" % (pattern, tag)
-    self.pattern = pattern
+  def __init__(self,tag,pattern,list=None,cls=None):
+    if cls != None:
+      assert cls in ['ISO'], 'value of cls [%s] not recognised' % cls
+      if cls == 'ISO':
+        assert pattern in ['ISO8601 duration'], 'value of pattern [%s] for ISO constraint not recognised' % pattern
+        if pattern == 'ISO8601 duration':
+          thispat = '^(P([0-9]+Y){0,1}([0-9]+M){0,1}([0-9]+D){0,1}(T([0-9]+H){0,1}([0-9]+M){0,1}([0-9]+(.[0-9]+){0,1}S){0,1}){0,1})$'
+        self.re_pat = re.compile( thispat )
+        self.pattern = thispat
+        self.pattern_src = pattern
+    else:
+      try:
+        self.re_pat = re.compile( pattern )
+      except:
+        print "Failed to compile pattern >>%s<< (%s)" % (pattern, tag)
+      self.pattern = pattern
     self.list = list
+    self.cls = cls
 
   def check(self,val):
     self.note = '-'
