@@ -34,4 +34,4 @@ standard_name_vocabulary (the name of the controlled vocabulary from which varia
 license (describe the restrictions to data access and distribution)
 platform Envisat
 sensor AATSR
-spatial_resolution (a string describing the approximate resolution of the product. For example, “1.1km at nadir”)
+spatial_resolution 1.1km at nadir
