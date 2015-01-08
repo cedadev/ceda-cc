@@ -185,6 +185,7 @@ def getVocabs(pcfg):
                'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
                'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
                'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO' ), \
+               'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})(km|m).*' ), \
                'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency'] ), \
                'cciProject':utils.listControl( 'project', lrdr.getSimpleList( 'cciProject.txt', bit=-1 ) ), \
                'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
@@ -284,7 +285,7 @@ class projectConfig(object):
       self.fNameSep = '-'
       self.checkVarType = False
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'requiredGlobalAts.txt', bit=0 )
-      self.controlledGlobalAttributes = ['platform','sensor','project','Conventions','institution','cdm_data_type','time_coverage_duration' ]
+      self.controlledGlobalAttributes = ['platform','sensor','project','Conventions','institution','cdm_data_type','time_coverage_duration','spatial_resolution' ]
       self.controlledFnParts = ['level','cciProject','var','version']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var','platform':'platform','sensor':'sensor','level':'@level'}
