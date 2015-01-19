@@ -289,3 +289,29 @@ if cga.errorCount == 0:
   print 'Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile)
 else:
   print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)
+
+
+ls = utils_c4.listControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
+testId = '#05.001'
+res = ls.essplit.findall( 'a, b, c<1,2>')
+if res == ['a', 'b', 'c<1,2>']:
+  print 'OK: [%s] Split of list with enumeration passed' % (testId)
+else:
+  print 'Failed: [%s] Split of list with enumeration failed %s' % (testId,str(res))
+
+testId = '#05.002'
+res = ls.check( 'a, c<1,2>' )
+if res:
+  print 'OK: [%s] Valid value passed' % (testId)
+else:
+  print 'Failed: [%s] valid value rejected %s' % (testId,str(res))
+
+testId = '#05.003'
+res = ls.check( 'a, c<1,3>' )
+if res:
+  print 'Failed: [%s] Invalid value passed' % (testId)
+else:
+  print 'OK: [%s] Invalid value rejected %s' % (testId,str(res))
+
+
+

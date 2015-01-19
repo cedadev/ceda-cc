@@ -32,6 +32,6 @@ time_coverage_duration P1Y
 time_coverage_resolution (should be an ISO8601 duration string)
 standard_name_vocabulary (the name of the controlled vocabulary from which variable standard names are taken)
 license (describe the restrictions to data access and distribution)
-platform Envisat
+platform ERS-<1,2>, Envisat
 sensor AATSR
 spatial_resolution 1.1km at nadir
