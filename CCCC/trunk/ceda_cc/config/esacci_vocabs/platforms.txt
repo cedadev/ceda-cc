@@ -4,6 +4,7 @@ Aura
 Coriolis
 DMSP
 Envisat
+ENVISAT
 ERS-1
 ERS-2
 Fengyun-3B
