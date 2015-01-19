@@ -970,11 +970,14 @@ class patternControl(object):
       return m.groupdict()["val"] in self.list
     
 class listControl(object):
-  def __init__(self,tag,list,split=False,splitVal=None):
+  def __init__(self,tag,list,split=False,splitVal=None,enumeration=False):
     self.list = list
     self.tag = tag
     self.split = split
     self.splitVal = splitVal
+    self.enumeration = enumeration
+    self.etest = re.compile( '(.*)<([0-9]+(,[0-9]+)*)>' )
+    self.essplit = re.compile(r'(?:[^\s,<]|<(?:\\.|[^>])*>)+')
 
   def check(self,val):
     self.note = '-'
@@ -985,11 +988,25 @@ class listControl(object):
     if self.split:
       if self.splitVal == None:
         vs = string.split( val )
+      elif self.enumeration:
+        vs = map( string.strip, self.essplit.findall( val ) )
       else:
-        vs = string.split( val, self.spliVal )
-      return all( map( lambda x: x in self.list, vs ) )
+        vs = map( string.strip, string.split( val, self.splitVal ) )
     else:
-      return val in self.list
+      vs = [val,]
+    if self.enumeration:
+      vs2 = []
+      for v in vs:
+        m = self.etest.findall( v )
+        if m in [None,[]]:
+          vs2.append( v )
+        else:
+          opts = string.split( m[0][1], ',' )
+          for o in opts:
+            vs2.append( '%s%s' % (m[0][0],o) )
+      vs = vs2[:]
+        
+    return all( map( lambda x: x in self.list, vs ) )
 
 
 class checkByVar(checkBase):

@@ -179,7 +179,7 @@ def getVocabs(pcfg):
     vocabs = { 'variable':utils.mipVocab(pcfg), \
                'version':utils.patternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$' ), \
                'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
-               'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0 ) ), \
+               'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0), enumeration=True, split=True, splitVal=',' ), \
                'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
                'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$' ), \
                'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
