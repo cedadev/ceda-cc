@@ -268,7 +268,7 @@ class checkFileName(checkBase):
 
     if self.pcfg.freqIndex != None:
       self.freq = self.fnParts[self.pcfg.freqIndex]
-    elif self.group == 'fx':
+    elif self.group in ['fx','fixed']:
       self.freq = 'fx'
     else:
       self.freq = None
@@ -284,7 +284,7 @@ class checkFileName(checkBase):
       if self.pcfg.fnvdict.has_key( self.var ):
         self.var = self.pcfg.fnvdict.get( self.var )['v']
 
-    self.isFixed = self.freq == 'fx'
+    self.isFixed = self.freq in ['fx','fixed']
     if self.isFixed:
       self.test( len(self.fnParts) in self.pcfg.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
@@ -480,7 +480,7 @@ class checkGlobalAttributes(checkBase):
     
     if self.pcfg.varTables=='CMIP':
       contAts = ['long_name', 'standard_name', 'units']
-      if varGroup != 'fx':
+      if varGroup not in ['fx','fixed']:
         contAts.append( 'cell_methods' )
     else:
       contAts = ['standard_name']
@@ -523,7 +523,7 @@ class checkGlobalAttributes(checkBase):
     if ok:
        self.log_pass()
 
-    if varGroup != 'fx' and hcm:
+    if (varGroup not in ['fx','fixed']) and hcm:
       self.isInstantaneous = string.find( varAts[varName]['cell_methods'], 'time: point' ) != -1
     else:
       self.isInstantaneous = True
@@ -614,7 +614,7 @@ class checkStandardDims(checkBase):
     self.completed = False
     self.checkId = ('001','time_attributes')
     self.calendar = 'None'
-    if varGroup != 'fx':
+    if varGroup not in ['fx','fixed']:
       ok = True
       self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
       if self.pcfg.varTables=='CMIP':
@@ -1034,7 +1034,7 @@ class checkByVar(checkBase):
         else:
           freq = None
 
-        isFixed = freq == 'fx'
+        isFixed = freq  in ['fx','fixed']
         group = fnParts[ self.pcfg.groupIndex ]
 
         if isFixed:
@@ -1099,7 +1099,7 @@ class checkByVar(checkBase):
     keys = self.ee.keys()
     keys.sort()
     for k in keys:
-      if k != 'fx':
+      if k not in ['fx','fixed']:
         keys2 = self.ee[k].keys()
         keys2.sort()
         for k2 in keys2:
