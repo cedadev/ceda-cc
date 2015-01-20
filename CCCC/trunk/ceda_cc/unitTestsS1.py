@@ -94,6 +94,14 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid CCMI file name' % (module,fn)
 
+fn = "areacella_fixed_SOCOL3_refC1_r0i0p0.nc"
+c = utils_c4.checkFileName(parent=pccmi)
+c.check(fn)
+if c.errorCount == 0:
+  print 'OK: [%s] %s: valid CCMI file name' % (module,fn)
+else:
+  print 'Failed [%s] %s: valid CCMI file name' % (module,fn)
+
 fn = "tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc"
 c = utils_c4.checkFileName(parent=ps)
 c.check(fn)
