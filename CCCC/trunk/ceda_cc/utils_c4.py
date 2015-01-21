@@ -194,6 +194,7 @@ class checkFileName(checkBase):
   def init(self):
     self.id = 'C4.001'
     self.checkId = 'unset'
+    self.isFixed = False
     self.step = 'Initialised'
     self.checks = (self.do_check_fn,self.do_check_fnextra)
     self.re_c1 = re.compile( '^[0-9]*$' )
@@ -285,6 +286,7 @@ class checkFileName(checkBase):
         self.var = self.pcfg.fnvdict.get( self.var )['v']
 
     self.isFixed = self.freq in ['fx','fixed']
+    self.parent.fileIsFixed = True
     if self.isFixed:
       self.test( len(self.fnParts) in self.pcfg.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
@@ -439,7 +441,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('004','variable_ncattribute_present')
     m = []
     reqAts = self.requiredVarAttributes[:]
-    if varGroup != 'fx' and self.pcfg.projectV.id in ['CORDEX']:
+    if (not self.parent.fileIsFixed) and self.pcfg.projectV.id in ['CORDEX']:
       reqAts.append( 'cell_methods' )
     for k in reqAts + vocabs['variable'].lists(varName, 'addRequiredAttributes'):
       if not varAts[varName].has_key(k):
@@ -448,7 +450,7 @@ class checkGlobalAttributes(checkBase):
       vaerr = True
       for k in m:
         self.parent.amapListDraft.append( '#@var=%s;%s=%s|%s=%s' % (varName,k,'__absent__',k,'<insert attribute value and uncomment>') )
-        print self.parent.amapListDraft[-1]
+        ## print self.parent.amapListDraft[-1]
     ##vaerr = not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) )
 
     ##if vaerr or gaerr:
@@ -480,7 +482,8 @@ class checkGlobalAttributes(checkBase):
     
     if self.pcfg.varTables=='CMIP':
       contAts = ['long_name', 'standard_name', 'units']
-      if varGroup not in ['fx','fixed']:
+      if not self.parent.fileIsFixed:
+      ##if varGroup not in ['fx','fixed']:
         contAts.append( 'cell_methods' )
     else:
       contAts = ['standard_name']
@@ -523,7 +526,8 @@ class checkGlobalAttributes(checkBase):
     if ok:
        self.log_pass()
 
-    if (varGroup not in ['fx','fixed']) and hcm:
+    if (not self.parent.fileIsFixed) and hcm:
+    ## if (varGroup not in ['fx','fixed']) and hcm:
       self.isInstantaneous = string.find( varAts[varName]['cell_methods'], 'time: point' ) != -1
     else:
       self.isInstantaneous = True
@@ -614,7 +618,8 @@ class checkStandardDims(checkBase):
     self.completed = False
     self.checkId = ('001','time_attributes')
     self.calendar = 'None'
-    if varGroup not in ['fx','fixed']:
+    if not self.parent.fileIsFixed:
+    ## if varGroup not in ['fx','fixed']:
       ok = True
       self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
       if self.pcfg.varTables=='CMIP':
@@ -1034,10 +1039,11 @@ class checkByVar(checkBase):
         else:
           freq = None
 
-        isFixed = freq  in ['fx','fixed']
+        ### isFixed = freq  in ['fx','fixed']
         group = fnParts[ self.pcfg.groupIndex ]
 
-        if isFixed:
+        if self.parent.fileIsFixed:
+       ## if isFixed:
           trange = None
         else:
           trange = string.split( fnParts[-1], '-' )

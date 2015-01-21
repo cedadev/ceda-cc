@@ -37,21 +37,21 @@ fn = 'v1_t1_a_b_20060101-20101231.nc'
 testId = '#10.001'
 c.check( fn )
 if c.errorCount == 0:
-  print 'OK [%s] %s: valid file name with project=__dummy' % (module,fn)
+  print 'OK: [%s] %s: valid file name with project=__dummy' % (module,fn)
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
 
 testId = '#11.001'
 try:
   m = main( args=['-p', '__dummy'], monitorFileHandles=True )
-  print 'OK [%s]: dummy run completed without exception' % testId
+  print 'OK: [%s]: dummy run completed without exception' % testId
 except:
   print 'Failed [%s]: dummy run triggered exception' % testId
   raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
 
 testId = '#11.002'
 if m.monitor.fhCountMax < 10:
-  print 'OK [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
+  print 'OK: [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
 else:
   print 'Failed [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
 
@@ -60,7 +60,7 @@ try:
   m = main( args=['-p', '__dummy'], abortMessageCount=10 )
   print 'Failed [%s]: did not trigger exception' % testId
 except:
-  print 'OK [%s]: attempt to trigger exception successful' % testId
+  print 'OK: [%s]: attempt to trigger exception successful' % testId
 
 
 extras = [
@@ -76,14 +76,14 @@ for e in extras:
       testId = '#20.%3.3i' % kt
       m = main( args=['-p', e[1], '-f', e[0], '--force-cdms2','--ld', 'ld_test1' ], abortMessageCount=10 )
       if m.ok:
-         print 'OK [%s]: successfully checked test file with cdms2' % testId
+         print 'OK: [%s]: successfully checked test file with cdms2' % testId
       else:
          print 'Failed [%s]: incorrect test results' % testId
 
     testId = '#21.%3.3i' % kt
     m = main( args=['-p', e[1], '-f', e[0], '--force-ncq','--ld', 'ld_test2' ], abortMessageCount=10 )
     if m.ok:
-       print 'OK [%s]: successfully checked test file with ncq3' % testId
+       print 'OK: [%s]: successfully checked test file with ncq3' % testId
     else:
        print 'Failed [%s]: incorrect test results' % testId
 
@@ -91,7 +91,7 @@ for e in extras:
       testId = '#22.%3.3i' % kt
       m = main( args=['-p', e[1], '-f', e[0], '--force-pync4','--ld', 'ld_test3' ], abortMessageCount=10 )
       if m.ok:
-         print 'OK [%s]: successfully checked test file with python NetCDF4' % testId
+         print 'OK: [%s]: successfully checked test file with python NetCDF4' % testId
       else:
          print 'Failed [%s]: incorrect test results' % testId
 
@@ -99,7 +99,7 @@ for e in extras:
       testId = '#23.%3.3i' % kt
       m = main( args=['-p', e[1], '-f', e[0], '--force-scientific','--ld', 'ld_test4' ], abortMessageCount=10 )
       if m.ok:
-         print 'OK [%s]: successfully checked test file with python Scientific' % testId
+         print 'OK: [%s]: successfully checked test file with python Scientific' % testId
       else:
          print 'Failed [%s]: incorrect test results' % testId
       

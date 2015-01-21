@@ -1,4 +1,5 @@
 
+import collections
 import os.path as op
 import logging, time, string
 import utils_c4
@@ -28,120 +29,61 @@ pcci = dummy()
 for x in (p,ps,pcmip5,pccmi,pcci):
   x.log = log
   x.abortMessageCount = -1
+  x.experimental = False
 p.pcfg = config.projectConfig( "CORDEX" )
 ps.pcfg = config.projectConfig( "SPECS" )
 pcmip5.pcfg = config.projectConfig( "CMIP5" )
 pccmi.pcfg = config.projectConfig( "CCMI" )
 pcci.pcfg = config.projectConfig( "ESA-CCI" )
 
+cfgd = { 'CORDEX':p, 'SPECS':ps, 'CMIP5':pcmip5, 'CCMI':pccmi, 'ESA-CCI':pcci }
+
+fnlist = """CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_20060101-20101231.nc True
+CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_fx.nc True  fixed
+CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_3hr_2006010100-2010123100.nc True
+CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_3hr_200601010030-201012310030.nc True
+CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_200601010030-201012310030.nc False
+CMIP5 pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc True
+CMIP5 pr_3hr_HadGEM2-ES_historical_r2i1p1.nc False
+CCMI clivi_monthly_CESM1-CAM4Chem_refC1sd_r1i1p1_197501-197912.nc True
+CCMI areacella_fixed_SOCOL3_refC1_r0i0p0.nc True
+SPECS orog_fx_EC-EARTH3_seaIceClimInit_S19930501_r0i0p0.nc True fixed
+SPECS tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc False
+SPECS tas_Amon_EC-EARTH3_seaIceClimInit_S19930501_r1i1p1_199306-199306.nc True
+ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc True
+ESA-CCI 20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc False
+ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv.1.nc False"""
+fntl = map( lambda x: tuple( string.split(x) ), string.split( fnlist, '\n' ) )
+ee = collections.defaultdict( list )
+for t in fntl:
+  ee[t[0]].append( t[1:] )
 
 module = 'checkFileName'
-c = utils_c4.checkFileName(parent=p)
-
-fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_20060101-20101231.nc'
-testId = '#01.001'
-c.check( fn )
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
-
-testId = '#01.002'
-fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_fx.nc'
-c.check(fn)
-if c.errorCount == 0 and c.isFixed:
-  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
-
-testId = '#01.003'
-fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_3hr_2006010100-2010123100.nc'
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
-
-testId = '#01.004'
-fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_3hr_200601010030-201012310030.nc'
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid CORDEX file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CORDEX file name' % (module,fn)
-
-testId = '#01.005'
-fn = 'ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_200601010030-201012310030.nc'
-c.check(fn)
-if c.errorCount == 0:
-  print 'Failed to detect bad CORDEX file name: [%s] %s ' % (module,fn)
-else:
-  print 'OK: -- detected bad CORDEX file name: [%s] %s' % (module,fn)
-
-fn = "pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc"
-c = utils_c4.checkFileName(parent=pcmip5)
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid CMIP5 file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CMIP5 file name' % (module,fn)
-
-fn = "clivi_monthly_CESM1-CAM4Chem_refC1sd_r1i1p1_197501-197912.nc"
-c = utils_c4.checkFileName(parent=pccmi)
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid CCMI file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CCMI file name' % (module,fn)
-
-fn = "areacella_fixed_SOCOL3_refC1_r0i0p0.nc"
-c = utils_c4.checkFileName(parent=pccmi)
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid CCMI file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid CCMI file name' % (module,fn)
-
-fn = "tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc"
-c = utils_c4.checkFileName(parent=ps)
-c.check(fn)
-if c.errorCount == 0:
-  print 'Failed [%s] %s: passed invalid SPECS file name' % (module,fn)
-else:
-  print 'OK: [%s] %s: detected invalid SPECS file name' % (module,fn)
-
-fn = "tas_Amon_EC-EARTH3_seaIceClimInit_S19930501_r1i1p1_199306-199306.nc"
-c = utils_c4.checkFileName(parent=ps)
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid SPECS file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid SPECS file name' % (module,fn)
-
-fn = "20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc"
-c = utils_c4.checkFileName(parent=pcci)
-c.check(fn)
-if c.errorCount == 0:
-  print 'OK: [%s] %s: valid ESA-CCI file name' % (module,fn)
-else:
-  print 'Failed [%s] %s: valid ESA-CCI file name' % (module,fn)
-
-fn = "20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc"
-c = utils_c4.checkFileName(parent=pcci)
-c.check(fn)
-if c.errorCount == 0:
-  print 'Failed: [%s] %s: Passed invalid ESA-CCI file name' % (module,fn)
-else:
-  print 'OK [%s] %s: Detected invalid ESA-CCI file name' % (module,fn)
-
-fn = "20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv.1.nc"
-c = utils_c4.checkFileName(parent=pcci)
-c.check(fn)
-if c.errorCount == 0:
-  print 'Failed: [%s] %s: Passed invalid ESA-CCI file name' % (module,fn)
-else:
-  print 'OK [%s] %s: Detected invalid ESA-CCI file name' % (module,fn)
-
+keys = ee.keys()
+keys.sort()
+kk = 0
+for k in keys:
+  c = utils_c4.checkFileName(parent=cfgd[k])
+  for l in ee[k]:
+    fn = l[0]
+    isValid = l[1] == 'True'
+    if len(l) > 2:
+      chckFx = l[2] == 'fixed'
+    else:
+      chckFx = False
+    kk += 1
+    testId = '#01.%3.3i' % kk
+    c.check( fn )
+    passed = c.errorCount == 0
+    if chckFx:
+      passed &= c.isFixed
+    ok = (isValid == passed)
+    vstr = { True:'Valid', False:'Invalid' }[isValid]
+    pstr = { True:'passed', False:'rejected' }[passed]
+    if ok:
+      print 'OK: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
+    else:
+      print 'Failed: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
 
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
@@ -297,7 +239,6 @@ if cga.errorCount == 0:
   print 'Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile)
 else:
   print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)
-
 
 ls = utils_c4.listControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
 testId = '#05.001'

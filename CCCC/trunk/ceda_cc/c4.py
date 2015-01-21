@@ -35,7 +35,9 @@ from fcc_utils2 import tupsort
 #rcm_version_id = <RCMVersionID>                     
 
 class dummy(object):
-   pass
+  def __init__(self):
+     self.experimental = None
+     self.parent = None
 
 pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/',   \
                  'SPECS':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(start_date)s/%(frequency)s/%(realm)s/%(table)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
@@ -144,9 +146,10 @@ class recorder(object):
 class checker(object):
   def __init__(self, pcfg, cls,reader,abortMessageCount=-1,experimental=False):
     self.info = dummy()
-    self.info.experimental=experimental
     self.info.pcfg = pcfg
+    self.info.fileIsFixed = None
     self.info.abortMessageCount = abortMessageCount
+    self.info.experimental = experimental
     self.calendar = 'None'
     self.ncReader = reader
     self.cfn = utils.checkFileName( parent=self.info,cls=cls)
