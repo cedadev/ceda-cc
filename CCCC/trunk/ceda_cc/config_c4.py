@@ -115,9 +115,14 @@ class readVocab(object):
   def __init__(self,dir):
     self.dir = dir
 
-  def getSimpleList(self,file,bit=None,omt=None):
+  def getSimpleList(self,file,bit=None,omt=None,options=None):
     ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
     oo = []
+    if options == 'returnMappings':
+      assert bit == -1, 'only support returnMappings for bit == -1'
+      ee = {}
+
+   
     for l in ii.readlines():
       if l[0] != '#':
         ll = string.strip(l)
@@ -126,85 +131,18 @@ class readVocab(object):
         elif bit == None:
           oo.append(ll)
         else:
-          oo.append(string.split(ll)[bit])
-    return oo
+          if options == 'returnMappings':
+            bb = string.split(ll)
+            ee[bb[-1]] = string.join( bb[:-1] )
+            oo.append( bb[-1] )
+          else:
+            oo.append(string.split(ll)[bit])
+    if options == 'returnMappings':
+      return oo, ee
+    else:
+      return oo
 
 validSpecsInstitutions = ['IC3', 'MPI-M', 'KNMI', 'UOXF', 'CNRM-CERFACS', 'ENEA', 'MOHC', 'SMHI', 'IPSL', 'UREAD', 'ECWMF']
-
-def getVocabs(pcfg):
-  "Returns a dictionary of vocabulary details for the project provided."
-  if pcfg.projectV.id == 'SPECS':
-               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
-    vocabs = { 'variable':utils.mipVocab(pcfg), \
-               'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
-               'frequency':utils.listControl( 'frequency', validSpecsFrequencies ), \
-               'experiment_id':utils.listControl( 'experiment_id', validSpecsExptFamilies ), \
-               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
-               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
-               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
-               'startdate':utils.patternControl( 'startdate', "S[0-9]{8}" ), \
-               ## 'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
-               'project_id':utils.listControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
-               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
-             }
-  elif pcfg.projectV.id == 'CMIP5':
-               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
-    lrdr = readVocab( 'cmip5_vocabs/')
-    vocabs = { 'variable':utils.mipVocab(pcfg), \
-               'Conventions':utils.listControl( 'Conventions', ['CF-1.4','CF-1.5'] ), \
-               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'experiments.txt' ) ), \
-               'frequency':utils.listControl( 'frequency', validCmip5Frequencies ), \
-               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
-               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
-               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
-               'project_id':utils.listControl( 'project_id', ['CMIP5'] ), \
-               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
-             }
-  elif pcfg.projectV.id == 'CCMI':
-    
-    lrdr = readVocab( 'ccmi_vocabs/')
-    vocabs = { 'variable':utils.mipVocab(pcfg), \
-               'frequency':utils.listControl( 'frequency', validCcmiFrequencies ), \
-               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
-## do not preserve or check relation between model and institution.
-               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
-               'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
-               'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
-
-  elif pcfg.projectV.id == 'ESA-CCI':
-    lrdr = readVocab( 'esacci_vocabs/')
-    vocabs = { 'variable':utils.mipVocab(pcfg), \
-               'version':utils.patternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$' ), \
-               'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
-               'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0), enumeration=True, split=True, splitVal=',' ), \
-               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
-               'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$' ), \
-               'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
-               'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
-               'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO' ), \
-               'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})(km|m).*' ), \
-               'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency'] ), \
-               'cciProject':utils.listControl( 'project', lrdr.getSimpleList( 'cciProject.txt', bit=-1 ) ), \
-               'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
-             }
-  elif pcfg.projectV.id == '__dummy':
-    vocabs = { 'variable':utils.mipVocab(pcfg,dummy=True) }
-  else:
-    vocabs = { 'variable':utils.mipVocab(pcfg), \
-           'driving_experiment_name':utils.listControl( 'driving_experiment_name', validCordexExperiment ), \
-           'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
-           'CORDEX_domain':utils.listControl( 'CORDEX_domain',  validCordexDomains ), \
-           'driving_model_id':utils.listControl( 'driving_model_id',  validGcmNames ), \
-           'driving_model_ensemble_member':utils.patternControl( 'driving_model_ensemble_member',  'r[0-9]+i[0-9]+p[0-9]+' ), \
-           'rcm_version_id':utils.patternControl( 'rcm_version_id',  '[a-zA-Z0-9-]+' ), \
-           'model_id':utils.listControl( 'model_id',  validRcmNames ), \
-           'institute_id':utils.listControl( 'institute_id',  validInstNames ), \
-           'frequency':utils.listControl( 'frequency', validCordexFrequencies ) }
-
-  return vocabs
 
 class projectConfig(object):
 
@@ -288,7 +226,8 @@ class projectConfig(object):
       self.controlledGlobalAttributes = ['platform','sensor','project','Conventions','institution','cdm_data_type','time_coverage_duration','spatial_resolution' ]
       self.controlledFnParts = ['level','cciProject','var','version']
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var','platform':'platform','sensor':'sensor','level':'@level'}
+      self.drsMappings = {'variable':'@var','platform':'platform','sensor':'sensor','level':'#level', \
+                'spatial_resolution':'spatial_resolution', 'ecv':'@ecv','version':'#version','convention_version':'#gdsv'}
       self.globalAttributesInFn = [None,]
     elif project == '__dummy':
       self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
@@ -409,7 +348,7 @@ class projectConfig(object):
 
     self.trangeIndex = -1
 
-    self.vocabs = getVocabs(self)
+    self.getVocabs()
     test = False
     if test:
       for k in self.vocabs['variable'].varcons.keys():
@@ -418,6 +357,83 @@ class projectConfig(object):
             print 'config_c4: %s , %s: %s' % (k,k2,str(self.vocabs['variable'].varcons[k][k2]['_dimension'] ) )
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
+
+  def getVocabs(self):
+  ## "Returns a dictionary of vocabulary details for the project provided."
+    if self.projectV.id == 'SPECS':
+               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
+      vocabs = { 'variable':utils.mipVocab(self), \
+               'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
+               'frequency':utils.listControl( 'frequency', validSpecsFrequencies ), \
+               'experiment_id':utils.listControl( 'experiment_id', validSpecsExptFamilies ), \
+               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
+               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
+               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
+               'startdate':utils.patternControl( 'startdate', "S[0-9]{8}" ), \
+               ## 'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
+               'project_id':utils.listControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
+               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
+             }
+    elif self.projectV.id == 'CMIP5':
+               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
+      lrdr = readVocab( 'cmip5_vocabs/')
+      vocabs = { 'variable':utils.mipVocab(self), \
+               'Conventions':utils.listControl( 'Conventions', ['CF-1.4','CF-1.5'] ), \
+               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'experiments.txt' ) ), \
+               'frequency':utils.listControl( 'frequency', validCmip5Frequencies ), \
+               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
+               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
+               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
+               'project_id':utils.listControl( 'project_id', ['CMIP5'] ), \
+               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
+             }
+    elif self.projectV.id == 'CCMI':
+    
+      lrdr = readVocab( 'ccmi_vocabs/')
+      vocabs = { 'variable':utils.mipVocab(self), \
+               'frequency':utils.listControl( 'frequency', validCcmiFrequencies ), \
+               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
+## do not preserve or check relation between model and institution.
+               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
+               'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
+               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
+               'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
+
+    elif self.projectV.id == 'ESA-CCI':
+      lrdr = readVocab( 'esacci_vocabs/')
+      cciProjectList, self.ecvMappings = lrdr.getSimpleList( 'cciProject.txt', bit=-1, options='returnMappings' )
+      vocabs = { 'variable':utils.mipVocab(self), \
+               'version':utils.patternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$', examples=['fv1.1'] ), \
+               'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
+               'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0), enumeration=True, split=True, splitVal=',' ), \
+               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
+               'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$', examples=['CF-1.6'] ), \
+               'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
+               'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
+               'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO',examples=['P1Y'] ), \
+               'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})(km|m).*', examples=['20km'] ), \
+               'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency'] ), \
+               'cciProject':utils.listControl( 'cciproject', cciProjectList ), \
+               'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
+             }
+    elif self.projectV.id == '__dummy':
+      vocabs = { 'variable':utils.mipVocab(self,dummy=True) }
+    else:
+      vocabs = { 'variable':utils.mipVocab(self), \
+           'driving_experiment_name':utils.listControl( 'driving_experiment_name', validCordexExperiment ), \
+           'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
+           'CORDEX_domain':utils.listControl( 'CORDEX_domain',  validCordexDomains ), \
+           'driving_model_id':utils.listControl( 'driving_model_id',  validGcmNames ), \
+           'driving_model_ensemble_member':utils.patternControl( 'driving_model_ensemble_member',  'r[0-9]+i[0-9]+p[0-9]+' ), \
+           'rcm_version_id':utils.patternControl( 'rcm_version_id',  '[a-zA-Z0-9-]+' ), \
+           'model_id':utils.listControl( 'model_id',  validRcmNames ), \
+           'institute_id':utils.listControl( 'institute_id',  validInstNames ), \
+           'frequency':utils.listControl( 'frequency', validCordexFrequencies ) }
+
+    self.vocabs = vocabs
+
 
   def setEsaCciFNType(self,id):
       self.groupIndex =  self.fnoptions['groupIndex'][id]

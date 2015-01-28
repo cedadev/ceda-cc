@@ -12,11 +12,10 @@ def uniquify( ll ):
   return l0
 
 heightRequired = ['tas','tasmax','tasmin','huss','sfcWind','sfcWindmax','wsgsmax','uas','vas']
+cmip5_ignore = ['pfull','phalf','depth','depth_c','eta','nsigma','vertices_latitude','vertices_longitude','ztop','ptop','p0','z1','z2','href','k_c','a','a_bnds','ap','ap_bnds','b','b_bnds','sigma','sigma_bnds','zlev','zlev_bnds','zfull','zhalf']
+cmip5AxesAtts = ['axis', 'bounds_values', 'climatology', 'coords_attrib', 'formula', 'index_only', 'long_name', 'must_call_cmor_grid', 'must_have_bounds', 'out_name', 'positive', 'requested', 'requested_bounds', 'standard_name', 'stored_direction', 'tolerance', 'type', 'units', 'valid_max', 'valid_min', 'value', 'z_bounds_factors', 'z_factors']
 
-ms = mipTableScan()
-snc = snlist()
 
-snl, snla = snc.gen_sn_list( )
 NT_mip = collections.namedtuple( 'mip',['label','dir','pattern'] )
 NT_var = collections.namedtuple( 'var',['name','sn','snStat','realm','units','longName','comment','mip'] )
 NT_canvari = collections.namedtuple( 'canonicalVariation',['conditions','text', 'ref'] )
@@ -150,10 +149,6 @@ class snsub:
          return (True, tt[3], tt[4] )
     return (False,'no match','')
 
-snsubber = snsub()
-
-
-cmip5_ignore = ['pfull','phalf','depth','depth_c','eta','nsigma','vertices_latitude','vertices_longitude','ztop','ptop','p0','z1','z2','href','k_c','a','a_bnds','ap','ap_bnds','b','b_bnds','sigma','sigma_bnds','zlev','zlev_bnds','zfull','zhalf']
 
 class mipCo:
 
@@ -413,7 +408,7 @@ class typecheck1:
                    if self.helper.match(string.replace( a, src, targ ), av[-1]) or self.helper.match(string.replace( av[-1], src, targ ), a):
                      thisok = True
                if thisok:
-                 print 'INFO ############### conditional match found', tab, v
+                 print 'INFO[typecheck]: conditional match found', tab, v
                else:
                  if pmatch:
                    ##print '########### no matvh found'
@@ -422,8 +417,6 @@ class typecheck1:
              else:
                av.append(a)
          adict[att] = av
-         ##if v == "snd":
-           ##print adict
        
 ## check for type 2
        tval = None
@@ -542,79 +535,96 @@ class typecheck1:
             oo.write( '</ul>\n' )
       oo.close()
            
+class run(object):
 
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
-         NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*')  )
-cordex_mip = NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*')
-specs_mip = NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*')
-mips = ( cordex_mip, )
-mips = ( specs_mip, )
-mips = ( NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), )
-mips = ( cordex_mip, NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'), NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ), specs_mip)
-mips = ( NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),  )
-m = mipCo( mips )  
-h = helper()
-
-keys = m.adict.keys()
-keys.sort()
-fh = open( 'axes_json.txt', 'w' )
-for k in keys:
-  ee = m.dd[m.adict[k][0]][k][0]
-  ee["__name__"] = k
-  fh.write( json.dumps( ee ) + '\n' )
-fh.close()
-
-al = []
-for k0 in m.dd.keys():
-  for k1 in m.dd[k0].keys():
-    al += m.dd[k0][k1][0].keys()
-ald = uniquify( al )
-ald.sort()
-i = ald.index('standard_name')
-ald.pop(i)
-ald = ['standard_name', ] + ald
-
-cmip5AxesAtts = ['axis', 'bounds_values', 'climatology', 'coords_attrib', 'formula', 'index_only', 'long_name', 'must_call_cmor_grid', 'must_have_bounds', 'out_name', 'positive', 'requested', 'requested_bounds', 'standard_name', 'stored_direction', 'tolerance', 'type', 'units', 'valid_max', 'valid_min', 'value', 'z_bounds_factors', 'z_factors']
-
-def getTupList(m):
-  vl = []
-  keys = m.vdict.keys()
-  keys.sort()
-  for k in keys:
-    for t in m.vdict[k]:
-##NT_var = collections.namedtuple( 'mip',['name','sn','snStat','realm','units','longName','comment'] )
-      sn, r, units, ln, c = map( lambda x: m.td[t][k][1].get(x,None), ['standard_name','modeling_realm','units','long_name','comment'] ) 
-      mipid = string.split(t,'_')[0]
-      if c == '':
-        c = None
-      v = NT_var( k, sn, 'exists', r, units, ln, c,mipid )
-      vl.append(v)
-  return vl
-
-tl = getTupList(m)
-tl1 = uniquify(tl)
-tl2 = [tl1[0],]
-for t in tl1[1:]:
-  if t[:7] == tl2[-1][:7]:
+  def __init__(self):
     pass
-  elif t[:3] == tl2[-1][:3] and t[4:6] == tl2[-1][4:6]:
-    if (t.mip == 'CMIP5' and tl2[-1].mip == 'CCMI1') or (t.mip == 'CCMI1' and tl2[-1].mip == 'CMIP5'):
-      tl2[-1] = t
-    else:
-      print 'What to do??'
-      print tl2[-1]
-      print t
-  else:
-    tl2.append(t)
-print len(tl),len(tl1)
-for t in tl1[:20]:
-  print t
 
-v = runcheck1( m, ald, isAxes=False )
+  def  run(self):
+    self.m = mipCo( mips )  
+    self.json()
+    al = []
+    for k0 in self.m.dd.keys():
+      for k1 in self.m.dd[k0].keys():
+        al += self.m.dd[k0][k1][0].keys()
+    ald = uniquify( al )
+    ald.sort()
+    i = ald.index('standard_name')
+    ald.pop(i)
+    ald = ['standard_name', ] + ald
+    self.ald = ald
+
+    return self.m,ald
+
+  def getTupList(self):
+    vl = []
+    keys = self.m.vdict.keys()
+    keys.sort()
+    for k in keys:
+      for t in self.m.vdict[k]:
+  ##NT_var = collections.namedtuple( 'mip',['name','sn','snStat','realm','units','longName','comment'] )
+        sn, r, units, ln, c = map( lambda x: self.m.td[t][k][1].get(x,None), ['standard_name','modeling_realm','units','long_name','comment'] ) 
+        mipid = string.split(t,'_')[0]
+        if c == '':
+          c = None
+        v = NT_var( k, sn, 'exists', r, units, ln, c,mipid )
+        vl.append(v)
+    self.tupList = vl
+    return vl
+
+  def compTupList(self):
+    tl1 = uniquify(self.tupList)
+    tl2 = [tl1[0],]
+###  these lines comment on all differences of variables with the same name, including differences in comments.
+    for t in tl1[1:]:
+      if t[:7] == tl2[-1][:7]:
+        pass
+      elif t[:3] == tl2[-1][:3] and t[4:6] == tl2[-1][4:6]:
+        if (t.mip == 'CMIP5' and tl2[-1].mip == 'CCMI1') or (t.mip == 'CCMI1' and tl2[-1].mip == 'CMIP5'):
+          tl2[-1] = t
+        else:
+          print 'What to do??'
+          print tl2[-1]
+          print t
+      else:
+        tl2.append(t)
+    return tl1, tl2
+
+  def runchecks(self):
+    self.v = runcheck1( self.m, self.ald, isAxes=False )
 ## check consistency of dimension
-r = runcheck1( m, ald, isAxes=True )
-for e in r.errors:
-  print ".....",e
+    self.r2 = runcheck1( self.m, self.ald, isAxes=True )
+    return self.v, self.r2
+
+  def json(self):
+    keys = self.m.adict.keys()
+    keys.sort()
+    fh = open( 'axes_json.txt', 'w' )
+    for k in keys:
+      ee = self.m.dd[self.m.adict[k][0]][k][0]
+      ee["__name__"] = k
+      fh.write( json.dumps( ee ) + '\n' )
+    fh.close()
+
+ms = mipTableScan()
+snc = snlist()
+snl, snla = snc.gen_sn_list( )
+snsubber = snsub()
+
+mips = { "cmip5":NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
+"ccmi":NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),
+"cordex":NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*'),
+"specs":NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*') }
+
+mipl = ['cmip5']
+mips = map( lambda x: mips[x], mipl )
+r = run()
+
+m,ald = r.run()
+
+tl = r.getTupList()
+tl1,tl2 = r.compTupList()
+v,r2 = r.runchecks()
 
 allatts = ms.al
 thisatts = ['standard_name','units','long_name','__dimensions__']
@@ -622,7 +632,9 @@ thisatts = ['standard_name','units','long_name','__dimensions__']
 for a in allatts:
   if a not in thisatts:
     thisatts.append(a)
-s =typecheck1( m, thisatts, helper=h)
+
+h = helper()
+s = typecheck1( m, thisatts, helper=h)
 s.exportHtml( 1 )
 s.exportHtml( 2 )
 s.exportHtml( 3 )

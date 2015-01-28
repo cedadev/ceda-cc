@@ -379,6 +379,7 @@ class checkGlobalAttributes(checkBase):
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
+    drsDefaults = { 'convention_version':'n/a'}
     if not self.globalAts.has_key('product'):
         self.globalAts['product'] = 'output'
     for k in self.drsMappings:
@@ -391,8 +392,14 @@ class checkGlobalAttributes(checkBase):
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
       elif self.drsMappings[k] == '@mip_id':
         ee[k] = string.split( self.globalAts["table_id"] )[1]
-      elif self.drsMappings[k] == '@level':
-        ee[k] = self.parent.fnDict['level']
+      elif self.drsMappings[k] == '@ecv':
+        ee[k] = self.pcfg.ecvMappings[ self.parent.fnDict['project'] ]
+      elif self.drsMappings[k][0] == '#':
+        thisk = self.drsMappings[k][1:]
+        if drsDefaults.has_key( thisk ):
+          ee[k] = self.parent.fnDict.get(thisk, drsDefaults[thisk] )
+        else:
+          ee[k] = self.parent.fnDict[thisk]
       else:
         ee[k] = self.globalAts[ self.drsMappings[k] ]
 
@@ -939,7 +946,7 @@ class mipVocab(object):
       
 class patternControl(object):
 
-  def __init__(self,tag,pattern,list=None,cls=None):
+  def __init__(self,tag,pattern,list=None,cls=None,examples=None,badExamples=None,runTest=True):
     if cls != None:
       assert cls in ['ISO'], 'value of cls [%s] not recognised' % cls
       if cls == 'ISO':
@@ -955,8 +962,16 @@ class patternControl(object):
       except:
         print "Failed to compile pattern >>%s<< (%s)" % (pattern, tag)
       self.pattern = pattern
+    
+    self.examples = examples
+    self.badExamples = badExamples
     self.list = list
     self.cls = cls
+
+    if runTest:
+      if examples != None:
+        for e in examples:
+          assert self.check(e), 'Internal check failed: example %s does not fit pattern %s' % (e,self.pattern)
 
   def check(self,val):
     self.note = '-'
