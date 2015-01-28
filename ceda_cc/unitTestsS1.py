@@ -50,7 +50,7 @@ CCMI areacella_fixed_SOCOL3_refC1_r0i0p0.nc True
 SPECS orog_fx_EC-EARTH3_seaIceClimInit_S19930501_r0i0p0.nc True fixed
 SPECS tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc False
 SPECS tas_Amon_EC-EARTH3_seaIceClimInit_S19930501_r1i1p1_199306-199306.nc True
-ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc True
+ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc True CCIplus
 ESA-CCI 20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc False
 ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv.1.nc False"""
 fntl = map( lambda x: tuple( string.split(x) ), string.split( fnlist, '\n' ) )
@@ -58,6 +58,7 @@ ee = collections.defaultdict( list )
 for t in fntl:
   ee[t[0]].append( t[1:] )
 
+cga = utils_c4.checkGlobalAttributes(parent=cfgd['ESA-CCI'])
 module = 'checkFileName'
 keys = ee.keys()
 keys.sort()
@@ -82,6 +83,17 @@ for k in keys:
     pstr = { True:'passed', False:'rejected' }[passed]
     if ok:
       print 'OK: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
+      if len(l) > 2 and l[2]  == 'CCIplus':
+        cga.globalAts =  {'platform':'platform','sensor':'sensor', \
+                'spatial_resolution':'1 km'}
+        cga.var = 'var'
+        cga.completed = True
+        ee1 = cga.getDrs()
+        if ee1['ecv'] == 'Sea Surface Temperature':
+          print 'OK: [%sb] %s: DRS dictionary generated' % (testId,fn)
+        else:
+          print 'Failed: [%sb] %s: DRS dictionary not generated correctly' % (testId,fn)
+        
     else:
       print 'Failed: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
 
