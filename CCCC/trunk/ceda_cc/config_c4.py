@@ -228,6 +228,7 @@ class projectConfig(object):
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'#var','platform':'platform','sensor':'sensor','level':'#level', \
                 'standard_name':'*standard_name', \
+                'algorithm':'$algorithm:unset', 'frequency':'$frequency', \
                 'spatial_resolution':'spatial_resolution', 'ecv':'@ecv','version':'#version','convention_version':'#gdsv'}
       self.globalAttributesInFn = [None,]
     elif project == '__dummy':
@@ -358,6 +359,21 @@ class projectConfig(object):
             print 'config_c4: %s , %s: %s' % (k,k2,str(self.vocabs['variable'].varcons[k][k2]['_dimension'] ) )
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
+
+  def getExtraAtts(self):
+
+    eafile = self.mipVocabDir + 'extraAtts.txt'
+    self.extraAtts = {}
+    if os.path.isfile( eafile ):
+      for l in open( eafile ).readlines():
+        if l[0] != '#':
+          bits = map( string.strip, string.split(l,',') )
+          id = '%s.%s' % (bits[0],bits[1])
+          ee = {}
+          for b in bits[2:]:
+            bb = string.split(b,'=')
+            ee[bb[0]] = bb[1]
+          self.extraAtts[id] = ee
 
   def getVocabs(self):
   ## "Returns a dictionary of vocabulary details for the project provided."
