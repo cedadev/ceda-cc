@@ -394,6 +394,9 @@ class checkGlobalAttributes(checkBase):
         ee[k] = string.split( self.globalAts["table_id"] )[1]
       elif self.drsMappings[k] == '@ecv':
         ee[k] = self.pcfg.ecvMappings[ self.parent.fnDict['project'] ]
+      elif self.drsMappings[k][0] == '*':
+        thisk = self.drsMappings[k][1:]
+        ee[k] = self.varAts[self.var][thisk]
       elif self.drsMappings[k][0] == '#':
         thisk = self.drsMappings[k][1:]
         if drsDefaults.has_key( thisk ):

@@ -86,6 +86,7 @@ for k in keys:
       if len(l) > 2 and l[2]  == 'CCIplus':
         cga.globalAts =  {'platform':'platform','sensor':'sensor', \
                 'spatial_resolution':'1 km'}
+        cga.varAts = { 'var':{ 'standard_name':'dummy'} }
         cga.var = 'var'
         cga.completed = True
         ee1 = cga.getDrs()
