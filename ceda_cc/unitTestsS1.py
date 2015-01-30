@@ -85,6 +85,7 @@ for k in keys:
       print 'OK: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
       if len(l) > 2 and l[2]  == 'CCIplus':
         cga.globalAts =  {'platform':'platform','sensor':'sensor', \
+                 'naming_authority':'org.ghrsst', 'id':'AATSR-ESACCI-L3U-v1', \
                 'spatial_resolution':'1 km'}
         cga.varAts = { 'var':{ 'standard_name':'dummy'} }
         cga.var = 'var'

@@ -364,6 +364,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = 'unset'
     self.step = 'Initialised'
     self.checks = (self.do_check_ga,)
+    self.fileId = None
 
   def check(self,globalAts, varAts,varName,varGroup, vocabs, fnParts):
     self.errorCount = 0
@@ -375,6 +376,10 @@ class checkGlobalAttributes(checkBase):
     self.vocabs = vocabs
     self.fnParts = fnParts
     self.runChecks()
+
+  def getId(self):
+    if self.fileId == None:
+      self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'])
 
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
@@ -394,6 +399,15 @@ class checkGlobalAttributes(checkBase):
         ee[k] = string.split( self.globalAts["table_id"] )[1]
       elif self.drsMappings[k] == '@ecv':
         ee[k] = self.pcfg.ecvMappings[ self.parent.fnDict['project'] ]
+      elif self.drsMappings[k][0] == '$':
+        self.pcfg.getExtraAtts()
+        print self.pcfg.extraAtts
+        self.getId()
+        if string.find(self.drsMappings[k],':') != -1:
+          k2,dflt = string.split( self.drsMappings[k][1:],':')
+          ee[k] = self.pcfg.extraAtts[self.fileId].get( k2, dflt )
+        else:
+          ee[k] = self.pcfg.extraAtts[self.fileId][self.drsMappings[k][1:]]
       elif self.drsMappings[k][0] == '*':
         thisk = self.drsMappings[k][1:]
         ee[k] = self.varAts[self.var][thisk]
