@@ -41,7 +41,7 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
 
-if sys.version_info > (2,6):
+if sys.version_info >= (2,7):
   ## monitoting file handles uses a "subprocess" method which is not available in python 2.6
   testId = '#11.001'
   try:
@@ -51,11 +51,11 @@ if sys.version_info > (2,6):
     print 'Failed [%s]: dummy run triggered exception' % testId
     raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
 
-testId = '#11.002'
-if m.monitor.fhCountMax < 10:
-  print 'OK: [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
-else:
-  print 'Failed [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
+  testId = '#11.002'
+  if m.monitor.fhCountMax < 10:
+    print 'OK: [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
+  else:
+    print 'Failed [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
 
 testId = '#11.003'
 try:
