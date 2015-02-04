@@ -1,0 +1,68 @@
+##CI Project Parameter <Data Type>
+Aerosol Aerosol optical depth AOD
+Absorbing aerosol index AAI
+Stratospheric aerosol extinction profile AEX
+Aerosol type ATY
+Multiple aerosol products AER_PRODUCTS
+Cloud Cloud cover CFC
+Cloud top pressure CTP
+Cloud top height CTH
+Cloud top temperature CTT
+Cloud optical thickness COT
+Cloud effective radius CER
+Cloud liquid water path LWP
+Cloud ice water path IWP
+Joint cloud physical properties JCH
+Multiple cloud products CLD_PRODUCTS
+Fire Burned area BA
+GHG column-averaged dry air mole fraction of CO2 CO2
+column-averaged dry air mole fraction of CH4 CH4
+Glaciers Glacier area GA
+Ice Sheets Ice sheet surface elevation change SEC
+Ice sheet velocity IV
+Glacier calving front location CFL
+Glacier grounding line location GLL
+Land Cover Land cover map Map
+Condition fire (burned area) BA
+Condition water (water bodies) WB
+Condition snow Snow
+Condition normalised difference vegetation index NDVI
+Condition albedo Alb
+Leaf Area Index LAI
+Surface reflectance SR
+Ocean Colour Multiple products (chla, nlw, IOPs, etc) OC_PRODUCTS
+Phytoplankton Chlorophyll-a concentration CHLOR_A
+Normalised water leaving radiance NLW
+Remote Sensing Reflectance RRS
+Spectral attenuation coefficient for downwelling irradiance K_490
+Total absorption ATOT
+Total backscattering BB
+Absorption by coloured dissolved organic matter ADG
+Backscattering by particulate matter BBP
+Absorption by phytoplankton APH
+Ozone Ozone total column TC
+Ozone nadir profile NP
+Ozone limb profile LP
+Sea Ice Sea Ice Concentration SICONC
+Sea Ice Thickness SITHICK
+Sea Ice Extent SIEXTENT
+Sea Level Corrected sea surface height SSH
+Sea level anomaly SLA
+Absolute dynamic topography ADT
+Maps of sea level anomalies MSLA
+Mean sea level MSL
+Mean sea level trends MSLTR
+Mean sea level amplitude and phase MSLAMPH
+SST Sea surface temperature SSTint
+Sea surface skin temperature SSTskin
+Sea surface subskin temperature SSTsubskin
+Sea water temperature SSTdepth
+Sea surface foundation temperature SSTfnd
+Soil Moisture Surface soil moisture volumetric absolutes SSMV
+Surface soil moisture volumetric anomalies SSMVA
+Surface soil moisture degree of saturation absolute SSMS
+Surface soil moisture degree of saturation anomalies SSMSA
+Soil water index volumetric absolute SWIV
+Soil water index volumetric anomalies SWIVA
+Soil water index degree of saturation absolute SWIS
+Soil water index degree of saturation anomalies SWISA

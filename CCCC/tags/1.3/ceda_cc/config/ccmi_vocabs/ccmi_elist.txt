@@ -1,0 +1,22 @@
+## experiment list for CCMI -- pulled from MIP tables
+senC1SSI CCMI_HistorSc_SSI
+senC2fODS CCMI_ProjecSC_fODS
+senC2fEMIS CCMI_ProjecSC_fEMIS
+senC1SDfEmis CCMI_HistorSc_fEmisSD
+senC2GeoMIPG4 CCMI_ProjecSC_GeoM_G4
+senC2GeoMIPG2 CCMI_ProjecSC_GeoM_G2
+refC2 CCMI_Projection
+refC1 CCMI_Historical
+senC2GeoMIPG1 CCMI_ProjecSC_GeoM_G1
+senC2GeoMIPG3 CCMI_ProjecSC_GeoM_G3
+senC1SDEmis CCMI_HistorSc_EmisSD
+senC2rcp85 CCMI_ProjecSC_RCP8.5
+refC1sd CCMI_HistoricalSD
+senC1fEmis CCMI_HistorSc_fEmis
+senC1Emis CCMI_HistorSc_Emis
+senC2slrtrend CCMI_ProjecSC_SolarTrend
+senC2rcp45 CCMI_ProjecSC_RCP4.5
+senC2fODS2000 CCMI_ProjecSC_fODS2000
+senC2fGHG CCMI_ProjecSC_fGHG
+senC2rcp26 CCMI_ProjecSC_RCP2.6
+

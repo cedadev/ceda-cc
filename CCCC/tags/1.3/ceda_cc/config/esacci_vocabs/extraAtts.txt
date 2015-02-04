@@ -1,0 +1,2 @@
+#Additional attributes for data publication
+org.ghrsst, AATSR-ESACCI-L3U-v1, algorithm=OE2, frequency=1sec
