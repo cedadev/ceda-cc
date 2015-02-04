@@ -1,4 +1,4 @@
-import logging, time, os
+import logging, time, os, sys
 import utils_c4
 import config_c4 as config
 from c4 import fileMetadata, dummy, main
@@ -41,13 +41,15 @@ if c.errorCount == 0:
 else:
   print 'Failed [%s] %s: valid file name' % (module,fn)
 
-testId = '#11.001'
-try:
-  m = main( args=['-p', '__dummy'], monitorFileHandles=True )
-  print 'OK: [%s]: dummy run completed without exception' % testId
-except:
-  print 'Failed [%s]: dummy run triggered exception' % testId
-  raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
+if sys.version_info > (2,6):
+  ## monitoting file handles uses a "subprocess" method which is not available in python 2.6
+  testId = '#11.001'
+  try:
+    m = main( args=['-p', '__dummy'], monitorFileHandles=True )
+    print 'OK: [%s]: dummy run completed without exception' % testId
+  except:
+    print 'Failed [%s]: dummy run triggered exception' % testId
+    raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
 
 testId = '#11.002'
 if m.monitor.fhCountMax < 10:
