@@ -1,3 +1,4 @@
 
-version="1.3.x"
-versionComment="Modification to improve version handling"
+version="1.3.1"
+versionComment="Fixed CCMI specification issues"
+
