@@ -1,16 +1,18 @@
 
 import sys
 
+testmain=True
 ## callout to summary.py: if this option is selected, imports of libraries are not needed.
-if __name__ == '__main__' and sys.argv[1] == '--sum':
+if not testmain:
+  if __name__ == '__main__' and sys.argv[1] == '--sum':
       import summary
       summary.main()
       raise SystemExit(0)
-elif __name__ == '__main__' and sys.argv[1] == '-v':
+  elif __name__ == '__main__' and sys.argv[1] == '-v':
       from versionConfig import version, versionComment
       print 'ceda-cc version %s [%s]' % (version,versionComment)
       raise SystemExit(0)
-elif __name__ == '__main__' and sys.argv[1] == '--unitTest':
+  elif __name__ == '__main__' and sys.argv[1] == '--unitTest':
       print "Starting test suite 1"
       import unitTestsS1
       print "Starting test suite 2"
@@ -647,17 +649,26 @@ def dump_drs_list(drs_list, filename):
 
 
 def main_entry():
-   """
+  """
    Wrapper around main() for use with setuptools.
 
-   """
-   main(printInfo=True)
-
-if __name__ == '__main__':
+  """
   if sys.argv[1] == '--sum':
       import summary
       summary.main()
-      raise SystemExit(0)
+  elif sys.argv[1] == '-v':
+      from versionConfig import version, versionComment
+      print 'ceda-cc version %s [%s]' % (version,versionComment)
+  elif sys.argv[1] == '--unitTest':
+      print "Starting test suite 1"
+      import unitTestsS1
+      print "Starting test suite 2"
+      import unitTestsS2
+      print "Tests completed"
+  else:
+     main(printInfo=True)
+
+if __name__ == '__main__':
   main_entry()
 
 
