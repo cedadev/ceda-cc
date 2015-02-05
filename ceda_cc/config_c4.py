@@ -3,6 +3,7 @@ import utils_c4 as utils
 import os
 import os.path as op
 import shutil, collections
+from versionConfig import version, versionComment
 
 NT_project = collections.namedtuple( 'project', ['id','v'] )
 NT_fnParts = collections.namedtuple( 'fnParts', ['len','fxLen','unfLen','checkTLen','ixDomain','ixFreq'] )
@@ -211,7 +212,7 @@ class projectConfig(object):
       self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'experiment_id', 'project', 'frequency' ]
       self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','@ensemble']
-      self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
+      self.requiredVarAttributes = ['long_name', 'units']
       self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
                         'frequency':'frequency',  'table':'@mip_id',

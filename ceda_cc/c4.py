@@ -6,6 +6,17 @@ if __name__ == '__main__' and sys.argv[1] == '--sum':
       import summary
       summary.main()
       raise SystemExit(0)
+elif __name__ == '__main__' and sys.argv[1] == '-v':
+      from versionConfig import version, versionComment
+      print 'ceda-cc version %s [%s]' % (version,versionComment)
+      raise SystemExit(0)
+elif __name__ == '__main__' and sys.argv[1] == '--unitTest':
+      print "Starting test suite 1"
+      import unitTestsS1
+      print "Starting test suite 2"
+      import unitTestsS2
+      print "Tests completed"
+      raise SystemExit(0)
 
 # Standard library imports
 import os, string, time, logging, sys, glob, pkgutil

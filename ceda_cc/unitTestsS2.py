@@ -52,7 +52,7 @@ if sys.version_info >= (2,7):
     raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
 
   testId = '#11.002'
-  if m.monitor.fhCountMax < 10:
+  if m.monitor.fhCountMax < 15:
     print 'OK: [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
   else:
     print 'Failed [%s]: fhCountMax = %s' % ( testId, m.monitor.fhCountMax )
