@@ -7,6 +7,8 @@
 
 from setuptools import setup, find_packages
 import sys, os
+import ceda_cc
+from ceda_cc.versionConfig import version, versionComment
 
 # Load long_description from README.txt
 here = os.path.dirname(__file__)
@@ -14,7 +16,7 @@ readme_txt = os.path.join(here, 'README.txt')
 long_description = '\n\n' + open(readme_txt).read()
 
 setup(name='ceda-cc',
-      version='1.3',
+      version=version,
       description="CEDA Conformance Checker",
       long_description=long_description,
       classifiers=[
