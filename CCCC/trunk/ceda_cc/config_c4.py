@@ -291,9 +291,6 @@ class projectConfig(object):
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'SPECS':
       self.fnParts = lrdr.getEvalAssign( 'fnParts_sv0101.txt' )
-     ## self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=1 )
-      print self.fnParts
-      
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'ESA-CCI':
