@@ -1,0 +1,6 @@
+None
+@mip_id
+model_id
+experiment_id
+startdate
+@ensemble
