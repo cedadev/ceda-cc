@@ -116,6 +116,13 @@ class readVocab(object):
   def __init__(self,dir):
     self.dir = dir
 
+  def driver(self,tt):
+    if tt[0] == "simpleList":
+      tx = tt + (None,None,None,None)
+      return self.getSimpleList( tx[1],bit=tx[2],omt=tx[3],options=tx[4] )
+    else:
+      print 'readVocab.driver: option %s not recgnised' % tt[0]
+
   def getSimpleList(self,file,bit=None,omt=None,options=None):
     ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
     oo = []
@@ -123,7 +130,6 @@ class readVocab(object):
       assert bit == -1, 'only support returnMappings for bit == -1'
       ee = {}
 
-   
     for l in ii.readlines():
       if l[0] != '#':
         ll = string.strip(l)
@@ -138,6 +144,7 @@ class readVocab(object):
             oo.append( bb[-1] )
           else:
             oo.append(string.split(ll)[bit])
+
     if options == 'returnMappings':
       return oo, ee
     else:
@@ -175,7 +182,8 @@ class projectConfig(object):
 
     elif project == 'SPECS':
       lrdr = readVocab( 'specs_vocabs/')
-      self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      ##self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
+      self.requiredGlobalAttributes = lrdr.driver( ('simpleList', 'globalAts.txt' ) )
       self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
       self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'frequency','Conventions','modeling_realm', \
                        'initialization_method','physics_version','realization']
