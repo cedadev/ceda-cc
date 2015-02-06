@@ -123,11 +123,29 @@ class readVocab(object):
     else:
       print 'readVocab.driver: option %s not recgnised' % tt[0]
 
+  def getEvalAssign(self, file ):
+    ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
+    ll = []
+    for l in ii.readlines():
+      if l[0] != '#':
+        ll.append( l )
+    assert len(ll) == 1, 'Too many lines in %s' % file 
+    try:
+      return eval( ll[0] )
+    except:
+      print 'Failed to evaluate configuration line from %s:\n%s' % (file,l[0])
+      raise
+
   def getSimpleList(self,file,bit=None,omt=None,options=None):
     ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
     oo = []
-    if options == 'returnMappings':
-      assert bit == -1, 'only support returnMappings for bit == -1'
+    if options == None:
+      olist = []
+    else:
+      olist = string.split(options,',')
+
+    if 'returnMappings' in olist:
+      assert bit in [0, -1], 'only support returnMappings for bit = -1 or 0'
       ee = {}
 
     for l in ii.readlines():
@@ -138,14 +156,20 @@ class readVocab(object):
         elif bit == None:
           oo.append(ll)
         else:
-          if options == 'returnMappings':
+          if 'returnMappings' in olist:
             bb = string.split(ll)
-            ee[bb[-1]] = string.join( bb[:-1] )
-            oo.append( bb[-1] )
+            if bit == -1:
+              ee[bb[-1]] = string.join( bb[:-1] )
+            else:
+              ee[bb[0]] = string.join( bb[1:] )
+            oo.append( bb[bit] )
           else:
             oo.append(string.split(ll)[bit])
 
-    if options == 'returnMappings':
+    if 'noneMap' in olist:
+      oo = map( lambda x: {'None':None}.get(x,x), oo )
+
+    if 'returnMappings' in olist:
       return oo, ee
     else:
       return oo
@@ -182,20 +206,19 @@ class projectConfig(object):
 
     elif project == 'SPECS':
       lrdr = readVocab( 'specs_vocabs/')
-      ##self.requiredGlobalAttributes = lrdr.getSimpleList( 'globalAts.txt' )
       self.requiredGlobalAttributes = lrdr.driver( ('simpleList', 'globalAts.txt' ) )
-      self.exptFamilies = lrdr.getSimpleList( 'exptFamily.txt', bit=0 )
-      self.controlledGlobalAttributes = [ 'project_id','experiment_id', 'frequency','Conventions','modeling_realm', \
-                       'initialization_method','physics_version','realization']
-      self.globalAttributesInFn = [None,'@mip_id','model_id','experiment_id','startdate','@ensemble']
-#sic_Oimon_EC-Earth2_seaIceBestInit_S19910501_r1i1p1_199501-199502.nc 
-## mip_id derived from global attribute Table_id (CMOR convention); ensemble derived from rip attributes.
+      self.exptFamilies = lrdr.driver( ('simpleList', 'exptFamily.txt', 0 ) )
+      self.controlledGlobalAttributes = lrdr.driver( ('simpleList', 'controlledGlobalAttributes_sv0101.txt' ) )
+                       ##'initialization_method','physics_version','realization']
+      self.globalAttributesInFn = lrdr.driver( ('simpleList', 'globalAttributesInFn_sv0101.txt',0,0,'noneMap' ) )
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
-                        'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
-                        'frequency':'frequency', 'start_date':'@forecast_reference_time', \
-                        'table':'@mip_id',
-                        'project':'project_id'}
+      oo, self.drsMappings = lrdr.driver( ('simpleList', 'drsMappings_sv0101.txt',0,0,'returnMappings' ) )
+
+      ##self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
+                        ##'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
+                        ##'frequency':'frequency', 'start_date':'@forecast_reference_time', \
+                        ##'table':'@mip_id',
+                        ##'project':'project_id'}
 
     elif project == 'CMIP5':
       lrdr = readVocab( 'cmip5_vocabs/')
@@ -264,36 +287,15 @@ class projectConfig(object):
 
     if self.projectV.id == 'CORDEX':
       self.fnParts = NT_fnParts( len=[8,9], fxLen=[8,],  unfLen=[9,], checkTLen=True, ixDomain=1, ixFreq=7 )
-    ##  self.fnPartsOkLen = [5,6]
-      ##self.fnPartsOkFixedLen = [5,]
-      ##self.fnPartsOkUnfixedLen = [6,]
-      ##self.checkTrangeLen = True
-      ##self.domainIndex = 1
-      ##self.freqIndex = 7
     elif self.projectV.id == 'CMIP5':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
-      ##self.fnPartsOkLen = [5,6]
-      ##self.fnPartsOkFixedLen = [5,]
-      ##self.fnPartsOkUnfixedLen = [6,]
-      ##self.checkTrangeLen = False
-      ##self.domainIndex = None
-      ##self.freqIndex = None
     elif self.projectV.id == 'SPECS':
-      self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=1 )
-      ##self.fnPartsOkLen = [6,7]
-      ##self.fnPartsOkFixedLen = [6,]
-      ##self.fnPartsOkUnfixedLen = [7,]
-      ##self.checkTrangeLen = False
-      ##self.domainIndex = None
-      ##self.freqIndex = 1
+      self.fnParts = lrdr.getEvalAssign( 'fnParts_sv0101.txt' )
+     ## self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=1 )
+      print self.fnParts
+      
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
-      ##self.fnPartsOkLen = [5,6]
-      ##self.fnPartsOkFixedLen = [5,]
-      ##self.fnPartsOkUnfixedLen = [6,]
-      ##self.checkTrangeLen = False
-      ##self.domainIndex = None
-      ##self.freqIndex = None
     elif self.projectV.id == 'ESA-CCI':
       self.fnParts = NT_fnParts( len=[7,8,9], fxLen=[0,],  unfLen=[7,8,9,], checkTLen=False, ixDomain=None, ixFreq=1 )
       self.trangeType = 'ESA-CCI'
