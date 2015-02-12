@@ -260,9 +260,13 @@ class c4_init(object):
     self.holdExceptions = False
     forceLogOrg = None
     argsIn = args[:]
-
+   
+    # Show help if no args or help requested
+    if len(args) == 0 or args[0] in ('-h', '-help', '--help'):
+       print 'Help command not implemented yet'
+       raise SystemExit(0)	
     # The --copy-config option must be the first argument if it is present.
-    if args[0] == '--copy-config':
+    elif args[0] == '--copy-config':
        if len(args) < 2:
          self.commandHints( argsIn )
        args.pop(0)
@@ -270,9 +274,6 @@ class c4_init(object):
        config.copy_config(dest_dir)
        print 'Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir
        print
-       raise SystemExit(0)
-    elif args[0] == '-h':
-       print 'Help command not implemented yet'
        raise SystemExit(0)
 
     self.summarymode = args[0] == '--sum'
