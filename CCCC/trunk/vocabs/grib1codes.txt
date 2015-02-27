@@ -1,0 +1,187 @@
+# codes from http://www.wmo.int/pages/prog/www/WMOCodes/Guides/GRIB/GRIB1-Contents.html#Section1
+000 	Reserved 	
+001 	Pressure 	Pa
+002 	Pressure reduced to MSL 	Pa
+003 	Pressure tendency 	Pa/s
+004 		
+005 		
+006 	Geopotential 	m2/s2
+007 	Geopotential height 	Gpm
+008 	Geometric height 	M
+009 	Standard deviation of height 	M
+010 		
+011 	Temperature 	K
+012 	Virtual temperature 	K
+013 	Potential temperature 	K
+014 	Pseudo-adiabatic potential temperature 	K
+015 	Maximum temperature 	K
+016 	Minimum temperature 	K
+017 	Dew point temperature 	K
+018 	Dew point depression (or deficit) 	K
+019 	Lapse rate 	K/m
+020 	Visibility 	M
+021 	Radar Spectra (1) 	-
+022 	Radar Spectra (2) 	-
+023 	Radar Spectra (3) 	-
+024 		
+025 	Temperature anomaly 	K
+026 	Pressure anomaly 	Pa
+027 	Geopotential height anomaly 	Gpm
+028 	Wave Spectra (1) 	-
+029 	Wave Spectra (2) 	-
+030 	Wave Spectra (3) 	-
+031 	Wind direction 	Deg.true
+032 	Wind speed 	m/s
+033 	u-component of wind 	m/s
+034 	v-component of wind 	m/s
+035 	Stream function 	m2/s
+036 	Velocity potential 	m2/s
+037 	Montgomery stream function 	m2/s2
+038 	Sigma coord. vertical velocity 	s/s
+039 	Pressure Vertical velocity 	Pa/s
+040 	Geometric Vertical velocity 	m/s
+041 	Absolute vorticity 	/s
+042 	Absolute divergence 	/s
+043 	Relative vorticity 	/s
+044 	Relative divergence 	/s
+045 	Vertical u-component shear 	/s
+046 	Vertical v-component shear 	/s
+047 	Direction of current 	Deg.true
+048 	Speed of current 	m/s
+049 	u-component of current 	m/s
+050 	v-component of current 	m/s
+051 	Specific humidity 	kg/kg
+052 	Relative humidity 	%
+053 	Humidity mixing ratio 	kg/kg
+054 	Precipitable water 	kg/m2
+055 	Vapor pressure 	Pa
+056 	Saturation deficit 	Pa
+057 	Evaporation 	kg/m2
+058 	Cloud Ice 	kg/m2
+059 	Precipitation rate 	kg/m2/s
+060 	Thunderstorm probability 	%
+061 	Total precipitation 	kg/m2
+062 	Large scale precipitation 	kg/m2
+063 	Convective precipitation 	kg/m2
+064 	Snowfall rate water equivalent 	kg/m2s
+065 	Water equiv. of accum. snow depth 	kg/m2
+066 	Snow depth 	M
+067 	Mixed layer depth 	M
+068 	Transient thermocline depth 	M
+069 	Main thermocline depth 	M
+070 	Main thermocline anomaly 	M
+071 	Total cloud cover 	%
+072 	Convective cloud cover 	%
+073 	Low cloud cover 	%
+074 	Medium cloud cover 	%
+075 	High cloud cover 	%
+076 	Cloud water 	kg/m2
+077 		
+078 	Convective snow 	kg/m2
+079 	Large scale snow 	kg/m2
+080 	Water Temperature 	K
+081 	Land-sea mask (1=land;0=sea) (see note) 	Fraction
+082 	Deviation of sea level from mean 	M
+083 	Surface roughness 	M
+084 	Albedo 	%
+085 	Soil temperature 	K
+086 	Soil moisture content 	kg/m2
+087 	Vegetation 	%
+088 	Salinity 	kg/kg
+089 	Density 	kg/m3
+090 	Water run off 	kg/m2
+091 	Ice concentration (ice=1;no ice=0)(see note) 	Fraction
+092 	Ice thickness 	M
+093 	Direction of ice drift 	deg.true
+094 	Speed of ice drift 	m/s
+095 	u-component of ice drift 	m/s
+096 	v-component of ice drift 	m/s
+097 	Ice growth rate 	m/s
+098 	Ice divergence 	/s
+099 	Snow melt 	kg/m2
+100 	Significant height of combined wind waves and swell 	 m
+101 	Direction of wind waves 	deg.true
+102 	Significant height of wind waves 	m
+103 	Mean period of wind waves 	s
+104 	Direction of swell waves 	deg.true
+105 	Significant height of swell waves 	m
+106 	Mean period of swell waves 	s
+107 	Primary wave direction 	deg.true
+108 	Primary wave mean period 	s
+109 	Secondary wave direction 	deg.true
+110 	Secondary wave mean period 	s
+111 	Net short-wave radiation (surface) 	W/m2
+112 	Net long wave radiation (surface) 	W/m2
+113 	Net short-wave radiation (top of atmos.) 	W/m2
+114 	Net long wave radiation (top of atmos.) 	W/m2
+115 	Long wave radiation 	W/m2
+116 	Short wave radiation 	W/m2
+117 	Global radiation 	W/m2
+118 		
+119 		
+120 		
+121 	Latent heat net flux 	W/m2
+122 	Sensible heat net flux 	W/m2
+123 	Boundary layer dissipation 	W/m2
+124 	Momentum flux, u component 	N/m2
+125 	Momentum flux, v component 	N/m2
+126 	Wind mixing energy 	J
+127 	Image data 	
+128-254 	Reserved for use by originating center) 
+##Table 3
+## special levels
+00 	reserved
+01 	surface (of the Earth, which includes sea surface)
+02 	cloud base level
+03 	cloud top level
+04 	0 deg (C) isotherm level
+05 	adiabatic condensation level(parcel lifted from surface)
+06 	maximum wind speed level
+07 	tropopause level
+08 	Nominal top of atmosphere
+09 	Sea bottom
+## levels with 1 or 2 parameters (needs cleaning up). [or smart parsing]
+100     isobaric level    |  pressure in hectoPascals (hPa)  |
+101     layer between two |  pressure of    |  pressure of   |
+        isobaric levels   |  top (kPa)      |  bottom (kPa)  |
+102     mean sea level    |        0        |       0        |
+103     fixed height level|   height above mean sea level (MSL) in meters           |
+104     layer between two |  height of top  |  height of     |
+          height levels   |     (hm)        |  bottom (hm)   |
+           above msl      |        above mean sea level      |
+105     fixed height above|         height in meters         |
+          ground          |            (2 octets)            |
+106     layer between two |  height of top  |  height of     |
+          height levels   |      (hm)       |  bottom (hm)   |
+          above ground    |           above ground           |
+107     sigma level       |     sigma value in 1/10000       |
+108     layer between two |  sigma value at |  sigma value   |
+          sigma levels    |       top       |  at bottom     |
+                          |     in 1/100    |   in 1/100     |
+109     Hybrid level      |           level number           |
+110     layer between two | level number of | level number   |
+          hybrid levels   |       top       |  of bottom     |
+111     depth below land surface       |            centimeters           |
+112     layer between two |  depth of upper | depth of lower |
+        depths below      |    surface (cm) |   surface (cm) |
+        land surface      |                 |                |
+113     isentropic        |     Potential Temperature K      |
+        (theta) level     |             (2 octets)           |
+114     layer between two |    475K minus   |  475K minus    |
+        isentropic        |   theta of top  |theta of bottom |
+        levels            |       in K      |     in K       |
+121     layer between two |  1100 hPa minus | 1100 hPa minus |
+        isobaric surfaces |  pressure of    | pressure of    |
+        (high precision)  |  top, in hPa    | bottom, in hPa |
+125     Height level      |            centimeters           |
+        above ground      |             (2 octets)           |
+        (high precision)  |                                  |
+128     layer between two |  1.1 minus sigma| 1.1 minus sigma|
+        sigma levels      |  of top, in     | of bottom, in  |
+        (high precision)  |  1/1000 of sigma| 1/1000 of sigma|
+141     layer between two |  pressure of    | 1100hPa minus  |
+        isobaric surfaces |  top, in kPa    | pressure of    |
+        (mixed precision) |                 | bottom, in hPa |
+160     depth below sea level       |               meters             |
+200     entire atmosphere considered as a single layer |                 0                |
+201     entire ocean considered as a single layer      |                 0                |
