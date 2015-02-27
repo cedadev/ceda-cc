@@ -260,6 +260,7 @@ class projectConfig(object):
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'#var','platform':'platform','sensor':'sensor','level':'#level', \
                 'standard_name':'*standard_name', \
+                'activity':'=CLIPC', \
                 'algorithm':'$algorithm:unset', 'frequency':'$frequency', \
                 'spatial_resolution':'spatial_resolution', 'ecv':'@ecv','version':'#version','convention_version':'#gdsv'}
       self.globalAttributesInFn = [None,]

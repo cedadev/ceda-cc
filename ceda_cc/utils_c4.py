@@ -390,6 +390,8 @@ class checkGlobalAttributes(checkBase):
     for k in self.drsMappings:
       if self.drsMappings[k] == '@var':
         ee[k] = self.var
+      elif self.drsMappings[k][0] == '=':
+        ee[k] = self.drsMappings[k][1:]
       elif self.drsMappings[k] == '@ensemble':
         ee[k] = "r%si%sp%s" % (self.globalAts["realization"],self.globalAts["initialization_method"],self.globalAts["physics_version"])
       elif self.drsMappings[k] == '@forecast_reference_time':
