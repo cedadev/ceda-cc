@@ -208,11 +208,13 @@ class projectConfig(object):
       lrdr = readVocab( 'specs_vocabs/')
       self.requiredGlobalAttributes = lrdr.driver( ('simpleList', 'globalAts.txt' ) )
       self.exptFamilies = lrdr.driver( ('simpleList', 'exptFamily.txt', 0 ) )
+      self.validInstitutions = lrdr.driver( ('simpleList', 'validInstitutions_sv0101.txt' ) )
+      self.realm = lrdr.driver( ('simpleList', 'realm_sv0101.txt' ) )
       self.controlledGlobalAttributes = lrdr.driver( ('simpleList', 'controlledGlobalAttributes_sv0101.txt' ) )
                        ##'initialization_method','physics_version','realization']
-      self.globalAttributesInFn = lrdr.driver( ('simpleList', 'globalAttributesInFn_sv0101.txt',0,0,'noneMap' ) )
+      self.globalAttributesInFn = lrdr.driver( ('simpleList', 'globalAttributesInFn_sv0101.txt',None,None,'noneMap' ) )
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
-      oo, self.drsMappings = lrdr.driver( ('simpleList', 'drsMappings_sv0101.txt',0,0,'returnMappings' ) )
+      oo, self.drsMappings = lrdr.driver( ('simpleList', 'drsMappings_sv0101.txt',0,None,'returnMappings' ) )
 
       ##self.drsMappings = {'variable':'@var', 'institute':'institute_id', 'product':'product', 'experiment':'experiment_id', \
                         ##'ensemble':'@ensemble', 'model':'model_id', 'realm':'modeling_realm', \
@@ -399,7 +401,7 @@ class projectConfig(object):
                ## 'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
                'project_id':utils.listControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
                ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
+               'modeling_realm':utils.listControl( 'realm', self.realm, split=True ), \
              }
     elif self.projectV.id == 'CMIP5':
                ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
