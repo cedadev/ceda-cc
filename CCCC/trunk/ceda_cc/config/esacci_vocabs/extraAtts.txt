@@ -1,2 +1,3 @@
 #Additional attributes for data publication
 org.ghrsst, AATSR-ESACCI-L3U-v1, algorithm=OE2, frequency=1sec
+uk.ac.pml, ESACCI-OC-L3S-OC_PRODUCTS-MERGED-1M_MONTHLY_4km_GEO_PML_OC4v6_QAA, algorithm=SeaDAS(v6.4-OCCCI), frequency=mon

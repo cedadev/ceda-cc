@@ -297,7 +297,7 @@ class projectConfig(object):
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'ESA-CCI':
-      self.fnParts = NT_fnParts( len=[7,8,9], fxLen=[0,],  unfLen=[7,8,9,], checkTLen=False, ixDomain=None, ixFreq=1 )
+      self.fnParts = NT_fnParts( len=[7,8,9], fxLen=[0,],  unfLen=[7,8,9,], checkTLen=False, ixDomain=None, ixFreq=None )
       self.trangeType = 'ESA-CCI'
     elif self.projectV.id == '__dummy':
       self.fnParts = NT_fnParts( len=[4,5], fxLen=[4,],  unfLen=[5,], checkTLen=False, ixDomain=None, ixFreq=1 )
@@ -336,7 +336,7 @@ class projectConfig(object):
     elif self.projectV.id == 'ESA-CCI':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'esacci_vocabs/')
        self.mipVocabTl = []
-       self.mipVocabVgmap = 'ESACCI'
+       self.mipVocabVgmap = { 'ESACCI':'ESACCI' }
        self.mipVocabFnpat = 'variableInFile.txt'
     else:
        self.mipVocabDir = None
@@ -352,7 +352,7 @@ class projectConfig(object):
       self.groupIndex = 1
     elif self.project in ['ESA-CCI']:
       self.fnvdict = { 'SSTskin':{'v':'sea_surface_temperature', 'sn':'sea_surface_skin_temperature'} }
-      self.fnoptions = {'groupIndex':[3,1], 'trangeIndex':[0,-2] }
+      self.fnoptions = {'groupIndex':[1,0], 'trangeIndex':[0,-2] }
       self.fnoptions['inFn'] = [[None,'*activity','*level','*project','*var','*product','*additional','*gdsv','*version'],
                                 ['*activity','*project','*level','*var','*additional',None,'*version']]
       self.fnoptions['varIndex'] = [4,3]
@@ -438,7 +438,7 @@ class projectConfig(object):
                'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0), enumeration=True, split=True, splitVal=',' ), \
                'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
                'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$', examples=['CF-1.6'] ), \
-               'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ) ), \
+               'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ), enumeration=True, split=True, splitVal=',' ), \
                'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
                'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO',examples=['P1Y'] ), \
                'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})[\s]*(km|m).*', examples=['20km','1 km at nadir'] ), \

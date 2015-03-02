@@ -51,6 +51,7 @@ SPECS orog_fx_EC-EARTH3_seaIceClimInit_S19930501_r0i0p0.nc True fixed
 SPECS tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc False
 SPECS tas_Amon_EC-EARTH3_seaIceClimInit_S19930501_r1i1p1_199306-199306.nc True
 ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc True CCIplus
+ESA-CCI ESACCI-OC-L3S-OC_PRODUCTS-MERGED-1M_MONTHLY_4km_GEO_PML_OC4v6_QAA-200005-fv1.0.nc True CCIplus
 ESA-CCI 20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc False
 ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv.1.nc False"""
 fntl = map( lambda x: tuple( string.split(x) ), string.split( fnlist, '\n' ) )
@@ -85,16 +86,21 @@ for k in keys:
       print 'OK: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
       if len(l) > 2 and l[2]  == 'CCIplus':
         cga.globalAts =  {'platform':'platform','sensor':'sensor', \
-                 'naming_authority':'org.ghrsst', 'id':'AATSR-ESACCI-L3U-v1', \
+                'naming_authority':'org.ghrsst', 'id':'AATSR-ESACCI-L3U-v1', \
                 'spatial_resolution':'1 km'}
         cga.varAts = { 'var':{ 'standard_name':'dummy'} }
         cga.var = 'var'
         cga.completed = True
         ee1 = cga.getDrs()
-        if ee1['ecv'] == 'Sea Surface Temperature':
-          print 'OK: [%sb] %s: DRS dictionary generated' % (testId,fn)
+        if ee1['ecv'] in ['Sea Surface Temperature','Ocean Colour']:
+          print 'OK: [%sb] %s: DRS dictionary generated (%s)' % (testId,fn,ee1['ecv'])
         else:
-          print 'Failed: [%sb] %s: DRS dictionary not generated correctly' % (testId,fn)
+          print 'Failed: [%sb] %s: DRS dictionary not generated correctly (%s)' % (testId,fn,ee1['ecv'])
+ 
+        if c.group == 'ESACCI':
+          print 'OK: group ESACCI detected' 
+        else:
+          print 'Failed: group read as "%s" (not ESACCI) %s' % (c.group,fn)
         
     else:
       print 'Failed: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
