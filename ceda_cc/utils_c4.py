@@ -186,8 +186,6 @@ class checkBase(object):
     except:
       self.log_exception( 'Exception caught by runChecks' )
       raise loggedException
-      ##traceback.print_exc(file=open("errlog.txt","a"))
-      ##logger.error("Exception has occured" ,exc_info=1)
     
 class checkFileName(checkBase):
 
@@ -249,6 +247,7 @@ class checkFileName(checkBase):
         if x != None and x[0] == '*':
           self.fnDict[x[1:]] = bits[i]
       self.fnDict['version'] = bits[-1]
+      self.fnDict['gdsv'] = 'na'
       if self.esaFnId == 0:
         if len(bits) == 9:
           self.fnDict['additional'] = bits[-3]
@@ -314,6 +313,8 @@ class checkFileName(checkBase):
             if len(tt) > 0:
               ll.append( tt[:2] )
               tt = tt[2:]
+            elif j in [1,2]:
+              ll.append( '01' )
             else:
               ll.append( '00' )
           indDateTime = map( int, ll )
@@ -380,6 +381,10 @@ class checkGlobalAttributes(checkBase):
   def getId(self):
     if self.fileId == None:
       self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'])
+      if self.globalAts['naming_authority'] == 'uk.ac.pml':
+        i0 = string.find(self.globalAts['id'],'OC4v6_QAA')
+        if i0 != -1:
+          self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'][:i0+9])
 
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
@@ -403,7 +408,6 @@ class checkGlobalAttributes(checkBase):
         ee[k] = self.pcfg.ecvMappings[ self.parent.fnDict['project'] ]
       elif self.drsMappings[k][0] == '$':
         self.pcfg.getExtraAtts()
-        print self.pcfg.extraAtts
         self.getId()
         if string.find(self.drsMappings[k],':') != -1:
           k2,dflt = string.split( self.drsMappings[k][1:],':')
@@ -477,10 +481,6 @@ class checkGlobalAttributes(checkBase):
       for k in m:
         self.parent.amapListDraft.append( '#@var=%s;%s=%s|%s=%s' % (varName,k,'__absent__',k,'<insert attribute value and uncomment>') )
         ## print self.parent.amapListDraft[-1]
-    ##vaerr = not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) )
-
-    ##if vaerr or gaerr:
-      ##self.log_abort()
 
 ## need to insert a check that variable is present
     self.checkId = ('005','variable_ncattribute_mipvalues')
@@ -496,8 +496,6 @@ class checkGlobalAttributes(checkBase):
       if mipType == 'real':
         if varAts[varName].has_key( 'missing_value' ):
            msg = 'Variable [%s] has incorrect attribute missing_value=%s [correct: %s]' % (varName,varAts[varName]['missing_value'],self.missingValue)
-           ## print varAts[varName]['missing_value'], type(varAts[varName]['missing_value'])
-           ## print self.missingValue, type(self.missingValue)
 ### need to use ctypes here when using ncq3 to read files -- appears OK for other libraries.
            ok &= self.test( ctypes.c_float(varAts[varName]['missing_value']).value == ctypes.c_float(self.missingValue).value, msg, part=True )
         if varAts[varName].has_key( '_FillValue' ):
@@ -932,7 +930,8 @@ class mipVocab(object):
   def flatTable(self):
      self.varInfo = {}
      self.varcons = {}
-     dir, tl, vg, fn = self.pcfg.mipVocabPars
+     dir, tl, vgm, fn = self.pcfg.mipVocabPars
+     vg = vgm.keys()[0]
      ee = { 'standard_name':'sn%s', 'long_name':'n%s', 'units':'1' }
      ll = open( '%s%s' % (dir,fn) ).readlines()
      self.varcons[vg] = {}
