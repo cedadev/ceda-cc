@@ -33,6 +33,7 @@ NOAA-18
 NOAA-19
 ODIN
 Orbview-2
+Orbview-2/SeaStar
 PARASOL
 SCISAT
 SPOT-4
