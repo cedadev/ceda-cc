@@ -49,6 +49,7 @@ if sys.version_info >= (2,7):
     print 'OK: [%s]: dummy run completed without exception' % testId
   except:
     print 'Failed [%s]: dummy run triggered exception' % testId
+    raise
     raise baseException( 'Failed [%s]: dummy run triggered exception' % testId )
 
   testId = '#11.002'

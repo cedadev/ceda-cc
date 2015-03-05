@@ -1,3 +1,4 @@
+"""A set of classes running checks and providing utilities to support checks"""
 import string, re, os, sys, traceback, ctypes
 
 def strmm3( mm ):
@@ -68,14 +69,14 @@ class checkSeq(object):
 cs = checkSeq()
 
 class checkBase(object):
+  """Base class for checks, containing a set of standard methods for managing operation of checks and logging of results"""
 
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None,monitor=None):
+    """Creat class instance: set defaults, link arguments to instance, create a range of compiled regular expressions"""
     self.cls = cls
     self.project = cls
     self.abortMessageCount = parent.abortMessageCount
     self.monitor = monitor
-    ## check done earlier
-    ## assert cls in ['CORDEX','SPECS'],'This version of the checker only supports CORDEX, SPECS'
     self.re_isInt = re.compile( '[0-9]+' )
     self.errorCount = 0
     self.passCount = 0
@@ -102,9 +103,11 @@ class checkBase(object):
       self.parent.amapListDraft = []
 
   def isInt(self,x):
+    """Check that a string is a representation of an integer"""
     return self.re_isInt.match( x ) != None
 
   def logMessage(self, msg, error=False ):
+    """Log messages and count messages"""
     self.messageCount += 1
     assert self.abortMessageCount < 0 or self.abortMessageCount > self.messageCount, 'Raising error [TESTX01], perhaps for testing'
     if self.parent != None and self.parent.log != None:
@@ -131,17 +134,20 @@ class checkBase(object):
            print 'Leaking file handles [1]: %s --- %s' % (nofh0, nofh9)
 
   def log_exception( self, msg):
+    """Logging of exceptions -- putting trace information in log files"""
     if self.parent != None and self.parent.log != None:
         self.parent.log.error("Exception has occured" ,exc_info=1)
     else:
         traceback.print_exc(file=sys.stdout)
 
   def log_error( self, msg ):
+    """Create an error log message and call logMessage; count errors;"""
     self.lastError = msg
     self.errorCount += 1
     self.logMessage( '%s.%s: FAILED:: %s' % (self.id,self.getCheckId(),msg), error=True )
 
   def log_pass( self ):
+    """Create a pass log message and call logMessage; count passes;"""
     self.passCount = True
     if self.reportPass:
       self.logMessage(  '%s.%s: OK' % (self.id,self.getCheckId()) )
@@ -164,6 +170,13 @@ class checkBase(object):
         return self.checkId[0]
 
   def test(self,res,msg,abort=False,part=False,appendLogfile=(None,None)):
+    """Handle test results. 
+      :param res: [True/False] result of test;
+      :param msg: Message describing the test;
+      :param abort: {optional} Set True if checks should be aborted when test fails;
+      :param part: {optional} Set True if this is a component of a test (logging of pass suppressed);
+      :param appendLogfile: {optional} Allows results to be appended to pre-existing log file;
+    """
     self.appendLogfile = appendLogfile
     if res:
       if not part:
@@ -175,6 +188,7 @@ class checkBase(object):
     return res
 
   def runChecks(self):
+    """Run all the checks registered in this instance (in self.checks) and handle exceptions"""
 
     try:
       for c in self.checks:
@@ -188,6 +202,8 @@ class checkBase(object):
       raise loggedException
     
 class checkFileName(checkBase):
+  """Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).
+Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method."""
 
   def init(self):
     self.id = 'C4.001'
@@ -200,6 +216,8 @@ class checkFileName(checkBase):
 ####
 
   def check(self,fn):
+    """Initiate checks: manage arguments and then call *runChecks* (inherited from checkBase class).
+  Arguments: fn: file name: the file name to be checked."""
     self.errorCount = 0
     assert type(fn) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(fn)
     self.fn = fn
@@ -209,6 +227,12 @@ class checkFileName(checkBase):
     self.parent.fnDict = self.fnDict
 ###
   def do_check_fn(self):
+    """Basic file name checks:
+       (1) Check suffix;
+       (1b) [for ESA-CCI files] check presence of "ESACCI" and identify file naming convention;
+       (2) Split file name into components and check number of such components;
+       (3) Additional specialist checks for ESA-CCI, CORDEX, CMIP-type (for the time range).
+    """
     fn = self.fn
     self.errorCount = 0
     self.completed = False
@@ -342,6 +366,7 @@ class checkFileName(checkBase):
         self.log_pass()
 
   def do_check_fnextra(self):
+    """Check whether file name components match constraints -- but only if those constraints are not implicitly verified through comparison with global attributes in later checks"""
     self.checkId = ('004','file_name_extra' )
     vocabs = self.pcfg.vocabs
     m = []
@@ -352,13 +377,13 @@ class checkFileName(checkBase):
             m.append( (a,self.fnDict[a],vocabs[a].note) )
         except:
           print 'failed trying to check file name component %s' % a
-          raise
-          ##raise baseException1( 'failed trying to check file name component %s' % a )
+          raise baseException( 'failed trying to check file name component %s' % a )
 
     self.test( len(m)  == 0, 'File name components do not match constraints: %s' % str(m) )
 
 
 class checkGlobalAttributes(checkBase):
+  """Check global and variable attributes, using tables of valid values"""
 
   def init(self):
     self.id = 'C4.002'
@@ -608,6 +633,7 @@ class checkGlobalAttributes(checkBase):
     self.completed = True
        
 class checkStandardDims(checkBase):
+  """Check the dimensions which are defined in the specifications"""
 
   def init(self):
     self.id = 'C4.003'
@@ -1048,6 +1074,7 @@ class listControl(object):
 
 
 class checkByVar(checkBase):
+  """Run some checks on groups of files with a common variable. Checks for continuity of time in group"""
 
   def init(self,fileNameSeparator='_'):
     self.id = 'C5.001'
@@ -1060,6 +1087,10 @@ class checkByVar(checkBase):
     self.fLogDict = fLogDict
 
   def impt(self,flist):
+    """Scan a list of files and identify groups which a common variable and extract time ranges into a dictionary of lists, keyed on group identifiers.
+     :param flist: List of file names.
+
+ This routine has rather obscure nested logical tests used to identify the group to which a file belongs. The complexity arises from the fact that the identification of the files that should form a continuous time series from the file names alone is not a standardised feature of the file names."""
     ee = {}
     elist = []
     for f in flist:
@@ -1072,11 +1103,9 @@ class checkByVar(checkBase):
         else:
           freq = None
 
-        ### isFixed = freq  in ['fx','fixed']
         group = fnParts[ self.pcfg.groupIndex ]
 
         if self.parent.fileIsFixed:
-       ## if isFixed:
           trange = None
         else:
           trange = string.split( fnParts[-1], '-' )
@@ -1135,6 +1164,7 @@ class checkByVar(checkBase):
       self.runChecks()
 
   def checkTrange(self):
+    """Manage time range checks: loop over groups of files identified by :meth:`impt`"""
     keys = self.ee.keys()
     keys.sort()
     for k in keys:
@@ -1145,6 +1175,7 @@ class checkByVar(checkBase):
           self.checkThisTrange( self.ee[k][k2], k )
 
   def checkThisTrange( self, tt, group):
+    """Check consistency across a list of time ranges"""
 
     if group in ['3hr','6hr']:
        kg = 'subd'
