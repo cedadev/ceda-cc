@@ -1,13 +1,14 @@
-
+"""Some exceptions used in the code"""
 
 class abortChecks(Exception):
+  """Raised when checks are aborted following failure of a critical test (e.g. file name cannot be parsed)."""
   pass
 class loggedException(Exception):
-  pass
-class baseException1(Exception):
+  """Raised after an exception has been caught and logged in a checking class, allowing execution to fall back to the loop over files."""
   pass
 
 class baseException(Exception):
+  """Basic exception for general use in code."""
 
   def __init__(self,msg):
     self.msg = 'utils_c4:: %s' % msg
