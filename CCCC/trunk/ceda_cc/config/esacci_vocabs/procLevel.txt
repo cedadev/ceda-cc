@@ -46,3 +46,7 @@ GHRSST
 IND
 Indicators derived from satellite data.
 ESACCI
+*Level 3 
+L3A
+Added for GLOB SNOW
+GLOB SNOW

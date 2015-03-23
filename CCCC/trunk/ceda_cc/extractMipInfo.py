@@ -613,11 +613,12 @@ snsubber = snsub()
 
 mips = { "cmip5":NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
 "ccmi":NT_mip( 'ccmi', 'ccmi_vocabs/mip/', 'CCMI1_*'),
+"pmip":NT_mip( 'pmip', 'pmip3_vocabs/mip/', 'PMIP3_*'),
 "cordex":NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*'),
 "specs":NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*') }
 
-mipl = ['cmip5']
 mipl = mips.keys()
+mipl = ['pmip']
 mips = map( lambda x: mips[x], mipl )
 r = run()
 
