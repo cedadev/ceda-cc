@@ -11,3 +11,4 @@ Sea Ice SEAICE
 Sea Level SEALEVEL
 Sea Surface Temperature GHRSST
 Soil Moisture SOILMOISTURE
+GLOB SNOW  GlobSnow

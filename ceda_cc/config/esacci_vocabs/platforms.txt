@@ -41,3 +41,4 @@ SPOT-5
 Terra
 Topex/Poseidon
 TRMM
+NIMBUS

@@ -250,8 +250,10 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 
 
     if self.pcfg.projectV.id in ['ESA-CCI']:
-      self.test( 'ESACCI' in bits[:2], 'File name not a valid ESA-CCI file name: %s' % fn, abort=True )
-      if bits[0] == 'ESACCI':
+      self.test( 'ESACCI' in bits[:2] or 'ESA' == bits[0], 'File name not a valid ESA-CCI file name: %s' % fn, abort=True )
+      if bits[0] == 'ESA':
+        self.esaFnId = 2
+      elif bits[0] == 'ESACCI':
         self.esaFnId = 1
       else:
         self.esaFnId = 0
@@ -265,7 +267,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 
     self.fnDict = {}
     if self.pcfg.projectV.id in ['ESA-CCI']:
-      l0 = {0:6, 1:5}[self.esaFnId]  
+      l0 = {0:6, 1:5, 2:5}[self.esaFnId]  
       for i in range(l0):
         x = self.pcfg.globalAttributesInFn[i]
         if x != None and x[0] == '*':
@@ -281,7 +283,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
             self.fnDict['gdsv'] = bits[-2]
           else:
             self.fnDict['additional'] = bits[-2]
-      elif self.esaFnId == 1:
+      elif self.esaFnId in [1,2]:
         if len(bits) == 8:
           self.fnDict['additional'] = bits[-3]
         
@@ -978,11 +980,17 @@ class mipVocab(object):
      else:
        raise baseException( 'mipVocab.lists called with bad list specifier %s' % k2 )
 
-  def isInTable( self, v, vg ):
+  def isInTable( self, v, vg1 ):
+    vg = vg1
+    if vg == 'ESA':
+      vg = 'ESACCI'
     assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys() [%s]' % (vg,str(self.varcons.keys()) )
     return (v in self.varcons[vg].keys())
       
-  def getAttr( self, v, vg, a ):
+  def getAttr( self, v, vg1, a ):
+    vg = vg1
+    if vg == 'ESA':
+      vg = 'ESACCI'
     assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys()'
     assert v in self.varcons[vg].keys(), '%s not found in self.varcons[%s].keys()' % (v,vg)
       

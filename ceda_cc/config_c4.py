@@ -442,7 +442,7 @@ class projectConfig(object):
                'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
                'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO',examples=['P1Y'] ), \
                'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})[\s]*(km|m).*', examples=['20km','1 km at nadir'] ), \
-               'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency'] ), \
+               'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency','CLIPC'] ), \
                'cciProject':utils.listControl( 'cciproject', cciProjectList ), \
                'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
              }
@@ -464,10 +464,14 @@ class projectConfig(object):
 
 
   def setEsaCciFNType(self,id):
-      self.groupIndex =  self.fnoptions['groupIndex'][id]
-      self.trangeIndex = self.fnoptions['trangeIndex'][id]
-      self.globalAttributesInFn = self.fnoptions['inFn'][id]
-      self.varIndex = self.fnoptions['varIndex'][id]
+      if id in [1,2]:
+        id1 = 1
+      else:
+        id1 = id
+      self.groupIndex =  self.fnoptions['groupIndex'][id1]
+      self.trangeIndex = self.fnoptions['trangeIndex'][id1]
+      self.globalAttributesInFn = self.fnoptions['inFn'][id1]
+      self.varIndex = self.fnoptions['varIndex'][id1]
 
 
 def copy_config(dest_dir):

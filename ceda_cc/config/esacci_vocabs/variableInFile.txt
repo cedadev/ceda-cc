@@ -4,3 +4,4 @@ SSTskin sea_surface_temperature  sea_surface_skin_temperature
 SSTdepth analysed_sst       sea_water_temperature
 BA    burned_area burned_area
 OC_PRODUCTS chlor_a mass_concentration_of_chlorophyll_a_in_sea_water
+SWE SWE lwe_thickness_of_surface_snow_amount
