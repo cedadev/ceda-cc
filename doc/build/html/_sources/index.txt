@@ -20,11 +20,11 @@ Calling options
 =============================================  ==========================================================
 Command line                                   Description
 =============================================  ==========================================================
-ceda-cc -p <project> -D <directory>  [..]      check all data in directory tree under specified directory
-ceda-cc -p <project> -d <directory>  [..]      check all data in specified directory
-ceda-cc -p <project> -f <file>       [..]      check a single file 
-ceda-cc --sum <log file directory>   [..]      create an overview of results
-ceda-cc --copy-config  <target diectory> [..]  copy configuration files to a new directory
+ceda-cc -p <project> -D <directory>            check all data in directory tree under specified directory
+ceda-cc -p <project> -d <directory>            check all data in specified directory
+ceda-cc -p <project> -f <file>                 check a single file 
+ceda-cc --sum <log file directory>             create an overview of results
+ceda-cc --copy-config-file  <target diectory>  copy configuration files to a new directory
 =============================================  ==========================================================
 
 .. automodule:: ccinit
