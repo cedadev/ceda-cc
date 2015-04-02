@@ -441,7 +441,7 @@ class projectConfig(object):
                'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ), enumeration=True, split=True, splitVal=',' ), \
                'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
                'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO',examples=['P1Y'] ), \
-               'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})[\s]*(km|m).*', examples=['20km','1 km at nadir'] ), \
+               'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})[\s]*(km|m|degree).*', examples=['20km','1 km at nadir'] ), \
                'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency','CLIPC'] ), \
                'cciProject':utils.listControl( 'cciproject', cciProjectList ), \
                'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
