@@ -7,6 +7,53 @@ def strmm3( mm ):
 from fcc_utils import mipTableScan
 from xceptions import *
 
+class timeInt(object):
+
+   vc = {'gregorian':0, 'standard':0, 'proleptic_gregorian':0, 'noleap':1, '365_day':1, 'all_leap':2, '366_day':2, '360_day':3, 'julian':0, 'none':None}
+   mnmx = [ (365,366),(365,365),(366,366),(360,360) ]
+   mmnmmx = [ (28,31),(28,31),(29,31),(30,30) ]
+   def __init__(self,cal='proleptic_gregorian',dpymn=None, dpymx=None,dpmmn=None,dpmmx=None,tol=1.e-6):
+     self.tol = tol
+     if not self.vc.has_key(cal) or cal == None:
+       assert dpymx != None and dpymn != None, 'If standard calendar is not use, dpymn and dpymx must be set'
+       assert dpmmx != None and dpmmn != None, 'If standard calendar is not use, dpmmn and dpmmx must be set'
+       self.dpymn = dpymn - tol
+       self.dpymx = dpymx + tol
+       self.dpmmn = dpmmn - tol
+       self.dpmmx = dpmmx + tol
+     else:
+       self.dpymn = self.mnmx[self.vc[cal]][0] - tol
+       self.dpymx = self.mnmx[self.vc[cal]][1] + tol
+       self.dpmmn = self.mmnmmx[self.vc[cal]][0] - tol
+       self.dpmmx = self.mmnmmx[self.vc[cal]][1] + tol
+     self.map = { 'yr':'P1Y','monClim':'P1M','mon':'P1M','day':'P1D','6hr':'P6H','3hr':'P3H'}
+     self.nd = { 'x':'y' }
+
+   def setUnit(self,u):
+     if u not in ['days','months','years']:
+         print  'Time unit %s not supported' % u
+         self.u = None
+     else:
+         self.u = u
+
+   def chk(self,v,u,f):
+      if not self.map.has_key(f):
+         return (0,'No frequency check available for f = %s' % f )
+      if u not in ['days']:
+         return (0,'No frequency check available for units = %s' % u )
+      x = self.map(f)
+      if x == 'P1Y':
+        return (v > self.dpymn) and (v < self.dpymx)
+      elif x == 'P1M':
+        return (v > self.dpmmn) and (v < self.dpmmx)
+      elif x == 'P1D':
+        return (v > 1.-self.tol) and (v < 1.+self.tol)
+      elif x == 'P6H':
+        return (v > 0.25-self.tol) and (v < 0.25+self.tol)
+      elif x == 'P3H':
+        return (v > 0.125-self.tol) and (v < 0.125+self.tol)
+      
+
 class reportSection(object):
 
   def __init__(self,id,cls,parent=None, description=None):
