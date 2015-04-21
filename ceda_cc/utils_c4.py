@@ -371,6 +371,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
         self.test( len(bits) == 2, 'File time segment [%s] will not parse into 2 elements' % (self.fnParts[-1] ), abort=True, part=True )
 
         self.test(  len(bits[0]) == len(bits[1]), 'Start and end time specified in file name [%s] of unequal length' % (self.fnParts[-1] ), abort=True, part=True  )
+        self.test(  int(bits[0]) <= int(bits[1]), 'Start and end time specified in file name [%s] in wrong order' % (self.fnParts[-1] ), abort=True, part=True  )
 
         for b in bits:
           self.test( self.isInt(b), 'Time segment in filename [%s] contains non integer characters' % (self.fnParts[-1] ),  abort=True, part=True  )
