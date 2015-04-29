@@ -1,25 +1,33 @@
-
+"""ceda_cc
+##########
+USAGE: see README.txt in distribution directory.
+"""
 import sys
 from ccinit import c4_init
 
 testmain=False
 ## callout to summary.py: if this option is selected, imports of libraries are not needed.
 if not testmain:
-  if __name__ == '__main__' and sys.argv[1] == '--sum':
-      import summary
-      summary.main()
-      raise SystemExit(0)
-  elif __name__ == '__main__' and sys.argv[1] == '-v':
-      from versionConfig import version, versionComment
-      print 'ceda-cc version %s [%s]' % (version,versionComment)
-      raise SystemExit(0)
-  elif __name__ == '__main__' and sys.argv[1] == '--unitTest':
-      print "Starting test suite 1"
-      import unitTestsS1
-      print "Starting test suite 2"
-      import unitTestsS2
-      print "Tests completed"
-      raise SystemExit(0)
+  if __name__ == '__main__':
+   if len(sys.argv) > 1:
+     if sys.argv[1] == '--sum':
+        import summary
+        summary.main()
+        raise SystemExit(0)
+     elif sys.argv[1] == '-v':
+        from versionConfig import version, versionComment
+        print 'ceda-cc version %s [%s]' % (version,versionComment)
+        raise SystemExit(0)
+     elif sys.argv[1] == '--unitTest':
+        print "Starting test suite 1"
+        import unitTestsS1
+        print "Starting test suite 2"
+        import unitTestsS2
+        print "Tests completed"
+        raise SystemExit(0)
+   else:
+     print __doc__
+     raise SystemExit(0)
 
 # Standard library imports
 import os, string, time, glob, pkgutil
