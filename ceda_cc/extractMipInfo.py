@@ -618,7 +618,7 @@ mips = { "cmip5":NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
 "specs":NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*') }
 
 mipl = mips.keys()
-mipl = ['pmip']
+mipl = ['specs']
 mips = map( lambda x: mips[x], mipl )
 r = run()
 

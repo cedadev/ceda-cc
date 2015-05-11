@@ -525,7 +525,7 @@ ok_max_mean_abs:   1.05e+20
 !
 
 !============
-variable_entry:    sos
+variable_entry:    so
 !============
 modeling_realm:    ocean
 !----------------------------------
@@ -543,7 +543,7 @@ shuffle:           1
 deflate:           1
 deflate_level:     6
 dimensions:        longitude latitude olevel time
-out_name:          sos
+out_name:          so
 type:              real
 valid_min:         -9.37e+17
 valid_max:         1.05e+20
