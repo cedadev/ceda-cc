@@ -251,12 +251,14 @@ class checker(object):
 
 class main(object):
 
-  def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False):
+  def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False,cmdl=None):
     logDict = {}
     ecount = 0
     c4i = c4_init(args=args)
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
     c4i.logger.info( 'Source: %s' % c4i.source )
+    if cmdl != None:
+      c4i.logger.info( 'Command: %s' % cmdl )
       
     isDummy  = c4i.project[:2] == '__'
     if (ncLib == None) and (not isDummy):
@@ -432,7 +434,8 @@ def main_entry():
       import unitTestsS2
       print "Tests completed"
   else:
-     main(printInfo=True)
+     cmdl = string.join( sys.argv )
+     main(printInfo=True, cmdl=cmdl)
 
 if __name__ == '__main__':
   main_entry()
