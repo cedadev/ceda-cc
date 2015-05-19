@@ -54,7 +54,7 @@ class c4_init(object):
    
     # Show help if no args or help requested
     if len(args) == 0 or args[0] in ('-h', '-help', '--help'):
-       print 'Help command not implemented yet'
+       print __doc__
        raise SystemExit(0)	
     # The --copy-config option must be the first argument if it is present.
     elif args[0] == '--copy-config':

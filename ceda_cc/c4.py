@@ -1,8 +1,8 @@
-"""ceda_cc
+"""c4.py
 ##########
-USAGE: see README.txt in distribution directory.
+Entry point for command line usage -- see ccinit for usage information.
 """
-import sys
+import sys, string
 
 def main_entry():
   """

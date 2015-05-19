@@ -1,6 +1,10 @@
 """ceda_cc
 ##########
-USAGE: see README.txt in distribution directory.
+Entry point for API.
+
+USAGE
+#####
+c4_run.main( <argument list> )
 """
 import sys
 from ccinit import c4_init
@@ -250,6 +254,11 @@ class checker(object):
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
 class main(object):
+  """Main entry point for execution.
+
+     All compliance tests are completed in the instantiation of a "main" object. The object created will contain attributes with test results.
+  """
+  
 
   def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False,cmdl=None):
     logDict = {}
