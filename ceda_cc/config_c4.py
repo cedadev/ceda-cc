@@ -1,3 +1,10 @@
+"""config_c4
+##########
+USAGE:
+import config_c4
+
+This module sets some basic variables, including some vocabulary lists.
+"""
 import string
 import utils_c4 as utils
 import os
@@ -112,6 +119,9 @@ for l in ii[18:33]:
     interpolatedGrids[bits[1]] = ee
 
 class readVocab(object):
+  """readVocab:
+  A general class to read in vocabulary lists ("code lists" in ISO 19115 terminology) from a variety of structured text files.
+  """
 
   def __init__(self,dir):
     self.dir = dir
@@ -177,6 +187,15 @@ class readVocab(object):
 validSpecsInstitutions = ['IC3', 'MPI-M', 'KNMI', 'UOXF', 'CNRM-CERFACS', 'ENEA', 'MOHC', 'SMHI', 'IPSL', 'UREAD', 'ECWMF']
 
 class projectConfig(object):
+  """projectConfig:
+  Set project specific configuration options.
+  
+  USAGE
+  =====
+  pcfg = projectConfig( <project id>[, version=..] )
+
+  Creates a "pcfg" object which contains attributes used in the code, including vocabulary lists.
+  """
 
   def __init__(self, project, version=-1):
     knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']

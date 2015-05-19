@@ -1,7 +1,7 @@
 import logging, time, os, sys
 import utils_c4
 import config_c4 as config
-from c4 import fileMetadata, dummy, main
+from c4_run import fileMetadata, dummy, main
 from xceptions import *
 
 from file_utils import installedSupportedNetcdf
