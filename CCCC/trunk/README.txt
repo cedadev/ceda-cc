@@ -21,7 +21,7 @@ Optional arguments:
   --log <single|multi>  ## Set log file management option -- see "Single log" and "Multi-log" below.
   --blfmode <mode>      # set mode for batch log file -- see log file modes
   --flfmode <mode>      # set mode for file-level log file -- see log file modes
-  --aMap                # Read in some attribute mappings and run tests with virtual substitutions, see also map2nco.py
+  --aMap                # Read in some attribute mappings and run tests with virtual substitutions, see also amap2nco.py
 
 Environment variables:
 
