@@ -6,8 +6,6 @@
 The ceda-cc file compliance checker: technical documentation 
 ===================================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
@@ -30,10 +28,33 @@ ceda-cc --copy-config  <target diectory> [..]  copy configuration files to a new
 .. automodule:: ccinit
    :members:
 
+c4
+===============
+
+.. automodule:: c4
+   :members:
+
+
+c4_run
+===============
+
+.. automodule:: c4_run
+   :members:
+
+
+config_c4
+===============
+
+.. automodule:: config_c4
+   :members:
+
+
 utils_c4
 ===============
 
 .. automodule:: utils_c4
+   :show-inheritance:
+   :inherited-members:
    :members:
 
 xceptions

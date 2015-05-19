@@ -46,7 +46,6 @@
             
   <div class="section" id="the-ceda-cc-file-compliance-checker-technical-documentation">
 <h1>The ceda-cc file compliance checker: technical documentation<a class="headerlink" href="#the-ceda-cc-file-compliance-checker-technical-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
@@ -67,19 +66,19 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>ceda-cc -p &lt;project&gt; -D &lt;directory&gt;</td>
+<tr class="row-even"><td>ceda-cc -p &lt;project&gt; -D &lt;directory&gt;  [..]</td>
 <td>check all data in directory tree under specified directory</td>
 </tr>
-<tr class="row-odd"><td>ceda-cc -p &lt;project&gt; -d &lt;directory&gt;</td>
+<tr class="row-odd"><td>ceda-cc -p &lt;project&gt; -d &lt;directory&gt;  [..]</td>
 <td>check all data in specified directory</td>
 </tr>
-<tr class="row-even"><td>ceda-cc -p &lt;project&gt; -f &lt;file&gt;</td>
+<tr class="row-even"><td>ceda-cc -p &lt;project&gt; -f &lt;file&gt;       [..]</td>
 <td>check a single file</td>
 </tr>
-<tr class="row-odd"><td>ceda-cc &#8211;sum &lt;log file directory&gt;</td>
+<tr class="row-odd"><td>ceda-cc &#8211;sum &lt;log file directory&gt;   [..]</td>
 <td>create an overview of results</td>
 </tr>
-<tr class="row-even"><td>ceda-cc &#8211;copy-config-file  &lt;target diectory&gt;</td>
+<tr class="row-even"><td>ceda-cc &#8211;copy-config  &lt;target diectory&gt; [..]</td>
 <td>copy configuration files to a new directory</td>
 </tr>
 </tbody>
@@ -131,13 +130,100 @@
 </div>
 </div>
 </div>
+<div class="section" id="module-c4">
+<span id="c4"></span><h1>c4<a class="headerlink" href="#module-c4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="c4-py">
+<h2>c4.py<a class="headerlink" href="#c4-py" title="Permalink to this headline">¶</a></h2>
+<p>Entry point for command line usage &#8211; see ccinit for usage information.</p>
+<dl class="function">
+<dt id="c4.main_entry">
+<tt class="descclassname">c4.</tt><tt class="descname">main_entry</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/c4.html#main_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#c4.main_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around main() for use with setuptools.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-c4_run">
+<span id="c4-run"></span><h1>c4_run<a class="headerlink" href="#module-c4_run" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ceda-cc">
+<h2>ceda_cc<a class="headerlink" href="#ceda-cc" title="Permalink to this headline">¶</a></h2>
+<p>Entry point for API.</p>
+</div>
+<div class="section" id="usage">
+<h2>USAGE<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>c4_run.main( &lt;argument list&gt; )</p>
+<dl class="class">
+<dt id="c4_run.main">
+<em class="property">class </em><tt class="descclassname">c4_run.</tt><tt class="descname">main</tt><big>(</big><em>args=None</em>, <em>abortMessageCount=-1</em>, <em>printInfo=False</em>, <em>monitorFileHandles=False</em>, <em>cmdl=None</em><big>)</big><a class="reference internal" href="_modules/c4_run.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#c4_run.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main entry point for execution.</p>
+<p>All compliance tests are completed in the instantiation of a &#8220;main&#8221; object. The object created will contain attributes with test results.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-config_c4">
+<span id="config-c4"></span><h1>config_c4<a class="headerlink" href="#module-config_c4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>config_c4<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>USAGE:
+import config_c4</p>
+<p>This module sets some basic variables, including some vocabulary lists.</p>
+<dl class="attribute">
+<dt id="config_c4.NT_fnParts">
+<tt class="descclassname">config_c4.</tt><tt class="descname">NT_fnParts</tt><a class="headerlink" href="#config_c4.NT_fnParts" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">fnParts</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="config_c4.NT_project">
+<tt class="descclassname">config_c4.</tt><tt class="descname">NT_project</tt><a class="headerlink" href="#config_c4.NT_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">project</span></tt></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="config_c4.copy_config">
+<tt class="descclassname">config_c4.</tt><tt class="descname">copy_config</tt><big>(</big><em>dest_dir</em><big>)</big><a class="reference internal" href="_modules/config_c4.html#copy_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config_c4.copy_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy the current default configuration directory into a separate directory.</p>
+<p>The directory &lt;ceda_cc-package-dir&gt;/config is copied to <cite>dest_dir</cite>.
+This is useful when ceda-cc is installed as a Python package and the user may
+not know where the config directory is stored.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dest_dir</strong> &#8211; should be a path to a directory which does not yet exist.  
+The configuration directory will be copied to this path.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="config_c4.projectConfig">
+<em class="property">class </em><tt class="descclassname">config_c4.</tt><tt class="descname">projectConfig</tt><big>(</big><em>project</em>, <em>version=-1</em><big>)</big><a class="reference internal" href="_modules/config_c4.html#projectConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config_c4.projectConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>projectConfig:
+Set project specific configuration options.</p>
+<p>pcfg = projectConfig( &lt;project id&gt;[, version=..] )</p>
+<p>Creates a &#8220;pcfg&#8221; object which contains attributes used in the code, including vocabulary lists.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="config_c4.readVocab">
+<em class="property">class </em><tt class="descclassname">config_c4.</tt><tt class="descname">readVocab</tt><big>(</big><em>dir</em><big>)</big><a class="reference internal" href="_modules/config_c4.html#readVocab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config_c4.readVocab" title="Permalink to this definition">¶</a></dt>
+<dd><p>readVocab:
+A general class to read in vocabulary lists (&#8220;code lists&#8221; in ISO 19115 terminology) from a variety of structured text files.</p>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="module-utils_c4">
 <span id="utils-c4"></span><h1>utils_c4<a class="headerlink" href="#module-utils_c4" title="Permalink to this headline">¶</a></h1>
 <p>A set of classes running checks and providing utilities to support checks</p>
 <dl class="class">
 <dt id="utils_c4.checkBase">
 <em class="property">class </em><tt class="descclassname">utils_c4.</tt><tt class="descname">checkBase</tt><big>(</big><em>cls='CORDEX'</em>, <em>reportPass=True</em>, <em>parent=None</em>, <em>monitor=None</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base class for checks, containing a set of standard methods for managing operation of checks and logging of results</p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base class for checks, containing a set of standard methods for managing operation of checks and logging of results</p>
 <dl class="method">
 <dt id="utils_c4.checkBase.isInt">
 <tt class="descname">isInt</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkBase.isInt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkBase.isInt" title="Permalink to this definition">¶</a></dt>
@@ -190,7 +276,8 @@
 <dl class="class">
 <dt id="utils_c4.checkByVar">
 <em class="property">class </em><tt class="descclassname">utils_c4.</tt><tt class="descname">checkByVar</tt><big>(</big><em>cls='CORDEX'</em>, <em>reportPass=True</em>, <em>parent=None</em>, <em>monitor=None</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkByVar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkByVar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run some checks on groups of files with a common variable. Checks for continuity of time in group</p>
+<dd><p>Bases: <a class="reference internal" href="#utils_c4.checkBase" title="utils_c4.checkBase"><tt class="xref py py-class docutils literal"><span class="pre">utils_c4.checkBase</span></tt></a></p>
+<p>Run some checks on groups of files with a common variable. Checks for continuity of time in group</p>
 <dl class="method">
 <dt id="utils_c4.checkByVar.checkThisTrange">
 <tt class="descname">checkThisTrange</tt><big>(</big><em>tt</em>, <em>group</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkByVar.checkThisTrange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkByVar.checkThisTrange" title="Permalink to this definition">¶</a></dt>
@@ -221,12 +308,60 @@
 <p>This routine has rather obscure nested logical tests used to identify the group to which a file belongs. The complexity arises from the fact that the identification of the files that should form a continuous time series from the file names alone is not a standardised feature of the file names.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="utils_c4.checkByVar.isInt">
+<tt class="descname">isInt</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.isInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that a string is a representation of an integer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkByVar.logMessage">
+<tt class="descname">logMessage</tt><big>(</big><em>msg</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.logMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log messages and count messages</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkByVar.log_error">
+<tt class="descname">log_error</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.log_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an error log message and call logMessage; count errors;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkByVar.log_exception">
+<tt class="descname">log_exception</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.log_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging of exceptions &#8211; putting trace information in log files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkByVar.log_pass">
+<tt class="descname">log_pass</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.log_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a pass log message and call logMessage; count passes;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkByVar.runChecks">
+<tt class="descname">runChecks</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.runChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the checks registered in this instance (in self.checks) and handle exceptions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkByVar.test">
+<tt class="descname">test</tt><big>(</big><em>res</em>, <em>msg</em>, <em>abort=False</em>, <em>part=False</em>, <em>appendLogfile=(None</em>, <em>None)</em><big>)</big><a class="headerlink" href="#utils_c4.checkByVar.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle test results. 
+:param res: [True/False] result of test;
+:param msg: Message describing the test;
+:param abort: {optional} Set True if checks should be aborted when test fails;
+:param part: {optional} Set True if this is a component of a test (logging of pass suppressed);
+:param appendLogfile: {optional} Allows results to be appended to pre-existing log file;</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="utils_c4.checkFileName">
 <em class="property">class </em><tt class="descclassname">utils_c4.</tt><tt class="descname">checkFileName</tt><big>(</big><em>cls='CORDEX'</em>, <em>reportPass=True</em>, <em>parent=None</em>, <em>monitor=None</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkFileName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).
+<dd><p>Bases: <a class="reference internal" href="#utils_c4.checkBase" title="utils_c4.checkBase"><tt class="xref py py-class docutils literal"><span class="pre">utils_c4.checkBase</span></tt></a></p>
+<p>Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).
 Inherits <a class="reference internal" href="#utils_c4.checkBase" title="utils_c4.checkBase"><tt class="xref py py-class docutils literal"><span class="pre">checkBase</span></tt></a> class. Checks are run by the <a class="reference internal" href="#utils_c4.checkFileName.check" title="utils_c4.checkFileName.check"><tt class="xref py py-meth docutils literal"><span class="pre">check()</span></tt></a> method.</p>
 <dl class="method">
 <dt id="utils_c4.checkFileName.check">
@@ -251,18 +386,161 @@ Arguments: fn: file name: the file name to be checked.</p>
 <dd><p>Check whether file name components match constraints &#8211; but only if those constraints are not implicitly verified through comparison with global attributes in later checks</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="utils_c4.checkFileName.isInt">
+<tt class="descname">isInt</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.isInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that a string is a representation of an integer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkFileName.logMessage">
+<tt class="descname">logMessage</tt><big>(</big><em>msg</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.logMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log messages and count messages</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkFileName.log_error">
+<tt class="descname">log_error</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.log_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an error log message and call logMessage; count errors;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkFileName.log_exception">
+<tt class="descname">log_exception</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.log_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging of exceptions &#8211; putting trace information in log files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkFileName.log_pass">
+<tt class="descname">log_pass</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.log_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a pass log message and call logMessage; count passes;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkFileName.runChecks">
+<tt class="descname">runChecks</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.runChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the checks registered in this instance (in self.checks) and handle exceptions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkFileName.test">
+<tt class="descname">test</tt><big>(</big><em>res</em>, <em>msg</em>, <em>abort=False</em>, <em>part=False</em>, <em>appendLogfile=(None</em>, <em>None)</em><big>)</big><a class="headerlink" href="#utils_c4.checkFileName.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle test results. 
+:param res: [True/False] result of test;
+:param msg: Message describing the test;
+:param abort: {optional} Set True if checks should be aborted when test fails;
+:param part: {optional} Set True if this is a component of a test (logging of pass suppressed);
+:param appendLogfile: {optional} Allows results to be appended to pre-existing log file;</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="utils_c4.checkGlobalAttributes">
 <em class="property">class </em><tt class="descclassname">utils_c4.</tt><tt class="descname">checkGlobalAttributes</tt><big>(</big><em>cls='CORDEX'</em>, <em>reportPass=True</em>, <em>parent=None</em>, <em>monitor=None</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkGlobalAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkGlobalAttributes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check global and variable attributes, using tables of valid values</p>
+<dd><p>Bases: <a class="reference internal" href="#utils_c4.checkBase" title="utils_c4.checkBase"><tt class="xref py py-class docutils literal"><span class="pre">utils_c4.checkBase</span></tt></a></p>
+<p>Check global and variable attributes, using tables of valid values</p>
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.isInt">
+<tt class="descname">isInt</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.isInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that a string is a representation of an integer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.logMessage">
+<tt class="descname">logMessage</tt><big>(</big><em>msg</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.logMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log messages and count messages</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.log_error">
+<tt class="descname">log_error</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.log_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an error log message and call logMessage; count errors;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.log_exception">
+<tt class="descname">log_exception</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.log_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging of exceptions &#8211; putting trace information in log files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.log_pass">
+<tt class="descname">log_pass</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.log_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a pass log message and call logMessage; count passes;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.runChecks">
+<tt class="descname">runChecks</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.runChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the checks registered in this instance (in self.checks) and handle exceptions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkGlobalAttributes.test">
+<tt class="descname">test</tt><big>(</big><em>res</em>, <em>msg</em>, <em>abort=False</em>, <em>part=False</em>, <em>appendLogfile=(None</em>, <em>None)</em><big>)</big><a class="headerlink" href="#utils_c4.checkGlobalAttributes.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle test results. 
+:param res: [True/False] result of test;
+:param msg: Message describing the test;
+:param abort: {optional} Set True if checks should be aborted when test fails;
+:param part: {optional} Set True if this is a component of a test (logging of pass suppressed);
+:param appendLogfile: {optional} Allows results to be appended to pre-existing log file;</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="utils_c4.checkStandardDims">
 <em class="property">class </em><tt class="descclassname">utils_c4.</tt><tt class="descname">checkStandardDims</tt><big>(</big><em>cls='CORDEX'</em>, <em>reportPass=True</em>, <em>parent=None</em>, <em>monitor=None</em><big>)</big><a class="reference internal" href="_modules/utils_c4.html#checkStandardDims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils_c4.checkStandardDims" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check the dimensions which are defined in the specifications</p>
+<dd><p>Bases: <a class="reference internal" href="#utils_c4.checkBase" title="utils_c4.checkBase"><tt class="xref py py-class docutils literal"><span class="pre">utils_c4.checkBase</span></tt></a></p>
+<p>Check the dimensions which are defined in the specifications</p>
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.isInt">
+<tt class="descname">isInt</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.isInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that a string is a representation of an integer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.logMessage">
+<tt class="descname">logMessage</tt><big>(</big><em>msg</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.logMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log messages and count messages</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.log_error">
+<tt class="descname">log_error</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.log_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an error log message and call logMessage; count errors;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.log_exception">
+<tt class="descname">log_exception</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.log_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging of exceptions &#8211; putting trace information in log files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.log_pass">
+<tt class="descname">log_pass</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.log_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a pass log message and call logMessage; count passes;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.runChecks">
+<tt class="descname">runChecks</tt><big>(</big><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.runChecks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all the checks registered in this instance (in self.checks) and handle exceptions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="utils_c4.checkStandardDims.test">
+<tt class="descname">test</tt><big>(</big><em>res</em>, <em>msg</em>, <em>abort=False</em>, <em>part=False</em>, <em>appendLogfile=(None</em>, <em>None)</em><big>)</big><a class="headerlink" href="#utils_c4.checkStandardDims.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle test results. 
+:param res: [True/False] result of test;
+:param msg: Message describing the test;
+:param abort: {optional} Set True if checks should be aborted when test fails;
+:param part: {optional} Set True if this is a component of a test (logging of pass suppressed);
+:param appendLogfile: {optional} Allows results to be appended to pre-existing log file;</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -311,6 +589,19 @@ Arguments: fn: file name: the file name to be checked.</p>
 <li><a class="reference internal" href="#log-file-modes">Log file modes</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-c4">c4</a><ul>
+<li><a class="reference internal" href="#c4-py">c4.py</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-c4_run">c4_run</a><ul>
+<li><a class="reference internal" href="#ceda-cc">ceda_cc</a></li>
+<li><a class="reference internal" href="#usage">USAGE</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-config_c4">config_c4</a><ul>
+<li><a class="reference internal" href="#id1">config_c4</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-utils_c4">utils_c4</a></li>
