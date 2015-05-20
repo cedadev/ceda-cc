@@ -649,31 +649,40 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('007','filename_filemetadata_consistency')
     m = []
     for i in range(len(self.globalAttributesInFn)):
-       if self.globalAttributesInFn[i] != None and self.globalAttributesInFn[i][0] != '*':
-         targVal = fnParts[i]
-         if self.globalAttributesInFn[i][0] == "@":
-           if self.globalAttributesInFn[i][1:] == "mip_id":
+       gaif = self.globalAttributesInFn[i]
+       if gaif != None and gaif[0] != '*':
+         if gaif[-1] == ':':
+           bits = string.split(gaif,':')
+           gaif0 = gaif
+           gaif = bits[0]
+           ix = int(bits[1])
+         else:
+           ix = i
+
+         targVal = fnParts[ix]
+         if gaif[0] == "@":
+           if gaif[1:] == "mip_id":
                bits = string.split( globalAts[ "table_id" ] ) 
                if len( bits ) > 2 and bits[0] == "Table":
                  thisVal = bits[1]
                else:
                  thisVal = globalAts[ "table_id" ]
                  self.test( False, 'Global attribute table_id does not conform to CMOR pattern ["Table ......"]: %s' % thisVal, part=True)
-           elif self.globalAttributesInFn[i][1:] == "ensemble":
+           elif gaif[1:] == "ensemble":
                thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
 ## following mappings are depricated -- introduced for SPECS and withdrawn ---
-           elif self.globalAttributesInFn[i][1:] == "experiment_family":
+           elif gaif[1:] == "experiment_family":
                thisVal = globalAts["experiment_id"][:-4]
-           elif self.globalAttributesInFn[i][1:] == "forecast_reference_time":
+           elif gaif[1:] == "forecast_reference_time":
                x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
                thisVal = "S%s%s%s" % (x[:4],x[5:7],x[8:10])
-           elif self.globalAttributesInFn[i][1:] == "series":
+           elif gaif[1:] == "series":
                thisVal = 'series%s' % globalAts["series"]
            else:
                assert False, "Not coded to deal with this configuration: globalAttributesInFn[%s]=%s" % (i,self.globalAttributesInFn[i])
          
          else:
-             thisVal = globalAts[self.globalAttributesInFn[i]]
+             thisVal = globalAts[gaif]
 
          if thisVal not in [targVal,'__errorReported__']:
              m.append( (i,self.globalAttributesInFn[i]) )
