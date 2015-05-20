@@ -6,6 +6,6 @@ ensemble @ensemble
 model model_id
 realm modeling_realm
 frequency frequency
-start_date @forecast_reference_time
+start_date start_date
 table @mip_id
 project project_id
