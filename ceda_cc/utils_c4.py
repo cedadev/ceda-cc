@@ -620,7 +620,10 @@ class checkGlobalAttributes(checkBase):
       if self.parent.amapListDraft == None:
         self.parent.amapListDraft = []
       for m in mm:
-          self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s' % (varName,m[0],m[1],m[0],m[2]) )
+          if m[2] == None:
+            self.parent.amapListDraft.append( '## @var=%s;%s=%s|@delete=%s -- not supported yet' % (varName,m[0],m[1],m[0]) )
+          else:
+            self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s' % (varName,m[0],m[1],m[0],m[2]) )
 
     if ok:
        self.log_pass()
