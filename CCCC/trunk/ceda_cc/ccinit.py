@@ -11,6 +11,7 @@ Arguments:
   :--cae: "catch all errors": will trap exceptions and record in  log files, and then continue. Default is to stop after unrecognised exceptions.
   :--log: <single|multi>:  Set log file management option -- see "Single log" and "Multi-log" below.
   :--blfmode: <mode>:    Set mode for batch log file -- see log file modes
+  :--blfms:            Set milli-second mode for naming batch log files (instead of second mode);
   :--flfmode: <mode>:  Set mode for file-level log file -- see log file modes
   :--aMap:             Read in some attribute mappings and run tests with virtual substitutions;
 
@@ -37,6 +38,7 @@ class c4_init(object):
     self.logByFile = True
     self.policyFileLogfileMode = 'w'
     self.policyBatchLogfileMode = 'np'
+    self.policyBatchLogfileMs = False
     if args==None:
        args = sys.argv[1:]
     nn = 0
@@ -107,6 +109,8 @@ class c4_init(object):
         lfmk = args.pop(0)
         assert lfmk in ['a','n','np','w','wo'], 'Unrecognised batch logfile mode (--blfmode): %s' % lfmk
         self.policyBatchLogfileMode = lfmk
+      elif next == '--blfms':
+        self.policyBatchLogfileMs = False
       elif next == '-d':
         fdir = args.pop(0)
         flist = glob.glob( '%s/*.nc' % fdir  )
@@ -186,6 +190,10 @@ class c4_init(object):
        os.mkdir(   self.logDir )
 
     tstring1 = '%4.4i%2.2i%2.2i_%2.2i%2.2i%2.2i' % time.gmtime()[0:6]
+    if self.policyBatchLogfileMs:
+      t = time.time()
+      ms = int( ( t-int(t) )*1000. )
+      tsring1 += '.%3.3i' % ms
     self.batchLogfile = '%s/qcBatchLog_%s.txt' % (  self.logDir,tstring1)
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
     self.logger = logging.getLogger('c4logger')
