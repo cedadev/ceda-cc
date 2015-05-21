@@ -31,6 +31,7 @@ ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root 
 With the "-D" option, all files in the directory tree beneath the given directory will be checked. With the "-d" option, only files in the given directory will be checked.
 """
 import sys, os, string, time, logging
+import config_c4
 
 class c4_init(object):
 
@@ -64,7 +65,7 @@ class c4_init(object):
          self.commandHints( argsIn )
        args.pop(0)
        dest_dir = args.pop(0)
-       config.copy_config(dest_dir)
+       config_c4.copy_config(dest_dir)
        print 'Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir
        print
        raise SystemExit(0)
