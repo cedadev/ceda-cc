@@ -203,7 +203,7 @@ class dirParser(object):
       handler.log.info( 'skipping %s' % f )
       files.pop( files.index(f) )
       
-# record diretory names at each level
+# record directory names at each level
     if thisLev not in self.dirNames.keys():
        self.dirNames[thisLev] = []
     if bits[-1] not in self.dirNames[thisLev]:
