@@ -7,8 +7,14 @@ import sys, string
 def main_entry():
   """
    Wrapper around main() for use with setuptools.
-
   """
+  if len(sys.argv) == 1:
+      # Show command-line info and report that you must provide arguments
+      import ccinit
+      print ccinit.__doc__
+      print "\nERROR: Please provide command-line arguments."
+      return
+
   if sys.argv[1] == '--sum':
       import summary
       summary.main()

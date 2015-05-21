@@ -28,7 +28,7 @@ Note that the log files generated in multi-log mode will re-use file names. If r
 """
 ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root of directory tree>] [other options]
 
-With the "-D" option, all files in the directory tree beneath the given diretory will be checked. With the "-d" option, only files in the given directory will be checked.
+With the "-D" option, all files in the directory tree beneath the given directory will be checked. With the "-d" option, only files in the given directory will be checked.
 """
 import sys, os, string, time, logging
 
