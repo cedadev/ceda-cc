@@ -8,6 +8,7 @@ Arguments:
   :-D: <directory>: check all the NetCDF files in a directory tree (or latest versions if a recognised version managment system is defined for the project);
   :--ld: <log file directory>:  ## directory to take log files;
   :-R: <record file name>: file name for file to take one record per file checked;
+  :-l: <file list file>: a file containing one data file to check per line;
   :--cae: "catch all errors": will trap exceptions and record in  log files, and then continue. Default is to stop after unrecognised exceptions.
   :--log: <single|multi>:  Set log file management option -- see "Single log" and "Multi-log" below.
   :--blfmode: <mode>:    Set mode for batch log file -- see log file modes
@@ -26,7 +27,7 @@ Note that the log files generated in multi-log mode will re-use file names. If r
 """
 
 """
-ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root of directory tree>] [other options]
+ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root of directory tree>|-l <file list file>] [other options]
 
 With the "-D" option, all files in the directory tree beneath the given directory will be checked. With the "-d" option, only files in the given directory will be checked.
 """
@@ -125,6 +126,9 @@ class c4_init(object):
             if (os.path.isfile( fpath ) or os.path.islink( fpath )) and f[-3:] == '.nc':
               flist.append( fpath )
         self.source = '%s/.....' % fdir
+      elif next == '-l':
+        flist = open(args.pop(0)).read().split()
+        self.source = flist[0]
       elif next == '-R':
         self.recordFile = args.pop(0)
       elif next == '--ld':
