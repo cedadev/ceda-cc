@@ -65,3 +65,4 @@ SAR-X
 ASTER
 Poseidon-1
 TMI
+SSMIS

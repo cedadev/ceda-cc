@@ -67,3 +67,4 @@ Soil water index volumetric anomalies SWIVA
 Soil water index degree of saturation absolute SWIS
 Soil water index degree of saturation anomalies SWISA
 Snow Water Equivalent SWE
+Snow Water Equivalent SWE_max
