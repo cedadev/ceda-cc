@@ -333,7 +333,9 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       elif self.esaFnId in [1,2]:
         if len(bits) == 8:
           self.fnDict['additional'] = bits[-3]
-        
+
+          
+    
     if self.pcfg.groupIndex != None:
       self.group = self.fnParts[self.pcfg.groupIndex]
     else:
@@ -352,6 +354,11 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       ##self.freq = self.fnParts[1]
 
     self.var = self.fnParts[self.pcfg.varIndex]
+    print self.fnDict
+    if self.pcfg.projectV.id in ['ESA-CCI']:
+      if  self.fnDict['project'] == 'GlobSnow':
+        if self.fnDict['additional'] == 'weekly':
+          self.var += 'weekly'
 
     if self.pcfg.fnvdict != None:
       if self.pcfg.fnvdict.has_key( self.var ):
@@ -1064,7 +1071,7 @@ class patternControl(object):
       if cls == 'ISO':
         assert pattern in ['ISO8601 duration'], 'value of pattern [%s] for ISO constraint not recognised' % pattern
         if pattern == 'ISO8601 duration':
-          thispat = '^(P([0-9]+Y){0,1}([0-9]+M){0,1}([0-9]+D){0,1}(T([0-9]+H){0,1}([0-9]+M){0,1}([0-9]+(.[0-9]+){0,1}S){0,1}){0,1})$'
+          thispat = '^(P([0-9]+Y){0,1}([0-9]+M){0,1}([0-9]+D){0,1}(T([0-9]+H){0,1}([0-9]+M){0,1}([0-9]+(.[0-9]+){0,1}S){0,1}){0,1})$|^(P[0-9]+W)$'
         self.re_pat = re.compile( thispat )
         self.pattern = thispat
         self.pattern_src = pattern

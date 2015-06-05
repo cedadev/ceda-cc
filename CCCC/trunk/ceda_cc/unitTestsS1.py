@@ -284,4 +284,16 @@ else:
   print 'OK: [%s] Invalid value rejected %s' % (testId,str(res))
 
 
+testId = '#06.001'
+pc = utils_c4.patternControl( 'pattern test', 'ISO8601 duration', cls='ISO' )
+res = pc.check( 'P1Z' )
+if res:
+  print 'Failed: [%s] Invalid value passed' % (testId)
+else:
+  print 'OK: [%s] Invalid value rejected %s' % (testId,str(res))
+res = pc.check( 'P1W' )
+if res:
+  print 'OK: [%s] Valid value passed' % (testId)
+else:
+  print 'Failed: [%s] Valid value rejected %s' % (testId,str(res))
 
