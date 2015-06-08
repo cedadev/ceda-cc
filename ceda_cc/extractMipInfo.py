@@ -619,6 +619,7 @@ mips = { "cmip5":NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
 
 mipl = mips.keys()
 mipl = ['specs']
+mipl = ['cordex','cmip5']
 mips = map( lambda x: mips[x], mipl )
 r = run()
 

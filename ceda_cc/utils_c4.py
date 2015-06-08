@@ -354,7 +354,6 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       ##self.freq = self.fnParts[1]
 
     self.var = self.fnParts[self.pcfg.varIndex]
-    print self.fnDict
     if self.pcfg.projectV.id in ['ESA-CCI']:
       if  self.fnDict['project'] == 'GlobSnow':
         if self.fnDict['additional'] == 'weekly':
