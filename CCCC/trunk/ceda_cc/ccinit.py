@@ -31,7 +31,7 @@ ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root 
 
 With the "-D" option, all files in the directory tree beneath the given directory will be checked. With the "-d" option, only files in the given directory will be checked.
 """
-import sys, os, string, time, logging
+import sys, os, string, time, logging, glob
 import config_c4
 
 class c4_init(object):
