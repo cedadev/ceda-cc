@@ -354,14 +354,21 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       ##self.freq = self.fnParts[1]
 
     self.var = self.fnParts[self.pcfg.varIndex]
-    if self.pcfg.projectV.id in ['ESA-CCI']:
+    if self.pcfg.projectV.id in ['ESA-CCIxxx']:
       if  self.fnDict['project'] == 'GlobSnow':
         if self.fnDict['additional'] == 'weekly':
+          self.var += 'weekly'
+        elif self.fnDict['additional'] == 'monthly' and self.var == 'SWE':
           self.var += 'weekly'
 
     if self.pcfg.fnvdict != None:
       if self.pcfg.fnvdict.has_key( self.var ):
         self.var = self.pcfg.fnvdict.get( self.var )['v']
+      else:
+        addi = self.fnDict.get('additional','xxxx')
+        thiskey = '%s:%s' % (self.var,addi)
+        if self.pcfg.fnvdict.has_key( thiskey ):
+          self.var = self.pcfg.fnvdict.get( thiskey )['v']
 
     self.isFixed = self.freq in ['fx','fixed']
     self.parent.fileIsFixed = True
@@ -461,11 +468,15 @@ class checkGlobalAttributes(checkBase):
 
   def getId(self):
     if self.fileId == None:
-      self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'])
-      if self.globalAts['naming_authority'] == 'uk.ac.pml':
-        i0 = string.find(self.globalAts['id'],'OC4v6_QAA')
-        if i0 != -1:
-          self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'][:i0+9])
+      id = self.globalAts['id']
+      if id != '':
+        self.fileId = '%s.%s' % (self.globalAts['naming_authority'],id)
+        if self.globalAts['naming_authority'] == 'uk.ac.pml':
+          i0 = string.find(self.globalAts['id'],'OC4v6_QAA')
+          if i0 != -1:
+            self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'][:i0+9])
+      else:
+        self.fileId = '%s.:%s' % (self.globalAts['naming_authority'],self.globalAts['title'])
 
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
@@ -1031,8 +1042,19 @@ class mipVocab(object):
      self.varcons[vg] = {}
      for l in ll:
        if l[0] != '#':
-          dt, v, sn = string.split( string.strip(l) )
-          self.pcfg.fnvdict[dt] = { 'v':v, 'sn':sn }
+          bits = string.split( string.strip(l), '|' )
+          if len(bits) == 2:
+            p1,p2 = bits
+          else:
+            p1 = l
+            p2 = None
+          dt, v, sn = string.split( string.strip(p1) )
+          if p2 != None:
+            bits = string.split( string.strip(p2), '=' )
+            eex = { bits[0]:bits[1] }
+          else:
+            eex = None
+          self.pcfg.fnvdict[dt] = { 'v':v, 'sn':sn, 'ex':eex }
           ar = []
           ac = []
           self.varInfo[v] = {'ar':ar, 'ac':ac }
