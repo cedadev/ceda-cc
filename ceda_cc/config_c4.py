@@ -397,8 +397,14 @@ class projectConfig(object):
     if os.path.isfile( eafile ):
       for l in open( eafile ).readlines():
         if l[0] != '#':
-          bits = map( string.strip, string.split(l,',') )
+          if l[0] == "@":
+            p1,p2 = string.split( l[1:], '|' )
+          else:
+            p1,p2 = None, l
+          bits = map( string.strip, string.split(p2,',') )
           id = '%s.%s' % (bits[0],bits[1])
+          if p1 != None:
+            id += ':%s' % p1
           ee = {}
           for b in bits[2:]:
             bb = string.split(b,'=')
