@@ -354,12 +354,6 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       ##self.freq = self.fnParts[1]
 
     self.var = self.fnParts[self.pcfg.varIndex]
-    if self.pcfg.projectV.id in ['ESA-CCIxxx']:
-      if  self.fnDict['project'] == 'GlobSnow':
-        if self.fnDict['additional'] == 'weekly':
-          self.var += 'weekly'
-        elif self.fnDict['additional'] == 'monthly' and self.var == 'SWE':
-          self.var += 'weekly'
 
     if self.pcfg.fnvdict != None:
       if self.pcfg.fnvdict.has_key( self.var ):
@@ -1234,9 +1228,9 @@ class checkByVar(checkBase):
 
     assert nn==n2, 'some file lost!!!!!!'
     if len(elist) == 0:
-      self.info =  '%s files, %s' % (nn,str(ee.keys()) )
+      self.info =  '%s %s, %s' % (nn, maybe_plural("file", nn), str(ee.keys()))
     else:
-      self.info =  '%s files, %s frequencies, severe errors in file names: %s' % (nn,len(ee.keys()),len(elist) )
+      self.info =  '%s %s, %s frequencies, severe errors in file names: %s' % (nn, maybe_plural("file", nn), len(ee.keys()), len(elist))
       for e in elist:
         self.info += '\n%s' % e
     self.ee = ee
@@ -1325,3 +1319,9 @@ class sysMonitor(object):
             self.procs.split( '\n' ) )
     self.fhCountMax = max( self.fhCountMax, len(self.ps) )
     return len( self.ps )
+
+def maybe_plural(word, n):
+    "Return ``word`` if n is 1, and plural of ``word`` if n is not."
+    if n == 1:
+        return word
+    return "%ss" % word
