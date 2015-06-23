@@ -16,7 +16,7 @@ if not testmain:
    if len(sys.argv) > 1:
      if sys.argv[1] == '--sum':
         import summary
-        summary.main()
+        summary.summariseLogs()
         raise SystemExit(0)
      elif sys.argv[1] == '-v':
         from versionConfig import version, versionComment
