@@ -17,7 +17,7 @@ def main_entry():
 
   if sys.argv[1] == '--sum':
       import summary
-      summary.main()
+      summary.summariseLogs()
   elif sys.argv[1] == '-v':
       from versionConfig import version, versionComment
       print 'ceda-cc version %s [%s]' % (version,versionComment)

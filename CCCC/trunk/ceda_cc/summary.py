@@ -10,7 +10,7 @@ print '############################ %s' % HERE
 NT_esn = collections.namedtuple( 'errorShortName', ['name', 'long_name', 'description' ] )
 class errorShortNames(object):
 
-  def __init__(self,file='config/testStandardNames.txt' ):
+  def __init__(self, file='config/testStandardNames.txt'):
     assert os.path.isfile(file), 'File %s not found' % file
     ii = map( string.strip, open(file).readlines() )
     ll = [[ii[0],]]
@@ -32,9 +32,12 @@ def cmin(x,y):
   else:
     return min(x,y)
 
-class main(object):
+class LogSummariser(object):
 
   def __init__(self):
+    pass
+
+  def summarise(self):
     args = sys.argv[1:-1]
     idir = sys.argv[-1]
     ndisp = 2
@@ -47,12 +50,12 @@ class main(object):
         dohtml = True
     assert os.path.isdir( idir ), 'Directory %s not found' % idir
 
-    fl = glob.glob( '%s/*__qclog_*.txt' % idir )
     fb = glob.glob( '%s/qcBatchLog*' % idir )
     fb.sort()
     fb = fb[-1]
     ii = open( fb )
     jj = []
+
     for k in range(10):
       jj.append( string.strip(ii.readline()) )
     ii.close()
@@ -65,16 +68,19 @@ class main(object):
 ##2014-09-06 18:42:24,109 INFO Source: /data/work/cordex/early/AFR-44i/SMHI/ECMWF-ERAINT/evaluation//.....
 
     ee = {}
+
+    fl = glob.glob( '%s/*__qclog_*.txt' % idir )
     self.write( 'Summarising error reports from %s log file' % len(fl) )
     nne = 0
     nerr = 0
     ff = {}
+
     for f in fl:
       nef = 0
       elist = []
       for l in open(f).readlines():
         fn = string.split(f,'/')[-1]
-        if (l[:3] == 'C4.' and string.find(l, 'FAILED') != -1) or string.find(l,'CDMSError:') != -1:
+        if (l[:3] in ('C4.', 'C5.') and l.find('FAILED') > -1) or l.find('CDMSError:') > -1:
           nef += 1
           nerr += 1
           bits = map( string.strip, string.split(l, ':' ) )
@@ -115,6 +121,8 @@ class main(object):
       ks = ee[k][1].keys()
       if len(ks) == 1:
         self.write( '%s:  %s  %s' % (k,ee[k][0],ks[0]) )
+
+        # Show first set of files that failed [To show them all change to: range(len(ee[k][1][ks[0]][1])) ]
         for i in range(cmin(ndisp,ee[k][0])):
           self.write( '               %s' % ee[k][1][ks[0]][1][i] )
       else:
@@ -122,6 +130,8 @@ class main(object):
         ks.sort()
         for k2 in ks:
           self.write( '  --- %s: %s' % (k2,ee[k][1][k2][0]) )
+
+          # Show first set of files that failed [To show them all change to: range(len(ee[k][1][k2][1]))
           for i in range(cmin(ndisp,ee[k][1][k2][0])):
             self.write( '               %s' % ee[k][1][k2][1][i] )
 
@@ -154,7 +164,7 @@ class main(object):
     self.testdict = {}
     for t in self.tests:
       self.testdict[t[0]] = (t[1],t[2])
-    
+
   def write( self, s ):
     print s
 
@@ -167,7 +177,7 @@ class main(object):
              %s
              </p>
              ''' % (l.name,l.name, l.long_name, l.description )
-    
+
     self.__htmlPageWrite( 'html/ref/errorShortNames.html', cnt )
 
   def htmlout( self, ee, ff, esum ):
@@ -274,5 +284,10 @@ Click on the code to see a list of the files in which each error is detected.
     oo.write( ptmpl % content )
     oo.close()
 
+def summariseLogs():
+    summariser = LogSummariser()
+    summariser.summarise()
+
 if __name__ == '__main__':
-  main()
+
+  summariseLogs()
