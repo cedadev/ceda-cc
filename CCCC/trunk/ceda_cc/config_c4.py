@@ -349,8 +349,8 @@ class projectConfig(object):
        self.mipVocabFnpat = 'SPECS_%s'
     elif self.projectV.id == 'CCMI':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi_vocabs/mip/')
-       self.mipVocabTl = ['fixed','annual','monthly','daily','hourly']
-       self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr'}
+       self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
+       self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr','satdaily':'day'}
        self.mipVocabFnpat = 'CCMI1_%s'
     elif self.projectV.id == 'ESA-CCI':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'esacci_vocabs/')
