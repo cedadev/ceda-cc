@@ -607,6 +607,7 @@ class run(object):
     fh.close()
 
 ms = mipTableScan()
+print ms.al
 snc = snlist()
 snl, snla = snc.gen_sn_list( )
 snsubber = snsub()
@@ -617,9 +618,9 @@ mips = { "cmip5":NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
 "cordex":NT_mip( 'cordex', 'cordex_vocabs/mip/', 'CORDEX_*'),
 "specs":NT_mip( 'specs', 'specs_vocabs/mip/', 'SPECS_*') }
 
-mipl = mips.keys()
 mipl = ['specs']
 mipl = ['cordex','cmip5']
+mipl = mips.keys()
 mips = map( lambda x: mips[x], mipl )
 r = run()
 
@@ -643,3 +644,12 @@ s.exportHtml( 2 )
 s.exportHtml( 3 )
 s.exportHtml( 4 )
 s.exportHtml( 5 )
+
+
+import collections
+ee = collections.defaultdict( int )
+## e.m.td['CMIP5_6hrPlev']['va'][1].keys()
+for k1 in m.td.keys():
+  for k2 in m.td[k1].keys():
+    for k3 in m.td[k1][k2][1].keys():
+      ee[k3] += 1
