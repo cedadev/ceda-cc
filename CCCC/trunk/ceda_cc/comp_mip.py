@@ -260,7 +260,7 @@ if newMip == 'SPECS':
 elif newMip == 'CCMI':
   ml = ['CCMI1_Amon_v2_complete']
   ml = ['CCMI1_annual_comp-v3.txt', 'CCMI1_daily_comp-v3.txt', 'CCMI1_fixed_comp-v2.txt', 'CCMI1_hourly_comp-v3.txt', 'CCMI1_monthly_comp-v3.txt']
-  ml = ['CCMI1_annual', 'CCMI1_daily', 'CCMI1_fixed', 'CCMI1_hourly', 'CCMI1_monthly']
+  ml = ['CCMI1_satdaily', 'CCMI1_annual', 'CCMI1_daily', 'CCMI1_fixed', 'CCMI1_hourly', 'CCMI1_monthly']
   mpat = 'CCMI1_%s_v1_complete'
   newMipDir = 'ccmi1-cmor-tables/Tables/'
   newMipDir = 'ccmi_vocabs/mip/'
