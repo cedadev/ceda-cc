@@ -145,7 +145,7 @@ axis_entry: timel
 standard_name:    time
 units:            days since ?
 axis:             T             ! X, Y, Z, T (default: undeclared)
-long_name:        time
+long_name:        Time of Sampling at Greenwich Meridian
 !----------------------------------
 ! Additional axis information:
 !----------------------------------
