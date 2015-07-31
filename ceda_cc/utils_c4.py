@@ -7,6 +7,8 @@ def strmm3( mm ):
 from fcc_utils import mipTableScan
 from xceptions import *
 
+re_dlr01 = re.compile( 'MERGED-DLR_1M-[0-9]{8}-fv0100.nc$' )
+
 class timeInt(object):
 
    vc = {'gregorian':0, 'standard':0, 'proleptic_gregorian':0, 'noleap':1, '365_day':1, 'all_leap':2, '366_day':2, '360_day':3, 'julian':0, 'none':None}
@@ -463,6 +465,13 @@ class checkGlobalAttributes(checkBase):
   def getId(self):
     if self.fileId == None:
       id = self.globalAts['id']
+##
+## hack to allow for awkward usage in DLR ozone, where id is different for each file
+## may need to improve on this if problem exists for other files in different form
+##
+      xx = re_dlr01.findall( id )
+      if len(xx) != 0:
+        id = id[:-19]
       if id != '':
         self.fileId = '%s.%s' % (self.globalAts['naming_authority'],id)
         if self.globalAts['naming_authority'] == 'uk.ac.pml':
