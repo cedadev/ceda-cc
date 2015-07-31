@@ -8,3 +8,4 @@ SWE:daily SWE lwe_thickness_of_surface_snow_amount
 SWE:monthly SWE_avg lwe_thickness_of_surface_snow_amount
 SWE_max SWE_max lwe_thickness_of_surface_snow_amount
 SWEweekly SWE_avg lwe_thickness_of_surface_snow_amount
+TC atmosphere_mole_content_of_ozone atmosphere_mole_content_of_ozone

@@ -11,6 +11,7 @@ Department of Geography, University of Zurich GIUZ
 Department of Geosciences, University of Oslo GUIO
 Deutscher Wetterdienst DWD
 Deutsches Zentrum fuer Luft- und Raumfahrt DLR
+Deutsches Zentrum fuer Luft- und Raumfahrt (DLR) DLR
 DTU Space DTU-S
 Environmental Earth Observation ENVEO
 European Space Agency ESA
