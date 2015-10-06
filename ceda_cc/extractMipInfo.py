@@ -645,7 +645,6 @@ s.exportHtml( 3 )
 s.exportHtml( 4 )
 s.exportHtml( 5 )
 
-
 import collections
 ee = collections.defaultdict( int )
 ## e.m.td['CMIP5_6hrPlev']['va'][1].keys()
