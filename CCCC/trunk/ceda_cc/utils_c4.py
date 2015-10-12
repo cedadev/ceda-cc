@@ -583,7 +583,8 @@ class checkGlobalAttributes(checkBase):
     hm = varAts[varName].get( 'missing_value', None ) != None
     hf = varAts[varName].has_key( '_FillValue' )
     if hm or hf:
-      if self.pcfg.varTables=='CMIP':
+## both are not required for SPECS.
+      if self.pcfg.varTables=='CMIP' and self.pcfg.projectV.id != 'SPECS':
         ok &= self.test( hm, 'missing_value must be present if _FillValue is [%s]' % varName )
         ok &= self.test( hf, '_FillValue must be present if missing_value is [%s]' % varName )
       else:
