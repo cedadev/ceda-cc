@@ -49,6 +49,15 @@ class cfCalSupport:
     else:
       self.lfixed = False
       self.ylen0 = sum( self.lm) 
+      if self.cal == 'julian':
+        self.ylen = 365.25
+      elif self.cal == 'proleptic_gregorian':
+        self.ylen = 365 + 97./400.
+      elif self.cal == 'gregorian':
+## compromise between gregorian and julian.
+        self.ylen = 365 + 98.5/400.
+        self.ylenx = [365.25,365 + 97./400.]
+      
     self.alm = [0,]
     for k in range(11):
       self.alm.append( self.alm[k] + self.lm[k] )
@@ -74,8 +83,9 @@ class cfCalSupport:
     return ( (iy/4)*4 == iy and (iy/100)*100 != iy ) or ( (iy/400)*400 == iy )
 
   def dayOff(self,year):
+    """Returns the number of days since year zero for given year"""
     if self.cal in ['all_leap','360_day','365_day']:
-      return (year -1 )*self.lyear
+      return year*self.ylen
     else:
       if self.cal == 'julian':
         return  int(1 + round( 365.25*year - 0.51 )  )
@@ -94,6 +104,15 @@ class cfCalSupport:
 ## proleptic gregorian has 12 fewer leap years than julian.
       else:
         assert False, "not suported yet"
+  
+  def d2y(self,ybase, d):
+    dy = d/float(self.ylen)
+    if not self.lfixed:
+      #####
+      pass
+      ############ need some work here to get correct day .....
+      ############ need to use known periodicities (4,400 and mixed) as a starting point ###########
+    
 
   def dayDiff(self,year1,year0):
     return self.dayOff(year1) - self.dayOff(year0)
@@ -137,7 +156,7 @@ class cfCalSupport:
       h = int(cc[0])
       mn = int(cc[1])
       s = float(cc[2])
-   self.base = (y,m,d,h,mn,s)
+    self.base = (y,m,d,h,mn,s)
 
 
 ## method to obtain extended index -- (time-base time)/dt or (time-base time)*freq
