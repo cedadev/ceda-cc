@@ -479,7 +479,7 @@ class checkGlobalAttributes(checkBase):
           if i0 != -1:
             self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'][:i0+9])
       else:
-        self.fileId = '%s.:%s' % (self.globalAts['naming_authority'],self.globalAts['title'])
+        self.fileId = '%s.:%s:%s' % (self.globalAts['naming_authority'],self.globalAts['title'],self.globalAts['time_coverage_duration'])
 
   def getDrs( self ):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
@@ -511,7 +511,7 @@ class checkGlobalAttributes(checkBase):
           ee[k] = self.pcfg.extraAtts[self.fileId][self.drsMappings[k][1:]]
       elif self.drsMappings[k][0] == '*':
         thisk = self.drsMappings[k][1:]
-        ee[k] = self.varAts[self.var][thisk]
+        ee[k] = self.varAts[self.var].get(thisk,'__none__')
       elif self.drsMappings[k][0] == '#':
         thisk = self.drsMappings[k][1:]
         if drsDefaults.has_key( thisk ):
@@ -611,6 +611,12 @@ class checkGlobalAttributes(checkBase):
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
       targ = varAts[varName].get( k, 'Attribute not present' )
       val = vocabs['variable'].getAttr( varName, varGroup, k )
+
+      if k == "standard_name":
+        if val.find( ' ' ) != -1:
+          val = string.join( string.split(val,maxsplit=1) )
+        if targ.find( ' ' ) != -1:
+          targ = string.join( string.split(targ,maxsplit=1) )
 
       if k == "cell_methods":
         if val != None:
@@ -1052,7 +1058,7 @@ class mipVocab(object):
           else:
             p1 = l
             p2 = None
-          dt, v, sn = string.split( string.strip(p1) )
+          dt, v, sn = string.split( string.strip(p1), maxsplit=2 )
           if p2 != None:
             bits = string.split( string.strip(p2), '=' )
             eex = { bits[0]:bits[1] }

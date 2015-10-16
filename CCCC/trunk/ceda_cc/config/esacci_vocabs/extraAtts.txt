@@ -2,6 +2,9 @@
 org.ghrsst, AATSR-ESACCI-L3U-v1, algorithm=OE2, frequency=1sec
 uk.ac.pml, ESACCI-OC-L3S-OC_PRODUCTS-MERGED-1M_MONTHLY_4km_GEO_PML_OC4v6_QAA, algorithm=SeaDAS-6-4-OCCCI, frequency=mon
 fi.fmi, , algorithm=Pulliainen2006, frequency=day
-@ESA GlobSnow snow water equivalent L3B monthly aggregated|fi.fmi, , algorithm=Pulliainen2006, frequency=mon
+@ESA GlobSnow snow water equivalent L3B monthly aggregated:P1M|fi.fmi, , algorithm=Pulliainen2006, frequency=mon
+@ESA GlobSnow snow water equivalent L3B weekly aggregated:P1W|fi.fmi, , algorithm=Pulliainen2006, frequency=week
+@ESA GlobSnow L3B mean STD of 7 day running mean Snow Water Equivalent estimates:P1W|fi.fmi, , algorithm=Pulliainen2006, frequency=week
+@ESA GlobSnow L3A STD of daily Snow Water Equivalent estimates:P1D|fi.fmi, , algorithm=Pulliainen2006, frequency=day
 org.ghrsst, OSTIA-ESACCI-L4-v01.0, algorithm=OSTIA2-0, frequency=day
 DLR, ESACCI-OZONE-L3S-TC-MERGED-DLR_1M, algorith=DLR.merged, frequency=mon
