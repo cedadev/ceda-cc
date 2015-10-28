@@ -188,7 +188,7 @@ class checker(object):
     ##self.vocabs = getVocabs(pcgf)
     self.vocabs = pcfg.vocabs
 
-  def checkFile(self,fpath,log=None,attributeMappings=[]):
+  def checkFile(self,fpath,log=None,attributeMappings=[], getdrs=True):
     self.calendar = 'None'
     self.info.log = log
 
@@ -249,8 +249,9 @@ class checker(object):
         self.completed = False
         return
     self.completed = True
-    self.drs = self.cga.getDrs()
-    self.drs['project'] = self.info.pcfg.projectV.id
+    if getdrs:
+      self.drs = self.cga.getDrs()
+      self.drs['project'] = self.info.pcfg.projectV.id
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
 class main(object):
@@ -326,7 +327,7 @@ class main(object):
   
         fLogger.info( 'Starting file %s' % fn )
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
-        self.cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings )
+        self.cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings, getdrs=c4i.getdrs )
 
         if self.cc.completed:
           if cal not in (None, 'None') and self.cc.cgd.varGroup != "fx":
