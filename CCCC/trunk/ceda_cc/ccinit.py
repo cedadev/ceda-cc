@@ -77,6 +77,7 @@ class c4_init(object):
 
     self.experimental = False
     self.forceNetcdfLib = None
+    self.getdrs = True
     fltype = None
     argu = []
     while len(args) > 0:
@@ -101,6 +102,8 @@ class c4_init(object):
         self.forceNetcdfLib = 'cdms2'
       elif next == '--force-pync4':
         self.forceNetcdfLib = 'netCDF4'
+      elif next == '--nodrs':
+        self.getdrs = False
       elif next == '--force-scientific':
         self.forceNetcdfLib = 'Scientific'
       elif next == '--flfmode':

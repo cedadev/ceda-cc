@@ -1,4 +1,5 @@
 #Additional attributes for data publication
+# namin authority, id, ... extra attributes
 org.ghrsst, AATSR-ESACCI-L3U-v1, algorithm=OE2, frequency=1sec
 uk.ac.pml, ESACCI-OC-L3S-OC_PRODUCTS-MERGED-1M_MONTHLY_4km_GEO_PML_OC4v6_QAA, algorithm=SeaDAS-6-4-OCCCI, frequency=mon
 fi.fmi, , algorithm=Pulliainen2006, frequency=day
