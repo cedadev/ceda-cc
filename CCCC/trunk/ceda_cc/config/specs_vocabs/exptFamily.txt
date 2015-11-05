@@ -6,6 +6,6 @@ decadal
 seasonal
 snowInit
 phenology
-aeorosols
+aerosols
 solarIrradiance
 stochPerturb
