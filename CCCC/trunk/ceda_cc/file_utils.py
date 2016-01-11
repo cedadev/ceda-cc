@@ -164,6 +164,9 @@ class fileMetadata(object):
           x = [x]
         self.va[v]['_data'] = x
         ### Note: returns a scalar if data has a scalar value.
+## remove missing_value == None
+      if self.va[v].has_key( 'missing_value' ) and self.va[v]['missing_value'] == None:
+        self.va[v].pop( 'missing_value' )
 
     for v in self.nc.axes.keys():
       self.da[v] = {}
