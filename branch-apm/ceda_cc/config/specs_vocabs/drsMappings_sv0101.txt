@@ -1,0 +1,11 @@
+variable @var
+institute institute_id
+product product
+experiment experiment_id
+ensemble @ensemble
+model model_id
+realm modeling_realm
+frequency frequency
+start_date startdate
+table @mip_id
+project project_id

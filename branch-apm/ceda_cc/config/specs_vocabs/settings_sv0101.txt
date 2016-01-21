@@ -1,0 +1,6 @@
+## draft - not yet used in code
+char:mipVocabFnpat SPECS_%s
+int:groupIndex 1
+char:mipSubDIr specs_vocabs/mip/
+char:vocabSubdir specs_vocabs/
+bool:doCheckGrids False

@@ -1,0 +1,14 @@
+Aerosol AEROSOL
+Cloud CLOUD
+Fire FIRE
+Greenhouse Gases GHG
+Glaciers GLACIERS
+Ice Sheets ICESHEETS
+Land Cover LC
+Ocean Colour OC
+Ozone OZONE
+Sea Ice SEAICE
+Sea Level SEALEVEL
+Sea Surface Temperature GHRSST
+Soil Moisture SOILMOISTURE
+Snow cover  GlobSnow
