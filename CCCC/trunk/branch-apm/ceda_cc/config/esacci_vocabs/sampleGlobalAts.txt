@@ -1,0 +1,37 @@
+20061122-ESACCI-L4_FIRE-BA-MERIS-fv03.1.nc
+PASS
+title (succinct description of the dataset)
+institution Aristotle University of Thessalonikii
+source (original data source(s), e.g. MERIS RR L1B version 4.02) Multiple source datasets separated by commas.
+history (processing history of dataset)
+references (references to algorithm, ATBD, technical note describing dataset)
+tracking_id (a UUID (Universal Unique Identifier) value)
+Conventions  CF-1.6
+product_version (the product version of this data file)
+summary (a paragraph describing the dataset)
+keywords (a comma separated list of key words and phrases)
+id id
+naming_authority (the combination of the naming authority and the id should be a globally unique identifier for the dataset)
+keywords_vocabulary (if you are following a guideline for the words/phrases in your “keywords” attribute, put the name of that guideline here)
+cdm_data_type (the THREDDS data type appropriate for this dataset)
+comment (miscellaneous information about the data)
+date_created (the date on which the data was created)
+creator_name dummy
+creator_url dummy
+creator_email dummy
+project Climate Change Initiative - European Space Agency
+geospatial_lat_min (decimal degrees north, range -90 to +90)
+geospatial_lat_max (decimal degrees north, range -90 to +90)
+geospatial_lon_min (decimal degrees east, range -180 to +180)
+geospatial_lon_max (decimal degrees east, range -180 to +180)
+geospatial_vertical_min (assumed to be in metres above ground unless geospatial_vertical_units attribute defined otherwise)
+geospatial_vertical_max (assumed to be in metres above ground unless geospatial_vertical_units attribute defined otherwise)
+time_coverage_start (format yyyymmddThhmmssZ)
+time_coverage_end (format yyyymmddThhmmssZ)
+time_coverage_duration P1Y
+time_coverage_resolution (should be an ISO8601 duration string)
+standard_name_vocabulary (the name of the controlled vocabulary from which variable standard names are taken)
+license (describe the restrictions to data access and distribution)
+platform ERS-<1,2>, Envisat
+sensor AATSR
+spatial_resolution 1.1km at nadir
