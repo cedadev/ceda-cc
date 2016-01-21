@@ -1,8 +1,0 @@
-project_id
-experiment_id
-frequency
-Conventions
-modeling_realm
-initialization_method
-physics_version
-realization

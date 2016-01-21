@@ -1,7 +1,0 @@
-None
-@mip_id
-model_id
-experiment_id
-startdate
-@ensemble
-@forecast_reference_time:4:
