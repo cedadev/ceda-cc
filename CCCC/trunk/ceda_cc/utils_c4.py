@@ -550,8 +550,10 @@ class checkGlobalAttributes(checkBase):
 
     self.checkId = ('002','variable_in_group')
 
+    
     self.test( varAts.has_key( varName ), 'Expected variable [%s] not present' % varName, abort=True, part=True )
     msg = 'Variable %s not in table %s' % (varName,varGroup)
+    
     self.test( vocabs['variable'].isInTable( varName, varGroup ), msg, abort=True, part=True )
 
     if self.pcfg.checkVarType:
@@ -1002,8 +1004,10 @@ class mipVocab(object):
      self.varInfo = {}
      self.varcons = {}
      for f in tl:
+        print 'INGESTING %s' % f
         vg = vgmap.get( f, f )
-        self.varcons[vg] = {}
+        if vg not in self.varcons:
+          self.varcons[vg] = {}
         fn = fnpat % f
         ll = open( '%s%s' % (dir,fn) ).readlines()
         ee = ms.scan_table(ll,None,asDict=True)
@@ -1020,6 +1024,8 @@ class mipVocab(object):
             ##ac.append( 'positive' )
           self.varInfo[v] = {'ar':ar, 'ac':ac }
           self.varcons[vg][v] = eeee
+        if f == 'daily':
+          print sorted( ee.keys() )
             
   def dummyMipTable(self):
      self.varInfo = {}
@@ -1082,6 +1088,10 @@ class mipVocab(object):
     vg = vg1
     if vg == 'ESA':
       vg = 'ESACCI'
+    print 'isInTable:',v,vg1
+    for k in self.varcons:
+      print k, sorted( self.varcons[k].keys() )
+   
     assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys() [%s]' % (vg,str(self.varcons.keys()) )
     return (v in self.varcons[vg].keys())
       
