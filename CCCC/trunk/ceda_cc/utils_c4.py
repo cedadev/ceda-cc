@@ -1004,7 +1004,6 @@ class mipVocab(object):
      self.varInfo = {}
      self.varcons = {}
      for f in tl:
-        print 'INGESTING %s' % f
         vg = vgmap.get( f, f )
         if vg not in self.varcons:
           self.varcons[vg] = {}
@@ -1024,8 +1023,6 @@ class mipVocab(object):
             ##ac.append( 'positive' )
           self.varInfo[v] = {'ar':ar, 'ac':ac }
           self.varcons[vg][v] = eeee
-        if f == 'daily':
-          print sorted( ee.keys() )
             
   def dummyMipTable(self):
      self.varInfo = {}
@@ -1088,9 +1085,6 @@ class mipVocab(object):
     vg = vg1
     if vg == 'ESA':
       vg = 'ESACCI'
-    print 'isInTable:',v,vg1
-    for k in self.varcons:
-      print k, sorted( self.varcons[k].keys() )
    
     assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys() [%s]' % (vg,str(self.varcons.keys()) )
     return (v in self.varcons[vg].keys())
