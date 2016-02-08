@@ -38,7 +38,7 @@ import os, string, time, glob, pkgutil
 import shutil
 ## pkgutil is used in file_utils
 # Third party imports
-
+import cdms2
 ## Local imports with 3rd party dependencies
 #### netcdf --- currently only support for cmds2 -- re-arranged to facilitate support for alternative modules
 
@@ -56,9 +56,7 @@ from xceptions import baseException
 
 from fcc_utils2 import tupsort
 
-
-#driving_model_ensemble_member = <CMIP5Ensemble_member>
-#rcm_version_id = <RCMVersionID>                     
+         
 
 class dummy(object):
   def __init__(self):
@@ -185,7 +183,6 @@ class checker(object):
     self.cls = cls
 
     # Define vocabs based on project
-    ##self.vocabs = getVocabs(pcgf)
     self.vocabs = pcfg.vocabs
 
   def checkFile(self,fpath,log=None,attributeMappings=[], getdrs=True):
@@ -229,11 +226,6 @@ class checker(object):
       self.completed = False
       return
 
-    ##self.cgd.plevRequired = config.plevRequired
-    ##self.cgd.plevValues = config.plevValues
-    ##self.cgd.heightRequired = config.heightRequired
-    ##self.cgd.heightValues = config.heightValues
-    ##self.cgd.heightRange = config.heightRange
     self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous, self.vocabs )
     self.calendar = self.cgd.calendar
     if not self.cgd.completed:
@@ -241,8 +233,6 @@ class checker(object):
       return
 
     if self.info.pcfg.doCheckGrids:
-      ##self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
-      ##self.cgg.interpolatedGrids = config.interpolatedGrids
       self.cgg.check( self.cfn.var, self.cfn.domain, self.da, self.va )
     
       if not self.cgg.completed:
@@ -364,6 +354,17 @@ class main(object):
           ecount += 20
           c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
           rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
+      except cdms2.error.CDMSError as cdms_error:
+        kf -= 1
+        c4i.logger.error("CDMSError has occured" )
+        c4i.logger.error(cdms_error )
+        #print "CDMSError has occured" , cdms_error
+        if fileLogOpen:
+          fLogger.error("C4.100.001: [exception]: FAILED:: CDMSError has occured")
+          #c4i.closeFileLog( )
+          #fileLogOpen = False
+        rec.addErr( f, 'ERROR: CDMSError' )
+
       except:
         c4i.logger.error("Exception has occured" ,exc_info=1)
         if fileLogOpen:
