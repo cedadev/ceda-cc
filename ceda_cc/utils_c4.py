@@ -1,5 +1,5 @@
 """A set of classes running checks and providing utilities to support checks"""
-import string, re, os, sys, traceback, ctypes
+import string, re, os, sys, traceback, ctypes, collections
 
 def strmm3( mm ):
   return string.join( map( lambda x: '%s="%s" [correct: "%s"]' % x, mm ), '; ' )
@@ -615,10 +615,11 @@ class checkGlobalAttributes(checkBase):
       val = vocabs['variable'].getAttr( varName, varGroup, k )
 
       if k == "standard_name":
-        if val.find( ' ' ) != -1:
-          val = string.join( string.split(val,maxsplit=1) )
-        if targ.find( ' ' ) != -1:
-          targ = string.join( string.split(targ,maxsplit=1) )
+        if val != None:
+          if val.find( ' ' ) != -1:
+            val = string.join( string.split(val,maxsplit=1) )
+          if targ.find( ' ' ) != -1:
+            targ = string.join( string.split(targ,maxsplit=1) )
 
       if k == "cell_methods":
         if val != None:
@@ -1003,6 +1004,7 @@ class mipVocab(object):
      ms = mipTableScan()
      self.varInfo = {}
      self.varcons = {}
+     ##self.varcons = collections.defaultdict( dict )
      for f in tl:
         vg = vgmap.get( f, f )
         if vg not in self.varcons:
