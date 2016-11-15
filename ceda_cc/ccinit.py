@@ -116,6 +116,12 @@ class c4_init(object):
         self.policyBatchLogfileMode = lfmk
       elif next == '--blfms':
         self.policyBatchLogfileMs = False
+      elif next == '-fl':
+        flf = args.pop(0)
+        flist = []
+        for l in open( flf ).readlines():
+          flist.append( l.strip() )
+        self.source = flf  
       elif next == '-d':
         fdir = args.pop(0)
         flist = glob.glob( '%s/*.nc' % fdir  )
