@@ -434,6 +434,8 @@ class projectConfig(object):
       vocabs = { 'variable':utils.mipVocab(self), \
                'Conventions':utils.listControl( 'Conventions', ['CF-1.4','CF-1.5'] ), \
                'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'experiments.txt' ) ), \
+               'institute_id':utils.listControl( 'institute_id', lrdr.getSimpleList( 'institutes.txt' ) ), \
+               'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models.txt' ) ), \
                'frequency':utils.listControl( 'frequency', validCmip5Frequencies ), \
                'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
                'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
