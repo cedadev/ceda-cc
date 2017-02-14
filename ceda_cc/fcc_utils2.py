@@ -1,5 +1,5 @@
 import string, os, re, stat, sys
-from config_c4 import CC_CONFIG_DIR
+from ceda_cc_config.config_c4 import CC_CONFIG_DIR
 
 ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'

@@ -1,5 +1,5 @@
 from fcc_utils2 import mipTableScan
-from config_c4 import CC_CONFIG_DIR
+from ceda_cc_config.config_c4 import CC_CONFIG_DIR
 import re, os, string
 
 ml = ['CORDEX_3h', 'CORDEX_6h', 'CORDEX_Aday', 'CORDEX_day', 'CORDEX_grids', 'CORDEX_mon' ]

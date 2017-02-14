@@ -3,7 +3,7 @@ import collections
 import os.path as op
 import logging, time, string
 import utils_c4
-import config_c4 as config
+import ceda_cc_config.config_c4 as config
 
 
 #### set up log file ####

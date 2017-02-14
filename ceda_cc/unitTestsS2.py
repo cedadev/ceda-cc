@@ -1,6 +1,6 @@
 import logging, time, os, sys
 import utils_c4
-import config_c4 as config
+import ceda_cc_config.config_c4 as config
 from c4_run import fileMetadata, dummy, main
 from xceptions import *
 

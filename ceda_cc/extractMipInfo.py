@@ -1,7 +1,7 @@
 
 import collections, glob, string, re, json, sys
 from fcc_utils2 import mipTableScan, snlist, tupsort
-from config_c4 import CC_CONFIG_DIR
+from ceda_cc_config.config_c4 import CC_CONFIG_DIR
 
 def uniquify( ll ):
   ll.sort()

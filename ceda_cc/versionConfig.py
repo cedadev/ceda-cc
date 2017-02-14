@@ -1,4 +1,4 @@
 
-version="1.3.1"
-versionComment="Fixed CCMI specification issues"
+version="1.3.2"
+versionComment="moved config_c4 into sub-directory"
 

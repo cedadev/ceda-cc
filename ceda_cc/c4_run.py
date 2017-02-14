@@ -48,7 +48,7 @@ from file_utils import fileMetadata, ncLib
 
 # Local imports
 import utils_c4 as utils
-import config_c4 as config
+import ceda_cc_config.config_c4 as config
 
 reload( utils )
 
