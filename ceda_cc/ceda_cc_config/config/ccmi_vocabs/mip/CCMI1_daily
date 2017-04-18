@@ -2,7 +2,7 @@ cmor_version: 2.5.0    ! minimum version of CMOR that can read this table
 cf_version:   1.4      ! version of CF that output conforms to
 project_id:   CCMI1    ! project id
 table_id:     daily    ! table id
-table_date:   17 May 2016 ! date this table was constructed
+table_date:   13 March 2017 ! date this table was constructed
 modeling_realm: atmos
 frequency: day
 
@@ -23,6 +23,7 @@ expt_id_ok:  'Projection Scenario - fxdGHG' 'senC2fGHG'
 expt_id_ok:  'Projection Scenario - fxdEmis' 'senC2fEmis'
 expt_id_ok:  'Projection Scenario - fxdN2O' 'senC2fN2O'
 expt_id_ok:  'Projection Scenario - fxdCH4' 'senC2fCH4'
+expt_id_ok:  'Projection Scenario - CH4-RCP8.5' 'senC2CH4rcp85'
 expt_id_ok:  'Projection Scenario - GeoMIP-G1' 'senC2GeoMIPG1'
 expt_id_ok:  'Projection Scenario - GeoMIP-G2' 'senC2GeoMIPG2'
 expt_id_ok:  'Projection Scenario - GeoMIP-G3' 'senC2GeoMIPG3'
