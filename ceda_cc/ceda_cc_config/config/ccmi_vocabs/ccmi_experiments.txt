@@ -13,8 +13,11 @@ SEN-C2-fODS Projection Scenario - fxdODS senC2fODS
 SEN-C2-fODS2000 Projection Scenario - fxdODS2000 senC2fODS2000
 SEN-C2-fGHG Projection Scenario - fxdGHG senC2fGHG
 SEN-C2-fEmis Projection Scenario - fxdEmis senC2fEmis
+SEN-C2-fN2O Projection Scenario - fxdN2O senC2fN2O
+SEN-C2-fCH4 Projection Scenario - fxdCH4 senC2fCH4
+SEN-C2-CH4rcp85 Projection Scenario - CH4-RCP8.5 senC2CH4rcp85
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G1 senC2GeoMIPG1
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G2 senC2GeoMIPG2
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G3 senC2GeoMIPG3
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G4 senC2GeoMIPG4
-SEN-C2-SolarTrend Projection Scenario - SolarTrend senC2SlrTrnd
+SEN-C2-SolarTrend Projection Scenario - SolarTrend senC2SlrTrend
