@@ -16,9 +16,9 @@ class timeInt(object):
    mmnmmx = [ (28,31),(28,31),(29,31),(30,30) ]
    def __init__(self,cal='proleptic_gregorian',dpymn=None, dpymx=None,dpmmn=None,dpmmx=None,tol=1.e-6):
      self.tol = tol
-     if not self.vc.has_key(cal) or cal == None:
-       assert dpymx != None and dpymn != None, 'If standard calendar is not use, dpymn and dpymx must be set'
-       assert dpmmx != None and dpmmn != None, 'If standard calendar is not use, dpmmn and dpmmx must be set'
+     if not self.vc.has_key(cal) or cal is None:
+       assert dpymx is not None and dpymn is not None, 'If standard calendar is not use, dpymn and dpymx must be set'
+       assert dpmmx is not None and dpmmn is not None, 'If standard calendar is not use, dpmmn and dpmmx must be set'
        self.dpymn = dpymn - tol
        self.dpymx = dpymx + tol
        self.dpmmn = dpmmn - tol
@@ -153,13 +153,13 @@ class checkBase(object):
 
   def isInt(self,x):
     """Check that a string is a representation of an integer"""
-    return self.re_isInt.match( x ) != None
+    return self.re_isInt.match( x ) is not None
 
   def logMessage(self, msg, error=False ):
     """Log messages and count messages"""
     self.messageCount += 1
     assert self.abortMessageCount < 0 or self.abortMessageCount > self.messageCount, 'Raising error [TESTX01], perhaps for testing'
-    if self.parent != None and self.parent.log != None:
+    if self.parent is not None and self.parent.log is not None:
        if error:
          self.parent.log.error( msg )
        else:
@@ -168,8 +168,8 @@ class checkBase(object):
        print msg
 
     doThis = True
-    if self.appendLogfile[0] != None and doThis:
-      if self.monitor != None:
+    if self.appendLogfile[0] is not None and doThis:
+      if self.monitor is not None:
          nofh0 = self.monitor.get_open_fds()
       xlog = self.c4i.getFileLog( self.appendLogfile[1], flf=self.appendLogfile[0] )
       if error:
@@ -177,14 +177,14 @@ class checkBase(object):
       else:
          xlog.info( msg )
       self.c4i.closeFileLog()
-      if self.monitor != None:
+      if self.monitor is not None:
          nofh9 = self.monitor.get_open_fds()
          if nofh9 > nofh0:
            print 'Leaking file handles [1]: %s --- %s' % (nofh0, nofh9)
 
   def log_exception( self, msg):
     """Logging of exceptions -- putting trace information in log files"""
-    if self.parent != None and self.parent.log != None:
+    if self.parent is not None and self.parent.log is not None:
         self.parent.log.error("Exception has occured" ,exc_info=1)
     else:
         traceback.print_exc(file=sys.stdout)
@@ -292,7 +292,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     bits = string.split( fn[:-3], self.fnsep )
 
     self.fnParts = bits[:]
-    if self.pcfg.domainIndex != None:
+    if self.pcfg.domainIndex is not None:
       self.domain = self.fnParts[self.pcfg.domainIndex]
     else:
       self.domain = None
@@ -319,7 +319,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       l0 = {0:6, 1:5, 2:5}[self.esaFnId]  
       for i in range(l0):
         x = self.pcfg.globalAttributesInFn[i]
-        if x != None and x[0] == '*':
+        if x is not None and x[0] == '*':
           self.fnDict[x[1:]] = bits[i]
       self.fnDict['version'] = bits[-1]
       self.fnDict['gdsv'] = 'na'
@@ -338,12 +338,12 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 
           
     
-    if self.pcfg.groupIndex != None:
+    if self.pcfg.groupIndex is not None:
       self.group = self.fnParts[self.pcfg.groupIndex]
     else:
       self.group = None
 
-    if self.pcfg.freqIndex != None:
+    if self.pcfg.freqIndex is not None:
       self.freq = self.fnParts[self.pcfg.freqIndex]
     elif self.group in ['fx','fixed']:
       self.freq = 'fx'
@@ -357,7 +357,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 
     self.var = self.fnParts[self.pcfg.varIndex]
 
-    if self.pcfg.fnvdict != None:
+    if self.pcfg.fnvdict is not None:
       if self.pcfg.fnvdict.has_key( self.var ):
         self.var = self.pcfg.fnvdict.get( self.var )['v']
       else:
@@ -389,7 +389,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
       elif self.pcfg.trangeType == 'ESA-CCI':
         self.pcfg.checkTrangeLen = False
         tt = self.fnParts[self.pcfg.trangeIndex] 
-        if self.test( len(tt) in [4,6,8,10,12,14] and self.re_c1.match(tt) != None, 'Length of indicative date/time not consistent with YYYY[MM[DD[HH[MM[SS]]]]] specification: %s' % self.fnParts[-1], part=True  ):
+        if self.test( len(tt) in [4,6,8,10,12,14] and self.re_c1.match(tt) is not None, 'Length of indicative date/time not consistent with YYYY[MM[DD[HH[MM[SS]]]]] specification: %s' % self.fnParts[-1], part=True  ):
           ll = [tt[:4],]
           tt = tt[4:]
           for j in range(5):
@@ -463,7 +463,7 @@ class checkGlobalAttributes(checkBase):
     self.runChecks()
 
   def getId(self):
-    if self.fileId == None:
+    if self.fileId is None:
       id = self.globalAts['id']
 ##
 ## hack to allow for awkward usage in DLR ozone, where id is different for each file
@@ -561,7 +561,7 @@ class checkGlobalAttributes(checkBase):
 
       mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
       thisType = {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( mipType, mipType )
-      self.test( mipType == None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),varAts[varName]['_type']) )
+      self.test( mipType is None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),varAts[varName]['_type']) )
     else:
       mipType = None
 
@@ -582,7 +582,7 @@ class checkGlobalAttributes(checkBase):
 ## need to insert a check that variable is present
     self.checkId = ('005','variable_ncattribute_mipvalues')
     ok = True
-    hm = varAts[varName].get( 'missing_value', None ) != None
+    hm = varAts[varName].get( 'missing_value', None ) is not None
     hf = varAts[varName].has_key( '_FillValue' )
     if hm or hf:
 ## both are not required for SPECS.
@@ -615,14 +615,14 @@ class checkGlobalAttributes(checkBase):
       val = vocabs['variable'].getAttr( varName, varGroup, k )
 
       if k == "standard_name":
-        if val != None:
+        if val is not None:
           if val.find( ' ' ) != -1:
             val = string.join( string.split(val,maxsplit=1) )
           if targ.find( ' ' ) != -1:
             targ = string.join( string.split(targ,maxsplit=1) )
 
       if k == "cell_methods":
-        if val != None:
+        if val is not None:
           parenthesies1 = []
           targ0 = targ[:]
           while string.find( targ, '(' ) != -1:
@@ -647,10 +647,10 @@ class checkGlobalAttributes(checkBase):
 
     ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, strmm3(mm)), part=True )
     if len( mm  ) != 0:
-      if self.parent.amapListDraft == None:
+      if self.parent.amapListDraft is None:
         self.parent.amapListDraft = []
       for m in mm:
-          if m[2] == None:
+          if m[2] is None:
             self.parent.amapListDraft.append( '## @var=%s;%s=%s|@delete=%s -- not supported yet' % (varName,m[0],m[1],m[0]) )
           else:
             self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s' % (varName,m[0],m[1],m[0],m[2]) )
@@ -683,7 +683,7 @@ class checkGlobalAttributes(checkBase):
     m = []
     for i in range(len(self.globalAttributesInFn)):
        gaif = self.globalAttributesInFn[i]
-       if gaif != None and gaif[0] != '*':
+       if gaif is not None and gaif[0] != '*':
          if gaif[-1] == ':':
            bits = string.split(gaif,':')
            gaif0 = gaif
@@ -1064,7 +1064,7 @@ class mipVocab(object):
             p1 = l
             p2 = None
           dt, v, sn = string.split( string.strip(p1), maxsplit=2 )
-          if p2 != None:
+          if p2 is not None:
             bits = string.split( string.strip(p2), '=' )
             eex = { bits[0]:bits[1] }
           else:
@@ -1103,7 +1103,7 @@ class mipVocab(object):
 class patternControl(object):
 
   def __init__(self,tag,pattern,list=None,cls=None,examples=None,badExamples=None,runTest=True):
-    if cls != None:
+    if cls is not None:
       assert cls in ['ISO'], 'value of cls [%s] not recognised' % cls
       if cls == 'ISO':
         assert pattern in ['ISO8601 duration'], 'value of pattern [%s] for ISO constraint not recognised' % pattern
@@ -1125,18 +1125,18 @@ class patternControl(object):
     self.cls = cls
 
     if runTest:
-      if examples != None:
+      if examples is not None:
         for e in examples:
           assert self.check(e), 'Internal check failed: example %s does not fit pattern %s' % (e,self.pattern)
 
   def check(self,val):
     self.note = '-'
     m = self.re_pat.match( val )
-    if self.list == None:
+    if self.list is None:
       self.note = "simple test"
-      return m != None
+      return m is not None
     else:
-      if m == None:
+      if m is None:
         self.note = "no match %s::%s" % (val,self.pattern)
         return False
       if not m.groupdict().has_key("val"):
@@ -1162,7 +1162,7 @@ class listControl(object):
     else:
       self.note = str( self.list[:4] )
     if self.split:
-      if self.splitVal == None:
+      if self.splitVal is None:
         vs = string.split( val )
       elif self.enumeration:
         vs = map( string.strip, self.essplit.findall( val ) )
@@ -1210,7 +1210,7 @@ class checkByVar(checkBase):
       fnParts = string.split( fn[:-3], self.fnsep )
       
       try:
-        if self.pcfg.freqIndex != None:
+        if self.pcfg.freqIndex is not None:
           freq = fnParts[self.pcfg.freqIndex]
         else:
           freq = None
@@ -1299,7 +1299,7 @@ class checkByVar(checkBase):
     n = len(tt)
     self.checkId = ('001','filename_timerange_value')
     for j in range(n):
-      if self.monitor != None:
+      if self.monitor is not None:
          nofh0 = self.monitor.get_open_fds()
       t = tt[j]
       fn = t[1]
@@ -1309,11 +1309,11 @@ class checkByVar(checkBase):
       for i in [0,1]:
         if not (i==0 and isFirst or i==1 and isLast):
           x = rere[i].match( t[3][i] )
-          lok &= self.test( x != None, 'Cannot match time range %s: %s [%s/%s]' % (i,fn,j,n), part=True, appendLogfile=(self.fLogDict.get(fn,None),fn) )
+          lok &= self.test( x is not None, 'Cannot match time range %s: %s [%s/%s]' % (i,fn,j,n), part=True, appendLogfile=(self.fLogDict.get(fn,None),fn) )
         if not lok:
-          if self.recorder != None:
+          if self.recorder is not None:
             self.recorder.modify( t[1], 'ERROR: time range' )
-      if self.monitor != None:
+      if self.monitor is not None:
          nofh9 = self.monitor.get_open_fds()
          if nofh9 > nofh0:
            print 'Open file handles: %s --- %s [%s]' % (nofh0, nofh9, j )

@@ -56,7 +56,7 @@ class fileMetadata(object):
     self.atMapLog = attributeMappingsLog
     self.forceLib = forceLib
     self.ncLib = ncLib
-    if self.atMapLog == None:
+    if self.atMapLog is None:
        self.atMapLog = open( 'cccc_atMapLog.txt', 'a' )
 
     if self.forceLib == 'ncq3':
@@ -164,8 +164,8 @@ class fileMetadata(object):
           x = [x]
         self.va[v]['_data'] = x
         ### Note: returns a scalar if data has a scalar value.
-## remove missing_value == None
-      if self.va[v].has_key( 'missing_value' ) and self.va[v]['missing_value'] == None:
+## remove missing_value is None
+      if self.va[v].has_key( 'missing_value' ) and self.va[v]['missing_value'] is None:
         self.va[v].pop( 'missing_value' )
 
     for v in self.nc.axes.keys():
@@ -293,7 +293,7 @@ class fileMetadata(object):
             else:
               targ = m[1][-1][0]
             if apThis:
-              if log != None:
+              if log is not None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
               thisval = self.va[m[1][0][1]].get( targ, None )
@@ -316,7 +316,7 @@ class fileMetadata(object):
             else:
               targ = m[1][-1][0]
             if apThis:
-              if log != None:
+              if log is not None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s:%s to %s' % (m[1][0][1],targ,m[2][1])
               thisval = self.da[m[1][0][1]].get( targ, None )
@@ -337,7 +337,7 @@ class fileMetadata(object):
             else:
               targ = m[1][-1][0]
             if apThis:
-              if log != None:
+              if log is not None:
                 log.info( 'Setting %s to %s' % (targ,m[2][1]) )
               ##print 'Setting %s to %s' % (targ,m[2][1])
               thisval = self.ga.get( targ, None )

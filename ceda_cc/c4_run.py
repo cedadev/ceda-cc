@@ -220,7 +220,7 @@ class checker(object):
     self.va = self.ncReader.va
     self.da = self.ncReader.da
 
-    if self.cfn.freq != None:
+    if self.cfn.freq is not None:
       vGroup = self.cfn.freq
     else:
       vGroup = self.info.pcfg.mipVocabVgmap.get(self.cfn.group,self.cfn.group)
@@ -267,11 +267,11 @@ class main(object):
     c4i = c4_init(args=args)
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
     c4i.logger.info( 'Source: %s' % c4i.source )
-    if cmdl != None:
+    if cmdl is not None:
       c4i.logger.info( 'Command: %s' % cmdl )
       
     isDummy  = c4i.project[:2] == '__'
-    if (ncLib == None) and (not isDummy):
+    if (ncLib is None) and (not isDummy):
        raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
     pcfg = config.projectConfig( c4i.project )
     assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
