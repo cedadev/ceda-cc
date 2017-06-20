@@ -1,4 +1,15 @@
 
+Updating pypi
+python setup.py sdist upload -r pypi
+# need to update version
+
+git
+git add
+git commit -m "<commit notes>"
+git push
+
+
+
 
 Documentation
 -------------
