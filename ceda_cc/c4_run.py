@@ -213,6 +213,8 @@ class checker(object):
         self.completed = False
         return
 
+    self.info.fnTimeTuples = self.cfn.fnTimeTuples
+
     if not ncRed:
       ##print fpath
       self.ncReader.loadNc( fpath )

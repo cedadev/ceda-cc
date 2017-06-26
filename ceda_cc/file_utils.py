@@ -50,7 +50,11 @@ def tstr( x ):
 
 class fileMetadata(object):
 
-  def __init__(self,dummy=False,attributeMappingsLog=None,forceLib=None):
+  def __init__(self,dummy=False,attributeMappingsLog=None,forceLib=None,readDx=None):
+    self.readDims = ['plev','plev_bnds','height']
+    if not readDx is None:
+      for d in readDx:
+        self.readDims.append( d )
      
     self.dummy = dummy
     self.atMapLog = attributeMappingsLog
@@ -124,7 +128,7 @@ class fileMetadata(object):
         for a in self.nc._ll[thisv.id]:
           self.va[v][a.name] = a.value
         self.va[v]['_type'] = tstr( thisv.type )
-        if v in ['plev','plev_bnds','height']:
+        if v in self.readDims:
           x = thisv.data
           if type(x) != type([]):
             x = [x]
@@ -158,7 +162,7 @@ class fileMetadata(object):
           x = x[0]
         self.va[v][k] = x
       self.va[v]['_type'] = tstr( self.nc.variables[v].dtype )
-      if v in ['plev','plev_bnds','height']:
+      if v in self.readDims:
         x = self.nc.variables[v].getValue().tolist()
         if type(x) != type([]):
           x = [x]
@@ -197,7 +201,7 @@ class fileMetadata(object):
         for k in self.nc.variables[v].__dict__.keys():
           self.va[v][k] = self.nc.variables[v].__dict__[k]
         self.va[v]['_type'] = tstr( self.nc.variables[v].getValue().dtype )
-        if v in ['plev','plev_bnds','height']:
+        if v in self.readDims:
         ### Note: returns a scalar if data has a scalar value.
           x = self.nc.variables[v].getValue().tolist()
           if type(x) != type([]):
@@ -232,7 +236,7 @@ class fileMetadata(object):
           self.va[v]['_type'] = tstr( self.nc.variables[v].dtype )
         except:
           self.va[v]['_type'] = tstr( self.nc.variables[v].datatype )
-        if v in ['plev','plev_bnds','height']:
+        if v in self.readDims:
           self.va[v]['_data'] = self.nc.variables[v][:].tolist()
           if type( self.va[v]['_data'] ) != type( [] ):
             self.va[v]['_data'] = [self.va[v]['_data'],]

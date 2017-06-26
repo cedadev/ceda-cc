@@ -67,7 +67,7 @@ except:
 
 
 extras = [
-( '/data/work/cmip5/output1/pr_20110323/pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc', 'CMIP5', 0 ),
+( '/data/work/cmip5/output1/pr_20110323/pr_3hr_HadGEM2-ES_historical_r2i1p1_200501010130-200512302230.nc', 'CMIP5', 0 ),
 ('/data/work/cmip5/output1/pr_20110323/pr_3hr_HadGEM2-ES_historical_r2i1p1_200001010130-200412302230.nc', 'CMIP5', 0 ) ]
 
 

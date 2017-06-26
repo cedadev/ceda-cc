@@ -106,6 +106,13 @@ for k in keys:
     else:
       print 'Failed: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
 
+c = utils_c4.checkFileName(parent=cfgd['CMIP5'])
+c.check('pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc' )
+if c.fnTimeTuples != ( (1960, 01, 01, 01, 30), (1964, 12, 30, 22, 30) ):
+  print 'Failed [%s]: failed to parse date string in file name'
+else:
+  print 'OK: -- date string in file name parsed into integer tuples'
+
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
 ## note last argument is "vocabs", but only used in "experimental" mode

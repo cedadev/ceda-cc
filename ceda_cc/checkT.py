@@ -62,6 +62,7 @@ class cfCalSupport:
     for k in range(11):
       self.alm.append( self.alm[k] + self.lm[k] )
 
+
   def isleap( self, year ):
     if self.lfixed:
       return self.leap
@@ -112,17 +113,19 @@ class cfCalSupport:
       pass
       ############ need some work here to get correct day .....
       ############ need to use known periodicities (4,400 and mixed) as a starting point ###########
-    
 
   def dayDiff(self,year1,year0):
     return self.dayOff(year1) - self.dayOff(year0)
 
-  def dayInYear(self,year,month,day):
+  def julianDay(self,month,day,year=None):
+    """convert month (january=1) and day to julian day (1st Jan=1)"""
     if self.cal == '360_day':
       return (month-1)*30 + day
     x = 0
-    if self.isleap(year) and month > 2:
-      x = 1
+    if not self.lfixed and month > 2:
+      assert not year is None, "juianDay: Argument year must be set if length of year varies"
+      if self.isleap(year):
+        x = 1
     return x + self.alm[month-1] + day
 
   def yearLen(self,year):
@@ -132,7 +135,6 @@ class cfCalSupport:
     if self.isleap(year):
       x = 1
     return self.ylen0 + x
-
 
   def setBase( self, base ):
     bits = string.split( base )
@@ -158,13 +160,12 @@ class cfCalSupport:
       s = float(cc[2])
     self.base = (y,m,d,h,mn,s)
 
-
 ## method to obtain extended index -- (time-base time)/dt or (time-base time)*freq
 
 def timeUnitsScan( c1 ):
     bits = string.split( c1 )
     assert bits[0] == 'days'
-## only support days here -- for more general support coudl use cf-python, introducing dependency on numpy and python netCDF4
+## only support days here -- for more general support could use cf-python, introducing dependency on numpy and python netCDF4
     assert bits[1] == 'since'
 
 def jabs( y,m,d,cal ):
