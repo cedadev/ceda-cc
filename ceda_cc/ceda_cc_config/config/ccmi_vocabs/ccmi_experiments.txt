@@ -20,4 +20,4 @@ SEN-C2-GeoMIP Projection Scenario - GeoMIP-G1 senC2GeoMIPG1
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G2 senC2GeoMIPG2
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G3 senC2GeoMIPG3
 SEN-C2-GeoMIP Projection Scenario - GeoMIP-G4 senC2GeoMIPG4
-SEN-C2-SolarTrend Projection Scenario - SolarTrend senC2SlrTrend
+SEN-C2-SolarTrend Projection Scenario - SolarTrend senC2SlrTrnd
