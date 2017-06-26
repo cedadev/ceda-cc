@@ -62,7 +62,6 @@ class cfCalSupport:
     for k in range(11):
       self.alm.append( self.alm[k] + self.lm[k] )
 
-
   def isleap( self, year ):
     if self.lfixed:
       return self.leap
@@ -118,7 +117,7 @@ class cfCalSupport:
     return self.dayOff(year1) - self.dayOff(year0)
 
   def julianDay(self,month,day,year=None):
-    """convert month (january=1) and day to julian day (1st Jan=1)"""
+    """convert month (january=1) and day to Julian day (1st Jan=1)"""
     if self.cal == '360_day':
       return (month-1)*30 + day
     x = 0
