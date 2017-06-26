@@ -262,6 +262,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     self.checks = (self.do_check_fn,self.do_check_fnextra)
     self.re_c1 = re.compile( '^[0-9]*$' )
     self.fnDict = {}
+    self.fnTimeTuples = None
 ####
 
   def check(self,fn):
@@ -367,7 +368,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
           self.var = self.pcfg.fnvdict.get( thiskey )['v']
 
     self.isFixed = self.freq in ['fx','fixed']
-    self.parent.fileIsFixed = True
+    self.parent.fileIsFixed = self.isFixed
     if self.isFixed:
       self.test( len(self.fnParts) in self.pcfg.fnPartsOkFixedLen, 'Number of file name elements not acceptable for fixed data' )
 
@@ -386,6 +387,18 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
           self.test( self.isInt(b), 'Time segment in filename [%s] contains non integer characters' % (self.fnParts[-1] ),  abort=True, part=True  )
         self.log_pass()
         self.fnTimeParts = bits[:]
+        l0 = []
+        ## pick out month, day, hours etc, until end of string )
+        for b in bits:
+          l00 = [int( b[:4] ),]
+          k0 = 4
+          while k0 + 2 <= len(b):
+            l00.append( int( b[k0:k0+2] ) )
+            k0 += 2
+          l0.append( tuple( l00 ) )
+            
+        self.fnTimeTuples = tuple( l0 )
+
       elif self.pcfg.trangeType == 'ESA-CCI':
         self.pcfg.checkTrangeLen = False
         tt = self.fnParts[self.pcfg.trangeIndex] 
@@ -731,7 +744,7 @@ class checkStandardDims(checkBase):
     self.id = 'C4.003'
     self.checkId = 'unset'
     self.step = 'Initialised'
-    self.checks = (self.do_check,)
+    self.checks = (self.check_timeVals, self.do_check,)
     self.plevRequired = self.pcfg.plevRequired
     self.plevValues = self.pcfg.plevValues
     self.heightRequired = self.pcfg.heightRequired
@@ -749,13 +762,9 @@ class checkStandardDims(checkBase):
     self.vocabs = vocabs
     self.runChecks()
 
-  def do_check(self):
-    varName = self.var
-    varGroup = self.varGroup
+  def check_timeVals(self):
     da = self.da
     va = self.va
-    isInsta = self.isInsta
-
     self.errorCount = 0
     self.completed = False
     self.checkId = ('001','time_attributes')
@@ -765,7 +774,7 @@ class checkStandardDims(checkBase):
       ok = True
       self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
       if self.pcfg.varTables=='CMIP':
-        if not isInsta:
+        if not self.isInsta:
           ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
 
 ## is time zone designator needed?
@@ -783,6 +792,21 @@ class checkStandardDims(checkBase):
         if ok:
           self.log_pass()
         self.calendar = da['time'].get( 'calendar', 'None' )
+
+        if self.project  == 'CMIP5':
+          pass
+          ##print da['time']['_data'][0], da['time']['_data'][-1],self.parent.fnTimeTuples
+    self.completed = True
+
+  def do_check(self):
+    varName = self.var
+    varGroup = self.varGroup
+    da = self.da
+    va = self.va
+    isInsta = self.isInsta
+    self.errorCount = 0
+    self.completed = False
+
 
     self.checkId = ('002','pressure_levels')
     if varName in self.plevRequired:
