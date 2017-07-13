@@ -6,11 +6,11 @@ import config_c4
 This module sets some basic variables, including some vocabulary lists.
 """
 import string
-import utils_c4 as utils
+import utils_config as utils
 import os
 import os.path as op
 import shutil, collections
-from versionConfig import version, versionComment
+##from versionConfig import version, versionComment
 
 NT_project = collections.namedtuple( 'project', ['id','v'] )
 NT_fnParts = collections.namedtuple( 'fnParts', ['len','fxLen','unfLen','checkTLen','ixDomain','ixFreq'] )
@@ -190,8 +190,8 @@ class projectConfig(object):
   """projectConfig:
   Set project specific configuration options.
   
-  USAGE
-  =====
+  USAGE:
+  
   pcfg = projectConfig( <project id>[, version=..] )
 
   Creates a "pcfg" object which contains attributes used in the code, including vocabulary lists.
@@ -292,7 +292,7 @@ class projectConfig(object):
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
       self.drsMappings = {'variable':'@var'}
 
-####### used in checkStandardDims
+# # used in checkStandardDims
 
     self.plevRequired = plevRequired
     self.plevValues = plevValues
@@ -300,12 +300,12 @@ class projectConfig(object):
     self.heightValues = heightValues
     self.heightRange = heightRange
 
-####### used in checkGrids
+# # used in checkGrids
     self.rotatedPoleGrids = rotatedPoleGrids
     self.interpolatedGrids = interpolatedGrids
     self.doCheckGrids = self.projectV.id in ['CORDEX',]
 
-####### used in checkFileName (freqIndex also used in checkByVar)
+# # used in checkFileName (freqIndex also used in checkByVar)
 
     if self.projectV.id == 'CORDEX':
       self.fnParts = NT_fnParts( len=[8,9], fxLen=[8,],  unfLen=[9,], checkTLen=True, ixDomain=1, ixFreq=7 )
@@ -330,7 +330,7 @@ class projectConfig(object):
 
 
     self.defaults = { 'variableDataType':'float' }
-######## used in mipVocabs
+# ## used in mipVocabs
     if self.projectV.id == 'CORDEX':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cordex_vocabs/mip/')
        self.mipVocabTl = ['fx','sem','mon','day','6h','3h']
@@ -364,7 +364,7 @@ class projectConfig(object):
        self.mipVocabFnpat = None
     self.mipVocabPars = [self.mipVocabDir, self.mipVocabTl, self.mipVocabVgmap, self.mipVocabFnpat]
 
-######## used in checkByVar
+# ## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
     elif self.project in ['CMIP5','CCMI','SPECS','__dummy']:

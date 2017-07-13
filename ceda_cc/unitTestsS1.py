@@ -4,6 +4,8 @@ import os.path as op
 import logging, time, string
 import utils_c4
 import ceda_cc_config.config_c4 as config
+import ceda_cc_config
+
 
 
 #### set up log file ####
@@ -268,7 +270,7 @@ if cga.errorCount == 0:
 else:
   print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)
 
-ls = utils_c4.listControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
+ls = ceda_cc_config.utils_config.listControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
 testId = '#05.001'
 res = ls.essplit.findall( 'a, b, c<1,2>')
 if res == ['a', 'b', 'c<1,2>']:
@@ -292,7 +294,7 @@ else:
 
 
 testId = '#06.001'
-pc = utils_c4.patternControl( 'pattern test', 'ISO8601 duration', cls='ISO' )
+pc = ceda_cc_config.utils_config.patternControl( 'pattern test', 'ISO8601 duration', cls='ISO' )
 res = pc.check( 'P1Z' )
 if res:
   print 'Failed: [%s] Invalid value passed' % (testId)

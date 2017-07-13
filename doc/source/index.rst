@@ -45,7 +45,7 @@ c4_run
 config_c4
 ===============
 
-.. automodule:: config_c4
+.. automodule:: ceda_cc_config.config_c4
    :members:
 
 
