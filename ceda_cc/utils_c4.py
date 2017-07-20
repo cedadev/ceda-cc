@@ -1,5 +1,5 @@
 """A set of classes running checks and providing utilities to support checks"""
-import string, re, os, sys, traceback, ctypes, collections
+import string, re, os, sys, traceback, ctypes, collections, importlib
 
 def strmm3( mm ):
   return string.join( map( lambda x: '%s="%s" [correct: "%s"]' % x, mm ), '; ' )
@@ -145,8 +145,16 @@ class checkBase(object):
     self.drsMappings = self.pcfg.drsMappings
 #######################################
     self.checks = ()
+    self.plugins = ()
+    self.agents = ()
     self.messageCount = 0
+
+## call init method defined in implementing class 
     self.init()
+
+## call initPlugs method to initialise any plugins defined by init
+    self.__initPlugs__()
+
     if not hasattr( self.parent, 'amapListDraft' ):
       self.parent.amapListDraft = []
 
@@ -235,12 +243,24 @@ class checkBase(object):
         self.log_abort()
     return res
 
+
+  def __initPlugs__(self):
+    if len( self.plugins ) > 0:
+      l = []
+      for p in self.plugins:
+        mod = importlib.import_module( 'plugins.%s' % p )
+        agent = mod.checker(self)
+        l.append(agent)
+      self.agents = tuple( l )
+
   def runChecks(self):
     """Run all the checks registered in this instance (in self.checks) and handle exceptions"""
 
     try:
       for c in self.checks:
         c()  # run check
+      for agent in self.agents:
+        agent.run() # run check
       self.completed = True
     except abortChecks:
       ## error logging done before raising this exception
@@ -744,19 +764,23 @@ class checkStandardDims(checkBase):
     self.checkId = 'unset'
     self.step = 'Initialised'
     self.checks = (self.check_timeVals, self.do_check,)
+    ###self.plugins = ('timeAxisConsistency',)
     self.plevRequired = self.pcfg.plevRequired
     self.plevValues = self.pcfg.plevValues
     self.heightRequired = self.pcfg.heightRequired
     self.heightValues = self.pcfg.heightValues
     self.heightRange = self.pcfg.heightRange
 
-  def check(self,varName,varGroup, da, va, isInsta,vocabs):
+  def check(self,varName,varGroup, da, va, isInsta,vocabs,fnParts):
+    """API called from check manager *run_c4* for each file"""
+
     self.errorCount = 0
     assert type(varName) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
     self.var = varName
     self.varGroup = varGroup
     self.da = da
     self.va = va
+    self.fnParts = fnParts
     self.isInsta = isInsta
     self.vocabs = vocabs
     self.runChecks()

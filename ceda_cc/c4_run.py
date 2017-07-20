@@ -236,7 +236,7 @@ class checker(object):
     ##self.cgd.heightRequired = config.heightRequired
     ##self.cgd.heightValues = config.heightValues
     ##self.cgd.heightRange = config.heightRange
-    self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous, self.vocabs )
+    self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous, self.vocabs, self.cfn.fnParts )
     self.calendar = self.cgd.calendar
     if not self.cgd.completed:
       self.completed = False
