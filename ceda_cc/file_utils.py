@@ -48,7 +48,25 @@ def tstr( x ):
   x1 = str(x)
   return {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( x1, x1 )
 
+class GlobalAttributes(dict):
+  """A dictionary to contain the global attributes from the data file.
+     Each attribute simply stored with attribute name as key."""
+
+class VariableAttributes(dict):
+  """A dictionary to contain the variable attributes from the data file.
+         this[k] gives a dictionary of values for variable k. The dictionary for each variable has key/value pairs for each attribute, plus two special keys:
+          _type [required]: indicating the data type (float32|int32|float64|...)
+          _data [optional]: data values
+  """
+
 class fileMetadata(object):
+  """Reads in the meta data from a netcdf file.
+     Four NetCDF APIs are supported:
+       cdms
+       NetCDF4
+       Scientific
+       ctypes (libnetcdf.so)
+  """
 
   def __init__(self,dummy=False,attributeMappingsLog=None,forceLib=None,readDx=None):
     self.readDims = ['plev','plev_bnds','height']
@@ -90,8 +108,8 @@ class fileMetadata(object):
     self.fpath = fpath
     self.fn = string.split( fpath, '/' )[-1]
     self.fparts = string.split( self.fn[:-3], '_' )
-    self.ga = {}
-    self.va = {}
+    self.ga = GlobalAttributes()
+    self.va = VariableAttributes()
     self.da = {}
     if self.dummy:
       self.makeDummyFileImage()
