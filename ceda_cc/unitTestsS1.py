@@ -117,8 +117,8 @@ else:
 
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
-## note last argument is "vocabs", but only used in "experimental" mode
-c.check( 'tas', 'day', {},{}, False, None )
+## note penultimate argument is "vocabs", but only used in "experimental" mode
+c.check( 'tas', 'day', {},{}, False, None, ['a','b'] )
 if c.errorCount == 0:
   print 'Failed [%s]: failed to detect empty dictionaries' % module
 else:
