@@ -54,7 +54,6 @@ utils_c4
 
 .. automodule:: utils_c4
    :show-inheritance:
-   :inherited-members:
    :members:
 
 file_utils
@@ -62,7 +61,6 @@ file_utils
 
 .. automodule:: file_utils
    :show-inheritance:
-   :inherited-members:
    :members:
 
 xceptions
