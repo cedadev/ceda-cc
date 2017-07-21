@@ -1,4 +1,6 @@
-
+"""
+Basic file utilities for reading NetCDF files.
+"""
 # Standard library imports
 import string, pkgutil
 
@@ -59,13 +61,28 @@ class VariableAttributes(dict):
           _data [optional]: data values
   """
 
+class DimensionAttributes(dict):
+  """A dictionary to contain the dimension attributes from the data file.
+         this[k] gives a dictionary of values for dimension k. The dictionary for each variable has key/value pairs for each attribute, plus two special keys:
+          _type [required]: indicating the data type (float32|int32|float64|...)
+          _data [required]: data values
+  """
+
+
 class fileMetadata(object):
   """Reads in the meta data from a netcdf file.
-     Four NetCDF APIs are supported:
-       cdms
+     Four python NetCDF APIs are supported:
+       cdms2
        NetCDF4
        Scientific
        ctypes (libnetcdf.so)
+
+
+     Metadata, values of dimensions, and some data values for vertical coordinate bounds are read in (**hard coded dependency on vertical coordinate bounds names**) and stored in 3 dictionaries-
+
+     There is also an option to create a dummy dictionaries which can be used for unit testing of code.
+
+     A final method allows some substitutions to be inserted before completing tests. With complex files it may be that some errors are masking others, and several attempts may be needed to arrive at valid specifications. This approach allows provisional modifications to be tested quickly before updating files.
   """
 
   def __init__(self,dummy=False,attributeMappingsLog=None,forceLib=None,readDx=None):
@@ -110,7 +127,7 @@ class fileMetadata(object):
     self.fparts = string.split( self.fn[:-3], '_' )
     self.ga = GlobalAttributes()
     self.va = VariableAttributes()
-    self.da = {}
+    self.da = DimensionAttributes()
     if self.dummy:
       self.makeDummyFileImage()
       return
@@ -299,6 +316,7 @@ class fileMetadata(object):
     svals( 'units', ['degrees_north', 'degrees_east','days since 19590101'] )
 
   def applyMap( self, mapList, globalAttributesInFn, log=None ):
+    """Apply some mappings to the metadata dictionaries, to transform values so that compliance tests will be on modified values""".
     for m in mapList:
       if m[0] == 'am001':
         if m[1][0][0] == "@var":

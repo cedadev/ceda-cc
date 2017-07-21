@@ -1,5 +1,4 @@
-"""c4.py
-##########
+"""
 Entry point for command line usage -- see ccinit for usage information.
 """
 import sys, string
@@ -7,6 +6,7 @@ import sys, string
 def main_entry():
   """
    Wrapper around main() for use with setuptools.
+   This function will intercept arguments --sum, --unitTest, -v, otherwise pass the commandline to c4_run.main.
   """
   if len(sys.argv) == 1:
       # Show command-line info and report that you must provide arguments
