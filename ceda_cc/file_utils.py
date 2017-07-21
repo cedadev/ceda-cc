@@ -316,7 +316,7 @@ class fileMetadata(object):
     svals( 'units', ['degrees_north', 'degrees_east','days since 19590101'] )
 
   def applyMap( self, mapList, globalAttributesInFn, log=None ):
-    """Apply some mappings to the metadata dictionaries, to transform values so that compliance tests will be on modified values""".
+    """Apply some mappings to the metadata dictionaries, to transform values so that compliance tests will be on modified values"""
     for m in mapList:
       if m[0] == 'am001':
         if m[1][0][0] == "@var":
