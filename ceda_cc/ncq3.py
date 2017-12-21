@@ -38,6 +38,7 @@ NC_GLOBAL = -1
 NC_BYTE = 1
 NC_CHAR = 2
 NC_SHORT = 3
+NC_STRING = 12
 NC_INT = 4
 NC_LONG = NC_INT
 NC_FLOAT = 5
@@ -54,8 +55,10 @@ ncmappings = DummyClass()
 ncmappings.fmt= { NC_FORMAT_CLASSIC:'Classic', NC_FORMAT_64BIT:'64Bit',
                   NC_FORMAT_NETCDF4:'NetCDF4', NC_FORMAT_NETCDF4_CLASSIC:'NetCDF4 Classic' }
 ## dictionary of c-types to deal with different data types 
+## NC_STRING added Dec. 2017: appears to be new in NetCDF4
 ncmappings.tdict = { NC_BYTE:c_byte,
       NC_SHORT:c_short,
+      NC_STRING:c_char_p,
       NC_INT:c_int,
       NC_LONG:c_long,
       NC_FLOAT:c_float,
@@ -63,6 +66,7 @@ ncmappings.tdict = { NC_BYTE:c_byte,
 
 ncmappings.tdict2 = { NC_BYTE:"byte",
       NC_SHORT:"short",
+      NC_STRING:"string",
       NC_INT:"int",
       NC_LONG:"long",
       NC_FLOAT:"float",
@@ -259,7 +263,7 @@ class File(object):
 
     else:
       tt = ncmappings.tdict.get( type, None )
-      if tt == None: raise NCError("unknown data type")
+      if tt == None: raise NCError("unknown data type : %s [%s]" % (type,name))
       t2 = ncmappings.tdict2.get( type, None )
       if len > 1:
         data = (tt*len)()
