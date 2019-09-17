@@ -27,7 +27,7 @@ class timeInt(object):
        self.dpymx = self.mnmx[self.vc[cal]][1] + tol
        self.dpmmn = self.mmnmmx[self.vc[cal]][0] - tol
        self.dpmmx = self.mmnmmx[self.vc[cal]][1] + tol
-     self.map = { 'yr':'P1Y','monClim':'P1M','mon':'P1M','day':'P1D','6hr':'P6H','3hr':'P3H'}
+     self.map = { 'yr':'P1Y','monClim':'P1M','mon':'P1M','day':'P1D','6hr':'P6H','3hr':'P3H', '1hr':'P1H'}
      self.nd = { 'x':'y' }
 
    def setUnit(self,u):
@@ -443,7 +443,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 
     self.checkId, ok = (('004','filename_timerange_length'),True)
     if (not self.isFixed) and self.pcfg.checkTrangeLen:
-      ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':[10,12], '6hr':10 }
+      ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':[10,12], '6hr':10, '1hr':12 }
       ok &=self.test( self.freq in ltr.keys(), 'Frequency [%s] not recognised' % self.freq, part=True )
       if ok:
         if type( ltr[self.freq] ) == type(0):
@@ -1139,7 +1139,7 @@ class checkByVar(checkBase):
   def checkThisTrange( self, tt, group):
     """Check consistency across a list of time ranges"""
 
-    if group in ['3hr','6hr']:
+    if group in ['1hr','3hr','6hr']:
        kg = 'subd'
     else:
        kg = group
@@ -1167,6 +1167,7 @@ class checkByVar(checkBase):
          nofh9 = self.monitor.get_open_fds()
          if nofh9 > nofh0:
            print 'Open file handles: %s --- %s [%s]' % (nofh0, nofh9, j )
+
 
 ### http://stackoverflow.com/questions/2023608/check-what-files-are-open-in-python
 class sysMonitor(object):
