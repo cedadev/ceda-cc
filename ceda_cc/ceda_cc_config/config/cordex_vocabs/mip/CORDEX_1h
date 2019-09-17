@@ -1,0 +1,220 @@
+table_id: Table 1h
+modeling_realm: atmos
+
+frequency: 1hr
+
+cmor_version: 2.6         ! version of CMOR that can read this table
+cf_version:   1.4         ! version of CF that output conforms to
+project_id:   CORDEX  ! project id
+table_date:   March 2015 ! date this table was constructed
+
+missing_value: 1.e20      ! value used to indicate a missing value
+                          !   in arrays output by netCDF as 32-bit IEEE 
+                          !   floating-point numbers (float or real)
+
+
+product: output
+! CMIP5's Table adapted for CORDEX
+required_global_attributes: creation_date tracking_id model_id contact institute_id ! space separated required global attribute 
+
+expt_id_ok: 'Evaluation run with reanalysis forcing' 'evaluation'
+expt_id_ok: 'historical' 'historical'
+expt_id_ok: 'RCP2.6' 'rcp26'
+expt_id_ok: 'RCP4.5' 'rcp45'
+expt_id_ok: 'RCP8.5' 'rcp85'
+expt_id_ok: 'AMIP' 'amip'
+expt_id_ok: '10- or 30-year run initialized in year XXXX' 'decadalXXXX'
+
+approx_interval:  0.041667     ! approximate spacing between successive time
+                               !   samples (in units of the output time 
+                               !   coordinate.
+
+!============
+axis_entry: longitude
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    longitude
+units:            degrees_east
+axis:             X             ! X, Y, Z, T (default: undeclared)
+long_name:        longitude
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         lon
+stored_direction: increasing
+type:             double
+must_have_bounds: yes
+!----------------------------------
+!
+
+
+!============
+axis_entry: latitude
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    latitude
+units:            degrees_north
+axis:             Y             ! X, Y, Z, T (default: undeclared)
+long_name:        latitude
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         lat
+valid_min:        -90.0         
+valid_max:        90.0 
+stored_direction: increasing
+type:             double
+must_have_bounds: yes
+!----------------------------------
+!
+
+
+!
+!============
+axis_entry: time
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    time
+units:            days since ?
+axis:             T             ! X, Y, Z, T (default: undeclared)
+long_name:        time
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         time
+stored_direction: increasing
+type:             double
+must_have_bounds: yes
+!----------------------------------
+!
+
+
+
+!============
+axis_entry: time1
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    time
+units:            days since ?
+axis:             T             ! X, Y, Z, T (default: undeclared)
+long_name:        time
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         time
+stored_direction: increasing
+type:             double
+must_have_bounds: no
+!----------------------------------
+!
+
+
+!============
+axis_entry: height2m
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    height
+units:            m
+axis:             Z             ! X, Y, Z, T (default: undeclared)
+positive:         up         ! up or down (default: undeclared)
+long_name:        height
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         height
+valid_min:        1.0         
+valid_max:        10.0 
+stored_direction: increasing
+type:             double
+value:            2.            ! of scalar (singleton) dimension 
+must_have_bounds: no
+!----------------------------------
+!
+
+
+!============
+axis_entry: height10m
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    height
+units:            m
+axis:             Z             ! X, Y, Z, T (default: undeclared)
+positive:         up         ! up or down (default: undeclared)
+long_name:        height
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         height
+valid_min:        1.0         
+valid_max:        30.0 
+stored_direction: increasing
+type:             double
+value:            10.            ! of scalar (singleton) dimension 
+must_have_bounds: no
+!----------------------------------
+!
+
+
+!============
+axis_entry: sdepth1 
+!============
+!----------------------------------
+! Axis attributes:
+!----------------------------------
+standard_name:    depth
+units:            m
+axis:             Z             ! X, Y, Z, T (default: undeclared)
+positive:         down         ! up or down (default: undeclared)
+long_name:        depth
+!----------------------------------
+! Additional axis information:
+!----------------------------------
+out_name:         depth
+valid_min:        0.0         
+valid_max:        0.2 
+stored_direction: increasing
+type:             double
+value:            0.05            ! of scalar (singleton) dimension 
+bounds_values:    0.0 0.1    ! of scalar (singleton) dimension bounds
+must_have_bounds: yes
+!----------------------------------
+!
+
+!============
+variable_entry:    pr
+!============
+deflate: 1
+deflate_level: 1
+shuffle: 1
+modeling_realm:    atmos
+!----------------------------------
+! Variable attributes:
+!----------------------------------
+standard_name:     precipitation_flux
+units:             kg m-2 s-1
+cell_methods:      time: mean
+
+long_name:         Precipitation
+comment:           at surface; includes both liquid and solid phases from all types of clouds (both large-scale and convective)
+!----------------------------------
+! Additional variable information:
+!----------------------------------
+dimensions:        longitude latitude time
+out_name:          pr
+type:              real
+!----------------------------------
+!
+
+
