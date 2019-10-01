@@ -1,4 +1,5 @@
 # list of GCMModelName values for CORDEX
+# From http://is-enes-data.github.io/GCMModelName.txt
 # name   institute  "UI institute"  "UI model name"
 ECMWF-ERAINT  ECMWF   na na
 BCC-bcc-csm1-1  BCC  BCC   BCC-CSM1.1

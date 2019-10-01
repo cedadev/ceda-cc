@@ -2,8 +2,8 @@ from fcc_utils2 import mipTableScan
 from ceda_cc_config.config_c4 import CC_CONFIG_DIR
 import re, os, string
 
-ml = ['CORDEX_3h', 'CORDEX_6h', 'CORDEX_Aday', 'CORDEX_day', 'CORDEX_grids', 'CORDEX_mon' ]
-ml = ['CORDEX_3h', 'CORDEX_6h', 'CORDEX_fx', 'CORDEX_day', 'CORDEX_mon', 'CORDEX_sem' ]
+ml = ['CORDEX_1h', 'CORDEX_3h', 'CORDEX_6h', 'CORDEX_Aday', 'CORDEX_day', 'CORDEX_grids', 'CORDEX_mon' ]
+ml = ['CORDEX_1h', 'CORDEX_3h', 'CORDEX_6h', 'CORDEX_fx', 'CORDEX_day', 'CORDEX_mon', 'CORDEX_sem' ]
 newMip = 'SPECS'
 newMip = 'CORDEX'
 newMip = 'CCMI'
@@ -203,7 +203,7 @@ if newMip == 'CORDEX':
       print 'ERROR: CORDEX DKRZ sn %s for %s not in snl/snla' % (sn, var)
     ec1[var] = ( sn,ln)
  elif dkrz_cordex_version == 2:
-  for tab in ['3hr','6hr','day','mon','sem','fx']:
+  for tab in ['1hr','3hr','6hr','day','mon','sem','fx']:
      ll = open( os.path.join(base, cordex_dkrz_pat % tab) ).readlines()
      for l in ll[3:]:
         bits = string.split( l, ',' )
@@ -236,7 +236,7 @@ if newMip == 'CORDEX':
         assert pos in ['','up','down'], 'Unexpected value for pos [%s] in %s' % (pos,l)
         eca[var] = ( units,ln,sn,pos,realm )
 
-  for tab in ['3hr','6hr','day','mon','sem','fx']:
+  for tab in ['1hr','3hr','6hr','day','mon','sem','fx']:
      ee  = {}
      ll = open( os.path.join(base, cordex_dkrz_pat % tab) ).readlines()
      for l in ll[2:]:
@@ -285,13 +285,13 @@ def validate( t,cc ):
     l2 = {}
     for m in ml2:
       l2 = ms.scan_table( open( os.path.join(base, 'cmip5_vocabs/mip/' + m) ).readlines(), None, asDict=True, appendTo=l2, lax=True, tag=m, warn=False)
-    k = { '3hr':'3h', '6hr':'6h' }.get( t,t )
+    k = { '1hr':'1h', '3hr':'3h', '6hr':'6h' }.get( t,t,t )
     l1 = ms.scan_table( open( os.path.join(base, newMipDir + mpat % k) ).readlines(), None, asDict=True, project=newMip)
     ccm = True
     tag = t
   cc.comp( l1, l2, checkCellMethods=ccm, tag=tag )
 
-tlist = ['3hr','6hr','day','mon','sem','fx']
+tlist = ['1hr','3hr','6hr','day','mon','sem','fx']
 tlist = ['Amon']
 tlist = ['Amon', 'fx', 'Lmon', 'Omon', '6hrLev', 'day', 'OImon']
 doAll = True

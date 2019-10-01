@@ -34,7 +34,7 @@ validCordexExperiment = validCmip5Experiments + ['evaluation']
 
 
 validCmip5Frequencies = ['fx','yr','monClim','mon','day','6hr','3hr','subhr']
-validCordexFrequencies = ['fx','sem','mon','day','6hr','3hr']
+validCordexFrequencies = ['fx','sem','mon','day','6hr','3hr','1hr']
 validSpecsFrequencies = ['fx','mon','day','6hr']
 validCcmiFrequencies = ['fx','yr','mon','day','hr','subhr']
 validSpecsExptFamilies = map( lambda x: string.strip( x ), 
@@ -333,8 +333,8 @@ class projectConfig(object):
 # ## used in mipVocabs
     if self.projectV.id == 'CORDEX':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cordex_vocabs/mip/')
-       self.mipVocabTl = ['fx','sem','mon','day','6h','3h']
-       self.mipVocabVgmap = {'6h':'6hr','3h':'3hr'}
+       self.mipVocabTl = ['fx','sem','mon','day','6h','3h','1h']
+       self.mipVocabVgmap = {'6h':'6hr','3h':'3hr', '1h':'1hr'}
        self.mipVocabFnpat = 'CORDEX_%s'
     elif self.projectV.id == 'CMIP5':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cmip5_vocabs/mip/')
