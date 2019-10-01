@@ -1111,7 +1111,7 @@ class checkByVar(checkBase):
     self.errorCount = 0
     self.recorder=recorder
     self.calendar=calendar
-    if calendar == '360-day':
+    if calendar in ('360-day', '360_day'):
       self.enddec = 30
     else:
       self.enddec = 31
