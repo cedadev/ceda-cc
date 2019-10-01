@@ -4,7 +4,7 @@ import string
 
 t1 = '19900101'
 
-t2 = ['days since 1980-01-01', '360-day', 3600]
+t2 = ['days since 1980-01-01', '360_day', 3600]
 
 lm = [31,28,31,30,31,30,31,31,30,31,30,31]
 
@@ -168,7 +168,7 @@ def timeUnitsScan( c1 ):
     assert bits[1] == 'since'
 
 def jabs( y,m,d,cal ):
-  if cal == '360-day':
+  if cal == '360_day':
     return y*360 + m*30 + d
 
 def c1(t1,t2):
@@ -178,7 +178,7 @@ def c1(t1,t2):
   assert bits[1] == 'since'
 
   calendar = t2[1]
-  if calendar == '360-day':
+  if calendar == '360_day':
     ly = 360
     lm = 30
 
