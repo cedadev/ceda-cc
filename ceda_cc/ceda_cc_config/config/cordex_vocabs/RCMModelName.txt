@@ -50,7 +50,7 @@ KNU-RegCM4-0 KNU confirmed
 MGO-RRCM MGO confirmed
 MIUB-WRF331A MIUB confirmed
 MOHC-HadGEM3-RA MOHC confirmed
-MOHC-HadREM3-GA7.05 MOHC confirmed
+MOHC-HadREM3-GA7-05 MOHC confirmed
 MOHC-HadRM3P MOHC confirmed
 MPI-CSC-REMO2009 MPI-CSC confirmed
 MU-WRF360M MU confirmed
