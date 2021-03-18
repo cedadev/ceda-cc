@@ -1,0 +1,3 @@
+2021-03-18 15:41:14,296 INFO Starting batch -- number of file: 90
+2021-03-18 15:41:14,296 INFO Source: dummy
+2021-03-18 15:41:14,296 INFO Python netcdf: netCDF4
