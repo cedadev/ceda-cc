@@ -31,8 +31,8 @@ ceda_cc -p <project> [-f <NetCDF file>|-d <directory containing files>|-D <root 
 
 With the "-D" option, all files in the directory tree beneath the given directory will be checked. With the "-d" option, only files in the given directory will be checked.
 """
-import sys, os, string, time, logging, glob
-from ceda_cc_config import config_c4
+import sys, os, time, logging, glob
+from ceda_cc.ceda_cc_config import config_c4
 
 class c4_init(object):
 
@@ -58,7 +58,7 @@ class c4_init(object):
    
     # Show help if no args or help requested
     if len(args) == 0 or args[0] in ('-h', '-help', '--help'):
-       print __doc__
+       print(__doc__)
        raise SystemExit(0)	
     # The --copy-config option must be the first argument if it is present.
     elif args[0] == '--copy-config':
@@ -67,8 +67,8 @@ class c4_init(object):
        args.pop(0)
        dest_dir = args.pop(0)
        config_c4.copy_config(dest_dir)
-       print 'Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir
-       print
+       print('Configuration directory copied to %s.  Set CC_CONFIG_DIR to use this configuration.' % dest_dir)
+       print()
        raise SystemExit(0)
 
     self.summarymode = args[0] == '--sum'
@@ -150,17 +150,17 @@ class c4_init(object):
       elif next == "-p":
         self.project = args.pop(0)
       else:
-       print 'Unused argument: %s' % next
+       print('Unused argument: %s' % next)
        argu.append( next )
        nn+=1
     if nn != 0:
-      print 'Unused arguments: ', argu
+      print('Unused arguments: ', argu)
       self.commandHints( argsIn )
 
     if self.project == 'CMIP5' and fltype != '-f':
       fl0 = []
       for f in flist:
-        if string.find( f, '/latest/' ) != -1:
+        if  f.find( '/latest/' ) != -1:
           fl0.append(f)
       flist = fl0
 
@@ -184,7 +184,7 @@ class c4_init(object):
     flist.sort()
     fnl = []
     for f in flist:
-      fn = string.split(f, '/')[-1]
+      fn = f.split( '/')[-1]
       fnl.append(fn)
     nd = 0
     dupl = []
@@ -230,31 +230,31 @@ class c4_init(object):
     if self.attributeMappingFile != None:
       for l in open( self.attributeMappingFile ).readlines():
         if l[0] != '#':
-          bb = string.split( string.strip(l), '|' ) 
+          bb = l.strip(l).split( '|' ) 
           assert len(bb) ==2, "Error in experimental module attributeMapping -- configuration line not scanned [%s]" % str(l)
-          bits = string.split( bb[0], ';' )
+          bits =  bb[0].split( ';' )
           cl = []
           for b in bits:
-            cl.append( string.split(b, '=' ) )
-          self.attributeMappings.append( ('am001',cl, string.split(bb[1],'=') ) )
+            cl.append( b.split( '=' ) )
+          self.attributeMappings.append( ('am001',cl, bb[1].split('=') ) )
       self.attributeMappingsLog = open( 'attributeMappingsLog.txt', 'w' )
 
   def commandHints(self, args):
     if args[0] in ['-h','--sum']:
-      print 'Arguments look OK'
+      print('Arguments look OK')
     elif args[0] == '--copy-config':
-      print 'Usage [configuration copy]: ceda_cc --copy-config <target directory path>'
+      print('Usage [configuration copy]: ceda_cc --copy-config <target directory path>')
     else:
       if not( '-f' in args or '-d' in args or '-D' in args):
-        print 'No file or target directory specified'
-        print __doc__
+        print('No file or target directory specified')
+        print(__doc__)
     raise SystemExit(0)
    
 
   def getFileLog( self, fn, flf=None ):
     if flf == None:
       tstring2 = '%4.4i%2.2i%2.2i' % time.gmtime()[0:3]
-      if fn in self.dupDict.keys():
+      if fn in list(self.dupDict.keys()):
         tag = '__%2.2i' % self.dupDict[fn]
         self.dupDict[fn] += 1
       else:

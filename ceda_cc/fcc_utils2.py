@@ -1,11 +1,11 @@
 import string, os, re, stat, sys
-from ceda_cc_config.config_c4 import CC_CONFIG_DIR
+from ceda_cc.ceda_cc_config.config_c4 import CC_CONFIG_DIR
+from ceda_cc.xceptions import *
 
 ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'
 ##
 
-from xceptions import *
 
 class mipTableScan(object):
 
@@ -21,7 +21,7 @@ class mipTableScan(object):
   def scan_table(self,ll,log,asDict=False,appendTo=None,lax=False,tag=None,warn=True, project='CMIP5'):
 
     self.project = project
-    lll0 = map( string.strip, ll )
+    lll0 = list(map( string.strip, ll ))
     lll = []
     for l in lll0:
       if len(l) != 0:
@@ -87,9 +87,9 @@ class mipTableScan(object):
 
       for k in range(len(ee) ):
         if ee[k][0:2] == eee[k][0:2] and ee[k][2]['standard_name'] == eee[k][2]['standard_name'] and ee[k][2]['long_name'] == eee[k][2]['long_name']:
-          print 'OK:::', ee[k]
+          print('OK:::', ee[k])
         else:
-          print 'DIFF: ',ee[k],eee[k]
+          print('DIFF: ',ee[k],eee[k])
       
     if not asDict:
       return tuple( eee )
@@ -103,33 +103,33 @@ class mipTableScan(object):
       for l in fff:
         self.adict[l[0]] = ( l[1], l[2] )
       if appendTo != None:
-        for k in ff.keys():
-          assert ff[k][1].has_key( 'standard_name' ), 'No standard name in %s:: %s' % (k,str(ff[k][1].keys()))
-          if appendTo.has_key(k):
+        for k in list(ff.keys()):
+          assert 'standard_name' in ff[k][1], 'No standard name in %s:: %s' % (k,str(list(ff[k][1].keys())))
+          if k in appendTo:
             if lax:
               if ff[k][1]['standard_name'] != appendTo[k][1]['standard_name']:
                 if warn:
-                  print 'ERROR[X1]%s - %s : Inconsistent standard_names %s:: %s [%s] --- %s [%s]' % (tag,appendTo[k][3],k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
+                  print('ERROR[X1]%s - %s : Inconsistent standard_names %s:: %s [%s] --- %s [%s]' % (tag,appendTo[k][3],k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2]))
               if ff[k][1]['long_name'] != appendTo[k][1]['long_name']:
                 if warn:
                   k3 = min( 3, len(appendTo[k])-1 )
-                  print 'WARNING[X1]%s -- %s: Inconsistent long_names %s:: %s --- %s' % (tag,appendTo[k][k3],k,ff[k][1]['long_name'],appendTo[k][1]['long_name'])
+                  print('WARNING[X1]%s -- %s: Inconsistent long_names %s:: %s --- %s' % (tag,appendTo[k][k3],k,ff[k][1]['long_name'],appendTo[k][1]['long_name']))
 
               p1 = ff[k][1].get('positive','not set')
               p2 = appendTo[k][1].get('positive','not set')
               if p1 != p2:
                 if warn:
                   k3 = min( 3, len(appendTo[k])-1 )
-                  print 'WARNING[X1]%s -- %s: Inconsistent positive attributes %s:: %s --- %s' % (tag,appendTo[k][k3],k,p1,p2)
+                  print('WARNING[X1]%s -- %s: Inconsistent positive attributes %s:: %s --- %s' % (tag,appendTo[k][k3],k,p1,p2))
 
-              for k2 in ff[k][1].keys():
+              for k2 in list(ff[k][1].keys()):
                 if k2 not in ['standard_name','long_name','positive']:
                     p1 = ff[k][1].get(k2,'not set')
                     p2 = appendTo[k][1].get(k2,'not set')
                     if p1 != p2:
                       if warn:
                         k3 = min( 3, len(appendTo[k])-1 )
-                        print 'WARNING[Y1]%s -- %s: Inconsistent %s attributes %s:: %s --- %s' % (tag,appendTo[k][k3],k2,k,p1,p2)
+                        print('WARNING[Y1]%s -- %s: Inconsistent %s attributes %s:: %s --- %s' % (tag,appendTo[k][k3],k2,k,p1,p2))
 
             if not lax:
               assert ff[k][1] == appendTo[k][1], 'Inconsistent entry definitions %s:: %s [%s] --- %s [%s]' % (k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
@@ -143,7 +143,7 @@ class mipTableScan(object):
       assert s[0] in ['variable_entry','axis_entry'],'scan_entry_01 called with unsupported entry type: %s' % s[0]
       bits = string.split(s[1][0],':')
       assert len(bits) == 2, 'Can not unpack: %s' % str(s[1])
-      k,var =  map( string.strip, string.split(s[1][0],':') )
+      k,var =  list(map( string.strip, string.split(s[1][0],':') ))
       nal = []
       if s[0] == 'variable_entry':
          aa = {'standard_name':None, 'long_name':None,'units':None,'cell_methods':None }
@@ -163,11 +163,11 @@ class mipTableScan(object):
       if self.project == 'CMIP5':
            if var == 'tos':
              if aa['standard_name'] != 'sea_surface_temperature':
-               print 'Overriding incorrect CMIP5 standard_name for %s' % var
+               print('Overriding incorrect CMIP5 standard_name for %s' % var)
                aa['standard_name'] = 'sea_surface_temperature'
            elif var == 'ps':
              if aa['long_name'] != 'Surface Air Pressure':
-               print 'Overriding inconsistent CMIP5 long_name for %s' % var
+               print('Overriding inconsistent CMIP5 long_name for %s' % var)
                aa['long_name'] = 'Surface Air Pressure'
       if s[0] == 'variable_entry':
         return ((var,ds,aa,tag), nal)

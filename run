@@ -1,0 +1,7 @@
+#!/bin/bash
+# 
+
+# with thanks to https://stackoverflow.com/questions/53442792/how-to-run-a-python-package-with-one-command-line#53445168
+
+python -m ceda_cc.c4  $*
+

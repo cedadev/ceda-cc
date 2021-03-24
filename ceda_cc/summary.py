@@ -5,14 +5,14 @@ import collections
 HERE = os.path.dirname(__file__)
 if HERE == '':
   HERE = '.'
-print '############################ %s' % HERE
+print('############################ %s' % HERE)
 
 NT_esn = collections.namedtuple( 'errorShortName', ['name', 'long_name', 'description' ] )
 class errorShortNames(object):
 
   def __init__(self, file='config/testStandardNames.txt'):
     assert os.path.isfile(file), 'File %s not found' % file
-    ii = map( string.strip, open(file).readlines() )
+    ii = list(map( string.strip, open(file).readlines() ))
     ll = [[ii[0],]]
     for l in ii[1:]:
       if len(l) > 0 and l[0] == '=':
@@ -22,7 +22,7 @@ class errorShortNames(object):
     self.ll = []
     for l in ll:
       if len(l) < 2:
-        print l
+        print(l)
       else:
         self.ll.append( NT_esn( string.strip(l[0],'='), l[1][1:], string.join(l[2:]) ) )
 
@@ -83,7 +83,7 @@ class LogSummariser(object):
         if (l[:3] in ('C4.', 'C5.') and l.find('FAILED') > -1) or l.find('CDMSError:') > -1:
           nef += 1
           nerr += 1
-          bits = map( string.strip, string.split(l, ':' ) )
+          bits = list(map( string.strip, string.split(l, ':' ) ))
           if 'FAILED' in bits:
              kb1 = bits.index('FAILED') + 1
           else:
@@ -98,9 +98,9 @@ class LogSummariser(object):
               msg = string.strip( string.join(bits[kb1:], ':' ) )
               msg0 = msg
               se = None
-            if code not in ee.keys():
+            if code not in list(ee.keys()):
               ee[code] = [0,{msg:[0,[]]},se]
-            elif msg not in ee[code][1].keys():
+            elif msg not in list(ee[code][1].keys()):
               ee[code][1][msg] = [0,[]]
             ee[code][0] += 1
             ee[code][1][msg][0] += 1
@@ -114,11 +114,11 @@ class LogSummariser(object):
       else:
         ff[fn] = elist
 
-    keys = ee.keys()
+    keys = list(ee.keys())
     keys.sort()
 
     for k in keys:
-      ks = ee[k][1].keys()
+      ks = list(ee[k][1].keys())
       if len(ks) == 1:
         self.write( '%s:  %s  %s' % (k,ee[k][0],ks[0]) )
 
@@ -166,7 +166,7 @@ class LogSummariser(object):
       self.testdict[t[0]] = (t[1],t[2])
 
   def write( self, s ):
-    print s
+    print(s)
 
   def htmlEsn( self ):
     esn = errorShortNames()
@@ -198,14 +198,14 @@ class LogSummariser(object):
                      <li>Number of error free files: %s</li></ul>
 """ % esum
 
-    keys = ee.keys()
+    keys = list(ee.keys())
     keys.sort()
     list = []
     for k in keys:
       if ee[k][2] == None:
         list.append( '<li>%s: %s</li>' % (k,ee[k][0]) )
       else:
-        assert ee[k][2] in self.testdict.keys(), 'unrecognised test name: %s' % ee[k][2]
+        assert ee[k][2] in list(self.testdict.keys()), 'unrecognised test name: %s' % ee[k][2]
         list.append( '<li>%s [%s:%s]: %s</li>' % (self.testdict[ee[k][2]][0],k,ee[k][2],ee[k][0]) )
     res2 = '<ul>%s</ul>' % string.join(list, '\n' )
     results += res2
@@ -219,14 +219,14 @@ class LogSummariser(object):
 """ % (about,data,results)
     self.__htmlPageWrite( 'html/index.html', maincontent )
 
-    keys = ee.keys()
+    keys = list(ee.keys())
     keys.sort()
 
     eItemTmpl = '<li><a href="rep.%3.3i.html">%s [%s]</a>: %s</li>'
     list = []
     nn = 0
     for k in keys:
-      ks = ee[k][1].keys()
+      ks = list(ee[k][1].keys())
       ks.sort()
       sect_esn = None
       for k2 in ks:
@@ -252,7 +252,7 @@ Click on the code to see a list of the files in which each error is detected.
 """  % (string.join(list, '\n' ) )
     self.__htmlPageWrite( 'html/errors/eindex.html', eIndexContent )
 
-    keys = ff.keys()
+    keys = list(ff.keys())
     keys.sort()
     fItemTmpl = '<li><a href="%s">%s [%s]</a></li>'
     list = []

@@ -4,7 +4,7 @@ ncdumpCmd = 'ncdump'
 ncdumpCmd = '/usr/local/5/bin/ncdump'
 ##
 
-from xceptions import *
+from .xceptions import *
 
 ##
 ## this class carries a logging method, and is used to carry information about datasets being parsed.
@@ -19,7 +19,7 @@ class qcHandler(object):
     self.log = log
     self.nofail = True
     self.hasTimeRange = False
-    for k in qcc.datasets.keys():
+    for k in list(qcc.datasets.keys()):
       self.datasets[k] = {}
     for g in qcc.groups:
       self.groups[g[0]] = { 'pat':g[1]}
@@ -60,7 +60,7 @@ class qcHandler(object):
     self.errorKeys = ['CQC.101.001.001', 'CQC.101.001.002']
 ## keys in this list will not be recorded as failed tests.
     self.ignoreKeys = []
-    for k in self.msg.keys():
+    for k in list(self.msg.keys()):
         self.msgk[k] = 0
 
   def _log( self, key, item, msg, ok=False ):
@@ -106,7 +106,7 @@ class dirParser(object):
       files.pop( files.index(f) )
       
 # record directory names at each level
-    if thisLev not in self.dirNames.keys():
+    if thisLev not in list(self.dirNames.keys()):
        self.dirNames[thisLev] = []
     if bits[-1] not in self.dirNames[thisLev]:
        self.dirNames[thisLev].append( bits[-1] )
@@ -147,11 +147,11 @@ class dirParser(object):
        for k in range(len(fbits)): 
          ns['fn_%s' % qfns.segments[k][1]] = fbits[k]
          if qfns.segments[k][0] == 'vocabulary':
-           assert qfns.segments[k][1] in self.qcc.vocab.keys(), '%s not a valid vocabulary name' % qfns.segments[k][1]
+           assert qfns.segments[k][1] in list(self.qcc.vocab.keys()), '%s not a valid vocabulary name' % qfns.segments[k][1]
            if not fbits[k] in self.qcc.vocab[qfns.segments[k][1]]:
               handler._log( 'CQC.101.001.004',  fpath, 'Not in vocab %s' % qfns.segments[k][1] )
          elif qfns.segments[k][0] == 'abstractVocab':
-           assert qfns.segments[k][1] in self.qcc.vocab.keys(), '%s not a valid abstract vocabulary name' % qfns.segments[k][1]
+           assert qfns.segments[k][1] in list(self.qcc.vocab.keys()), '%s not a valid abstract vocabulary name' % qfns.segments[k][1]
            this = self.qcc.vocab[qfns.segments[k][1]]
            assert this[0] == 'regex', 'Unexpected start of abstractVocab, %s' % str( this )
            match = False
@@ -159,13 +159,13 @@ class dirParser(object):
               if s.match( fbits[k] ):
                 match = True
                 ## print 'Match [%s] found for %s {%s}' % (t,fbits[k],tt)
-                for k in y.groupdict().keys():
+                for k in list(y.groupdict().keys()):
                     ns['fnre_%s' % k] = y.groupdict()[k]
                 if tt != None:
                   ##print 'trying further test'
                   tt1 = string.replace(tt,'$','_arg_')
                   y = s.match( fbits[k] )
-                  for k in y.groupdict().keys():
+                  for k in list(y.groupdict().keys()):
                     eval( '_arg_%s = int( %s )' % (k,y.groupdict()[k] ) )
                   eval( 'res = tt1' )
                   ##print res
@@ -176,7 +176,7 @@ class dirParser(object):
            if not match:
               handler._log( 'CQC.101.001.006',  fpath, 'Failed abstractVocab regex tests %s' % fbits[k] )
          elif qfns.segments[k][0] == 'condAbstractVocab':
-           assert qfns.segments[k][1] in self.qcc.vocab.keys(), '%s not a valid abstract vocabulary name' % qfns.segments[k][1]
+           assert qfns.segments[k][1] in list(self.qcc.vocab.keys()), '%s not a valid abstract vocabulary name' % qfns.segments[k][1]
            this = self.qcc.vocab[qfns.segments[k][1]]
            assert this[0] == 'regex', 'Unexpected start of abstractVocab, %s' % str( this )
            match = False
@@ -199,14 +199,14 @@ class dirParser(object):
                   if y:
                     ## print 'Match [%s] found for %s {%s}' % (t,fbits[k],tt)
                     nunc += 1
-                    for key in y.groupdict().keys():
+                    for key in list(y.groupdict().keys()):
                         ns['fnre_%s' % key] = y.groupdict()[key]
                     ##print '--- Match [%s] found for %s {%s}' % (t,fbits[k],tt)
                     if tt != None:
                       ## create string with test condition.`
                       tt1 = string.replace(tt,'$','_arg_')
                       y = s.match( fbits[k] )
-                      for key in y.groupdict().keys():
+                      for key in list(y.groupdict().keys()):
                         locals()['_arg_%s' % key ] = int( y.groupdict()[key] )
                         ##print '_arg_%s' % key , locals()['_arg_%s' % key ]
                       res = eval( tt1 )
@@ -233,26 +233,26 @@ class dirParser(object):
          elif qfns.segments[k][0] == 'vocabulary*':
            pass
          else:
-           print 'segment test id %s not recognised' % qfns.segments[k][0]
+           print('segment test id %s not recognised' % qfns.segments[k][0])
            raise baseException( 'segment test id %s not recognised' % qfns.segments[k][0] )
 ##################################
        versionned = False
        if not versionned:
-        for k in self.qcc.datasets.keys():
+        for k in list(self.qcc.datasets.keys()):
           if self.qcc.datasets[k].datasetIdArg == 'fileNameBits':
             dsId = self.qcc.datasets[k].getDatasetId( fbits )
           elif self.qcc.datasets[k].datasetIdArg == 'filePathBits':
             try:
               dsId = self.qcc.datasets[k].getDatasetId( fbits, dbits )
             except:
-              print 'Failed to get dsID:',fbits,dbits
+              print('Failed to get dsID:',fbits,dbits)
               raise baseException( 'Failed to get dsID: %s,%s' % (fbits,dbits) )
           else:
             assert False, 'datasetIdMethod %s not supported yet' % self.qcc.datasets[k].datasetIdMethod
             
           if os.path.islink( fpath ):
             dsId += '_lnk'
-          if not handler.datasets[k].has_key( dsId ):
+          if dsId not in handler.datasets[k]:
             handler.datasets[k][dsId] = []
           handler.datasets[k][dsId].append( (dir,f, handler.nofail, ns) )
 
@@ -269,9 +269,9 @@ class dataSetParser(object):
 ## allowEndPeriodEqual should only be permitted for time averaged fields, but in this version it is set true for all fields.
       allowEndPeriodEqual = True
       try:
-        fns = map( lambda x: x[1], self.qcc.fileNameSegments.segments )
+        fns = [x[1] for x in self.qcc.fileNameSegments.segments]
       except:
-        print self.qcc.fileNameSegments.segments
+        print(self.qcc.fileNameSegments.segments)
         raise baseException(  str( self.qcc.fileNameSegments.segments ) )
       dsok = True
       for dir,f, fok, ns in files:
@@ -327,7 +327,7 @@ class dataSetParser(object):
 ###
 ### run group constraints
 ###
-          if self.qcc.groupConstraints.has_key( dsclass ):
+          if dsclass in self.qcc.groupConstraints:
               for ct in self.qcc.groupConstraints[dsclass]:
                  ct.__reset__()
                  for dir,f, fok, ns in files:
@@ -374,31 +374,31 @@ class dataSetParser(object):
 ##
 ## messy hack -- copying globals attributes into a new dictionary
 ##
-               for k in rd.gats.keys():
+               for k in list(rd.gats.keys()):
                  ns['g_%s' % k] = rd.gats[k]
 ## rd.vars[k] is a tuple: (dims,atts), where atts is a dictionary of attributes.
-               for k in rd.vars.keys():
+               for k in list(rd.vars.keys()):
                  ns['v_%s' % k] = rd.vars[k]
-               for k in rd.dims.keys():
+               for k in list(rd.dims.keys()):
                  ns['d_%s' % k] = rd.dims[k]
 
                if self.qcc.attributeTests:
                  for a in self.qcc.requiredGlobalAttributes:
-                   self.h._log( 'CQC.101.004.007', '%s/%s' % (dir,f), 'Attribute: %s' % a, ok=a in rd.gats.keys() )
+                   self.h._log( 'CQC.101.004.007', '%s/%s' % (dir,f), 'Attribute: %s' % a, ok=a in list(rd.gats.keys()) )
 
           if self.qcc.variableTests:
             for dir,f, fok, ns in files2:
              if fok:
               for rv in self.qcc.requiredVariables:
                 if rv[0][0] != '$':
-                  self.h._log( 'CQC.102.002.007', f, 'Required variable %s'% (rv[0]), 'v_%s' % rv[0] in ns.keys())
+                  self.h._log( 'CQC.102.002.007', f, 'Required variable %s'% (rv[0]), 'v_%s' % rv[0] in list(ns.keys()))
 
           if self.qcc.groups:
             for dir,f, fok, ns in files2:
              if fok:
                for g in self.qcc.groups:
                   gid = g[1] % ns
-                  if not self.qcc.groupDict[g[0]].has_key( gid ):
+                  if gid not in self.qcc.groupDict[g[0]]:
                     self.qcc.groupDict[g[0]][ gid ] = []
                   self.qcc.groupDict[g[0]][ gid ].append( ( dir,f,fok) )
                   ## print '%s:: %s' % (g[0],gid)
@@ -419,7 +419,7 @@ class dataSetParser(object):
               for v in self.qcc.dataVariables:
                 var = ns[v[1]]
                 if v[0] == 'ns':
-                  isPresent = 'v_%s' % var in ns.keys()
+                  isPresent = 'v_%s' % var in list(ns.keys())
                   if v[3]:
                     self.h._log( 'CQC.102.002.008', f, '%s [%s::%s]'% (var,v[1],v[2]), isPresent )
        
@@ -475,7 +475,7 @@ class qcConfigParse(object):
      self.firstFile = False
 
      for s in requiredSections:
-       assert s in self.sections.keys(), 'Required section %s not found in %s [parsing %s]' % (s, self.section.keys(),self.file)
+       assert s in list(self.sections.keys()), 'Required section %s not found in %s [parsing %s]' % (s, list(self.section.keys()),self.file)
      self._parse_l1 = section_parser_l1( self )
      self._parse_l1.parse( 'GENERAL' )
      self._parse_l1.parse( 'VOCABULARIES' )
@@ -512,7 +512,7 @@ class section_parser_l1(object):
     self.version = x[0]
 
   def parse( self, sname ):
-    if self.parent.sections.has_key( sname ):
+    if sname in self.parent.sections:
 
       self.currentSectionName = sname
       self.currentSection = self.parent.sections[sname]
@@ -548,7 +548,7 @@ class section_parser_l1(object):
     ## print len( self.currentSection )
     base = ''
     for l in self.currentSection[1:]:
-      bits = map( string.strip, string.split( l, ', ' ) )
+      bits = list(map( string.strip, string.split( l, ', ' ) ))
       id = bits[0]
       if id[0:2] == '__':
         assert id[2:] in ['base','mipMapping'], 'vocabulary record not recognised: %s' % l
@@ -584,7 +584,7 @@ class section_parser_l1(object):
               if i[0] != '#' and len( string.strip(i) ) > 0:
                 vlist.append( string.split( string.strip(i) )[0] )
           elif '1perline' in sl:
-            vlist = map( string.strip, ii )
+            vlist = list(map( string.strip, ii ))
           elif 'mip' in sl:
             vlist = self.mipsc.scan_table( ii, self.parent.log )
             if self.parent.mipTables == None:
@@ -613,8 +613,8 @@ class section_parser_l1(object):
                      try:
                        cr0.append( (re.compile( v % self.gc ),v % self.gc,tt) )
                      except:
-                       print 'Error trying to compile: ', v % self.gc
-                       print 'Pattern: ',v
+                       print('Error trying to compile: ', v % self.gc)
+                       print('Pattern: ',v)
                        raise baseException(  'Error trying to compile: %s [%s]' % ( v % self.gc, v) )
                      ## print 'compiled ' +  v % self.gc, tt
                  cr.append( (cc,cr0) )
@@ -634,7 +634,7 @@ class section_parser_l1(object):
   
   def parse_filename(self):
     sep = self.__get_match( refs, self.currentSection[1], 'File separator' )
-    nn = map( int, string.split( self.__get_match( revsc, self.currentSection[2], 'File separator' ),',') )
+    nn = list(map( int, string.split( self.__get_match( revsc, self.currentSection[2], 'File separator' ),',') ))
     self.parent.fileNameSegments = fileNameSegments( self.parent, sep, nn )
     for l in self.currentSection[3:]:
        self.parent.fileNameSegments.add(l)
@@ -647,7 +647,7 @@ class section_parser_l1(object):
     self.parent.requiredGlobalAttributes = []
     self.parent.attributeTests = True
     for l in self.currentSection[1:]:
-      bits = map( string.strip, string.split(l,','))
+      bits = list(map( string.strip, string.split(l,',')))
       if bits[0] == 'global':
         if bits[2] == 'required':
            self.parent.requiredGlobalAttributes.append( bits[1] )
@@ -659,10 +659,10 @@ class section_parser_l1(object):
     self.parent.dataVariables = []
     for l in self.currentSection[1:]:
       if l[0] == '$':
-        bits = map( string.strip, string.split(l[1:],'='))
+        bits = list(map( string.strip, string.split(l[1:],'=')))
         self.gc[bits[0]] = bits[1]
       else:
-        bits = map( string.strip, string.split(l,','))
+        bits = list(map( string.strip, string.split(l,',')))
         if bits[0] == 'DataVariable':
           if bits[1] == 'byName':
             isRequired = bits[3] == 'required'
@@ -675,8 +675,8 @@ class section_parser_l1(object):
     if self.currentSection == None:
        return
     for l in self.currentSection[1:]:
-      bits = map( string.strip, string.split(l,','))
-      if bits[1] not in self.parent.groupDict.keys():
+      bits = list(map( string.strip, string.split(l,',')))
+      if bits[1] not in list(self.parent.groupDict.keys()):
           self.parent.groupDict[bits[1]] = {}
       if bits[0] == 'group':
         cc = []
@@ -692,12 +692,12 @@ class section_parser_l1(object):
     self.parent.constraints = []
     self.parent.groupConstraints = {}
     for l in self.currentSection[1:]:
-       bits = map( string.strip, string.split(l,','))
+       bits = list(map( string.strip, string.split(l,',')))
        bb = string.split( bits[0], ':' )
        if len(bb) == 2:
          gid = bb[0]
          cid = bb[1]
-         if gid not in self.parent.groupConstraints.keys():
+         if gid not in list(self.parent.groupConstraints.keys()):
             self.parent.groupConstraints[gid] = []
        else:
          gid = None
@@ -731,7 +731,7 @@ class section_parser_l1(object):
     self.parent.variableTests = True
     self.parent.requiredVariables = []
     for l in self.currentSection[1:]:
-       bits = map( string.strip, string.split(l,','))
+       bits = list(map( string.strip, string.split(l,',')))
        isDimension = bits[0] == 'dimension'
        if bits[2] == 'required':
          if bits[1][0] != '$':
@@ -755,7 +755,7 @@ class section_parser_l1(object):
     self.parent.datasets = {}
     datasetHierarchy = None
     for l in self.currentSection[1:]:
-       bits = map( string.strip, string.split(l,','))
+       bits = list(map( string.strip, string.split(l,',')))
        if bits[0] == 'datasetVersion':
          vdsName = bits[1]
          if bits[2] == 'pathElement':
@@ -787,7 +787,7 @@ class section_parser_l1(object):
          self.parent.omitDirectories = string.split( string.strip( bits[1] ) )
 
     if self.datasetVersionMode[0] != None:
-      assert vdsName in self.parent.datasets.keys(), 'Invalid dataset specified for version: %s [%s]' % (vdsName, str( self.parent.datasets.keys() ) )
+      assert vdsName in list(self.parent.datasets.keys()), 'Invalid dataset specified for version: %s [%s]' % (vdsName, str( list(self.parent.datasets.keys()) ) )
       self.versionnedDataset = self.parent.datasets[ vdsName ]
 
     if datasetHierarchy == None:
@@ -796,8 +796,8 @@ class section_parser_l1(object):
       self.datasetHierarchy = True
       bb = string.split( string.strip( datasetHierarchy[0]), '/' )
       for b in bb:
-        assert b in self.parent.datasets.keys(), 'Invalid dataset hierarchy, %s not among defined datasets' % b
-      for k in self.parent.datasets.keys():
+        assert b in list(self.parent.datasets.keys()), 'Invalid dataset hierarchy, %s not among defined datasets' % b
+      for k in list(self.parent.datasets.keys()):
         self.parent.datasets[k].inHierarchy = k in bb
           
       for k in range( len(bb) ):
@@ -852,7 +852,7 @@ class get_trange(object):
     thisOk = True
     tb[0] = x.groupdict().get( 'start', None )
     tb[1] = x.groupdict().get( 'end', None )
-    if x.groupdict().has_key( 'isClim' ):
+    if 'isClim' in x.groupdict():
       tb.append( x.groupdict()['isClim'] )
     for i in range(2):
         b = tb[i]
@@ -886,17 +886,17 @@ class fileNameSegments(object):
     self.parent = parent
 
   def add( self, line ):
-    bits = map( string.strip, string.split( line, ', ' ) )
+    bits = list(map( string.strip, string.split( line, ', ' ) ))
     k = int(bits[0])
     if bits[1] == 'vocabulary':
-      assert bits[2] in self.parent.vocab.keys(), 'Vocabulary specified in file name section not defined in vocab sections, %s' % bits[2]
+      assert bits[2] in list(self.parent.vocab.keys()), 'Vocabulary specified in file name section not defined in vocab sections, %s' % bits[2]
       
       self.__segments[k] = ('vocabulary',bits[2])
     elif bits[1][0:5] == 'regex' or bits[2] == 'TimeRange':
       try:
         regex = re.compile( string.strip( bits[3], "'") )
       except:
-        print 'Failed to compile (in re): %s' % bits[3]
+        print('Failed to compile (in re): %s' % bits[3])
         raise baseException(  'Failed to compile (in re): %s' % bits[3] )
       self.__segments[k] = (bits[1],bits[2], regex)
     else:
@@ -924,11 +924,11 @@ class Constraint__CordexInterpolatedGrid(object):
 
   def check(self,fns):
     region = fns.get( 'g_CORDEX_domain', 'unset' )
-    assert region != 'unset', 'CORDEX domain not found in %s' % str(fns.keys())
+    assert region != 'unset', 'CORDEX domain not found in %s' % str(list(fns.keys()))
     if region[-3:] != '44i':
        self.msg = 'Interpolated grid constraint not applicable to region %s' % region
        return ('PASS',self.msg)
-    print 'WARNING -- check not implemented'
+    print('WARNING -- check not implemented')
     self.msg = 'WARNING -- check not implemented'
     return ('PASS',self.msg)
 
@@ -970,7 +970,7 @@ class Constraint__IdentityChecker(object):
 
   def check(self,fns):
     if self.mode == 's':
-      if fns.has_key( self.Ref1[0] ):
+      if self.Ref1[0] in fns:
         if fns[self.Ref1[0]] == self.value:
           self.msg = self.PassMsg
           return ('PASS',self.msg)
@@ -980,7 +980,7 @@ class Constraint__IdentityChecker(object):
       else:
         return ('DEFER', 'No entry in fns for %s' % self.Ref1[0])
     else:
-      if fns.has_key( self.Ref1[0] ) and fns.has_key( self.Ref2[0] ):
+      if self.Ref1[0] in fns and self.Ref2[0] in fns:
         if fns[self.Ref1[0]] == fns[self.Ref2[0]]:
           self.msg = self.PassMsg
           return ('PASS',self.msg)
@@ -1016,14 +1016,14 @@ class Constraint__OnlyOnce(object):
     self.nn = 0
 
   def check(self,fns):
-      if fns.has_key( self.Ref1[0] ):
+      if self.Ref1[0] in fns:
         self.nn+=1
         if self.nn <= 1:
           return ('PASS' ,'Occurence rate OK')
         else:      
           return ('FAIL', '%s occurs too often' % self.Ref1[0] )
       else:
-        keys = fns.keys()
+        keys = list(fns.keys())
         keys.sort()
         return ('PASS',None)
 
@@ -1048,7 +1048,7 @@ class Constraint__VarAtts(object):
      self.keys = keys
      self.kpat = kpat
      self.logger = logger
-     for t in attribVocabs.keys():
+     for t in list(attribVocabs.keys()):
         self.tables[t] = {}
         for i in attribVocabs[t]:
           self.tables[t][i[0]] = (i[1],i[2])
@@ -1065,7 +1065,7 @@ class Constraint__VarAtts(object):
      self.msg = 'starting'
      mip = self.kpat % fns
      var = fns['fn_variable']
-     if not self.tables.has_key( mip ):
+     if mip not in self.tables:
        self.msg = 'VarAtts: no table found -- kpat = %s' % self.kpat
        return ('FAIL', self.msg )
      res = self.__check( mip, var, fns )
@@ -1075,11 +1075,11 @@ class Constraint__VarAtts(object):
      ms = ''
      self.log( 'i', 'CHECKING %s' % var )
      nf = 0
-     if not self.tables[mip].has_key(var):
+     if var not in self.tables[mip]:
        self.msg = 'Variable %s not present in table %s' % (var,mip)
        ##print ('FAIL',self.msg)
        return ('FAIL', self.msg)
-     assert fns.has_key( 'v_%s' % var ), 'Internal error: attempt to check variable %s which is not in fns' % var
+     assert 'v_%s' % var in fns, 'Internal error: attempt to check variable %s which is not in fns' % var
      mip_dims, mip_ats = self.tables[mip][var]
      var_dims = fns['v_%s' % var ][0]
      for k in self.keys:
@@ -1121,7 +1121,7 @@ class Constraint__Constant(object):
     self.value = None
 
   def check(self,fns):
-      if fns.has_key( self.Ref1[0] ):
+      if self.Ref1[0] in fns:
         if self.value == None:
           self.value = fns[self.Ref1[0]]
           return ('DEFER', 'first element')

@@ -1,7 +1,7 @@
 """
 Entry point for command line usage -- see ccinit for usage information.
 """
-import sys, string
+import sys
 
 def main_entry():
   """
@@ -10,26 +10,26 @@ def main_entry():
   """
   if len(sys.argv) == 1:
       # Show command-line info and report that you must provide arguments
-      import ccinit
-      print ccinit.__doc__
-      print "\nERROR: Please provide command-line arguments."
+      from ceda_cc import ccinit
+      print(ccinit.__doc__)
+      print("\nERROR: Please provide command-line arguments.")
       return
 
   if sys.argv[1] == '--sum':
-      import summary
+      from ceda_cc import summary
       summary.summariseLogs()
   elif sys.argv[1] == '-v':
-      from versionConfig import version, versionComment
-      print 'ceda-cc version %s [%s]' % (version,versionComment)
+      from .versionConfig import version, versionComment
+      print('ceda-cc version %s [%s]' % (version,versionComment))
   elif sys.argv[1] == '--unitTest':
-      print "Starting test suite 1"
-      import unitTestsS1
-      print "Starting test suite 2"
-      import unitTestsS2
-      print "Tests completed"
+      print("Starting test suite 1")
+      from . import unitTestsS1
+      print("Starting test suite 2")
+      from . import unitTestsS2
+      print("Tests completed")
   else:
-     from c4_run import main
-     cmdl = string.join( sys.argv )
+     from ceda_cc.c4_run import main
+     cmdl = ' '.join( sys.argv )
      main(printInfo=True, cmdl=cmdl)
 
 if __name__ == '__main__':

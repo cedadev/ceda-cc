@@ -1,10 +1,10 @@
 
 import collections
 import os.path as op
-import logging, time, string
-import utils_c4
-import ceda_cc_config.config_c4 as config
-import ceda_cc_config
+import logging, time 
+import ceda_cc.utils_c4 as utils_c4
+import ceda_cc.ceda_cc_config.config_c4 as config
+import ceda_cc.ceda_cc_config as ceda_cc_config
 
 
 
@@ -57,14 +57,14 @@ ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc True C
 ESA-CCI ESACCI-OC-L3S-OC_PRODUCTS-MERGED-1M_MONTHLY_4km_GEO_PML_OC4v6_QAA-200005-fv1.0.nc True CCIplus
 ESA-CCI 20120101015548-ESACCI-L3U-GHRSST-SSTskin-AATSR-LT-v02.0-fv01.1.nc False
 ESA-CCI 20120101015548-ESACCI-L3U_GHRSST-SSTskin-AATSR-LT-v02.0-fv.1.nc False"""
-fntl = map( lambda x: tuple( string.split(x) ), string.split( fnlist, '\n' ) )
+fntl = [tuple( x.split() ) for x in fnlist.split( '\n' )]
 ee = collections.defaultdict( list )
 for t in fntl:
   ee[t[0]].append( t[1:] )
 
 cga = utils_c4.checkGlobalAttributes(parent=cfgd['ESA-CCI'])
 module = 'checkFileName'
-keys = ee.keys()
+keys = list(ee.keys())
 keys.sort()
 kk = 0
 for k in keys:
@@ -86,7 +86,7 @@ for k in keys:
     vstr = { True:'Valid', False:'Invalid' }[isValid]
     pstr = { True:'passed', False:'rejected' }[passed]
     if ok:
-      print 'OK: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
+      print('OK: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr))
       if len(l) > 2 and l[2]  == 'CCIplus':
         cga.globalAts =  {'platform':'platform','sensor':'sensor', \
                 'naming_authority':'org.ghrsst', 'id':'AATSR-ESACCI-L3U-v1', \
@@ -96,33 +96,33 @@ for k in keys:
         cga.completed = True
         ee1 = cga.getDrs()
         if ee1['ecv'] in ['Sea Surface Temperature','Ocean Colour']:
-          print 'OK: [%sb] %s: DRS dictionary generated (%s)' % (testId,fn,ee1['ecv'])
+          print('OK: [%sb] %s: DRS dictionary generated (%s)' % (testId,fn,ee1['ecv']))
         else:
-          print 'Failed: [%sb] %s: DRS dictionary not generated correctly (%s)' % (testId,fn,ee1['ecv'])
+          print('Failed: [%sb] %s: DRS dictionary not generated correctly (%s)' % (testId,fn,ee1['ecv']))
  
         if c.group == 'ESACCI':
-          print 'OK: group ESACCI detected' 
+          print('OK: group ESACCI detected') 
         else:
-          print 'Failed: group read as "%s" (not ESACCI) %s' % (c.group,fn)
+          print('Failed: group read as "%s" (not ESACCI) %s' % (c.group,fn))
         
     else:
-      print 'Failed: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr)
+      print('Failed: [%s] %s: %s %s file name %s' % (testId,fn,vstr,k,pstr))
 
 c = utils_c4.checkFileName(parent=cfgd['CMIP5'])
 c.check('pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc' )
-if c.fnTimeTuples != ( (1960, 01, 01, 01, 30), (1964, 12, 30, 22, 30) ):
-  print 'Failed [%s]: failed to parse date string in file name'
+if c.fnTimeTuples != ( (1960, 0o1, 0o1, 0o1, 30), (1964, 12, 30, 22, 30) ):
+  print('Failed [%s]: failed to parse date string in file name')
 else:
-  print 'OK: -- date string in file name parsed into integer tuples'
+  print('OK: -- date string in file name parsed into integer tuples')
 
 c = utils_c4.checkStandardDims(parent=p)
 module = 'checkStandardDims'
 ## note penultimate argument is "vocabs", but only used in "experimental" mode
 c.check( 'tas', 'day', {},{}, False, None, ['a','b'] )
 if c.errorCount == 0:
-  print 'Failed [%s]: failed to detect empty dictionaries' % module
+  print('Failed [%s]: failed to detect empty dictionaries' % module)
 else:
-  print 'OK: -- detected error in standard dims'
+  print('OK: -- detected error in standard dims')
 
 c = utils_c4.checkByVar(parent=p)
 module = 'checkByVar (regex)'
@@ -132,73 +132,73 @@ r1 = re.compile( c.pats['subd'][0] )
 for x in ['200401010000','2004010100']:
   m = r1.match( x )
   if m:
-     print 'OK: -- passed [%s] %s for sub-daily data' % (module,x)
+     print('OK: -- passed [%s] %s for sub-daily data' % (module,x))
   else:
-     print 'Failed to match correct sub-daily time range element [%s] %s' % (module,x)
+     print('Failed to match correct sub-daily time range element [%s] %s' % (module,x))
 
 for x in ['200401010040','2004010200']:
   m = r1.match( x )
   if not m:
-     print 'OK: -- correctly failed [%s] %s for sub-daily data' % (module,x)
+     print('OK: -- correctly failed [%s] %s for sub-daily data' % (module,x))
   else:
-     print 'Failed to detect bad sub-daily time range element [%s] %s' % (module,x)
+     print('Failed to detect bad sub-daily time range element [%s] %s' % (module,x))
 
 r1 = re.compile( c.pats['sem'][0] )
 for x in ['199012','199101']:
   m = r1.match( x )
   if m:
-     print 'OK: -- passed [%s] %s for seasonal data' % (module,x)
+     print('OK: -- passed [%s] %s for seasonal data' % (module,x))
   else:
-     print 'Failed to match correct seasonal time range element [%s] %s' % (module,x)
+     print('Failed to match correct seasonal time range element [%s] %s' % (module,x))
 
 for x in ['199011','199112']:
   m = r1.match( x )
   if not m:
-     print 'OK: -- correctly failed [%s] %s for seasonal data' % (module,x)
+     print('OK: -- correctly failed [%s] %s for seasonal data' % (module,x))
   else:
-     print 'Failed to detect bad seasonal time range element [%s] %s' % (module,x)
+     print('Failed to detect bad seasonal time range element [%s] %s' % (module,x))
 
 r1 = re.compile( c.pats['mon'][0] )
 for x in ['199101']:
   m = r1.match( x )
   if m:
-     print 'OK: -- passed [%s] %s for daily data' % (module,x)
+     print('OK: -- passed [%s] %s for daily data' % (module,x))
   else:
-     print 'Failed to match correct daily time range element [%s] %s -- %s' % (module,x,c.pats['day'][0])
+     print('Failed to match correct daily time range element [%s] %s -- %s' % (module,x,c.pats['day'][0]))
 
 
 c = utils_c4.checkGrids(parent=p)
 c.interpolatedGrids = config.interpolatedGrids
 
-lat = map( lambda x: -46.25 + x*0.5, range(185) )
-lon = map( lambda x: -25.25 + x*0.5, range(173) )
+lat = [-46.25 + x*0.5 for x in range(185)]
+lon = [-25.25 + x*0.5 for x in range(173)]
 da = {'lat':{'_data':lat,'units':'degrees_north','long_name':'latitude','standard_name':'latitude','_type':'float64'}, 'lon':{'_data':lon,'units':'degrees_east','long_name':'longitude','standard_name':'longitude','_type':'float64'} }
 c.check( 'tas','AFR-44i', da, {'tas':{} } )
 if c.errorCount == 0:
-  print 'OK: -- passed a correct grid'
+  print('OK: -- passed a correct grid')
 else:
-  print 'Failed -- reported errors on correct grid'
-lat = map( lambda x: -46.25 + x*0.5, range(180) )
-lon = map( lambda x: -25.25 + x*0.5, range(172) )
+  print('Failed -- reported errors on correct grid')
+lat = [-46.25 + x*0.5 for x in range(180)]
+lon = [-25.25 + x*0.5 for x in range(172)]
 da = {'lat':{'_data':lat,'units':'degrees_north','long_name':'latitude','standard_name':'latitude','_type':'float64'}, 'lon':{'_data':lon,'units':'degrees_east','long_name':'longitude','standard_name':'longitude','_type':'float64'} }
 c.check( 'tas','AFR-44i', da, {'tas':{} } )
 if c.errorCount == 0:
-  print 'Failed -- passed a bad grid'
+  print('Failed -- passed a bad grid')
 else:
-  print 'OK: -- detected a bad grid'
+  print('OK: -- detected a bad grid')
 
 ##ii = open( op.join(config.CC_CONFIG_DIR, 'specs_vocabs/globalAtsSample001.txt') )
 def readSampleGa( ifile ):
   ii = open( op.join(config.CC_CONFIG_DIR, ifile) )
-  fn = string.strip( ii.readline() )
-  res = string.strip( ii.readline() )
+  fn = ii.readline().strip( )
+  res = ii.readline().strip( )
   ga = {}
   for l in ii.readlines():
-    bits = string.split( string.strip(l) )
+    bits = l.strip().split( )
     if bits[1] == '@int':
       ga[bits[0]] = int( bits[2] )
     else:
-      ga[bits[0]] = string.join( bits[1:] )
+      ga[bits[0]] = ' '.join( bits[1:] )
   return res, fn, ga
 
 gafile = 'specs_vocabs/globalAtsSample001.txt'
@@ -209,9 +209,9 @@ testId = '#04.001'
 c = utils_c4.checkFileName(parent=ps)
 c.check( fn )
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (module,fn)
+  print('OK: [%s] %s: valid file name' % (module,fn))
 else:
-  print 'Failed [%s] %s: valid file name' % (module,fn)
+  print('Failed [%s] %s: valid file name' % (module,fn))
 
 ## note test is done on string'ed values.
 va = { "tas":{ "_type":"float32", "standard_name":"air_temperature", 'long_name':'Air Temperature', 'units':'K', 'cell_methods':'time: mean'} }
@@ -220,9 +220,9 @@ testId = '#04.002'
 cga = utils_c4.checkGlobalAttributes( parent=ps,cls='SPECS')
 cga.check( ga, va, "tas", "day", ps.pcfg.vocabs, c.fnParts )
 if cga.errorCount == 0:
-  print 'OK: [%s]: global attributes check (%s)' % (testId,gafile)
+  print('OK: [%s]: global attributes check (%s)' % (testId,gafile))
 else:
-  print 'Failed [%s]: global attributes check (%s)' % (testId,gafile)
+  print('Failed [%s]: global attributes check (%s)' % (testId,gafile))
 
 gafile = 'specs_vocabs/globalAtsSample002.txt'
 res, fn, ga = readSampleGa( gafile )
@@ -231,9 +231,9 @@ testId = '#04.003'
 c = utils_c4.checkFileName(parent=ps)
 c.check( fn )
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (testId,fn)
+  print('OK: [%s] %s: valid file name' % (testId,fn))
 else:
-  print 'Failed [%s] %s: valid file name' % (testId,fn)
+  print('Failed [%s] %s: valid file name' % (testId,fn))
 
 ## note test is done on string'ed values.
 
@@ -243,9 +243,9 @@ testId = '#04.004'
 cga = utils_c4.checkGlobalAttributes( parent=ps,cls='SPECS')
 cga.check( ga, va, "tas", "day", ps.pcfg.vocabs, c.fnParts )
 if cga.errorCount == 0:
-  print 'Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile)
+  print('Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile))
 else:
-  print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)
+  print('OK: [%s]: detected bad global attributes (%s)' % (testId,gafile))
 
 gafile = 'esacci_vocabs/sampleGlobalAts.txt'
 res, fn, ga = readSampleGa( gafile )
@@ -254,9 +254,9 @@ testId = '#04.005'
 c = utils_c4.checkFileName(parent=pcci)
 c.check( fn )
 if c.errorCount == 0:
-  print 'OK: [%s] %s: valid file name' % (testId,fn)
+  print('OK: [%s] %s: valid file name' % (testId,fn))
 else:
-  print 'Failed [%s] %s: valid file name' % (testId,fn)
+  print('Failed [%s] %s: valid file name' % (testId,fn))
 
 ## note test is done on string'ed values.
 
@@ -266,43 +266,43 @@ testId = '#04.004'
 cga = utils_c4.checkGlobalAttributes( parent=pcci,cls='ESA-CCI')
 cga.check( ga, va, "burned_area", "ESACCI", pcci.pcfg.vocabs, c.fnParts )
 if cga.errorCount == 0:
-  print 'Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile)
+  print('Failed: [%s]: passed bad global attributes (%s)' % (testId,gafile))
 else:
-  print 'OK: [%s]: detected bad global attributes (%s)' % (testId,gafile)
+  print('OK: [%s]: detected bad global attributes (%s)' % (testId,gafile))
 
 ls = ceda_cc_config.utils_config.listControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
 testId = '#05.001'
 res = ls.essplit.findall( 'a, b, c<1,2>')
 if res == ['a', 'b', 'c<1,2>']:
-  print 'OK: [%s] Split of list with enumeration passed' % (testId)
+  print('OK: [%s] Split of list with enumeration passed' % (testId))
 else:
-  print 'Failed: [%s] Split of list with enumeration failed %s' % (testId,str(res))
+  print('Failed: [%s] Split of list with enumeration failed %s' % (testId,str(res)))
 
 testId = '#05.002'
 res = ls.check( 'a, c<1,2>' )
 if res:
-  print 'OK: [%s] Valid value passed' % (testId)
+  print('OK: [%s] Valid value passed' % (testId))
 else:
-  print 'Failed: [%s] valid value rejected %s' % (testId,str(res))
+  print('Failed: [%s] valid value rejected %s' % (testId,str(res)))
 
 testId = '#05.003'
 res = ls.check( 'a, c<1,3>' )
 if res:
-  print 'Failed: [%s] Invalid value passed' % (testId)
+  print('Failed: [%s] Invalid value passed' % (testId))
 else:
-  print 'OK: [%s] Invalid value rejected %s' % (testId,str(res))
+  print('OK: [%s] Invalid value rejected %s' % (testId,str(res)))
 
 
 testId = '#06.001'
 pc = ceda_cc_config.utils_config.patternControl( 'pattern test', 'ISO8601 duration', cls='ISO' )
 res = pc.check( 'P1Z' )
 if res:
-  print 'Failed: [%s] Invalid value passed' % (testId)
+  print('Failed: [%s] Invalid value passed' % (testId))
 else:
-  print 'OK: [%s] Invalid value rejected %s' % (testId,str(res))
+  print('OK: [%s] Invalid value rejected %s' % (testId,str(res)))
 res = pc.check( 'P1W' )
 if res:
-  print 'OK: [%s] Valid value passed' % (testId)
+  print('OK: [%s] Valid value passed' % (testId))
 else:
-  print 'Failed: [%s] Valid value rejected %s' % (testId,str(res))
+  print('Failed: [%s] Valid value rejected %s' % (testId,str(res)))
 

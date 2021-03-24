@@ -2,16 +2,16 @@
 Basic file utilities for reading NetCDF files.
 """
 # Standard library imports
-import string, pkgutil
+import pkgutil
 
-from xceptions import *
+from ceda_cc.xceptions import *
 
 # Third party imports
 
 #### netcdf --- currently support cdms2, python-netCDF4 and Scientific
 
 l = pkgutil.iter_modules()
-ll = map( lambda x: x[1], l )
+ll = [x[1] for x in l]
 
 supportedNetcdf = ['cdms2','netCDF4','Scientific','ncq3']
 
@@ -23,21 +23,21 @@ for x in supportedNetcdf:
     if len(installedSupportedNetcdf) == 0:
       try: 
         cmd = 'import %s' % x
-        exec cmd
+        exec(cmd)
         installedSupportedNetcdf.append( x )
       except:
-        print 'Failed to install %s' % x
+        print('Failed to install %s' % x)
     else:
       installedSupportedNetcdf.append( x )
 
 if len(installedSupportedNetcdf) > 0:
   ncLib = installedSupportedNetcdf[0]
 else:
-  print """No supported netcdf module found.
+  print("""No supported netcdf module found.
          Supported modules are %s.
          Attempting to run with experimental ncq3
          Execution may fail, depending on options chosen.
-         """ % str(supportedNetcdf)
+         """ % str(supportedNetcdf))
   ncLib = 'ncq3'
 
 if ncLib == 'Scientific':
@@ -99,7 +99,7 @@ class fileMetadata(object):
        self.atMapLog = open( 'cccc_atMapLog.txt', 'a' )
 
     if self.forceLib == 'ncq3':
-      import ncq3
+      from . import ncq3
       self.ncq3 = ncq3
       self.ncLib = 'ncq3'
     elif self.forceLib == 'cdms2':
@@ -123,8 +123,8 @@ class fileMetadata(object):
 
   def loadNc(self,fpath):
     self.fpath = fpath
-    self.fn = string.split( fpath, '/' )[-1]
-    self.fparts = string.split( self.fn[:-3], '_' )
+    self.fn = fpath.split( '/' )[-1]
+    self.fparts = self.fn[:-3].split( '_' )
     self.ga = GlobalAttributes()
     self.va = VariableAttributes()
     self.da = DimensionAttributes()
@@ -144,7 +144,7 @@ class fileMetadata(object):
       self.ncdf = ncdf
       self.loadNc__Scientific(fpath)
     else:
-      import ncq3
+      from . import ncq3
       self.ncq3 = ncq3
       self.loadNc__ncq(fpath)
       ##raise baseException( 'No supported netcdf module assigned' )
@@ -156,9 +156,9 @@ class fileMetadata(object):
     self.nc = self.ncq3.Browse( self.nc0.digest )
     for a in self.nc._gal:
        self.ga[a.name] = a.value
-    for v in self.nc._vdict.keys():
+    for v in list(self.nc._vdict.keys()):
       thisv = self.nc._vdict[v][0]
-      if v not in self.nc._ddict.keys():
+      if v not in list(self.nc._ddict.keys()):
         self.va[v] = {}
         for a in self.nc._ll[thisv.id]:
           self.va[v][a.name] = a.value
@@ -178,7 +178,7 @@ class fileMetadata(object):
     
   def loadNc__Cdms(self,fpath):
     self.nc = self.cdms2.open( fpath )
-    for k in self.nc.attributes.keys():
+    for k in list(self.nc.attributes.keys()):
       self.ga[k] = self.nc.attributes[k]
       if len( self.ga[k] ) == 1:
         self.ga[k] = self.ga[k][0]
@@ -188,9 +188,9 @@ class fileMetadata(object):
       self.ga['id'] = thisid
     except:
       pass
-    for v in self.nc.variables.keys():
+    for v in list(self.nc.variables.keys()):
       self.va[v] = {}
-      for k in self.nc.variables[v].attributes.keys():
+      for k in list(self.nc.variables[v].attributes.keys()):
         x = self.nc.variables[v].attributes[k]
      ## returns a list for some scalar attributes.
         if type(x) == type([]) and len(x) == 1:
@@ -204,12 +204,12 @@ class fileMetadata(object):
         self.va[v]['_data'] = x
         ### Note: returns a scalar if data has a scalar value.
 ## remove missing_value is None
-      if self.va[v].has_key( 'missing_value' ) and self.va[v]['missing_value'] is None:
+      if 'missing_value' in self.va[v] and self.va[v]['missing_value'] is None:
         self.va[v].pop( 'missing_value' )
 
-    for v in self.nc.axes.keys():
+    for v in list(self.nc.axes.keys()):
       self.da[v] = {}
-      for k in self.nc.axes[v].attributes.keys():
+      for k in list(self.nc.axes[v].attributes.keys()):
         self.da[v][k] = self.nc.axes[v].attributes[k]
       self.da[v]['_type'] = tstr( self.nc.axes[v].getValue().dtype )
       self.da[v]['_data'] = self.nc.axes[v].getValue().tolist()
@@ -226,14 +226,14 @@ class fileMetadata(object):
 ###
   def loadNc__Scientific(self,fpath):
     self.nc = self.ncdf.NetCDFFile( fpath, 'r' )
-    for k in self.nc.__dict__.keys():
+    for k in list(self.nc.__dict__.keys()):
       self.ga[k] = self.nc.__dict__[k]
       if type(self.ga[k]) not in [type('x'),type(1),type(1.)] and len(self.ga[k]) == 1:
         self.ga[k] = self.ga[k][0]
-    for v in self.nc.variables.keys():
-      if v not in self.nc.dimensions.keys():
+    for v in list(self.nc.variables.keys()):
+      if v not in list(self.nc.dimensions.keys()):
         self.va[v] = {}
-        for k in self.nc.variables[v].__dict__.keys():
+        for k in list(self.nc.variables[v].__dict__.keys()):
           self.va[v][k] = self.nc.variables[v].__dict__[k]
         self.va[v]['_type'] = tstr( self.nc.variables[v].getValue().dtype )
         if v in self.readDims:
@@ -243,10 +243,10 @@ class fileMetadata(object):
             x = [x]
           self.va[v]['_data'] = x
 
-    for v in self.nc.dimensions.keys():
+    for v in list(self.nc.dimensions.keys()):
       self.da[v] = {}
-      if v in self.nc.variables.keys():
-        for k in self.nc.variables[v].__dict__.keys():
+      if v in list(self.nc.variables.keys()):
+        for k in list(self.nc.variables[v].__dict__.keys()):
           self.da[v][k] = self.nc.variables[v].__dict__[k]
         self.da[v]['_type'] = tstr( self.nc.variables[v].getValue().dtype )
         self.da[v]['_data'] = self.nc.variables[v].getValue().tolist()
@@ -262,8 +262,8 @@ class fileMetadata(object):
       if type( self.ga[k] ) in [ type([]),type(()) ]:
         if len( self.ga[k] ) == 1:
           self.ga[k] = self.ga[k][0]
-    for v in self.nc.variables.keys():
-      if v not in self.nc.dimensions.keys():
+    for v in list(self.nc.variables.keys()):
+      if v not in list(self.nc.dimensions.keys()):
         self.va[v] = {}
         for k in self.nc.variables[v].ncattrs():
           self.va[v][k] = self.nc.variables[v].getncattr(k)
@@ -276,9 +276,9 @@ class fileMetadata(object):
           if type( self.va[v]['_data'] ) != type( [] ):
             self.va[v]['_data'] = [self.va[v]['_data'],]
 
-    for v in self.nc.dimensions.keys():
+    for v in list(self.nc.dimensions.keys()):
       self.da[v] = {}
-      if v in self.nc.variables.keys():
+      if v in list(self.nc.variables.keys()):
         for k in self.nc.variables[v].ncattrs():
           self.da[v][k] = self.nc.variables[v].getncattr(k)
         try:
@@ -308,9 +308,9 @@ class fileMetadata(object):
     for v in ['lat','lon','time']:
       self.da[v] = {}
       self.da[v]['_type'] = 'float64'
-      self.da[v]['_data'] = range(5)
+      self.da[v]['_data'] = list(range(5))
     dlist = ['lat','lon','time']
-    svals = lambda p,q: map( lambda y,z: self.da[y].__setitem__(p, z), dlist, q )
+    svals = lambda p,q: list(map( lambda y,z: self.da[y].__setitem__(p, z), dlist, q ))
     svals( 'standard_name', ['latitude', 'longitude','time'] )
     svals( 'long_name', ['latitude', 'longitude','time'] )
     svals( 'units', ['degrees_north', 'degrees_east','days since 19590101'] )
@@ -320,11 +320,11 @@ class fileMetadata(object):
     for m in mapList:
       if m[0] == 'am001':
         if m[1][0][0] == "@var":
-          if m[1][0][1] in self.va.keys():
+          if m[1][0][1] in list(self.va.keys()):
             this = self.va[m[1][0][1]]
             apThis = True
             for c in m[1][1:]:
-              if c[0] not in this.keys():
+              if c[0] not in list(this.keys()):
                 apThis = False
               elif c[1] != this[c[0]]:
                 apThis = False
@@ -342,12 +342,12 @@ class fileMetadata(object):
 
         elif m[1][0][0] == "@ax":
           ##print 'checking dimension ',m[1][0][1], self.da.keys()
-          if m[1][0][1] in self.da.keys():
+          if m[1][0][1] in list(self.da.keys()):
             ##print 'checking dimension [2]',m[1][0][1]
             this = self.da[m[1][0][1]]
             apThis = True
             for c in m[1][1:]:
-              if c[0] not in this.keys():
+              if c[0] not in list(this.keys()):
                 apThis = False
               elif c[1] != this[c[0]]:
                 apThis = False
@@ -367,7 +367,7 @@ class fileMetadata(object):
             apThis = True
 ## apply change where attribute absent only
             for c in m[1][1:]:
-              if c[0] not in this.keys():
+              if c[0] not in list(this.keys()):
                 if c[1] != '__absent__':
                   apThis = False
               elif c[1] == '__absent__' or c[1] != this[c[0]]:
@@ -388,7 +388,7 @@ class fileMetadata(object):
                 i = globalAttributesInFn.index(targ)
                 thisval = self.fparts[ i ]
                 self.fparts[ i ] = m[2][1]
-                self.fn = string.join( self.fparts, '_' ) + '.nc'
+                self.fn = '_'.join( self.fparts ) + '.nc'
                 self.atMapLog.write( '@fn:"%s","%s","%s"\n' % (self.fpath, thisval, m[2][1]) )
         else:
-          print 'Token %s not recognised' % m[1][0][0]
+          print('Token %s not recognised' % m[1][0][0])

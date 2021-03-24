@@ -99,12 +99,12 @@ class Browser(object):
 
   def varsum(self,name):
     if name not in self.varlist:
-      print '%s not in %s' % (name,str(self.varlist))
+      print('%s not in %s' % (name,str(self.varlist)))
       return None
     v = self.digest.variables[self.varlist.index(name)]
     assert v.name == name, 'Error in internal logic: name mismatch in varsum'
-    dlist = map( lambda x: self.digest.dimensions[x], v.dimids )
-    dstr = map( lambda x: '%s[%s]' % (x.name, x.len), dlist )
+    dlist = [self.digest.dimensions[x] for x in v.dimids]
+    dstr = ['%s[%s]' % (x.name, x.len) for x in dlist]
     return '%s[%s]' % (name,string.join( dstr, ',') )
     
 
@@ -130,7 +130,7 @@ class Browse(object):
       else:
         self._gal.append( a )
     for v in self.nc.variables:
-      self._vdict[v.name] = (v,map(lambda x: x.name,self._ll[v.id]) )
+      self._vdict[v.name] = (v,[x.name for x in self._ll[v.id]] )
     for d in self.nc.dimensions:
       self._ddict[d.name] = d
          

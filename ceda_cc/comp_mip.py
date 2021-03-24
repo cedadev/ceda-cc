@@ -1,5 +1,5 @@
-from fcc_utils2 import mipTableScan
-from ceda_cc_config.config_c4 import CC_CONFIG_DIR
+from .fcc_utils2 import mipTableScan
+from .ceda_cc_config.config_c4 import CC_CONFIG_DIR
 import re, os, string
 
 ml = ['CORDEX_1h', 'CORDEX_3h', 'CORDEX_6h', 'CORDEX_Aday', 'CORDEX_day', 'CORDEX_grids', 'CORDEX_mon' ]
@@ -79,7 +79,7 @@ class comp(object):
     thisSnl = []
 
     checkAll = True
-    keys = e1.keys()
+    keys = list(e1.keys())
     keys.sort()
     self.nn_var = len(keys)
     for k in keys:
@@ -89,15 +89,15 @@ class comp(object):
       f4 = False
       if e1[k][1]['standard_name'] in [None,'None']:
         if e1[k][1].get('long_name',None) not in [None,'None']:
-          print 'WARNING[A]: standard name for %s [%s] not set' % (k,e1[k][1].get('long_name') )
+          print('WARNING[A]: standard name for %s [%s] not set' % (k,e1[k][1].get('long_name') ))
         else:
-          print 'WARNING[A]: standard name for %s not set' % k
+          print('WARNING[A]: standard name for %s not set' % k)
       else:
         if e1[k][1]['standard_name'] not in self.snl:
           if e1[k][1]['standard_name'] not in self.snla:
-            print 'ERROR[0]: standard name %s for %s [%s] not in snl or snla' % (e1[k][1]['standard_name'], k, e1[k][2] )
+            print('ERROR[0]: standard name %s for %s [%s] not in snl or snla' % (e1[k][1]['standard_name'], k, e1[k][2] ))
           else:
-            print 'WARNING: standard name %s for %s not in snl' % (e1[k][1]['standard_name'], k )
+            print('WARNING: standard name %s for %s not in snl' % (e1[k][1]['standard_name'], k ))
             if e1[k][1]['standard_name'] not in thisSnl:
                thisSnl.append( e1[k][1]['standard_name'] )
         else:
@@ -105,8 +105,8 @@ class comp(object):
                thisSnl.append( e1[k][1]['standard_name'] )
 
       if self.ec1 != None:
-        if k not in self.ec1.keys():
-          print 'ERROR[1]: variable %s [%s] not in CORDEX variable requirements list' % (k,e1[k][2])
+        if k not in list(self.ec1.keys()):
+          print('ERROR[1]: variable %s [%s] not in CORDEX variable requirements list' % (k,e1[k][2]))
           vrln = None
         else:
           vrln = self.ec1[k][1]
@@ -117,15 +117,15 @@ class comp(object):
               if not (e1[k][1]['cell_methods']=="None" and string.strip(self.ec1[k][3]) == "time:"):
                 f3 = True
           if checkAll:  
-            if (e1[k][1].has_key( 'positive' ) and self.ec1[k][4] == '') or ( (not e1[k][1].has_key( 'positive' )) and self.ec1[k][4] != ''):
+            if ('positive' in e1[k][1] and self.ec1[k][4] == '') or ( ('positive' not in e1[k][1]) and self.ec1[k][4] != ''):
                 f4 = True
-            elif e1[k][1].has_key( 'positive' ):
+            elif 'positive' in e1[k][1]:
               if e1[k][1]['positive'] != self.ec1[k][4]:
                 if not (e1[k][1]['positive']=="None" and string.strip(self.ec1[k][4]) == ""):
                   f4 = True
-            if (e1[k][1].has_key( 'modeling_realm' ) and self.ec1[k][5] == '') or ( (not e1[k][1].has_key( 'modeling_realm' )) and self.ec1[k][5] != ''):
+            if ('modeling_realm' in e1[k][1] and self.ec1[k][5] == '') or ( ('modeling_realm' not in e1[k][1]) and self.ec1[k][5] != ''):
                 f4 = True
-            elif e1[k][1].has_key( 'modeling_realm' ):
+            elif 'modeling_realm' in e1[k][1]:
               if e1[k][1]['modeling_realm'] != self.ec1[k][5]:
                 if not (e1[k][1]['modeling_realm']=="None" and string.strip(self.ec1[k][5]) == ""):
                   f4 = True
@@ -133,7 +133,7 @@ class comp(object):
       self.nn_sn = len(thisSnl)
       cks = ['units', 'long_name', 'standard_name']
       suppress4B = True
-      if k in e2.keys():
+      if k in list(e2.keys()):
         if e1[k][1] != e2[k][1]:
           ne1 = 0
           nmm = []
@@ -142,8 +142,8 @@ class comp(object):
                 ne1 += 1
                 nmm.append(k2)
           if ne1 > 0:
-                v1 = map( lambda x: e1[k][1][x], nmm )
-                v2 = map( lambda x: e2[k][1][x], nmm )
+                v1 = [e1[k][1][x] for x in nmm]
+                v2 = [e2[k][1][x] for x in nmm]
                 ##if k == 'clivi':
                   ##print k, nmm, v1, v2
                   ##print snaliasses.keys()
@@ -155,12 +155,12 @@ class comp(object):
                   if snaliasses.get(v1[0],'xxx') == v2[0] or snaliasses.get(v2[0],'xxx') == v1[0]:
                     weakmatch = True
                 if weakmatch:
-                  print 'WARNING[4A*]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag )
+                  print('WARNING[4A*]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag ))
                 else:
-                  print 'ERROR[4A]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag )
+                  print('ERROR[4A]: Anomaly between MIP tables: %s:: %s -- %s -- %s {%s} ' % (k, str(nmm), str(v1), str(v2), tag ))
           else:
              if not suppress4B:
-                print 'ERROR[4B]: Anomaly between MIP tables: %s:: %s -- %s [%s]' % (k, str(e1[k][1]), str( e2[k][1] ), vrln )
+                print('ERROR[4B]: Anomaly between MIP tables: %s:: %s -- %s [%s]' % (k, str(e1[k][1]), str( e2[k][1] ), vrln ))
           e0 = 1
         else:
           ##print '%s OK -- %s -- %s' % (k,str(e1[k][1]), str( e2[k][1] ) )
@@ -174,20 +174,20 @@ class comp(object):
          xxx += '[%s]' % self.tag
       if self.ec1 != None:
         if f2 and (e0 == 2):
-           print 'ERROR[2]: Difference between CORDEX/CMIP5 MIP tables and VR: %s:: %s [%s] --- %s' % (k,e1[k][1]['long_name'],e1[k][2], self.ec1[k][1])
+           print('ERROR[2]: Difference between CORDEX/CMIP5 MIP tables and VR: %s:: %s [%s] --- %s' % (k,e1[k][1]['long_name'],e1[k][2], self.ec1[k][1]))
         elif f2 and (e0 == 3):
-           print 'ERROR[3]: Difference between CORDEX MIP tables and VR: %s:: %s [%s] --- %s' % (k,e1[k][1]['long_name'],e1[k][2], self.ec1[k][1])
+           print('ERROR[3]: Difference between CORDEX MIP tables and VR: %s:: %s [%s] --- %s' % (k,e1[k][1]['long_name'],e1[k][2], self.ec1[k][1]))
         elif f2:
-           print 'ERROR[5]: Difference between CORDEX MIP tables and VR %s: %s --- %s' % (xxx,e1[k][1]['long_name'], self.ec1[k][1])
+           print('ERROR[5]: Difference between CORDEX MIP tables and VR %s: %s --- %s' % (xxx,e1[k][1]['long_name'], self.ec1[k][1]))
         if f3:
-           print 'ERROR[6]: Difference between CORDEX MIP tables and VR in cell_methods: %s:: %s --- %s' % (k,e1[k][1]['cell_methods'], self.ec1[k][3])
+           print('ERROR[6]: Difference between CORDEX MIP tables and VR in cell_methods: %s:: %s --- %s' % (k,e1[k][1]['cell_methods'], self.ec1[k][3]))
         if f4:
-           print 'ERROR[7]: Difference between CORDEX MIP tables and VR in positive, realm: %s:: %s,%s --- %s' % (xxx,e1[k][1].get('positive','None'),e1[k][1].get('modeling_realm','None'), self.ec1[k][4:6])
+           print('ERROR[7]: Difference between CORDEX MIP tables and VR in positive, realm: %s:: %s,%s --- %s' % (xxx,e1[k][1].get('positive','None'),e1[k][1].get('modeling_realm','None'), self.ec1[k][4:6]))
         
 base=CC_CONFIG_DIR
-print base
+print(base)
 snl,snla, snaliasses = gen_sn_list( os.path.join(base, cfsntab) )
-print 'Len snl = %s' % len(snl)
+print('Len snl = %s' % len(snl))
 
 dkrz_cordex_version = 4
 ec1 = {}
@@ -200,7 +200,7 @@ if newMip == 'CORDEX':
     ln = bits[13]
     sn = bits[14]
     if sn not in snl + snla:
-      print 'ERROR: CORDEX DKRZ sn %s for %s not in snl/snla' % (sn, var)
+      print('ERROR: CORDEX DKRZ sn %s for %s not in snl/snla' % (sn, var))
     ec1[var] = ( sn,ln)
  elif dkrz_cordex_version == 2:
   for tab in ['1hr','3hr','6hr','day','mon','sem','fx']:
@@ -208,7 +208,7 @@ if newMip == 'CORDEX':
      for l in ll[3:]:
         bits = string.split( l, ',' )
         if (tab != 'fx' and len( bits ) != 7) or (tab == 'fx' and len( bits ) != 5):
-          print 'cant safely parse %s [%s]' % (l,tab)
+          print('cant safely parse %s [%s]' % (l,tab))
 #1,sund,Duration of Sunshine,duration_of_sunshine,s,sum,
         var,ln,sn,units = bits[1:5]
         if tab != 'fx':
@@ -216,7 +216,7 @@ if newMip == 'CORDEX':
         else:
           cm,pos = [None,None]
         if sn not in snl + snla:
-           print 'ERROR: CORDEX DKRZ [%s] sn %s for %s not in snl/snla' % (tab,sn, var)
+           print('ERROR: CORDEX DKRZ [%s] sn %s for %s not in snl/snla' % (tab,sn, var))
         ec1[var] = ( sn,ln,units,cm,pos)
  elif dkrz_cordex_version in [3,4]:
   eeee = {}
@@ -225,14 +225,14 @@ if newMip == 'CORDEX':
   for l in ll[2:]:
         bits = string.split( string.strip(l), ',' )
         if dkrz_cordex_version == 4:
-          bits = map( lambda x: string.strip(x, '"' ), bits)
+          bits = [string.strip(x, '"' ) for x in bits]
         if string.strip(bits[0]) == '':
            break
 #1,sund,Duration of Sunshine,duration_of_sunshine,s,sum,
         var,units = bits[1:3]
         ln,sn,pos,realm   = bits[12:16]
         if sn not in snl + snla:
-           print 'ERROR: CORDEX DKRZ [%s] sn %s for %s not in snl/snla' % ('all',sn, var)
+           print('ERROR: CORDEX DKRZ [%s] sn %s for %s not in snl/snla' % ('all',sn, var))
         assert pos in ['','up','down'], 'Unexpected value for pos [%s] in %s' % (pos,l)
         eca[var] = ( units,ln,sn,pos,realm )
 
@@ -242,7 +242,7 @@ if newMip == 'CORDEX':
      for l in ll[2:]:
         bits = string.split( l, ',' )
         if dkrz_cordex_version == 4:
-          bits = map( lambda x: string.strip(x, '"' ), bits)
+          bits = [string.strip(x, '"' ) for x in bits]
         if string.strip(bits[0]) == '':
            break
 #1,sund,Duration of Sunshine,duration_of_sunshine,s,sum,
@@ -273,7 +273,7 @@ def validate( t,cc ):
     l1 = {}
     l2 = {}
     for m in ml:
-      print 'base: ',base
+      print('base: ',base)
       l1 = ms.scan_table( open( os.path.join(base, newMipDir + m) ).readlines(), None, asDict=True, appendTo=l1, lax=True, tag=m, project=newMip)
     ms.nn_tab = len(ml)
     for m in ml2:
@@ -300,16 +300,16 @@ if doAll:
     ec1 = None
     c = comp( snl,snla=snla, ec1=ec1)
     validate('all',c)
-    print """Number of tables=%s\nNumber of variables=%s\nNumber of standard names=%s\n""" % (ms.nn_tab,c.nn_var,c.nn_sn)
-    print ms.al
+    print("""Number of tables=%s\nNumber of variables=%s\nNumber of standard names=%s\n""" % (ms.nn_tab,c.nn_var,c.nn_sn))
+    print(ms.al)
 else:
   for tab in tlist:
     ms = mipTableScan()
-    print 'Validating table %s ' % tab
+    print('Validating table %s ' % tab)
     if newMip in ['CCMI','SPECS']:
       ec1 = None
     else:
       ec1=eeee[tab]
-      print eeee[tab].keys()
+      print(list(eeee[tab].keys()))
     c = comp( snl,snla=snla, ec1=ec1)
     validate(tab,c)

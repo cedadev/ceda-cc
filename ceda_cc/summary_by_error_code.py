@@ -82,19 +82,19 @@ def generateSummaryByErrorCode(dr):
 
         fin.close()
 
-    keys = errors.keys()
+    keys = list(errors.keys())
     keys.sort()
 
     for k in keys:
         files = errors[k]
         files.sort()
-        print "CODE: %s (%d files)" % (k, len(files))
+        print("CODE: %s (%d files)" % (k, len(files)))
    
         if printFiles:
-          for f in files: print "\t%s" % f
+          for f in files: print("\t%s" % f)
         elif printTwoFiles:
           for f in files[:min(2,len(files))]: 
-            print "\t%s" % f
+            print("\t%s" % f)
 
 
 

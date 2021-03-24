@@ -1,5 +1,5 @@
 """A set of classes running checks and providing utilities to support checks"""
-import string, re, os, sys, traceback, ctypes, collections
+import re, os, sys, traceback, ctypes, collections
 
 class baseException(Exception):
   """Basic exception for general use in code."""
@@ -8,7 +8,7 @@ class baseException(Exception):
     self.msg = 'utils_c4:: %s' % msg
 
   def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self).encode('utf-8')
 
   def __repr__(self):
     return self.msg
@@ -28,16 +28,17 @@ class mipTableScan(object):
 ##
   def scan_table(self,ll,log,asDict=False,appendTo=None,lax=False,tag=None):
  
-    lll0 = map( string.strip, ll )
+    ##lll0 = list(map( string.strip, ll ))
+    lll0 = [x.strip() for x in ll]
     lll = []
     for l in lll0:
       if len(l) != 0:
         if l[0] != '!':
-          lll.append(string.split(l,'!')[0])
+          lll.append(l.split('!')[0])
     sll = []
     sll.append( ['header',[]] )
     for l in lll:
-      k = string.split( l, ':' )[0]
+      k = l.split( ':' )[0]
       if k in ['variable_entry','axis_entry']:
         sll.append( [k,[]] )
       sll[-1][1].append(l)
@@ -45,17 +46,18 @@ class mipTableScan(object):
     eee = []
     for s in sll:
       if s[0] == 'variable_entry':
-         bits = string.split(s[1][0],':')
+         bits = s[1][0].split(':')
          assert len(bits) == 2, 'Can not unpack: %s' % str(s[1])
-         k,var =  map( string.strip, string.split(s[1][0],':') )
+         #k,var =  list(map( string.strip, string.split(s[1][0],':') ))
+         k,var =  [x.strip() for x in s[1][0].split(':') ]
          aa = {'standard_name':None, 'long_name':None,'units':None,'cell_methods':None }
          ds = 'scalar'
          for l in s[1][1:]:
-           bits = string.split(l,':')
-           k = string.strip(bits[0])
-           v = string.strip( string.join( bits[1:], ':' ) )
+           bits = l.split(':')
+           k = bits[0].strip()
+           v = ':'.join( bits[1:] ).strip( )
            if k == 'dimensions':
-             ds = string.split(v)
+             ds = v.split()
            else:
              aa[k] = v
          eee.append( (var,ds,aa,tag) )
@@ -63,24 +65,24 @@ class mipTableScan(object):
 
     checkOldMethod = False
     if checkOldMethod:
-      ssss = string.join( lll, ':::' )
-      vitems = string.split( ssss, ':::variable_entry:' )[1:]
+      ssss = ':::'.join( lll )
+      vitems = ssss.split( ':::variable_entry:' )[1:]
  
       ee = []
       for i in vitems:
-        b1 = string.split( i, ':::')[0]
-        var = string.strip( b1 )
+        b1 = i.split( ':::')[0]
+        var = b1.strip( )
         aa = {}
         for v in self.vats:
           mm = self.re_vats[v].findall(i)
           if len(mm) == 1:
-             aa[v] = string.strip(mm[0])
+             aa[v] = mm[0].strip()
           else:
              aa[v] = 'None'
  
         mm = self.re_cmor_mip2.findall( i )
         if len(mm) == 1:
-          ds = string.split( string.strip(mm[0]) )
+          ds = mm[0].strip().split( )
         elif len(mm) == 0:
           ds = 'scalar'
         else:
@@ -92,9 +94,9 @@ class mipTableScan(object):
 
       for k in range(len(ee) ):
         if ee[k][0:2] == eee[k][0:2] and ee[k][2]['standard_name'] == eee[k][2]['standard_name'] and ee[k][2]['long_name'] == eee[k][2]['long_name']:
-          print 'OK:::', ee[k]
+          print('OK:::', ee[k])
         else:
-          print 'DIFF: ',ee[k],eee[k]
+          print('DIFF: ',ee[k],eee[k])
       
     if not asDict:
       return tuple( eee )
@@ -103,11 +105,11 @@ class mipTableScan(object):
       for l in eee:
         ff[l[0]] = ( l[1], l[2], l[3] )
       if appendTo != None:
-        for k in ff.keys():
-          assert ff[k][1].has_key( 'standard_name' ), 'No standard name in %s:: %s' % (k,str(ff[k][1].keys()))
-          if appendTo.has_key(k):
+        for k in list(ff.keys()):
+          assert 'standard_name' in ff[k][1], 'No standard name in %s:: %s' % (k,str(list(ff[k][1].keys())))
+          if k in appendTo:
             if lax and  ff[k][1]['standard_name'] != appendTo[k][1]['standard_name']:
-              print 'ERROR[X1]: Inconsistent entry definitions %s:: %s [%s] --- %s [%s]' % (k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
+              print('ERROR[X1]: Inconsistent entry definitions %s:: %s [%s] --- %s [%s]' % (k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2]))
             if not lax:
               assert ff[k][1] == appendTo[k][1], 'Inconsistent entry definitions %s:: %s [%s] --- %s [%s]' % (k,ff[k][1],ff[k][2], appendTo[k][1], appendTo[k][2])
           else:
@@ -143,13 +145,13 @@ class mipVocab(object):
         fn = fnpat % f
         ll = open( '%s%s' % (dir,fn) ).readlines()
         ee = ms.scan_table(ll,None,asDict=True)
-        for v in ee.keys():
+        for v in list(ee.keys()):
 ## set global default: type float
           eeee = { 'type':self.pcfg.defaults.get( 'variableDataType', 'float' ) }
           eeee['_dimension'] = ee[v][0]
           ar = []
           ac = []
-          for a in ee[v][1].keys():
+          for a in list(ee[v][1].keys()):
             eeee[a] = ee[v][1][a]
           ##if 'positive' in eeee.keys():
             ##ar.append( 'positive' )
@@ -182,21 +184,21 @@ class mipVocab(object):
      self.varInfo = {}
      self.varcons = {}
      dir, tl, vgm, fn = self.pcfg.mipVocabPars
-     vg = vgm.keys()[0]
+     vg = list(vgm.keys())[0]
      ee = { 'standard_name':'sn%s', 'long_name':'n%s', 'units':'1' }
      ll = open( '%s%s' % (dir,fn) ).readlines()
      self.varcons[vg] = {}
      for l in ll:
        if l[0] != '#':
-          bits = string.split( string.strip(l), '|' )
+          bits = l.strip().split( '|' )
           if len(bits) == 2:
             p1,p2 = bits
           else:
             p1 = l
             p2 = None
-          dt, v, sn = string.split( string.strip(p1), maxsplit=2 )
+          dt, v, sn = p1.strip().split( maxsplit=2 )
           if p2 is not None:
-            bits = string.split( string.strip(p2), '=' )
+            bits = p2.strip().split( '=' )
             eex = { bits[0]:bits[1] }
           else:
             eex = None
@@ -219,15 +221,15 @@ class mipVocab(object):
     if vg == 'ESA':
       vg = 'ESACCI'
    
-    assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys() [%s]' % (vg,str(self.varcons.keys()) )
-    return (v in self.varcons[vg].keys())
+    assert vg in list(self.varcons.keys()), '%s not found in  self.varcons.keys() [%s]' % (vg,str(list(self.varcons.keys())) )
+    return (v in list(self.varcons[vg].keys()))
       
   def getAttr( self, v, vg1, a ):
     vg = vg1
     if vg == 'ESA':
       vg = 'ESACCI'
-    assert vg in self.varcons.keys(), '%s not found in  self.varcons.keys()'
-    assert v in self.varcons[vg].keys(), '%s not found in self.varcons[%s].keys()' % (v,vg)
+    assert vg in list(self.varcons.keys()), '%s not found in  self.varcons.keys()'
+    assert v in list(self.varcons[vg].keys()), '%s not found in self.varcons[%s].keys()' % (v,vg)
       
     return self.varcons[vg][v][a]
       
@@ -247,7 +249,7 @@ class patternControl(object):
       try:
         self.re_pat = re.compile( pattern )
       except:
-        print "Failed to compile pattern >>%s<< (%s)" % (pattern, tag)
+        print("Failed to compile pattern >>%s<< (%s)" % (pattern, tag))
       self.pattern = pattern
     
     self.examples = examples
@@ -270,7 +272,7 @@ class patternControl(object):
       if m is None:
         self.note = "no match %s::%s" % (val,self.pattern)
         return False
-      if not m.groupdict().has_key("val"):
+      if "val" not in m.groupdict():
         self.note = "no 'val' in match"
         return False
       self.note = "val=%s" % m.groupdict()["val"]
@@ -294,11 +296,13 @@ class listControl(object):
       self.note = str( self.list[:4] )
     if self.split:
       if self.splitVal is None:
-        vs = string.split( val )
+        vs = val.split( )
       elif self.enumeration:
-        vs = map( string.strip, self.essplit.findall( val ) )
+        #vs = list(map( string.strip, self.essplit.findall( val ) ))
+        vs = [x.strip() for x in self.essplit.findall( val ) ]
       else:
-        vs = map( string.strip, string.split( val, self.splitVal ) )
+        #vs = list(map( string.strip, string.split( val, self.splitVal ) ))
+        vs =  [ x.split() for x in val.split( self.splitVal) ]
     else:
       vs = [val,]
     if self.enumeration:
@@ -308,9 +312,9 @@ class listControl(object):
         if m in [None,[]]:
           vs2.append( v )
         else:
-          opts = string.split( m[0][1], ',' )
+          opts = m[0][1].split( ',' )
           for o in opts:
             vs2.append( '%s%s' % (m[0][0],o) )
       vs = vs2[:]
         
-    return all( map( lambda x: x in self.list, vs ) )
+    return all( [x in self.list for x in vs] )

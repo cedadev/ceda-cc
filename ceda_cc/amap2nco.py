@@ -11,7 +11,7 @@ Check ouput and run ceda-cc to verify that the correct changes have been impleme
 See file USAGE_amap2nco.txt in code repository for more detail"""
 
 import os, string, random, time
-from xceptions import *
+from .xceptions import *
 
 xx='abcdefghijklmnopqrstuvwxyz1234567890$%-=+*'
 
@@ -46,7 +46,7 @@ class map2nco(object):
     thislist = None
     lok = {'var':5, 'fn':2, 'ax':5, 'ga':4 }
     for d in self.directives:
-      assert lok.has_key( d[0] ), 'Directive not recognised'
+      assert d[0] in lok, 'Directive not recognised'
       bits = string.split( string.strip( d[1], '"' ), '","' ) 
       assert len(bits) == lok[d[0]], 'Not enough elements for directive'
       fpath = bits[0]
@@ -75,7 +75,7 @@ class map2nco(object):
       toklist = []
       for d in f[1:]:
         if d[0] in ['var','ga']:
-          print d
+          print(d)
           var, att, oval, nval = d[1]
           if d[0] == 'var':
             token = '%s,%s,o,c,"%s"' % (att,var,nval)
@@ -92,8 +92,8 @@ class map2nco(object):
           ofn = string.join( fs, '.' )
           ofile = odir + ofn
         else:
-          print 'WARNING: UNREPARABLE ERRORS ARE LISTED'
-          print d
+          print('WARNING: UNREPARABLE ERRORS ARE LISTED')
+          print(d)
       cmd = 'ncatted '
       if self.newtid:
         tid = ''
@@ -115,9 +115,9 @@ if __name__ == '__main__':
   if len(sys.argv) != 4:
     if os.path.isfile( 'USAGE_amap2nco.txt' ):
       for l in open( 'USAGE_amap2nco.txt').readlines():
-        print string.strip(l)
+        print(string.strip(l))
     else:
-      print __doc__
+      print(__doc__)
   else:
      mfile, idir, odir = sys.argv[1:]
      m = map2nco(mfile, idir, odir )

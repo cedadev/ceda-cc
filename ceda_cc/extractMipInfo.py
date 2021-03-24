@@ -1,7 +1,7 @@
 
 import collections, glob, string, re, json, sys
-from fcc_utils2 import mipTableScan, snlist, tupsort
-from ceda_cc_config.config_c4 import CC_CONFIG_DIR
+from .fcc_utils2 import mipTableScan, snlist, tupsort
+from .ceda_cc_config.config_c4 import CC_CONFIG_DIR
 
 def uniquify( ll ):
   ll.sort()
@@ -112,7 +112,7 @@ class helper:
 
   def match(self,a,b):
       if type(a) == type( 'X' ) and type(b) == type( 'X' ):
-        a0,b0 = map( lambda x: string.replace(x, '__ABSENT__',''), [a,b] )
+        a0,b0 = [string.replace(x, '__ABSENT__','') for x in [a,b]]
         return string.strip( string.replace(a0, '  ', ' '), '"') == string.strip( string.replace(b0, '  ', ' '), '"')
       else:
         return a == b
@@ -175,7 +175,7 @@ class mipCo:
       l2 = ms.scan_table( open( d ).readlines(), None, asDict=True, lax=True, tag="x", warn=True)
       l2k = []
       usedDims = []
-      for k in l2.keys():
+      for k in list(l2.keys()):
         if k not in cmip5_ignore:
           l2k.append(k)
           if l2[k][0] != 'scalar':
@@ -190,17 +190,17 @@ class mipCo:
       self.td[tab] = l2
       ##self.dd[tab] = ms.adict.copy()
       self.dd[tab] = {}
-      for k in ms.adict.keys():
+      for k in list(ms.adict.keys()):
         if k not in usedDims:
-          print "WARNING[X1]: axis %s declared and not used in table %s" % (k,tab)
+          print("WARNING[X1]: axis %s declared and not used in table %s" % (k,tab))
       for u in usedDims:
-        if ms.adict.has_key(u):
+        if u in ms.adict:
            self.dd[tab][u] = ms.adict[u]
         else:
-           print 'WARNING[X2]: USED DIMENSION %s not in table %s' % (u,tab)
+           print('WARNING[X2]: USED DIMENSION %s not in table %s' % (u,tab))
       ##self.dl.append( [tab, ms.adict.copy()] )
       self.dl.append( [tab, self.dd[tab].copy() ] )
-      self.al0 += self.dd[tab].keys()
+      self.al0 += list(self.dd[tab].keys())
 
     self.vl0.sort()
     self.vl = []
@@ -224,12 +224,12 @@ class mipCo:
 
 ## create list of tables for each dimension.
     for a in self.dl:
-      for k in a[1].keys():
+      for k in list(a[1].keys()):
         self.adict[k].append(a[0])
 
-    self.dims = self.adict.keys()
+    self.dims = list(self.adict.keys())
     self.dims.sort()
-    self.vars = self.vdict.keys()
+    self.vars = list(self.vdict.keys())
     self.vars.sort()
     ##for v in self.vars:
       ##l = self.vdict[v]
@@ -266,9 +266,9 @@ class runcheck1:
         if att != "__name__":
        ##for att in ['standard_name','units']:
          if att == '__dimensions__':
-           atl = map( lambda x: string.join( td[x][v][0] ), l )
+           atl = [string.join( td[x][v][0] ) for x in l]
          else:
-           atl = map( lambda x: td[x][v][ix].get(att,'__ABSENT__'), l )
+           atl = [td[x][v][ix].get(att,'__ABSENT__') for x in l]
          atl.sort()
          av = [atl[0],]
          for a in atl[1:]:
@@ -277,7 +277,7 @@ class runcheck1:
          if att == 'standard_name':
            for a in av:
              if a not in snl and a not in snla:
-               print "ERROR[A1]: ",xxx,"INVALID STANDARD NAME: ",a,v
+               print("ERROR[A1]: ",xxx,"INVALID STANDARD NAME: ",a,v)
                self.errors.append( "INVALID STANDARD NAME: %s [%s]" % (a,v) )
          if len(av) > 1:
            ee = {}
@@ -301,11 +301,11 @@ class runcheck1:
                tt = (False,)
          ##    iso = False
              except:
-               print att,v
+               print(att,v)
                raise
              isol.append((iso,x))
              if tt[0]:
-               print 'INFO[Y1]: Substituting ',v,a,tt
+               print('INFO[Y1]: Substituting ',v,a,tt)
                ee[iso].append( tt[1] )
              else:
                ee[iso].append( a )
@@ -318,14 +318,14 @@ class runcheck1:
                    ok = False
    
              if not ok:
-                print xxx,'E001: Multiple values : ',att,v,ee
+                print(xxx,'E001: Multiple values : ',att,v,ee)
                 for t in isol:
                   if t[0] == a:
                     tab = t[1]
                     if att in ['standard_name','long_name']:
-                      print "E002",xxx,tab,td[tab][v][ix].get('standard_name','__ABSENT__'),td[tab][v][ix].get('long_name','__ABSENT__')
+                      print("E002",xxx,tab,td[tab][v][ix].get('standard_name','__ABSENT__'),td[tab][v][ix].get('long_name','__ABSENT__'))
                     else:
-                      print "E003",xxx,tab,td[tab][v][ix].get(att,'__ABSENT__')
+                      print("E003",xxx,tab,td[tab][v][ix].get(att,'__ABSENT__'))
                    
            if att == "standard_name":
              vd2[v] = (2,[ee[True],ee[False]] )
@@ -333,7 +333,7 @@ class runcheck1:
            if att == "standard_name":
              tt = snsubber.isFalseSn( v, av[0] )
              if tt[0]:
-               print 'INFO[A2]: Substituting ',v,av[0],tt
+               print('INFO[A2]: Substituting ',v,av[0],tt)
                vd2[v] = (1, tt[1])
              else:
                vd2[v] = (1, av)
@@ -342,13 +342,13 @@ class runcheck1:
            a = td[tab][v][ix].get('standard_name','__ABSENT__')
            tt = snsubber.isFalseSn( v, a )
            if tt[0]:
-             print 'INFO[A3]: Substituting ',v,a,tt
+             print('INFO[A3]: Substituting ',v,a,tt)
              vd2[v] = (1, tt[1])
            else:
              vd2[v] = (1, a)
            ##print 'MULTIPLE VALUES: ',v,att,av
      else:
-      print "WARNING[X4]: ",xxx, 'Zero length element: %s' % v
+      print("WARNING[X4]: ",xxx, 'Zero length element: %s' % v)
 
   def chkDims( self, reqh=None):
     pass
@@ -371,7 +371,7 @@ class typecheck1:
     vd2 = {}
     for v in vars:
      l = vdict[v]
-     dl = map( lambda x: string.join( td[x][v][0] ), l )
+     dl = [string.join( td[x][v][0] ) for x in l]
      vd2[v] = str( uniquify( dl ) )
     json.dump( vd2, open( 'mipInfo.json', 'w' ) )
     for v in vars:
@@ -383,9 +383,9 @@ class typecheck1:
        adict = {}
        for att in thisatts:
          if att == '__dimensions__':
-           atl = map( lambda x: (string.join( td[x][v][0] ),x), l )
+           atl = [(string.join( td[x][v][0] ),x) for x in l]
          else:
-           atl = map( lambda x: (td[x][v][1].get(att,'__ABSENT__'),x), l )
+           atl = [(td[x][v][1].get(att,'__ABSENT__'),x) for x in l]
          atl.sort( tupsort(0).cmp )
          a0 = atl[0][0]
          if a0 == None:
@@ -408,7 +408,7 @@ class typecheck1:
                    if self.helper.match(string.replace( a, src, targ ), av[-1]) or self.helper.match(string.replace( av[-1], src, targ ), a):
                      thisok = True
                if thisok:
-                 print 'INFO[typecheck]: conditional match found', tab, v
+                 print('INFO[typecheck]: conditional match found', tab, v)
                else:
                  if pmatch:
                    ##print '########### no matvh found'
@@ -421,14 +421,14 @@ class typecheck1:
 ## check for type 2
        tval = None
        ##if adict[ 'positive' ] == ['__ABSENT__']:
-       if all( map( lambda x: len(adict[x]) == 1, self.type2Atts )):
+       if all( [len(adict[x]) == 1 for x in self.type2Atts]):
            tval = 2
-       elif all( map( lambda x: len(adict[x]) == 1, self.type3Atts )):
+       elif all( [len(adict[x]) == 1 for x in self.type3Atts]):
            tval = 3
-       elif all( map( lambda x: len(adict[x]) == 1, self.type4Atts )):
+       elif all( [len(adict[x]) == 1 for x in self.type4Atts]):
            tval = 4
        else:
-           l = map( lambda x: '%s:%s, ' % (x,len(adict[x]) ), self.type2Atts )
+           l = ['%s:%s, ' % (x,len(adict[x]) ) for x in self.type2Atts]
        if tval == 2:
          type2.append( v)
        elif tval == 3:
@@ -438,7 +438,7 @@ class typecheck1:
        else:
          type5.append(v)
     xx = float( len(vars) )
-    print "INFO[XXX]", string.join( map( lambda x: '%s (%5.1f%%);' % (x,x/xx*100), [len(type1), len(type2), len(type3), len(type4), len(type5)] ) )
+    print("INFO[XXX]", string.join( ['%s (%5.1f%%);' % (x,x/xx*100) for x in [len(type1), len(type2), len(type3), len(type4), len(type5)]] ))
     self.type1 = type1
     self.type2 = type2
     self.type3 = type3
@@ -477,10 +477,10 @@ class typecheck1:
       ee = {}
       for v in self.type1:
         tab = self.m.vdict[v][0]
-        if not ee.has_key(tab):
+        if tab not in ee:
           ee[tab] = []
         ee[tab].append( v )
-      keys = ee.keys()
+      keys = list(ee.keys())
       keys.sort()
       for k in keys:
          oo.write( '<h2>Table %s</h2>\n' % k )
@@ -492,7 +492,7 @@ class typecheck1:
               etmp['__dimensions__'] = string.join( self.m.td[k][v][0] )
               oo.write( '<h3>' + v + (fixedType1Tmpl % etmp) )
             except:
-              print k, self.m.td[k][v][1].keys()
+              print(k, list(self.m.td[k][v][1].keys()))
               raise
       oo.close()
     elif typecode == 2:
@@ -508,7 +508,7 @@ class typecheck1:
             oo.write( '<ul>\n' )
             for t in l:
               dims = string.join( self.m.td[t][v][0] )
-              sa = tuple( [t,dims,] + map( lambda x: self.m.td[t][v][1].get( x, 'unset' ), ['cell_methods','valid_max', 'valid_min', 'ok_max_mean_abs', 'ok_min_mean_abs'] ) )
+              sa = tuple( [t,dims,] + [self.m.td[t][v][1].get( x, 'unset' ) for x in ['cell_methods','valid_max', 'valid_min', 'ok_max_mean_abs', 'ok_min_mean_abs']] )
               oo.write( fixedType2TmplB % sa )
             oo.write( '</ul>\n' )
       oo.close()
@@ -530,7 +530,7 @@ class typecheck1:
             oo.write( '<ul>\n' )
             for t in l:
               dims = string.join( self.m.td[t][v][0] )
-              sa = tuple( [t,dims,] + map( lambda x: self.m.td[t][v][1].get( x, 'unset' ), al ) )
+              sa = tuple( [t,dims,] + [self.m.td[t][v][1].get( x, 'unset' ) for x in al] )
               oo.write( tmplB % sa )
             oo.write( '</ul>\n' )
       oo.close()
@@ -544,9 +544,9 @@ class run(object):
     self.m = mipCo( mips )  
     self.json()
     al = []
-    for k0 in self.m.dd.keys():
-      for k1 in self.m.dd[k0].keys():
-        al += self.m.dd[k0][k1][0].keys()
+    for k0 in list(self.m.dd.keys()):
+      for k1 in list(self.m.dd[k0].keys()):
+        al += list(self.m.dd[k0][k1][0].keys())
     ald = uniquify( al )
     ald.sort()
     i = ald.index('standard_name')
@@ -558,12 +558,12 @@ class run(object):
 
   def getTupList(self):
     vl = []
-    keys = self.m.vdict.keys()
+    keys = list(self.m.vdict.keys())
     keys.sort()
     for k in keys:
       for t in self.m.vdict[k]:
   ##NT_var = collections.namedtuple( 'mip',['name','sn','snStat','realm','units','longName','comment'] )
-        sn, r, units, ln, c = map( lambda x: self.m.td[t][k][1].get(x,None), ['standard_name','modeling_realm','units','long_name','comment'] ) 
+        sn, r, units, ln, c = [self.m.td[t][k][1].get(x,None) for x in ['standard_name','modeling_realm','units','long_name','comment']] 
         mipid = string.split(t,'_')[0]
         if c == '':
           c = None
@@ -583,9 +583,9 @@ class run(object):
         if (t.mip == 'CMIP5' and tl2[-1].mip == 'CCMI1') or (t.mip == 'CCMI1' and tl2[-1].mip == 'CMIP5'):
           tl2[-1] = t
         else:
-          print 'What to do??'
-          print tl2[-1]
-          print t
+          print('What to do??')
+          print(tl2[-1])
+          print(t)
       else:
         tl2.append(t)
     return tl1, tl2
@@ -597,7 +597,7 @@ class run(object):
     return self.v, self.r2
 
   def json(self):
-    keys = self.m.adict.keys()
+    keys = list(self.m.adict.keys())
     keys.sort()
     fh = open( 'axes_json.txt', 'w' )
     for k in keys:
@@ -607,7 +607,7 @@ class run(object):
     fh.close()
 
 ms = mipTableScan()
-print ms.al
+print(ms.al)
 snc = snlist()
 snl, snla = snc.gen_sn_list( )
 snsubber = snsub()
@@ -620,8 +620,8 @@ mips = { "cmip5":NT_mip( 'cmip5','cmip5_vocabs/mip/', 'CMIP5_*' ),
 
 mipl = ['specs']
 mipl = ['cordex','cmip5']
-mipl = mips.keys()
-mips = map( lambda x: mips[x], mipl )
+mipl = list(mips.keys())
+mips = [mips[x] for x in mipl]
 r = run()
 
 m,ald = r.run()
@@ -648,7 +648,7 @@ s.exportHtml( 5 )
 import collections
 ee = collections.defaultdict( int )
 ## e.m.td['CMIP5_6hrPlev']['va'][1].keys()
-for k1 in m.td.keys():
-  for k2 in m.td[k1].keys():
-    for k3 in m.td[k1][k2][1].keys():
+for k1 in list(m.td.keys()):
+  for k2 in list(m.td[k1].keys()):
+    for k3 in list(m.td[k1][k2][1].keys()):
       ee[k3] += 1

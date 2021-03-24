@@ -5,8 +5,7 @@ import config_c4
 
 This module sets some basic variables, including some vocabulary lists.
 """
-import string
-import utils_config as utils
+from . import utils_config as utils
 import os
 import os.path as op
 import shutil, collections
@@ -37,11 +36,10 @@ validCmip5Frequencies = ['fx','yr','monClim','mon','day','6hr','3hr','subhr']
 validCordexFrequencies = ['fx','sem','mon','day','6hr','3hr','1hr']
 validSpecsFrequencies = ['fx','mon','day','6hr']
 validCcmiFrequencies = ['fx','yr','mon','day','hr','subhr']
-validSpecsExptFamilies = map( lambda x: string.strip( x ), 
-                              open( op.join(CC_CONFIG_DIR, 'specs_vocabs/exptFamily.txt' )).readlines() )
+validSpecsExptFamilies = [x.strip( ) for x in open( op.join(CC_CONFIG_DIR, 'specs_vocabs/exptFamily.txt' )).readlines()]
 
 validCordexDomainsL = [ 'SAM-44', 'CAM-44', 'NAM-44', 'EUR-44', 'AFR-44', 'WAS-44', 'EAS-44', 'CAS-44', 'AUS-44', 'ANT-44', 'ARC-44', 'MED-44']
-validCordexDomainsLi = map( lambda x: x + 'i', validCordexDomainsL )
+validCordexDomainsLi = [x + 'i' for x in validCordexDomainsL]
 validCordexDomainsH = ['EUR-11']
 validCordexDomains = validCordexDomainsL + validCordexDomainsLi + validCordexDomainsH
 
@@ -53,15 +51,15 @@ heightRequired = ['tas','tasmax','tasmin','huss','sfcWind','sfcWindmax','wsgsmax
 ii = open( op.join(CC_CONFIG_DIR, 'cordex_vocabs/GCMModelName.txt' )).readlines()
 validGcmNames = []
 for l in ii:
-  if l[0] != '#' and len( string.strip(l) ) > 0:
-    validGcmNames.append( string.split(l)[0] )
+  if l[0] != '#' and len( l.strip() ) > 0:
+    validGcmNames.append( l.split()[0] )
 
 ii = open( op.join(CC_CONFIG_DIR, 'cordex_vocabs/RCMModelName.txt' )).readlines()
 validRcmNames = []
 validInstNames = []
 for l in ii:
-  if l[0] != '#' and len( string.strip(l) ) > 0:
-    bits = string.split(l)
+  if l[0] != '#' and len( l.strip() ) > 0:
+    bits = l.split()
     validRcmNames.append( bits[0] )
     validInstNames.append( bits[1] )
 
@@ -85,7 +83,7 @@ ii = open( op.join(CC_CONFIG_DIR, 'cordex_vocabs/cordex_domains.csv' )).readline
 keys = ['name','tag','res','grid_np_lon','grid_np_lat','nlon','nlat','w','e','s','n']
 rotatedPoleGrids = {}
 for l in ii[2:16]:
-  bits = string.split(string.strip(l),',')
+  bits = l.strip().split(',')
   ee = {}
   i = 0
   for k in keys:
@@ -105,7 +103,7 @@ for l in ii[2:16]:
 keys = ['name','tag','res','nlon','nlat','w','e','s','n']
 interpolatedGrids = {}
 for l in ii[18:33]:
-  bits = string.split(string.strip(l),',')
+  bits = l.strip().split(',')
   ee = {}
   i = 0
   for k in keys:
@@ -131,7 +129,7 @@ class readVocab(object):
       tx = tt + (None,None,None,None)
       return self.getSimpleList( tx[1],bit=tx[2],omt=tx[3],options=tx[4] )
     else:
-      print 'readVocab.driver: option %s not recgnised' % tt[0]
+      print('readVocab.driver: option %s not recgnised' % tt[0])
 
   def getEvalAssign(self, file ):
     ii = open('%s/%s/%s' % (CC_CONFIG_DIR, self.dir,file) )
@@ -143,7 +141,7 @@ class readVocab(object):
     try:
       return eval( ll[0] )
     except:
-      print 'Failed to evaluate configuration line from %s:\n%s' % (file,l[0])
+      print('Failed to evaluate configuration line from %s:\n%s' % (file,l[0]))
       raise
 
   def getSimpleList(self,file,bit=None,omt=None,options=None):
@@ -152,7 +150,7 @@ class readVocab(object):
     if options == None:
       olist = []
     else:
-      olist = string.split(options,',')
+      olist = options.split(',')
 
     if 'returnMappings' in olist:
       assert bit in [0, -1], 'only support returnMappings for bit = -1 or 0'
@@ -160,24 +158,24 @@ class readVocab(object):
 
     for l in ii.readlines():
       if l[0] != '#':
-        ll = string.strip(l)
+        ll = l.strip()
         if omt == 'last':
-          oo.append(string.join(string.split(ll)[:-1]))
+          oo.append(' '.join(ll.split()[:-1]))
         elif bit == None:
           oo.append(ll)
         else:
           if 'returnMappings' in olist:
-            bb = string.split(ll)
+            bb = ll.split()
             if bit == -1:
-              ee[bb[-1]] = string.join( bb[:-1] )
+              ee[bb[-1]] = ' '.join( bb[:-1] )
             else:
-              ee[bb[0]] = string.join( bb[1:] )
+              ee[bb[0]] = ' '.join( bb[1:] )
             oo.append( bb[bit] )
           else:
-            oo.append(string.split(ll)[bit])
+            oo.append(ll.split()[bit])
 
     if 'noneMap' in olist:
-      oo = map( lambda x: {'None':None}.get(x,x), oo )
+      oo = [{'None':None}.get(x,x) for x in oo]
 
     if 'returnMappings' in olist:
       return oo, ee
@@ -286,7 +284,7 @@ class projectConfig(object):
                 'spatial_resolution':'spatial_resolution', 'ecv':'@ecv','version':'#version','convention_version':'#gdsv'}
       self.globalAttributesInFn = [None,]
     elif project == '__dummy':
-      self.requiredGlobalAttributes = map( lambda x: 'ga%s' % x, range(10) )
+      self.requiredGlobalAttributes = ['ga%s' % x for x in range(10)]
       self.controlledGlobalAttributes = [ ]
       self.globalAttributesInFn = [None,'ga2', 'ga3', 'ga4' ]
       self.requiredVarAttributes = ['long_name', 'standard_name', 'units']
@@ -383,10 +381,10 @@ class projectConfig(object):
     self.getVocabs()
     test = False
     if test:
-      for k in self.vocabs['variable'].varcons.keys():
-        for k2 in self.vocabs['variable'].varcons[k].keys():
+      for k in list(self.vocabs['variable'].varcons.keys()):
+        for k2 in list(self.vocabs['variable'].varcons[k].keys()):
           if "height2m" in self.vocabs['variable'].varcons[k][k2].get( '_dimension',[]):
-            print 'config_c4: %s , %s: %s' % (k,k2,str(self.vocabs['variable'].varcons[k][k2]['_dimension'] ) )
+            print('config_c4: %s , %s: %s' % (k,k2,str(self.vocabs['variable'].varcons[k][k2]['_dimension'] ) ))
 
     ##assert self.project != 'CCMI', 'Not completely set up for CCMI yet'
 
@@ -398,16 +396,17 @@ class projectConfig(object):
       for l in open( eafile ).readlines():
         if l[0] != '#':
           if l[0] == "@":
-            p1,p2 = string.split( l[1:], '|' )
+              p1,p2 = l[1:].split( '|' )
           else:
             p1,p2 = None, l
-          bits = map( string.strip, string.split(p2,',') )
+          ##bits = list(map( string.strip, string.split(p2,',') ))
+          bits = [x.strip() for x in p2.split( ',' )]
           id = '%s.%s' % (bits[0],bits[1])
           if p1 != None:
             id += ':%s' % p1
           ee = {}
           for b in bits[2:]:
-            bb = string.split(b,'=')
+            bb = b.split('=')
             ee[bb[0]] = bb[1]
           self.extraAtts[id] = ee
 

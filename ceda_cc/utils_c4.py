@@ -1,10 +1,10 @@
 """A set of classes running checks and providing utilities to support checks"""
-import string, re, os, sys, traceback, ctypes, collections, importlib
+import re, os, sys, traceback, ctypes, collections, importlib
 
 def strmm3( mm ):
-  return string.join( map( lambda x: '%s="%s" [correct: "%s"]' % x, mm ), '; ' )
+  return '; '.join( ['%s="%s" [correct: "%s"]' % x for x in mm] )
 
-from xceptions import *
+from ceda_cc.xceptions import *
 
 re_dlr01 = re.compile( 'MERGED-DLR_1M-[0-9]{8}-fv0100.nc$' )
 
@@ -15,7 +15,7 @@ class timeInt(object):
    mmnmmx = [ (28,31),(28,31),(29,31),(30,30) ]
    def __init__(self,cal='proleptic_gregorian',dpymn=None, dpymx=None,dpmmn=None,dpmmx=None,tol=1.e-6):
      self.tol = tol
-     if not self.vc.has_key(cal) or cal is None:
+     if cal not in self.vc or cal is None:
        assert dpymx is not None and dpymn is not None, 'If standard calendar is not use, dpymn and dpymx must be set'
        assert dpmmx is not None and dpmmn is not None, 'If standard calendar is not use, dpmmn and dpmmx must be set'
        self.dpymn = dpymn - tol
@@ -32,13 +32,13 @@ class timeInt(object):
 
    def setUnit(self,u):
      if u not in ['days','months','years']:
-         print  'Time unit %s not supported' % u
+         print('Time unit %s not supported' % u)
          self.u = None
      else:
          self.u = u
 
    def chk(self,v,u,f):
-      if not self.map.has_key(f):
+      if f not in self.map:
          return (0,'No frequency check available for f = %s' % f )
       if u not in ['days']:
          return (0,'No frequency check available for units = %s' % u )
@@ -108,7 +108,7 @@ class checkSeq(object):
     pass
 
   def check(self,x):
-    d = map( lambda i: x[i+1] - x[i], range(len(x)-1) )
+    d = [x[i+1] - x[i] for i in range(len(x)-1)]
     self.delt = sum(d)/len(d)
     self.dmx = max(d)
     self.dmn = min(d)
@@ -130,7 +130,7 @@ class checkBase(object):
     self.passCount = 0
     self.missingValue = 1.e20
     self.missingValue = ctypes.c_float(1.00000002004e+20).value
-    from file_utils import ncLib
+    from ceda_cc.file_utils import ncLib
     if ncLib == 'netCDF4':
       import numpy
       self.missingValue = numpy.float32(self.missingValue)
@@ -172,7 +172,7 @@ class checkBase(object):
        else:
          self.parent.log.info( msg )
     else:
-       print msg
+       print(msg)
 
     doThis = True
     if self.appendLogfile[0] is not None and doThis:
@@ -187,7 +187,7 @@ class checkBase(object):
       if self.monitor is not None:
          nofh9 = self.monitor.get_open_fds()
          if nofh9 > nofh0:
-           print 'Leaking file handles [1]: %s --- %s' % (nofh0, nofh9)
+           print('Leaking file handles [1]: %s --- %s' % (nofh0, nofh9))
 
   def log_exception( self, msg):
     """Logging of exceptions -- putting trace information in log files"""
@@ -288,7 +288,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     """Initiate checks: manage arguments and then call *runChecks* (inherited from checkBase class).
   Arguments: fn: file name: the file name to be checked."""
     self.errorCount = 0
-    assert type(fn) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(fn)
+    assert type(fn) in [type('x'),type('x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(fn)
     self.fn = fn
     self.fnsep = self.pcfg.fNameSep
 
@@ -309,7 +309,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 ## check basic parsing of file name
     self.checkId = ('001','parse_filename')
     self.test( fn[-3:] == '.nc', 'File name ending ".nc" expected', abort=True, part=True )
-    bits = string.split( fn[:-3], self.fnsep )
+    bits = fn[:-3].split( self.fnsep )
 
     self.fnParts = bits[:]
     if self.pcfg.domainIndex is not None:
@@ -326,7 +326,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
         self.esaFnId = 1
       else:
         self.esaFnId = 0
-        bb = string.split( bits[2], '_' )
+        bb = bits[2].split( '_' )
         self.test( bits[2][0] == 'L' and len(bb) == 2, 'Cannot parse ESA-CCI file name: %s' % fn, abort=True )
         bits = bits[:2] + bb + bits[3:]
         self.fnParts = bits[:]
@@ -378,12 +378,12 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     self.var = self.fnParts[self.pcfg.varIndex]
 
     if self.pcfg.fnvdict is not None:
-      if self.pcfg.fnvdict.has_key( self.var ):
+      if self.var in self.pcfg.fnvdict:
         self.var = self.pcfg.fnvdict.get( self.var )['v']
       else:
         addi = self.fnDict.get('additional','xxxx')
         thiskey = '%s:%s' % (self.var,addi)
-        if self.pcfg.fnvdict.has_key( thiskey ):
+        if thiskey in self.pcfg.fnvdict:
           self.var = self.pcfg.fnvdict.get( thiskey )['v']
 
     self.isFixed = self.freq in ['fx','fixed']
@@ -396,7 +396,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 
 ## test time segment
       if self.pcfg.trangeType == 'CMIP':
-        bits = string.split( self.fnParts[-1], '-' )
+        bits = self.fnParts[-1].split( '-' )
         self.test( len(bits) == 2, 'File time segment [%s] will not parse into 2 elements' % (self.fnParts[-1] ), abort=True, part=True )
 
         self.test(  len(bits[0]) == len(bits[1]), 'Start and end time specified in file name [%s] of unequal length' % (self.fnParts[-1] ), abort=True, part=True  )
@@ -432,7 +432,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
               ll.append( '01' )
             else:
               ll.append( '00' )
-          indDateTime = map( int, ll )
+          indDateTime = list(map( int, ll ))
           self.test( indDateTime[1] in range(1,13), 'Invalid Month in indicative date time %s' % str(ll), part=True )
           self.test( indDateTime[2] in range(1,32), 'Invalid Day in indicative date time %s' % str(ll), part=True )
           self.test( indDateTime[3] in range(25), 'Invalid hour in indicative date time %s' % str(ll), part=True )
@@ -444,7 +444,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     self.checkId, ok = (('004','filename_timerange_length'),True)
     if (not self.isFixed) and self.pcfg.checkTrangeLen:
       ltr = { 'mon':6, 'sem':6, 'day':8, '3hr':[10,12], '6hr':10, '1hr':12 }
-      ok &=self.test( self.freq in ltr.keys(), 'Frequency [%s] not recognised' % self.freq, part=True )
+      ok &=self.test( self.freq in list(ltr.keys()), 'Frequency [%s] not recognised' % self.freq, part=True )
       if ok:
         if type( ltr[self.freq] ) == type(0):
           msg = 'Length of time range parts [%s,%s] not equal to required length [%s] for frequency %s' % (self.fnTimeParts[0],self.fnTimeParts[1],ltr[self.freq],self.freq)
@@ -462,12 +462,12 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     vocabs = self.pcfg.vocabs
     m = []
     for a in self.pcfg.controlledFnParts:
-      if self.fnDict.has_key(a):
+      if a in self.fnDict:
         try:
           if not vocabs[a].check( str(self.fnDict[a]) ):
             m.append( (a,self.fnDict[a],vocabs[a].note) )
         except:
-          print 'failed trying to check file name component %s' % a
+          print('failed trying to check file name component %s' % a)
           raise baseException( 'failed trying to check file name component %s' % a )
 
     self.test( len(m)  == 0, 'File name components do not match constraints: %s' % str(m) )
@@ -485,7 +485,7 @@ class checkGlobalAttributes(checkBase):
 
   def check(self,globalAts, varAts,varName,varGroup, vocabs, fnParts):
     self.errorCount = 0
-    assert type(varName) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
+    assert type(varName) in [type('x'),type('x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
     self.var = varName
     self.globalAts = globalAts
     self.varAts = varAts
@@ -507,7 +507,7 @@ class checkGlobalAttributes(checkBase):
       if id != '':
         self.fileId = '%s.%s' % (self.globalAts['naming_authority'],id)
         if self.globalAts['naming_authority'] == 'uk.ac.pml':
-          i0 = string.find(self.globalAts['id'],'OC4v6_QAA')
+          i0 = self.globalAts['id'].find( 'OC4v6_QAA')
           if i0 != -1:
             self.fileId = '%s.%s' % (self.globalAts['naming_authority'],self.globalAts['id'][:i0+9])
       else:
@@ -517,7 +517,7 @@ class checkGlobalAttributes(checkBase):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
     drsDefaults = { 'convention_version':'n/a'}
-    if not self.globalAts.has_key('product'):
+    if 'product' not in self.globalAts:
         self.globalAts['product'] = 'output'
     for k in self.drsMappings:
       if self.drsMappings[k] == '@var':
@@ -530,14 +530,14 @@ class checkGlobalAttributes(checkBase):
         x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
       elif self.drsMappings[k] == '@mip_id':
-        ee[k] = string.split( self.globalAts["table_id"] )[1]
+        ee[k] = self.globalAts["table_id"].split( )[1]
       elif self.drsMappings[k] == '@ecv':
         ee[k] = self.pcfg.ecvMappings[ self.parent.fnDict['project'] ]
       elif self.drsMappings[k][0] == '$':
         self.pcfg.getExtraAtts()
         self.getId()
-        if string.find(self.drsMappings[k],':') != -1:
-          k2,dflt = string.split( self.drsMappings[k][1:],':')
+        if self.drsMappings[k].find(':') != -1:
+          k2,dflt = self.drsMappings[k][1:].split(':')
           ee[k] = self.pcfg.extraAtts[self.fileId].get( k2, dflt )
         else:
           ee[k] = self.pcfg.extraAtts[self.fileId][self.drsMappings[k][1:]]
@@ -546,7 +546,7 @@ class checkGlobalAttributes(checkBase):
         ee[k] = self.varAts[self.var].get(thisk,'__none__')
       elif self.drsMappings[k][0] == '#':
         thisk = self.drsMappings[k][1:]
-        if drsDefaults.has_key( thisk ):
+        if thisk in drsDefaults:
           ee[k] = self.parent.fnDict.get(thisk, drsDefaults[thisk] )
         else:
           ee[k] = self.parent.fnDict[thisk]
@@ -554,7 +554,7 @@ class checkGlobalAttributes(checkBase):
         ee[k] = self.globalAts[ self.drsMappings[k] ]
 
     for k in ['creation_date','tracking_id']:
-      if k in self.globalAts.keys():
+      if k in list(self.globalAts.keys()):
         ee[k] = self.globalAts[k]
 
     return ee
@@ -571,7 +571,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('001','global_ncattribute_present')
     m = []
     for k in self.requiredGlobalAttributes:
-      if not globalAts.has_key(k):
+      if k not in globalAts:
          m.append(k)
          self.globalAts[k] = '__errorReported__'
 
@@ -583,7 +583,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('002','variable_in_group')
 
     
-    self.test( varAts.has_key( varName ), 'Expected variable [%s] not present' % varName, abort=True, part=True )
+    self.test( varName in varAts, 'Expected variable [%s] not present' % varName, abort=True, part=True )
     msg = 'Variable %s not in table %s' % (varName,varGroup)
     
     self.test( vocabs['variable'].isInTable( varName, varGroup ), msg, abort=True, part=True )
@@ -603,7 +603,7 @@ class checkGlobalAttributes(checkBase):
     if (not self.parent.fileIsFixed) and self.pcfg.projectV.id in ['CORDEX']:
       reqAts.append( 'cell_methods' )
     for k in reqAts + vocabs['variable'].lists(varName, 'addRequiredAttributes'):
-      if not varAts[varName].has_key(k):
+      if k not in varAts[varName]:
          m.append(k)
     if not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) ):
       vaerr = True
@@ -615,7 +615,7 @@ class checkGlobalAttributes(checkBase):
     self.checkId = ('005','variable_ncattribute_mipvalues')
     ok = True
     hm = varAts[varName].get( 'missing_value', None ) is not None
-    hf = varAts[varName].has_key( '_FillValue' )
+    hf = '_FillValue' in varAts[varName]
     if hm or hf:
 ## both are not required for SPECS.
       if self.pcfg.varTables=='CMIP' and self.pcfg.projectV.id != 'SPECS':
@@ -624,11 +624,11 @@ class checkGlobalAttributes(checkBase):
       else:
         ok = True
       if mipType == 'real':
-        if varAts[varName].has_key( 'missing_value' ):
+        if 'missing_value' in varAts[varName]:
            msg = 'Variable [%s] has incorrect attribute missing_value=%s [correct: %s]' % (varName,varAts[varName]['missing_value'],self.missingValue)
 ### need to use ctypes here when using ncq3 to read files -- appears OK for other libraries.
            ok &= self.test( ctypes.c_float(varAts[varName]['missing_value']).value == ctypes.c_float(self.missingValue).value, msg, part=True )
-        if varAts[varName].has_key( '_FillValue' ):
+        if '_FillValue' in varAts[varName]:
            msg = 'Variable [%s] has incorrect attribute _FillValue=%s [correct: %s]' % (varName,varAts[varName]['_FillValue'],self.missingValue)
            ok &= self.test( varAts[varName]['_FillValue'] == self.missingValue, msg, part=True )
 
@@ -641,7 +641,7 @@ class checkGlobalAttributes(checkBase):
         contAts.append( 'cell_methods' )
     else:
       contAts = ['standard_name']
-    hcm = varAts[varName].has_key( "cell_methods" )
+    hcm = "cell_methods" in varAts[varName]
     for k in contAts + vocabs['variable'].lists(varName,'addControlledAttributes'):
       targ = varAts[varName].get( k, 'Attribute not present' )
       val = vocabs['variable'].getAttr( varName, varGroup, k )
@@ -649,22 +649,22 @@ class checkGlobalAttributes(checkBase):
       if k == "standard_name":
         if val is not None:
           if val.find( ' ' ) != -1:
-            val = string.join( string.split(val,maxsplit=1) )
+            val = ' '.join( val.split(maxsplit=1) )
           if targ.find( ' ' ) != -1:
-            targ = string.join( string.split(targ,maxsplit=1) )
+            targ = ' '.join( targ.split(maxsplit=1) )
 
       if k == "cell_methods":
         if val is not None:
           parenthesies1 = []
           targ0 = targ[:]
-          while string.find( targ, '(' ) != -1:
+          while targ.find( '(' ) != -1:
             i0 = targ.index( '(' )
             i1 = targ.index( ')' )
             parenthesies1.append( targ[i0:i1+1] )
             targ = targ[:i0-1] + targ[i1+1:]
           parenthesies2 = []
           val0 = val[:]
-          while string.find( val, '(' ) != -1:
+          while val.find( '(' ) != -1:
             i0 = val.index( '(' )
             i1 = val.index( ')' )
             parenthesies2.append( val[i0:i1+1] )
@@ -672,7 +672,7 @@ class checkGlobalAttributes(checkBase):
           for p in parenthesies2:
             if p not in parenthesies1:
               mm.append( (k,parenthesies1,p) )
-          if string.find( targ, val):
+          if targ.find( val):
              mm.append( (k,targ,val) )
       elif targ != 'Attribute not present' and targ != val:
         mm.append( (k,targ,val) )
@@ -692,19 +692,19 @@ class checkGlobalAttributes(checkBase):
 
     if (not self.parent.fileIsFixed) and hcm:
     ## if (varGroup not in ['fx','fixed']) and hcm:
-      self.isInstantaneous = string.find( varAts[varName]['cell_methods'], 'time: point' ) != -1
+      self.isInstantaneous = varAts[varName]['cell_methods'].find( 'time: point' ) != -1
     else:
       self.isInstantaneous = True
 
     self.checkId = ('006','global_ncattribute_cv' )
     m = []
     for a in self.controlledGlobalAttributes:
-      if globalAts.has_key(a):
+      if a in globalAts:
         try:
           if not vocabs[a].check( str(globalAts[a]) ):
             m.append( (a,globalAts[a],vocabs[a].note) )
         except:
-          print 'failed trying to check global attribute %s' % a
+          print('failed trying to check global attribute %s' % a)
           raise baseException( 'failed trying to check global attribute %s' % a )
 
     if not self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) ):
@@ -717,7 +717,7 @@ class checkGlobalAttributes(checkBase):
        gaif = self.globalAttributesInFn[i]
        if gaif is not None and gaif[0] != '*':
          if gaif[-1] == ':':
-           bits = string.split(gaif,':')
+           bits = gaif.split(':')
            gaif0 = gaif
            gaif = bits[0]
            ix = int(bits[1])
@@ -727,7 +727,7 @@ class checkGlobalAttributes(checkBase):
          targVal = fnParts[ix]
          if gaif[0] == "@":
            if gaif[1:] == "mip_id":
-               bits = string.split( globalAts[ "table_id" ] ) 
+               bits = globalAts[ "table_id" ].split( ) 
                if len( bits ) > 2 and bits[0] == "Table":
                  thisVal = bits[1]
                else:
@@ -775,7 +775,7 @@ class checkStandardDims(checkBase):
     """API called from check manager *run_c4* for each file"""
 
     self.errorCount = 0
-    assert type(varName) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
+    assert type(varName) in [type('x'),type('x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
     self.var = varName
     self.varGroup = varGroup
     self.da = da
@@ -795,7 +795,7 @@ class checkStandardDims(checkBase):
     if not self.parent.fileIsFixed:
     ## if varGroup not in ['fx','fixed']:
       ok = True
-      self.test( 'time' in da.keys(), 'Time dimension not found' , abort=True, part=True )
+      self.test( 'time' in list(da.keys()), 'Time dimension not found' , abort=True, part=True )
       if self.pcfg.varTables=='CMIP':
         if not self.isInsta:
           ok &= self.test(  da['time'].get( 'bounds', 'xxx' ) == 'time_bnds', 'Required bounds attribute not present or not correct value', part=True )
@@ -808,7 +808,7 @@ class checkStandardDims(checkBase):
         else:
           ok &= self.test( tunits[:10] == "days since", 'time units [%s] attribute not set correctly to "days since ....."' % tunits, part=True )
 
-        ok &= self.test(  da['time'].has_key( 'calendar' ), 'Time: required attribute calendar missing', part=True )
+        ok &= self.test(  'calendar' in da['time'], 'Time: required attribute calendar missing', part=True )
 
         ok &= self.test( da['time']['_type'] in ["float64","double"], 'Time: data type not float64 [%s]' % da['time']['_type'], part=True )
        
@@ -834,7 +834,7 @@ class checkStandardDims(checkBase):
     self.checkId = ('002','pressure_levels')
     if varName in self.plevRequired:
       ok = True
-      self.test( 'plev' in va.keys(), 'plev coordinate not found %s' % str(va.keys()), abort=True, part=True )
+      self.test( 'plev' in list(va.keys()), 'plev coordinate not found %s' % str(list(va.keys())), abort=True, part=True )
 
       ok &= self.test( int( va['plev']['_data'][0] ) == self.plevValues[varName],  \
                   'plev value [%s] does not match required [%s]' % (va['plev']['_data'],self.plevValues[varName] ), part=True )
@@ -848,15 +848,15 @@ class checkStandardDims(checkBase):
       if varName in ['clh','clm','cll']:
         plevAtDict['bounds']= "plev_bnds"
 
-      for k in plevAtDict.keys():
+      for k in list(plevAtDict.keys()):
         ok &= self.test( va['plev'].get( k, None ) == plevAtDict[k], 
                      'plev attribute %s absent or wrong value (should be %s)' % (k,plevAtDict[k]), part=True )
 
       if varName in ['clh','clm','cll']:
-         self.test( "plev_bnds" in va.keys(), 'plev_bnds variable not found %s' % str(va.keys()), abort=True, part=True )
+         self.test( "plev_bnds" in list(va.keys()), 'plev_bnds variable not found %s' % str(list(va.keys())), abort=True, part=True )
          mm = []
-         for k in plevAtDict.keys():
-            if k != 'bounds' and k in va['plev_bnds'].keys():
+         for k in list(plevAtDict.keys()):
+            if k != 'bounds' and k in list(va['plev_bnds'].keys()):
                if va['plev_bnds'][k] != va['plev'][k]:
                  mm.append(k)
          ok &= self.test( len(mm) == 0, 'Attributes of plev_bnds do not match those of plev: %s' % str(mm), part=True )
@@ -877,14 +877,14 @@ class checkStandardDims(checkBase):
     self.checkId = ('003','height_levels')
     hreq = varName in self.heightRequired
     if self.parent.experimental:
-      print 'utils_c4: ', varName, self.vocabs['variable'].varcons[varGroup][varName].get( '_dimension',[])
+      print('utils_c4: ', varName, self.vocabs['variable'].varcons[varGroup][varName].get( '_dimension',[]))
       hreq = "height2m" in self.vocabs['variable'].varcons[varGroup][varName].get( '_dimension',[])
       if hreq:
-        print 'testing height, var=%s' % varName
+        print('testing height, var=%s' % varName)
     if hreq:
       heightAtDict = {'long_name':"height", 'standard_name':"height", 'units':"m", 'positive':"up", 'axis':"Z" }
       ok = True
-      ok &= self.test( 'height' in va.keys(), 'height coordinate not found %s' % str(va.keys()), abort=True, part=True )
+      ok &= self.test( 'height' in list(va.keys()), 'height coordinate not found %s' % str(list(va.keys())), abort=True, part=True )
       ##ok &= self.test( abs( va['height']['_data'] - self.heightValues[varName]) < 0.001, \
                 ##'height value [%s] does not match required [%s]' % (va['height']['_data'],self.heightValues[varName] ), part=True )
 
@@ -896,7 +896,7 @@ class checkStandardDims(checkBase):
 
       ok &= ok1
       
-      for k in heightAtDict.keys():
+      for k in list(heightAtDict.keys()):
         val =  va['height'].get( k, "none" )
         if not self.test( val == heightAtDict[k], \
                          'height attribute %s absent or wrong value (should be %s)' % (k,heightAtDict[k]), part=True ):
@@ -918,7 +918,7 @@ class checkGrids(checkBase):
 
   def check(self,varName, domain, da, va):
     self.errorCount = 0
-    assert type(varName) in [type('x'),type(u'x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
+    assert type(varName) in [type('x'),type('x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(varName)
     self.var = varName
     self.domain = domain
     self.da = da
@@ -943,13 +943,13 @@ class checkGrids(checkBase):
         atDict['grid_north_pole_longitude'] = self.pcfg.rotatedPoleGrids[domain]['grid_np_lon']
 
       self.checkId = ('002','rotated_latlon_attributes')
-      self.test( 'rlat' in da.keys() and 'rlon' in da.keys(), 'rlat and rlon not found (required for grid_mapping = rotated_pole )', abort=True, part=True )
+      self.test( 'rlat' in list(da.keys()) and 'rlon' in list(da.keys()), 'rlat and rlon not found (required for grid_mapping = rotated_pole )', abort=True, part=True )
 
       atDict = {'rlat':{'long_name':"rotated latitude", 'standard_name':"grid_latitude", 'units':"degrees", 'axis':"Y", '_type':'float64'},
                 'rlon':{'long_name':"rotated longitude", 'standard_name':"grid_longitude", 'units':"degrees", 'axis':"X", '_type':'float64'} }
       mm = []
       for k in ['rlat','rlon']:
-        for k2 in atDict[k].keys():
+        for k2 in list(atDict[k].keys()):
           if atDict[k][k2] != da[k].get(k2, None ):
             mm.append( (k,k2) )
             record = '#@ax=%s;%s=%s|%s=%s <uncomment if correct>' % (k,k2,da[k].get(k2, '__missing__'),k2,atDict[k][k2]   )
@@ -965,7 +965,7 @@ class checkGrids(checkBase):
           ok = False
 
       a = ( da['rlat']['_data'][0], da['rlat']['_data'][-1], da['rlon']['_data'][0], da['rlon']['_data'][-1] )
-      b = map( lambda x: self.pcfg.rotatedPoleGrids[domain][x], ['s','n','w','e'] )
+      b = [self.pcfg.rotatedPoleGrids[domain][x] for x in ['s','n','w','e']]
       mm = []
       for i in range(4):
         if abs(a[i] - b[i]) > self.pcfg.gridSpecTol:
@@ -986,13 +986,13 @@ class checkGrids(checkBase):
     va = self.va
     if domain[-1] == 'i':
       self.checkId = ('004','regular_grid_attributes')
-      self.test( 'lat' in da.keys() and 'lon' in da.keys(), 'lat and lon not found (required for interpolated data)', abort=True, part=True )
+      self.test( 'lat' in list(da.keys()) and 'lon' in list(da.keys()), 'lat and lon not found (required for interpolated data)', abort=True, part=True )
 
       atDict = {'lat':{'long_name':"latitude", 'standard_name':"latitude", 'units':"degrees_north", '_type':'float64'},
                 'lon':{'long_name':"longitude", 'standard_name':"longitude", 'units':"degrees_east", '_type':'float64'} }
       mm = []
       for k in ['lat','lon']:
-        for k2 in atDict[k].keys():
+        for k2 in list(atDict[k].keys()):
           if atDict[k][k2] != da[k].get(k2, None ):
             mm.append( (k,k2) )
             record = '#@ax=%s;%s=%s|%s=%s <uncomment if correct>' % (k,k2,da[k].get(k2, '__missing__'),k2,atDict[k][k2]   )
@@ -1010,7 +1010,7 @@ class checkGrids(checkBase):
           ok = False
 
       a = ( da['lat']['_data'][0], da['lat']['_data'][-1], da['lon']['_data'][0], da['lon']['_data'][-1] )
-      b = map( lambda x: self.pcfg.interpolatedGrids[domain][x], ['s','n','w','e'] )
+      b = [self.pcfg.interpolatedGrids[domain][x] for x in ['s','n','w','e']]
       rs = self.pcfg.interpolatedGrids[domain]['res']
       c = [-rs,rs,-rs,rs]
       mm = []
@@ -1056,8 +1056,8 @@ class checkByVar(checkBase):
     ee = {}
     elist = []
     for f in flist:
-      fn = string.split(f, '/' )[-1]
-      fnParts = string.split( fn[:-3], self.fnsep )
+      fn = f.split( '/' )[-1]
+      fnParts = fn[:-3].split( self.fnsep )
       
       try:
         if self.pcfg.freqIndex is not None:
@@ -1070,39 +1070,39 @@ class checkByVar(checkBase):
         if self.parent.fileIsFixed:
           trange = None
         else:
-          trange = string.split( fnParts[-1], '-' )
+          trange = fnParts[-1].split( '-' )
         var = fnParts[self.pcfg.varIndex]
-        thisKey = string.join( fnParts[:-1], '.' )
-        if group not in ee.keys():
+        thisKey = '.'.join( fnParts[:-1] )
+        if group not in list(ee.keys()):
           ee[group] = {}
-        if thisKey not in ee[group].keys():
+        if thisKey not in list(ee[group].keys()):
           ee[group][thisKey] = []
         ee[group][thisKey].append( (f,fn,group,trange) )
       except:
-        print 'Cannot parse file name: %s' % (f) 
+        print('Cannot parse file name: %s' % (f)) 
         elist.append(f)
 ## this ee entry is not used, except in bookkeeping check below. 
 ## parsing of file name is repeated later, and a error log entry is created at that stage -- this could be improved.
 ## in order to improve, need to clarify flow of program: the list here is used to provide preliminary info before log files etc are set up.
         group = '__error__'
         thisKey = fn
-        if group not in ee.keys():
+        if group not in list(ee.keys()):
           ee[group] = {}
-        if thisKey not in ee[group].keys():
+        if thisKey not in list(ee[group].keys()):
           ee[group][thisKey] = []
         ee[group][thisKey].append( (f,fn,group) )
 
     nn = len(flist)
     n2 = 0
-    for k in ee.keys():
-      for k2 in ee[k].keys():
+    for k in list(ee.keys()):
+      for k2 in list(ee[k].keys()):
         n2 += len( ee[k][k2] )
 
     assert nn==n2, 'some file lost!!!!!!'
     if len(elist) == 0:
-      self.info =  '%s %s, %s' % (nn, maybe_plural("file", nn), str(ee.keys()))
+      self.info =  '%s %s, %s' % (nn, maybe_plural("file", nn), str(list(ee.keys())))
     else:
-      self.info =  '%s %s, %s frequencies, severe errors in file names: %s' % (nn, maybe_plural("file", nn), len(ee.keys()), len(elist))
+      self.info =  '%s %s, %s frequencies, severe errors in file names: %s' % (nn, maybe_plural("file", nn), len(list(ee.keys())), len(elist))
       for e in elist:
         self.info += '\n%s' % e
     self.ee = ee
@@ -1128,11 +1128,11 @@ class checkByVar(checkBase):
 
   def checkTrange(self):
     """Manage time range checks: loop over groups of files identified by :meth:`impt`"""
-    keys = self.ee.keys()
+    keys = list(self.ee.keys())
     keys.sort()
     for k in keys:
       if k not in ['fx','fixed']:
-        keys2 = self.ee[k].keys()
+        keys2 = list(self.ee[k].keys())
         keys2.sort()
         for k2 in keys2:
           self.checkThisTrange( self.ee[k][k2], k )
@@ -1144,6 +1144,8 @@ class checkByVar(checkBase):
        kg = 'subd'
     else:
        kg = group
+    if kg not in self.pats:
+        print ('WORKFLOW ERROR 001.001: kg=%s, keys=%s' % (kg,sorted( list( self.pats.keys() ) ) )) 
     ps = self.pats[kg]
     rere = (re.compile( ps[0] ), re.compile( ps[1] ) )
 
@@ -1167,7 +1169,7 @@ class checkByVar(checkBase):
       if self.monitor is not None:
          nofh9 = self.monitor.get_open_fds()
          if nofh9 > nofh0:
-           print 'Open file handles: %s --- %s [%s]' % (nofh0, nofh9, j )
+           print('Open file handles: %s --- %s [%s]' % (nofh0, nofh9, j ))
 
 
 ### http://stackoverflow.com/questions/2023608/check-what-files-are-open-in-python
@@ -1188,9 +1190,12 @@ class sysMonitor(object):
     self.procs = subprocess.check_output( 
         [ "lsof", '-w', '-Ff', "-p", str( pid ) ] )
 
-    self.ps = filter( 
-            lambda s: s and s[ 0 ] == 'f' and s[1: ].isdigit(),
-            self.procs.split( '\n' ) )
+    ##print (type(self.procs) )
+    ##for  s in str(self.procs).split( '\n' ):
+        ##print ('P3.001: ',s)
+        
+
+    self.ps = [s for s in str(self.procs).split( '\n' ) if s and s[ 0 ] == 'f' and s[1: ].isdigit()]
     self.fhCountMax = max( self.fhCountMax, len(self.ps) )
     return len( self.ps )
 

@@ -145,7 +145,7 @@ class cfCalSupport:
     t = re.compile( '^([0-9]{1,2}):([0-9]{1,2}):([0-9.]*)($|Z$)' )
     bb = s.findall( bits[2] )
     assert len(bb) > 0, 'Failed to parse time base reference year/month/day: %s' % base
-    y,m,d = map( int, string.split( bb[0], '-' ) )
+    y,m,d = list(map( int, string.split( bb[0], '-' ) ))
     if len(bits) == 3 and len(bb[2]) ==  0:
       h,mn,s = 0,0,0.
     else:
@@ -172,7 +172,7 @@ def jabs( y,m,d,cal ):
     return y*360 + m*30 + d
 
 def c1(t1,t2):
-  y,m,d = map(int,[t1[:4],t1[4:6],t1[6:]])
+  y,m,d = list(map(int,[t1[:4],t1[4:6],t1[6:]]))
   bits = string.split( t2[0] )
   assert bits[0] == 'days'
   assert bits[1] == 'since'
@@ -183,12 +183,12 @@ def c1(t1,t2):
     lm = 30
 
   bt = bits[2]
-  by,bm,bd = map(int,[bt[:4],bt[5:7],bt[8:]])
+  by,bm,bd = list(map(int,[bt[:4],bt[5:7],bt[8:]]))
   j0 = jabs(y,m,d, calendar )
   j1 = jabs(by,bm,bd, calendar ) + t2[2]
   if j0 != j1:
-    print 'dates do not match: %s, %s:: %s' % (t1,str(t2),j1-j0)
+    print('dates do not match: %s, %s:: %s' % (t1,str(t2),j1-j0))
   else:
-    print 'OK'
+    print('OK')
 
 c1(t1,t2)

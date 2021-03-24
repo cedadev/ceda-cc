@@ -7,7 +7,7 @@ USAGE
 c4_run.main( <argument list> )
 """
 import sys
-from ccinit import c4_init
+from ceda_cc.ccinit import c4_init
 
 testmain=False
 ## callout to summary.py: if this option is selected, imports of libraries are not needed.
@@ -15,26 +15,26 @@ if not testmain:
   if __name__ == '__main__':
    if len(sys.argv) > 1:
      if sys.argv[1] == '--sum':
-        import summary
+        from . import summary
         summary.summariseLogs()
         raise SystemExit(0)
      elif sys.argv[1] == '-v':
-        from versionConfig import version, versionComment
-        print 'ceda-cc version %s [%s]' % (version,versionComment)
+        from .versionConfig import version, versionComment
+        print('ceda-cc version %s [%s]' % (version,versionComment))
         raise SystemExit(0)
      elif sys.argv[1] == '--unitTest':
-        print "Starting test suite 1"
-        import unitTestsS1
-        print "Starting test suite 2"
-        import unitTestsS2
-        print "Tests completed"
+        print("Starting test suite 1")
+        from . import unitTestsS1
+        print("Starting test suite 2")
+        from . import unitTestsS2
+        print("Tests completed")
         raise SystemExit(0)
    else:
-     print __doc__
+     print(__doc__)
      raise SystemExit(0)
 
 # Standard library imports
-import os, string, time, glob, pkgutil
+import os, time, glob, pkgutil
 import shutil
 ## pkgutil is used in file_utils
 # Third party imports
@@ -42,19 +42,19 @@ import shutil
 ## Local imports with 3rd party dependencies
 #### netcdf --- currently only support for cmds2 -- re-arranged to facilitate support for alternative modules
 
-import file_utils
+import ceda_cc.file_utils
 
-from file_utils import fileMetadata, ncLib
+from ceda_cc.file_utils import fileMetadata, ncLib
 
 # Local imports
-import utils_c4 as utils
-import ceda_cc_config.config_c4 as config
+import ceda_cc.utils_c4 as utils
+from ceda_cc.ceda_cc_config import config_c4 as config
 
-reload( utils )
+##reload( utils )
 
-from xceptions import baseException
+from ceda_cc.xceptions import baseException
 
-from fcc_utils2 import tupsort
+from ceda_cc.fcc_utils2 import tupsort
 
 
 #driving_model_ensemble_member = <CMIP5Ensemble_member>
@@ -112,9 +112,9 @@ class recorder(object):
       fdate = "na"
       sz = 0
     record = '%s | OK | %s | modTime = %s | target = %s ' % (fpath,sz,fdate,tpath)
-    fn = string.split( fpath, '/' )[-1]
+    fn = fpath.split( '/' )[-1]
     for k in ['creation_date','tracking_id']:
-      if k in drs.keys():
+      if k in list(drs.keys()):
         record += ' | %s = %s' % (k,drs[k])
         if k == 'tracking_id':
           self.tidtupl.append( (fn,drs[k]) )
@@ -122,11 +122,11 @@ class recorder(object):
     self.records[fn] = record
   
   def modify(self,fn,msg):
-    assert fn in self.records.keys(),'Attempt to modify non-existent record %s, %s' % [fn,str(self.records.keys()[0:10])]
-    if string.find( self.records[fn], '| OK |') == -1:
+    assert fn in list(self.records.keys()),'Attempt to modify non-existent record %s, %s' % [fn,str(list(self.records.keys())[0:10])]
+    if self.records[fn].find( '| OK |') == -1:
       ##print 'File %s already flagged with errors' % fn
       return
-    s = string.replace( self.records[fn], '| OK |', '| %s |' % msg )
+    s = self.records[fn].replace( '| OK |', '| %s |' % msg )
     ##print '--> ',s
     self.records[fn] = s
 
@@ -139,20 +139,20 @@ class recorder(object):
     fnl = []
     for k in range(len(self.tidtupl)-1):
       if self.tidtupl[k][1] == self.tidtupl[k+1][1]:
-        print 'Duplicate tracking_id: %s, %s:: %s' % (self.tidtupl[k][0],self.tidtupl[k+1][0],self.tidtupl[k][1])
+        print('Duplicate tracking_id: %s, %s:: %s' % (self.tidtupl[k][0],self.tidtupl[k+1][0],self.tidtupl[k][1]))
         nd += 1
         if len(fnl) == 0 or fnl[-1] != self.tidtupl[k][0]:
           fnl.append( self.tidtupl[k][0])
         fnl.append( self.tidtupl[k+1][0])
     if nd == 0:
-      print 'No duplicate tracking ids found in %s files' % len(self.tidtupl)
+      print('No duplicate tracking ids found in %s files' % len(self.tidtupl))
     else:
-      print '%s duplicate tracking ids' % nd
+      print('%s duplicate tracking ids' % nd)
       for f in fnl:
         self.modify( f, 'ERROR: duplicate tid' )
 
   def dumpAll(self,safe=True):
-    keys = self.records.keys()
+    keys = list(self.records.keys())
     keys.sort()
     for k in keys:
       self.dump( self.records[k], safe=safe )
@@ -166,7 +166,7 @@ class recorder(object):
 
   def addErr(self,fpath,reason,safe=True):
     record = '%s | %s' % (fpath, reason)
-    fn = string.split( fpath, '/' )[-1]
+    fn = fpath.split( '/' )[-1]
     self.records[fn] = record
 
 class checker(object):
@@ -192,7 +192,7 @@ class checker(object):
     self.calendar = 'None'
     self.info.log = log
 
-    fn = string.split( fpath, '/' )[-1]
+    fn = fpath.split( '/' )[-1]
 
     if attributeMappings != []:
       self.ncReader.loadNc( fpath )
@@ -209,7 +209,7 @@ class checker(object):
       return
     if not self.info.pcfg.projectV.id[:2] == '__':
       if not os.path.isfile( fpath ):
-        print 'File %s not found [2]' % fpath
+        print('File %s not found [2]' % fpath)
         self.completed = False
         return
 
@@ -301,7 +301,7 @@ class main(object):
     if c4i.project not in ['ESA-CCI']:
       cbv.impt( c4i.flist )
       if printInfo:
-        print cbv.info
+        print(cbv.info)
 
     fileLogOpen = False
     self.resList =  []
@@ -314,7 +314,7 @@ class main(object):
       ec = None
       if monitorFileHandles:
         nofhStart = self.monitor.get_open_fds()
-      fn = string.split(f,'/')[-1]
+      fn = f.split('/')[-1]
       c4i.logger.info( 'Starting: %s' % fn )
       try:
   ### need to have a unique name, otherwise get mixing of logs despite close statement below.
@@ -376,11 +376,11 @@ class main(object):
         if not c4i.holdExceptions:
           raise
       if stdoutsum > 0 and kf%stdoutsum == 0:
-         print '%s files checked; %s passed this round' % (kf,npass)
+         print('%s files checked; %s passed this round' % (kf,npass))
       if monitorFileHandles:
         nofhEnd = self.monitor.get_open_fds()
         if nofhEnd > nofhStart:
-           print 'Open file handles: %s --- %s' % (nofhStart, nofhEnd)
+           print('Open file handles: %s --- %s' % (nofhStart, nofhEnd))
   
     self.cc.info.log = c4i.logger
     
@@ -413,10 +413,10 @@ class main(object):
     dump_drs_list(drs_list, json_file)
 
     if printInfo:
-      print 'Error count %s' % ecount
+      print('Error count %s' % ecount)
     ##c4i.hdlr.close()
     c4i.closeBatchLog()
-    self.ok = all( map( lambda x: x[0], self.resList ) )
+    self.ok = all( [x[0] for x in self.resList] )
 
 
 def dump_drs_list(drs_list, filename):
