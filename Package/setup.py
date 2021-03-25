@@ -23,12 +23,12 @@ setup(name='ceda-cc',
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: BSD License',
         'Topic :: Scientific/Engineering',
-        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 3',
         ], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='',
       author='Martin Juckes',
       author_email='Martin.Juckes@stfc.ac.uk',
-      url='http://proj.badc.rl.ac.uk/exarch/wiki/PackageCedaccInstall',
+      url='https://github.com/cedadev/ceda-cc',
       #download_url=''
       license='BSD',
       packages=find_packages(),
@@ -38,6 +38,6 @@ setup(name='ceda-cc',
       #install_requires=[
       #],
       entry_points= {
-        'console_scripts': ['ceda-cc = ceda_cc.c4:main_entry'],
+        'console_scripts': ['beta-ceda-cc=ceda_cc.c4:main_entry'],
         },
       )

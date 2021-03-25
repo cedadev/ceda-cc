@@ -1044,7 +1044,7 @@ class checkByVar(checkBase):
     self.step = 'Initialised'
     self.checks = (self.checkTrange,)
     ## empty for ccmi2022 ############
-    self.checks = tuple()
+    ##self.checks = tuple()
     self.fnsep = fileNameSeparator
 
   def setLogDict( self,fLogDict ):

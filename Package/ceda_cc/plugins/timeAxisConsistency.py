@@ -7,7 +7,7 @@ class checker(object):
      self.parent = parent
 
    def run(self):
-     print 'Hello from plugin', self.parent.fnParts
+     print ( 'Hello from plugin', self.parent.fnParts )
      ee = {'filename':self.parent.fnParts, 'time':self.parent.da['time'] }
      ofile = '_'.join( self.parent.fnParts ) + '.txt' 
      json.dump( ee, open( ofile, 'w' ) )

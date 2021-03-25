@@ -1,4 +1,4 @@
 
-version="1.3.5"
+version="1.4.1"
 versionComment="Resolved futureWarning concerning comparisons with None"
 
