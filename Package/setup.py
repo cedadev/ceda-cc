@@ -12,7 +12,7 @@ from ceda_cc.versionConfig import version, versionComment
 
 # Load long_description from README.txt
 here = os.path.dirname(__file__)
-readme_txt = os.path.join(here, 'README.txt')
+readme_txt = os.path.join(here, 'README.md')
 long_description = '\n\n' + open(readme_txt).read()
 
 setup(name='ceda-cc',
