@@ -277,7 +277,11 @@ class ProjectConfig(object):
       self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.requiredVarAttributes = ['long_name', 'units']
-      self.drsMappings = {}
+      self.drsMappings = {'variable':'@var', 'institution_id':'institution_id', 'experiment_id':'experiment_id', \
+                        'variant_label':'variant_label', 'source_id':'source_id', 'realm':'realm', \
+                        'frequency':'frequency',  'table_id':'table_id', 'mip_era':'mip_era','frequency':'frequency',
+                        'activity_id':'activity_id'
+                        }
 
     elif project == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')
