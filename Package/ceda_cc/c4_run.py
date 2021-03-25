@@ -104,7 +104,6 @@ class recorder(object):
   def add(self,fpath,drs,safe=True):
     assert self.type == 'map','Can only do map files at present'
     assert type(drs) == type( {} ), '2nd user argument to method add should be a dictionary [%s]' % type(drs)
-    print ( drs.keys() )
     tpath = self.pathTmpl % drs
     if not self.dummy:
       assert os.path.isfile( fpath ), 'File %s not found' % fpath

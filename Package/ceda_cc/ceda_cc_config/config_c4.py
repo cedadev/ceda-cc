@@ -486,8 +486,6 @@ class ProjectConfig(object):
           if i[0] == 'list':
               vocabs[k] = utils.listControl( k, i[1] )
       vocabs[ 'variable' ] = utils.mipVocab(self)
-      print ( '############################################\n#####################################\n' )
-      print ( 'ccmi2022 vocabs: ', vocabs )
 
     elif self.projectV.id == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')
