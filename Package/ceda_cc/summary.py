@@ -1,4 +1,7 @@
-
+"""
+ -h : help
+ [-n <integer>] [-html] idir : scan logs in idir, nlines of output per error; inlcude html summury if -html present
+"""
 import sys, glob, os
 import collections
 
@@ -286,10 +289,13 @@ Click on the code to see a list of the files in which each error is detected.
     oo.write( ptmpl % content )
     oo.close()
 
-def summariseLogs():
+def summarise_logs():
     summariser = LogSummariser()
     summariser.summarise()
 
 if __name__ == '__main__':
-
-  summariseLogs()
+  import sys
+  if len(sys.argv) > 1 and sys.argv[1] == '-h':
+     print (__doc__)
+  else:
+    summarise_logs()
