@@ -27,7 +27,7 @@ print('OK: instantiated fileMetaData and parsed a simple dummy path')
 p = dummy()
 p.log = log
 p.abortMessageCount = -1
-p.pcfg = config.projectConfig( "__dummy" )
+p.pcfg = config.ProjectConfig( "__dummy" )
 
 
 module = 'checkFileName'
