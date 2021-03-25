@@ -1,0 +1,66 @@
+{
+    "Header": {
+        "data_specs_version": "01.00.00",
+        "cmor_version": "3.5",
+        "table_id": "Table AdayZ",
+        "realm": "atmos",
+        "table_date": "January 15, 2021",
+        "missing_value": "1e20",
+        "int_missing_value": "-999",
+        "product": "model-output",
+        "approx_interval": "1.00000",
+        "generic_levels": "",
+        "mip_era": "CMIP6",
+        "Conventions": "CF-1.7"
+    },
+    "variable_entry": {
+        "ta": {
+            "frequency": "dayPt",
+            "modeling_realm": "atmos",
+            "standard_name": "air_temperature",
+            "units": "K",
+            "cell_methods": "longitude: mean time: point",
+            "cell_measures": "",
+            "long_name": "Air Temperature",
+            "comment": "Air Temperature",
+            "dimensions": "latitude plev39 time1",
+            "out_name": "ta",
+            "type": "real",
+            "positive": "",
+            "valid_min": "",
+            "valid_max": ""
+        },
+        "ua": {
+            "frequency": "dayPt",
+            "modeling_realm": "atmos",
+            "standard_name": "eastward_wind",
+            "units": "m s-1",
+            "cell_methods": "longitude: mean time: point",
+            "cell_measures": "",
+            "long_name": "Eastward Wind",
+            "comment": "Zonal wind (positive in a eastward direction).",
+            "dimensions": "latitude plev39 time1",
+            "out_name": "ua",
+            "type": "real",
+            "positive": "",
+            "valid_min": "",
+            "valid_max": ""
+        },
+        "zg": {
+            "frequency": "dayPt",
+            "modeling_realm": "atmos",
+            "standard_name": "geopotential_height",
+            "units": "m",
+            "cell_methods": "longitude: mean time: point",
+            "cell_measures": "",
+            "long_name": "Geopotential Height",
+            "comment": "Geopotential is the sum of the specific gravitational potential energy relative to the geoid and the specific centripetal potential energy. Geopotential height is the geopotential divided by the standard acceleration due to gravity. It is numerically similar to the altitude (or geometric height) and not to the quantity with standard name height, which is relative to the surface.",
+            "dimensions": "latitude plev39 time1",
+            "out_name": "zg",
+            "type": "real",
+            "positive": "",
+            "valid_min": "",
+            "valid_max": ""
+        }
+    }
+}

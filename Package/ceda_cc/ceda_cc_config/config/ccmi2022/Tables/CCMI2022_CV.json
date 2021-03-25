@@ -1,0 +1,245 @@
+{
+    "CV": {
+        "required_global_attributes": [
+            "Conventions",
+            "activity_id",
+            "contact",
+            "creation_date",
+            "data_specs_version",
+            "experiment",
+            "experiment_id",
+            "forcing_index",
+            "frequency",
+            "grid",
+            "grid_label",
+            "initialization_index",
+            "institution",
+            "institution_id",
+            "license",
+            "mip_era",
+            "nominal_resolution",
+            "physics_index",
+            "product",
+            "realization_index",
+            "realm",
+            "source",
+            "source_id",
+            "source_type",
+            "sub_experiment",
+            "sub_experiment_id",
+            "table_id",
+            "tracking_id",
+            "variable_id",
+            "variant_label"
+        ],
+        "version_metadata": {
+            "CV_collection_modified": "March 16, 2021, 15:49:57 UTC",
+            "CV_collection_version": "0.9.0",
+            "author": "David Plummer <david.plummer@canada.ca>"
+        },
+        "activity_id": {
+            "CCMI2022": "Chemistry Climate Model Initiative simulations for the 2022 OA"
+        },
+        "institution_id": {
+            "CCCma": "Canadian Centre for Climate Modelling and Analysis, Environment and Climate Change Canada, Victoria, BC V8P 5C2, Canada",
+            "CNRM-CERFACS": "CNRM (Centre National de Recherches Meteorologiques, Toulouse 31057, France), CERFACS (Centre Europeen de Recherche et de Formation Avancee en Calcul Scientifique, Toulouse 31057, France)",
+            "ETH-PMOD": "IAC ETH, Zurich and PMOD/WRC, Davos, Switzerland",
+            "MESSy-Consortium": "The Modular Earth Submodel System (MESSy) Consortium, represented by the Institute for Physics of the Atmosphere, Deutsches Zentrum fur Luft- und Raumfahrt (DLR), Wessling, Bavaria 82234, Germany",
+            "NCAR": "National Center for Atmospheric Research, Climate and Global Dynamics Laboratory, 1850 Table Mesa Drive, Boulder, CO 80305, USA",
+            "NIES": "National Institute for Environmental Studies, Ibaraki 305-8506, Japan"
+        },
+        "source_id": {
+            "CCSRNIES-MIROC32": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "NIES",
+                "source_id": "CCSRNIES-MIROC32",
+                "source": "CCSRNIES-MIROC32 (2020): \natmos: CCSRNIES-MIROC3.2 (T42; 34 levels; top level 0.01 Pa) \natmosChem: stratospheric mechanism \nocean: none"
+            },
+            "CESM2-WACCM": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "NCAR",
+                "source_id": "CESM2-WACCM",
+                "source": "CESM2-WACCM (2018): \naerosol: MAM4 (same grid as atmos)\natmos: WACCM6 (0.9x1.25 finite volume grid; 288 x 192 longitude/latitude; 70 levels; top level 4.5e-06 mb)\natmosChem: MAM4 (same grid as atmos)\nland: CLM5 (same grid as atmos)\nlandIce: CISM2.1\nocean: POP2 (320 x 384 longitude/latitude; 60 levels; top grid cell 0-10 m)\nocnBgchem: MARBL (same grid as ocean)\nseaIce: CICE5.1 (same grid as ocean)"
+            },
+            "CMAM": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "CCCma",
+                "source_id": "CMAM",
+                "source": "CMAM (2020): \natmos: CanAM3.1 (T47; 48x96 linear grid; 80 levels; top level 0.08 Pa) \natmosChem: stratospheric mechanism plus CH4-NOx tropospheric \nocean: none"
+            },
+            "CNRM-MOCAGE-1-HR": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "CNRM-CERFACS",
+                "source_id": "CNRM-MOCAGE-1-HR",
+                "source": "CNRM-MOCAGE-1-HR: a completer"
+            },
+            "EMAC-CCMI2-oce": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "MESSy-Consortium",
+                "source_id": "EMAC-CCMI2-oce",
+                "source": "EMAC-CCMI2-oce (2020): \natmos: ECHAM5.3.02 (modified, spectral T42; 128 x 64 longitude/latitude; 47 levels; top level 0.01 hPa) \natmosChem: MECCA 4.4.0.m1 \nland: same as Atmosphere \nlandIce: none \nocean: MPIOM 1.3.0-beta (bipolar GR1.5, approximately 1.5deg; 256 x 220 longitude/latitude; 40 levels; top grid cell 0-12 m) \nocnBgchem: none \nseaIce: thermodynamic (Semtner zero-layer) dynamic (Hibler 79) sea ice model"
+            },
+            "EMAC-CCMI2": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "MESSy-Consortium",
+                "source_id": "EMAC-CCMI2",
+                "source": "EMAC-CCMI2 (2020): \natmos: ECHAM5.3.02 (modified, spectral T42; 128 x 64 longitude/latitude; 90 levels; top level 0.01 hPa) \natmosChem: MECCA 4.4.0.m1 \nland: same as Atmosphere\nlandIce: none \nocean: none \nocnBgchem: none \nseaIce: same as Atmosphere"
+            },
+            "SOCOL": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "ETH-PMOD",
+                "source_id": "SOCOL",
+                "source": "SOCOL: \natmos: SOCOL (T63; 47 levels; top level 0.01 Pa) \natmosChem: stratospheric and tropospheric mechanism \nocean: none"
+            }
+        },
+        "source_type": {
+            "AER": "aerosol treatment in an atmospheric model where concentrations are calculated based on emissions, transformation, and removal processes (rather than being prescribed or omitted entirely)",
+            "AGCM": "atmospheric general circulation model run with prescribed ocean surface conditions and usually a model of the land surface",
+            "AOGCM": "coupled atmosphere-ocean global climate model, additionally including explicit representation of at least the land and sea ice",
+            "BGC": "biogeochemistry model component that at the very least accounts for carbon reservoirs and fluxes in the atmosphere, terrestrial biosphere, and ocean",
+            "CHEM": "chemistry treatment in an atmospheric model that calculates atmospheric oxidant concentrations (including at least ozone), rather than prescribing them",
+            "CTM": "chemistry transport model, calculating transport and chemistry using specified meteorological fields",
+            "ISM": "ice-sheet model that includes ice-flow",
+            "LAND": "land model run uncoupled from the atmosphere",
+            "OGCM": "ocean general circulation model run uncoupled from an AGCM but, usually including a sea-ice model",
+            "RAD": "radiation component of an atmospheric model run 'offline'",
+            "SLAB": "slab-ocean used with an AGCM in representing the atmosphere-ocean coupled system"
+        },
+        "frequency": {
+            "10dayPt": "sampled approximately every 10 days, at specified time point within the time period",
+            "dayPt": "sampled daily, at specified time point within the time period",
+            "fx": "fixed (time invariant) field",
+            "mon": "monthly mean samples"
+        },
+        "grid_label": {
+            "gm": "global mean data",
+            "gn": "data reported on a model's native grid",
+            "gnz": "zonal mean data reported on a model's native latitude grid",
+            "gr": "regridded data reported on the data provider's preferred target grid",
+            "grz": "regridded zonal mean data reported on the data provider's preferred latitude target grid",
+            "gr1": "regridded data reported on a grid other than the native grid and other than the preferred target grid",
+            "gr1z": "regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid",
+            "gr2": "regridded data reported on a grid other than the native grid and other than the preferred target grid",
+            "gr2z": "regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid"
+        },
+        "nominal_resolution": [
+            "0.5 km",
+            "1 km",
+            "10 km",
+            "100 km",
+            "1000 km",
+            "10000 km",
+            "1x1 degree",
+            "2.5 km",
+            "25 km",
+            "250 km",
+            "2500 km",
+            "5 km",
+            "50 km",
+            "500 km",
+            "5000 km"
+        ],
+        "realm": {
+            "atmos": "Atmosphere",
+            "land": "Land Surface"
+        },
+        "table_id": [
+            "A10dayPt",
+            "Aday",
+            "AdayZ",
+            "Amon",
+            "AmonZ",
+            "fx"
+        ],
+        "license": [
+            "^CCMI2022 model data produced by .* is licensed under a Creative Commons Attribution.*ShareAlike 4.0 International License .https://creativecommons.org/licenses.* *Consult http://blogs.reading.ac.uk/ccmi/ for terms of use governing CCMI output, including citation requirements and proper acknowledgment\\. *The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose\\. *All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law\\.$"
+        ],
+        "mip_era": [
+            "CMIP6"
+        ],
+        "sub_experiment_id": {
+            "none": "none"
+        },
+        "experiment_id": {
+            "refD1": {
+                "activity_id": "CCMI2022",
+                "experiment": "Hindcast",
+                "experiment_id": "refD1",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "none"
+                ]
+            },
+            "refD2": {
+                "activity_id": "CCMI2022",
+                "experiment": "Baseline projection using CMIP6 SSP2-45 GHGs and precursor emissions with WMO-2018 ODSs",
+                "experiment_id": "refD2",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "none"
+                ]
+            },
+            "senD2-geo": {
+                "activity_id": "CCMI2022",
+                "experiment": "Baseline (SSP2-45) with geoengineering using specified stratospheric aerosol distribution and specified SSTs/sea-ice",
+                "experiment_id": "senD2-geo",
+                "parent_experiment_id": "refD2",
+                "sub_experiment_id": [
+                    "none"
+                ]
+            },
+            "senD2-ssp126": {
+                "activity_id": "CCMI2022",
+                "experiment": "Future projection using CMIP6 SSP1-26 GHGs and precursor emissions with WMO-2018 ODSs",
+                "experiment_id": "senD2-ssp126",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "none"
+                ]
+            },
+            "senD2-ssp370": {
+                "activity_id": "CCMI2022",
+                "experiment": "Future projection using CMIP6 SSP3-70 GHGs and precursor emissions with WMO-2018 ODSs",
+                "parent_experiment_id": "no parent",
+                "experiment_id": "senD2-ssp370",
+                "sub_experiment_id": [
+                    "none"
+                ]
+            }
+        },
+        "product": [
+            "model-output"
+        ],
+        "tracking_id": [
+            "hdl:21.14100/.*"
+        ],
+        "realization_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ],
+        "variant_label": [
+            "r[[:digit:]]\\{1,\\}i[[:digit:]]\\{1,\\}p[[:digit:]]\\{1,\\}f[[:digit:]]\\{1,\\}$"
+        ],
+        "data_specs_version": [
+            "^[[:digit:]]\\{2,2\\}\\.[[:digit:]]\\{2,2\\}\\.[[:digit:]]\\{2,2\\}$"
+        ],
+        "Conventions": [
+            "CF-1.7"
+        ],
+        "forcing_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ],
+        "initialization_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ],
+        "physics_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ]
+    }
+}
