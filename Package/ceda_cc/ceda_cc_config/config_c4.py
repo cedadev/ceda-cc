@@ -196,7 +196,7 @@ class projectConfig(object):
   """
 
   def __init__(self, project, version=-1):
-    knownProjects = ['CMIP5','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
+    knownProjects = ['CMIP5','CCMI2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -313,6 +313,9 @@ class projectConfig(object):
       self.fnParts = lrdr.getEvalAssign( 'fnParts_sv0101.txt' )
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
+    elif self.projectV.id == 'CCMI2022':
+        # ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
+      self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'ESA-CCI':
       self.fnParts = NT_fnParts( len=[7,8,9], fxLen=[0,],  unfLen=[7,8,9,], checkTLen=False, ixDomain=None, ixFreq=None )
       self.trangeType = 'ESA-CCI'
@@ -329,6 +332,7 @@ class projectConfig(object):
 
     self.defaults = { 'variableDataType':'float' }
 # ## used in mipVocabs
+    self.legacy = True
     if self.projectV.id == 'CORDEX':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'cordex_vocabs/mip/')
        self.mipVocabTl = ['fx','sem','mon','day','6h','3h','1h']
@@ -350,6 +354,11 @@ class projectConfig(object):
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr','satdaily':'day'}
        self.mipVocabFnpat = 'CCMI1_%s'
+    elif self.projectV.id == 'CCMI2022':
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi2022_vocabs/Tables/')
+       self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
+       self.mipVocabVgmap = {}
+       self.mipVocabFnpat = 'CCMI2022_%s.json'
     elif self.projectV.id == 'ESA-CCI':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'esacci_vocabs/')
        self.mipVocabTl = []
