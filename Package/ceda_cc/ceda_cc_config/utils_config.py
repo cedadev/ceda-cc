@@ -1,5 +1,5 @@
 """A set of classes running checks and providing utilities to support checks"""
-import re, os, sys, traceback, ctypes, collections
+import re, os, sys, traceback, ctypes, collections, json
 
 class baseException(Exception):
   """Basic exception for general use in code."""
@@ -131,7 +131,32 @@ class mipVocab(object):
        self.ingestMipTables()
      elif pcfg.varTables=='FLAT':
        self.flatTable()
+     elif pcfg.varTables=='json_ccmi':
+       self.ingestJsonMipTables()
     
+  def ingestJsonMipTables(self):
+     dir, tl, vgmap, fnpat = self.pcfg.mipVocabPars
+     self.varInfo = {}
+     self.varcons = {}
+     ##self.varcons = collections.defaultdict( dict )
+     full = ['cell_measures', 'cell_methods', 'comment', 'dimensions', 'frequency', 'long_name', 'modeling_realm', 'out_name', 'positive', 'standard_name', 'type', 'units', 'valid_max', 'valid_min']
+     here = ['cell_measures', 'cell_methods', 'long_name', 'standard_name', 'type', 'units']
+     for vg in tl:
+        if vg not in self.varcons:
+          self.varcons[vg] = {}
+        fn = fnpat % vg
+        print ('ingestJson ... ',dir,fn)
+        ee = json.load( open( '%s%s' % (dir,fn) ) )
+        for var,i in ee['variable_entry'].items():
+          eeee = dict()
+
+          for kk in here:
+              eeee[kk] = i[kk]
+          eeee['_dimension'] = i['dimensions']
+
+          self.varInfo[var] = {'ar':[], 'ac':[] }
+          self.varcons[vg][var] = eeee
+
   def ingestMipTables(self):
      dir, tl, vgmap, fnpat = self.pcfg.mipVocabPars
      ms = mipTableScan()

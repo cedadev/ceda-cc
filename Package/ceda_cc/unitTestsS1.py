@@ -32,11 +32,12 @@ for x in (p,ps,pcmip5,pccmi,pcci):
   x.log = log
   x.abortMessageCount = -1
   x.experimental = False
-p.pcfg = config.projectConfig( "CORDEX" )
-ps.pcfg = config.projectConfig( "SPECS" )
-pcmip5.pcfg = config.projectConfig( "CMIP5" )
-pccmi.pcfg = config.projectConfig( "CCMI" )
-pcci.pcfg = config.projectConfig( "ESA-CCI" )
+p.pcfg = config.ProjectConfig( "CORDEX" )
+ps.pcfg = config.ProjectConfig( "SPECS" )
+pcmip5.pcfg = config.ProjectConfig( "CMIP5" )
+pccmi.pcfg = config.ProjectConfig( "CCMI" )
+pccmi.pcfg = config.ProjectConfig( "ccmi2022" )
+pcci.pcfg = config.ProjectConfig( "ESA-CCI" )
 
 cfgd = { 'CORDEX':p, 'SPECS':ps, 'CMIP5':pcmip5, 'CCMI':pccmi, 'ESA-CCI':pcci }
 

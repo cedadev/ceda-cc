@@ -69,6 +69,7 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  'SPECS':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(start_date)s/%(frequency)s/%(realm)s/%(table)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                  'CMIP5':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'CCMI':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
+                 'ccmi2022':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'ESA-CCI':'%(level)s/%(platform)s/%(sensor)s/%(variable)s/', \
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
@@ -103,6 +104,7 @@ class recorder(object):
   def add(self,fpath,drs,safe=True):
     assert self.type == 'map','Can only do map files at present'
     assert type(drs) == type( {} ), '2nd user argument to method add should be a dictionary [%s]' % type(drs)
+    print ( drs.keys() )
     tpath = self.pathTmpl % drs
     if not self.dummy:
       assert os.path.isfile( fpath ), 'File %s not found' % fpath
@@ -275,7 +277,7 @@ class main(object):
     isDummy  = c4i.project[:2] == '__'
     if (ncLib is None) and (not isDummy):
        raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
-    pcfg = config.projectConfig( c4i.project )
+    pcfg = config.ProjectConfig( c4i.project )
     assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
     ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
     c4i.logger.info( 'Python netcdf: %s' % ncReader.ncLib )

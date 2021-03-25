@@ -1043,6 +1043,8 @@ class checkByVar(checkBase):
     self.checkId = 'unset'
     self.step = 'Initialised'
     self.checks = (self.checkTrange,)
+    ## empty for ccmi2022 ############
+    self.checks = tuple()
     self.fnsep = fileNameSeparator
 
   def setLogDict( self,fLogDict ):
@@ -1064,8 +1066,10 @@ class checkByVar(checkBase):
           freq = fnParts[self.pcfg.freqIndex]
         else:
           freq = None
+        print( fnParts )
 
         group = fnParts[ self.pcfg.groupIndex ]
+        print (freq,group)
 
         if self.parent.fileIsFixed:
           trange = None
@@ -1073,6 +1077,7 @@ class checkByVar(checkBase):
           trange = fnParts[-1].split( '-' )
         var = fnParts[self.pcfg.varIndex]
         thisKey = '.'.join( fnParts[:-1] )
+        print (var, thisKey )
         if group not in list(ee.keys()):
           ee[group] = {}
         if thisKey not in list(ee[group].keys()):
@@ -1091,6 +1096,7 @@ class checkByVar(checkBase):
         if thisKey not in list(ee[group].keys()):
           ee[group][thisKey] = []
         ee[group][thisKey].append( (f,fn,group) )
+        raise
 
     nn = len(flist)
     n2 = 0

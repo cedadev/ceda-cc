@@ -184,7 +184,7 @@ class readVocab(object):
 
 validSpecsInstitutions = ['IC3', 'MPI-M', 'KNMI', 'UOXF', 'CNRM-CERFACS', 'ENEA', 'MOHC', 'SMHI', 'IPSL', 'UREAD', 'ECWMF']
 
-class projectConfig(object):
+class ProjectConfig(object):
   """projectConfig:
   Set project specific configuration options.
   
@@ -196,7 +196,7 @@ class projectConfig(object):
   """
 
   def __init__(self, project, version=-1):
-    knownProjects = ['CMIP5','CCMI2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
+    knownProjects = ['CMIP5','ccmi2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -268,6 +268,17 @@ class projectConfig(object):
                         'frequency':'frequency',  'table':'@mip_id',
                         'project':'project_id'}
 
+    elif project == 'ccmi2022':
+      import ceda_cc.ceda_cc_config.config.table_imports as ti
+      self.thiscfg = ti.Ingest_ccmi2022()
+      self.varTables='json_ccmi'
+      self.requiredGlobalAttributes = self.thiscfg.required[:]
+      self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] )
+      self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label']
+      ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
+      self.requiredVarAttributes = ['long_name', 'units']
+      self.drsMappings = {}
+
     elif project == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')
       self.varTables='FLAT'
@@ -313,7 +324,7 @@ class projectConfig(object):
       self.fnParts = lrdr.getEvalAssign( 'fnParts_sv0101.txt' )
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
-    elif self.projectV.id == 'CCMI2022':
+    elif self.projectV.id == 'ccmi2022':
         # ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'ESA-CCI':
@@ -354,9 +365,9 @@ class projectConfig(object):
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr','satdaily':'day'}
        self.mipVocabFnpat = 'CCMI1_%s'
-    elif self.projectV.id == 'CCMI2022':
-       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi2022_vocabs/Tables/')
-       self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
+    elif self.projectV.id == 'ccmi2022':
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi2022/Tables/')
+       self.mipVocabTl = self.thiscfg.acvs['table_id'][1]
        self.mipVocabVgmap = {}
        self.mipVocabFnpat = 'CCMI2022_%s.json'
     elif self.projectV.id == 'ESA-CCI':
@@ -374,7 +385,7 @@ class projectConfig(object):
 # ## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
-    elif self.project in ['CMIP5','CCMI','SPECS','__dummy']:
+    elif self.project in ['CMIP5','CCMI','ccmi2022','SPECS','__dummy']:
       self.groupIndex = 1
     elif self.project in ['ESA-CCI']:
       self.fnvdict = { 'SSTskin':{'v':'sea_surface_temperature', 'sn':'sea_surface_skin_temperature'} }
@@ -463,6 +474,16 @@ class projectConfig(object):
                'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
                'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
+
+    elif self.projectV.id == 'ccmi2022':
+    
+      vocabs = dict()
+      for k,i in self.thiscfg.acvs.items():
+          if i[0] == 'list':
+              vocabs[k] = utils.listControl( k, i[1] )
+      vocabs[ 'variable' ] = utils.mipVocab(self)
+      print ( '############################################\n#####################################\n' )
+      print ( 'ccmi2022 vocabs: ', vocabs )
 
     elif self.projectV.id == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')
