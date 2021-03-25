@@ -1,5 +1,8 @@
-
-import string, sys, glob, os
+"""
+ -h : help
+ [-n <integer>] [-html] idir : scan logs in idir, nlines of output per error; inlcude html summury if -html present
+"""
+import sys, glob, os
 import collections
 
 HERE = os.path.dirname(__file__)
@@ -12,7 +15,8 @@ class errorShortNames(object):
 
   def __init__(self, file='config/testStandardNames.txt'):
     assert os.path.isfile(file), 'File %s not found' % file
-    ii = list(map( string.strip, open(file).readlines() ))
+    ##ii = list(map( string.strip, open(file).readlines() ))
+    ii = [x.strip() for x in open(file).readlines() ]
     ll = [[ii[0],]]
     for l in ii[1:]:
       if len(l) > 0 and l[0] == '=':
@@ -24,7 +28,7 @@ class errorShortNames(object):
       if len(l) < 2:
         print(l)
       else:
-        self.ll.append( NT_esn( string.strip(l[0],'='), l[1][1:], string.join(l[2:]) ) )
+        self.ll.append( NT_esn( l[0].strip('='), l[1][1:], ' '.join(l[2:]) ) )
 
 def cmin(x,y):
   if x < 0:
@@ -57,7 +61,7 @@ class LogSummariser(object):
     jj = []
 
     for k in range(10):
-      jj.append( string.strip(ii.readline()) )
+      jj.append( ii.readline().strip() )
     ii.close()
     i0 = jj[0].index( ' INFO ' )
     tstart = jj[0][:i0]
@@ -79,11 +83,12 @@ class LogSummariser(object):
       nef = 0
       elist = []
       for l in open(f).readlines():
-        fn = string.split(f,'/')[-1]
+        fn = f.split('/')[-1]
         if (l[:3] in ('C4.', 'C5.') and l.find('FAILED') > -1) or l.find('CDMSError:') > -1:
           nef += 1
           nerr += 1
-          bits = list(map( string.strip, string.split(l, ':' ) ))
+          #bits = list(map( string.strip, string.split(l, ':' ) ))
+          bits = [ x.strip() for x in  l.split( ':' ) ]
           if 'FAILED' in bits:
              kb1 = bits.index('FAILED') + 1
           else:
@@ -91,11 +96,11 @@ class LogSummariser(object):
           if len(bits) > kb1:
             code = bits[0]
             if kb1 == 3:
-              msg0 = string.join(bits[kb1:], ':' )
-              msg = string.strip( bits[1] + ' ' + msg0 )
+              msg0 = ':'.join(bits[kb1:] )
+              msg = ( bits[1] + ' ' + msg0 ).strip()
               se = bits[1][1:-1]
             else:
-              msg = string.strip( string.join(bits[kb1:], ':' ) )
+              msg =  ':'.join(bits[kb1:] ).strip( )
               msg0 = msg
               se = None
             if code not in list(ee.keys()):
@@ -143,21 +148,21 @@ class LogSummariser(object):
       self.htmlEsn( )
 
   def testnames(self):
-    tnfile = '%s/config/testStandardNames.txt' % HERE
+    tnfile = '%s/ceda_cc_config/config/testStandardNames.txt' % HERE
     ii = open( tnfile ).readlines()
     self.tests = []
     thistest = None
     for l in ii:
       if l[0] == '=':
-        name = string.strip(l)[1:-1]
+        name = l.strip()[1:-1]
         if thistest != None:
           thistest.append(defn)
           self.tests.append( thistest )
         thistest = [name,]
         defn = ''
       elif l[0] == '*':
-        thistest.append( string.strip(l)[1:] )
-      elif string.strip(l) != '':
+        thistest.append( l.strip()[1:] )
+      elif l.strip() != '':
         defn += l
     thistest.append(defn)
     self.tests.append( thistest )
@@ -207,7 +212,7 @@ class LogSummariser(object):
       else:
         assert ee[k][2] in list(self.testdict.keys()), 'unrecognised test name: %s' % ee[k][2]
         list.append( '<li>%s [%s:%s]: %s</li>' % (self.testdict[ee[k][2]][0],k,ee[k][2],ee[k][0]) )
-    res2 = '<ul>%s</ul>' % string.join(list, '\n' )
+    res2 = '<ul>%s</ul>' % '\n'.join(list )
     results += res2
 
     maincontent = """<h1>The test</h1>
@@ -231,17 +236,17 @@ class LogSummariser(object):
       sect_esn = None
       for k2 in ks:
         nn += 1
-        this_esn = string.split(k2,']')[0][1:]
+        this_esn = k2.split(']')[0][1:]
         if this_esn != sect_esn:
           sect_esn = this_esn
           list.append( '<h2>%s: %s<a href="../ref/errorShortNames.html#%s">(definition)</a></h2>' % (k,this_esn, this_esn) )
         list.append( eItemTmpl % (nn,k, ee[k][1][k2][0], k2  ) )
         l2 = []
         for ss in ee[k][1][k2][1]:
-            i0 = string.index( ss, '__qclog' )
+            i0 = ss.index( '__qclog' )
             fs = ss[:i0]
             l2.append( '<li><a href="../files/rep.%s.html">%s</a></li>' % (fs,fs) )
-        ePage = """<h1>Error %s </h1> %s <ul>%s</ul> """ % (nn,k2,string.join( l2, '\n' ) )
+        ePage = """<h1>Error %s </h1> %s <ul>%s</ul> """ % (nn,k2,'\n'.join( l2 ) )
         efp = 'html/errors/rep.%3.3i.html' % nn 
         self.__htmlPageWrite( efp, ePage )
     eIndexContent = """<h1>List of detected errors</h1>
@@ -249,7 +254,7 @@ class LogSummariser(object):
 Click on the code to see a list of the files in which each error is detected.
 </p>
 <ul>%s</ul>
-"""  % (string.join(list, '\n' ) )
+"""  % ('\n'.join(list ) )
     self.__htmlPageWrite( 'html/errors/eindex.html', eIndexContent )
 
     keys = list(ff.keys())
@@ -257,7 +262,7 @@ Click on the code to see a list of the files in which each error is detected.
     fItemTmpl = '<li><a href="%s">%s [%s]</a></li>'
     list = []
     for k in ff:
-      i0 = string.index( k, '__qclog' )
+      i0 = k.index( '__qclog' )
       fs = k[:i0]
       knc = fs + '.nc'
       hfn = 'rep.%s.html' % fs
@@ -268,13 +273,13 @@ Click on the code to see a list of the files in which each error is detected.
         l2.append( '<li>%s: %s</li>' % f[:2] )
       fPage = """<h1>Errors in %s.nc</h1>
 <ul>%s</ul>
-""" % (fs,string.join( l2, '\n' ) )
+""" % (fs,'\n'.join( l2 ) )
       self.__htmlPageWrite( hfp, fPage )
     list.sort()
     fIndexContent = """<h1>List of files with errors</h1>
         File name [number of errors]
 <ul> %s </ul>
-"""  % string.join( list, '\n' )
+"""  % '\n'.join( list )
     self.__htmlPageWrite( 'html/files/findex.html', fIndexContent )
 
 
@@ -284,10 +289,13 @@ Click on the code to see a list of the files in which each error is detected.
     oo.write( ptmpl % content )
     oo.close()
 
-def summariseLogs():
+def summarise_logs():
     summariser = LogSummariser()
     summariser.summarise()
 
 if __name__ == '__main__':
-
-  summariseLogs()
+  import sys
+  if len(sys.argv) > 1 and sys.argv[1] == '-h':
+     print (__doc__)
+  else:
+    summarise_logs()
