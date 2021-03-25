@@ -593,7 +593,13 @@ class checkGlobalAttributes(checkBase):
 
       mipType = vocabs['variable'].getAttr( varName, varGroup, 'type' )
       thisType = {'real':'float32', 'integer':'int32', 'float':'float32', 'double':'float64' }.get( mipType, mipType )
-      self.test( mipType is None or varAts[varName]['_type'] == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),varAts[varName]['_type']) )
+      variable_type = varAts[varName]['_type']
+
+      if '>' in variable_type:
+        # Big endian!
+        variable_type = {'>f8': 'float64', '>f4': 'float32', '>i4': 'int32'}.get(variable_type, variable_type)
+      self.test( mipType is None or variable_type == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),variable_type)
+
     else:
       mipType = None
 
