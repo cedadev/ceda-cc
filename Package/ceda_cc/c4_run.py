@@ -170,7 +170,7 @@ class recorder(object):
     fn = fpath.split( '/' )[-1]
     self.records[fn] = record
 
-class checker(object):
+class Checker(object):
   def __init__(self, pcfg, cls,reader,abortMessageCount=-1,experimental=False):
     self.info = dummy()
     self.info.pcfg = pcfg
@@ -257,7 +257,7 @@ class checker(object):
       self.drs['project'] = self.info.pcfg.projectV.id
     self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
 
-class main(object):
+class Main(object):
   """Main entry point for execution.
 
      All compliance tests are completed in the instantiation of a "main" object. The object created will contain attributes with test results.
@@ -265,9 +265,10 @@ class main(object):
   
 
   def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False,cmdl=None):
-    logDict = {}
-    ecount = 0
+    self.logDict = {}
+    self.monitorFileHandles = monitorFileHandles
     c4i = c4_init(args=args)
+    self.c4i = c4i
     c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
     c4i.logger.info( 'Source: %s' % c4i.source )
     if cmdl is not None:
@@ -278,65 +279,67 @@ class main(object):
        raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
     pcfg = config.ProjectConfig( c4i.project )
     assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
-    ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
-    c4i.logger.info( 'Python netcdf: %s' % ncReader.ncLib )
-    self.cc = checker(pcfg, c4i.project, ncReader,abortMessageCount=abortMessageCount, experimental=c4i.experimental)
-    rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
+    self.ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
+    c4i.logger.info( 'Python netcdf: %s' % self.ncReader.ncLib )
+    self.cc = Checker(pcfg, c4i.project, self.ncReader,abortMessageCount=abortMessageCount, experimental=c4i.experimental)
+    self.rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
     self.ncLib = ncLib
 
     # This list will record the drs dictionaries of all checked files for export to JSON
-    drs_list = []
 
     if monitorFileHandles:
       self.monitor = utils.sysMonitor()
     else:
       self.monitor = None
 
-    cal = None
     if len( c4i.errs ) > 0:
       for i in range(0,len( c4i.errs ), 2 ):
         c4i.logger.info( c4i.errs[i] )
   
     self.cc.info.amapListDraft = []
-    cbv = utils.checkByVar( parent=self.cc.info,cls=c4i.project,monitor=self.monitor)
-    if c4i.project not in ['ESA-CCI']:
-      cbv.impt( c4i.flist )
-      if printInfo:
-        print(cbv.info)
 
+  def run(self, printInfo=False):
+    drs_list = []
+    cal = None
+    ecount = 0
     fileLogOpen = False
     self.resList =  []
     stdoutsum = 2000
+    cbv = utils.checkByVar( parent=self.cc.info,cls=self.c4i.project,monitor=self.monitor)
+    if self.c4i.project not in ['ESA-CCI']:
+      cbv.impt( self.c4i.flist )
+      if printInfo:
+        print(cbv.info)
     npass = 0
     kf = 0
-    for f in c4i.flist:
+    for f in self.c4i.flist:
       kf += 1
       rv = False
       ec = None
-      if monitorFileHandles:
+      if self.monitorFileHandles:
         nofhStart = self.monitor.get_open_fds()
       fn = f.split('/')[-1]
-      c4i.logger.info( 'Starting: %s' % fn )
+      self.c4i.logger.info( 'Starting: %s' % fn )
       try:
   ### need to have a unique name, otherwise get mixing of logs despite close statement below.
   ### if duplicate file names are present, this will be recorded in the main log, tag appended to file level log name (not yet tested).
-        if c4i.logByFile:
-          fLogger = c4i.getFileLog( fn )
-          logDict[fn] = c4i.fileLogfile
-          c4i.logger.info( 'Log file: %s' % c4i.fileLogfile )
+        if self.c4i.logByFile:
+          fLogger = self.c4i.getFileLog( fn )
+          self.logDict[fn] = self.c4i.fileLogfile
+          self.c4i.logger.info( 'Log file: %s' % self.c4i.fileLogfile )
           fileLogOpen = True
         else:
-          fLogger = c4i.logger
+          fLogger = self.c4i.logger
   
         fLogger.info( 'Starting file %s' % fn )
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
-        self.cc.checkFile( f, log=fLogger,attributeMappings=c4i.attributeMappings, getdrs=c4i.getdrs )
+        self.cc.checkFile( f, log=fLogger,attributeMappings=self.c4i.attributeMappings, getdrs=self.c4i.getdrs )
 
         if self.cc.completed:
           if cal not in (None, 'None') and self.cc.cgd.varGroup != "fx":
             if cal != self.cc.calendar:
               cal_change_err_msg = 'Error: change in calendar attribute %s --> %s' % (cal, self.cc.calendar)
-              c4i.logger.info(cal_change_err_msg)
+              self.c4i.logger.info(cal_change_err_msg)
               fLogger.info(cal_change_err_msg)
               self.cc.errorCount += 1
 
@@ -347,53 +350,53 @@ class main(object):
           npass += 1
         self.resList.append( (rv,ec) )
 
-        if c4i.logByFile:
+        if self.c4i.logByFile:
           if self.cc.completed:
             fLogger.info( 'Done -- error count %s' % self.cc.errorCount )
           else:
             fLogger.info( 'Done -- checks not completed' )
-          c4i.closeFileLog( )
+          self.c4i.closeFileLog( )
           fileLogOpen = False
 
         if self.cc.completed:
-          c4i.logger.info( 'Done -- error count %s' % self.cc.errorCount ) 
+          self.c4i.logger.info( 'Done -- error count %s' % self.cc.errorCount ) 
           ecount += self.cc.errorCount
           if self.cc.errorCount == 0:
-            rec.add( f, self.cc.drs )
+            self.rec.add( f, self.cc.drs )
             drs_list.append({'path': f, 'drs': self.cc.drs})
           else:
-            rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % self.cc.errorCount )
+            self.rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % self.cc.errorCount )
         else:
           ecount += 20
-          c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
-          rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
+          self.c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
+          self.rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
       except:
-        c4i.logger.error("Exception has occured" ,exc_info=1)
+        self.c4i.logger.error("Exception has occured" ,exc_info=1)
         if fileLogOpen:
           fLogger.error("C4.100.001: [exception]: FAILED:: Exception has occured" ,exc_info=1)
-          c4i.closeFileLog( )
+          self.c4i.closeFileLog( )
           fileLogOpen = False
-        rec.addErr( f, 'ERROR: Exception' )
-        if not c4i.holdExceptions:
+        self.rec.addErr( f, 'ERROR: Exception' )
+        if not self.c4i.holdExceptions:
           raise
       if stdoutsum > 0 and kf%stdoutsum == 0:
          print('%s files checked; %s passed this round' % (kf,npass))
-      if monitorFileHandles:
+      if self.monitorFileHandles:
         nofhEnd = self.monitor.get_open_fds()
         if nofhEnd > nofhStart:
            print('Open file handles: %s --- %s' % (nofhStart, nofhEnd))
   
-    self.cc.info.log = c4i.logger
+    self.cc.info.log = self.c4i.logger
     
-    if c4i.project not in ['SPECS','CCMI','ccmi2022', 'CMIP5','ESA-CCI']:
-       cbv.c4i = c4i
-       cbv.setLogDict( logDict )
-       cbv.check( recorder=rec, calendar=self.cc.calendar)
+    if self.c4i.project not in ['SPECS','CCMI','ccmi2022', 'CMIP5','ESA-CCI']:
+       cbv.c4i = self.c4i
+       cbv.setLogDict( self.logDict )
+       cbv.check( recorder=self.rec, calendar=self.cc.calendar)
        try:
          ecount += cbv.errorCount
        except:
          ecount = None
-    ncReader.close()
+    self.ncReader.close()
     if type( self.cc.info.amapListDraft ) == type( [] ) and len(  self.cc.info.amapListDraft ) > 0:
       ll =  self.cc.info.amapListDraft
       ll.sort()
@@ -403,20 +406,20 @@ class main(object):
         if ll[i] != ll[i-1]:
           oo.write( ll[i] + '\n' )
       oo.close()
-    if c4i.project in ['SPECS','CCMI','CMIP5']:
-      rec.checktids()
-    rec.dumpAll()
+    if self.c4i.project in ['SPECS','CCMI','CMIP5']:
+      self.rec.checktids()
+    self.rec.dumpAll()
 
     #!TODO: the recorder class could export JSON if it recorded the full drs dictionaries.
     #       This lightweight solution re-uses the filename from the rec class and dumps
     #       JSON in a separate function.
-    json_file = os.path.splitext(rec.file)[0] + '.json'
+    json_file = os.path.splitext(self.rec.file)[0] + '.json'
     dump_drs_list(drs_list, json_file)
 
     if printInfo:
       print('Error count %s' % ecount)
     ##c4i.hdlr.close()
-    c4i.closeBatchLog()
+    self.c4i.closeBatchLog()
     self.ok = all( [x[0] for x in self.resList] )
 
 

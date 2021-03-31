@@ -1,7 +1,7 @@
 import logging, time, os, sys
 import ceda_cc.utils_c4 as utils_c4
 from ceda_cc.ceda_cc_config import config_c4 as config
-from ceda_cc.c4_run import fileMetadata, dummy, main
+from ceda_cc.c4_run import fileMetadata, dummy, Main
 from ceda_cc.xceptions import *
 
 from ceda_cc.file_utils import installedSupportedNetcdf
@@ -45,7 +45,8 @@ if sys.version_info >= (2,7):
   ## monitoting file handles uses a "subprocess" method which is not available in python 2.6
   testId = '#11.001'
   try:
-    m = main( args=['-p', '__dummy'], monitorFileHandles=True )
+    m = Main( args=['-p', '__dummy'], monitorFileHandles=True )
+    m.run()
     print('OK: [%s]: dummy run completed without exception' % testId)
   except:
     print('Failed [%s]: dummy run triggered exception' % testId)
@@ -60,7 +61,8 @@ if sys.version_info >= (2,7):
 
 testId = '#11.003'
 try:
-  m = main( args=['-p', '__dummy'], abortMessageCount=10 )
+  m = Main( args=['-p', '__dummy'], abortMessageCount=10 )
+  m.run()
   print('Failed [%s]: did not trigger exception' % testId)
 except:
   print('OK: [%s]: attempt to trigger exception successful' % testId)
@@ -77,14 +79,16 @@ for e in extras:
   if os.path.isfile( e[0] ):
     if 'cdms2' in installedSupportedNetcdf:
       testId = '#20.%3.3i' % kt
-      m = main( args=['-p', e[1], '-f', e[0], '--force-cdms2','--ld', 'ld_test1' ], abortMessageCount=10 )
+      m = Main( args=['-p', e[1], '-f', e[0], '--force-cdms2','--ld', 'ld_test1' ], abortMessageCount=10 )
+      m.run()
       if m.ok:
          print('OK: [%s]: successfully checked test file with cdms2' % testId)
       else:
          print('Failed [%s]: incorrect test results' % testId)
 
     testId = '#21.%3.3i' % kt
-    m = main( args=['-p', e[1], '-f', e[0], '--force-ncq','--ld', 'ld_test2' ], abortMessageCount=10 )
+    m = Main( args=['-p', e[1], '-f', e[0], '--force-ncq','--ld', 'ld_test2' ], abortMessageCount=10 )
+    m.run()
     if m.ok:
        print('OK: [%s]: successfully checked test file with ncq3' % testId)
     else:
@@ -92,7 +96,8 @@ for e in extras:
 
     if 'netCDF4' in installedSupportedNetcdf:
       testId = '#22.%3.3i' % kt
-      m = main( args=['-p', e[1], '-f', e[0], '--force-pync4','--ld', 'ld_test3' ], abortMessageCount=10 )
+      m = Main( args=['-p', e[1], '-f', e[0], '--force-pync4','--ld', 'ld_test3' ], abortMessageCount=10 )
+      m.run()
       if m.ok:
          print('OK: [%s]: successfully checked test file with python NetCDF4' % testId)
       else:
@@ -100,7 +105,8 @@ for e in extras:
 
     if 'Scientific' in installedSupportedNetcdf:
       testId = '#23.%3.3i' % kt
-      m = main( args=['-p', e[1], '-f', e[0], '--force-scientific','--ld', 'ld_test4' ], abortMessageCount=10 )
+      m = Main( args=['-p', e[1], '-f', e[0], '--force-scientific','--ld', 'ld_test4' ], abortMessageCount=10 )
+      m.run()
       if m.ok:
          print('OK: [%s]: successfully checked test file with python Scientific' % testId)
       else:

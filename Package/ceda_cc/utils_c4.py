@@ -598,7 +598,7 @@ class checkGlobalAttributes(checkBase):
       if '>' in variable_type:
         # Big endian!
         variable_type = {'>f8': 'float64', '>f4': 'float32', '>i4': 'int32'}.get(variable_type, variable_type)
-      self.test( mipType is None or variable_type == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),variable_type)
+      self.test( mipType is None or variable_type == thisType, 'Variable [%s/%s] not of type %s [%s]' % (varName,varGroup,str(thisType),variable_type) )
 
     else:
       mipType = None
