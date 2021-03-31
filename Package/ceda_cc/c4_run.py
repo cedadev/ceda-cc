@@ -291,7 +291,7 @@ class Main(object):
     # This list will record the drs dictionaries of all checked files for export to JSON
 
     if monitorFileHandles:
-      self.monitor = utils.sysMonitor()
+      self.monitor = utils.SysMonitor()
     else:
       self.monitor = None
 

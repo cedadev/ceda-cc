@@ -116,7 +116,7 @@ class checkSeq(object):
 
 cs = checkSeq()
 
-class checkBase(object):
+class CheckBase(object):
   """Base class for checks, containing a set of standard methods for managing operation of checks and logging of results"""
 
   def  __init__(self,cls="CORDEX",reportPass=True,parent=None,monitor=None):
@@ -269,9 +269,9 @@ class checkBase(object):
       self.log_exception( 'Exception caught by runChecks' )
       raise loggedException
     
-class checkFileName(checkBase):
+class checkFileName(CheckBase):
   """Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).
-Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method."""
+Inherits :class:`CheckBase` class. Checks are run by the :meth:`check` method."""
 
   def init(self):
     self.id = 'C4.001'
@@ -285,7 +285,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
 ####
 
   def check(self,fn):
-    """Initiate checks: manage arguments and then call *runChecks* (inherited from checkBase class).
+    """Initiate checks: manage arguments and then call *runChecks* (inherited from CheckBase class).
   Arguments: fn: file name: the file name to be checked."""
     self.errorCount = 0
     assert type(fn) in [type('x'),type('x')], '1st argument to "check" method of checkGrids shound be a string variable name (not %s)' % type(fn)
@@ -473,7 +473,7 @@ Inherits :class:`checkBase` class. Checks are run by the :meth:`check` method.""
     self.test( len(m)  == 0, 'File name components do not match constraints: %s' % str(m) )
 
 
-class checkGlobalAttributes(checkBase):
+class checkGlobalAttributes(CheckBase):
   """Check global and variable attributes, using tables of valid values"""
 
   def init(self):
@@ -762,7 +762,7 @@ class checkGlobalAttributes(checkBase):
 
     self.completed = True
        
-class checkStandardDims(checkBase):
+class checkStandardDims(CheckBase):
   """Check the dimensions which are defined in the specifications"""
 
   def init(self):
@@ -914,7 +914,7 @@ class checkStandardDims(checkBase):
 
     self.completed = True
 
-class checkGrids(checkBase):
+class checkGrids(CheckBase):
 
   def init(self):
     self.id = 'C4.004'
@@ -1041,7 +1041,7 @@ class checkGrids(checkBase):
       if ok:
         self.log_pass()
 
-class checkByVar(checkBase):
+class checkByVar(CheckBase):
   """Run some checks on groups of files with a common variable. Checks for continuity of time in group"""
 
   def init(self,fileNameSeparator='_'):
@@ -1183,7 +1183,7 @@ class checkByVar(checkBase):
 
 
 ### http://stackoverflow.com/questions/2023608/check-what-files-are-open-in-python
-class sysMonitor(object):
+class SysMonitor(object):
 
   def __init__(self):
     self.fhCountMax = 0
