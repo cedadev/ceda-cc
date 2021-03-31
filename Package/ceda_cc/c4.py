@@ -30,8 +30,8 @@ def main_entry():
   else:
      from ceda_cc.c4_run import main
      cmdl = ' '.join( sys.argv )
-     m = Main(printInfo=True, cmdl=cmdl)
-     m.run()
+     m = Main(cmdl=cmdl)
+     m.run(printInfo=True)
 
 if __name__ == '__main__':
   main_entry()

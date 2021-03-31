@@ -260,11 +260,14 @@ class Checker(object):
 class Main(object):
   """Main entry point for execution.
 
-     All compliance tests are completed in the instantiation of a "main" object. The object created will contain attributes with test results.
+     All compliance tests are completed in the execution of the "main.run()" method. Test results are aggregated in a number of attributes.
   """
   
 
-  def __init__(self,args=None,abortMessageCount=-1,printInfo=False,monitorFileHandles = False,cmdl=None):
+  def __init__(self,args=None,abortMessageCount=-1,monitorFileHandles = False,cmdl=None):
+    """Instantiation sets up logging, imports the package configuration, and creates a Checker instance.
+       A monitor to check on open file handles is created if required (this was needed to deal with accumulation of zombie file handles in an earlier version) """
+
     self.logDict = {}
     self.monitorFileHandles = monitorFileHandles
     c4i = c4_init(args=args)
