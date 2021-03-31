@@ -517,6 +517,7 @@ class checkGlobalAttributes(CheckBase):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
     drsDefaults = { 'convention_version':'n/a'}
+    variant_ixs = ['realization' 'initialization', 'physics', 'forcing']
     if 'product' not in self.globalAts:
         self.globalAts['product'] = 'output'
     for k in self.drsMappings:
@@ -526,6 +527,8 @@ class checkGlobalAttributes(CheckBase):
         ee[k] = self.drsMappings[k][1:]
       elif self.drsMappings[k] == '@ensemble':
         ee[k] = "r%si%sp%s" % (self.globalAts["realization"],self.globalAts["initialization_method"],self.globalAts["physics_version"])
+      elif self.drsMappings[k] == '@variant':
+        ee[k] = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index"] for x in variant_ixs])
       elif self.drsMappings[k] == '@forecast_reference_time':
         x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
