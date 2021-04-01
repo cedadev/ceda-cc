@@ -28,7 +28,7 @@ def main_entry():
       from . import unitTestsS2
       print("Tests completed")
   else:
-     from ceda_cc.c4_run import main
+     from ceda_cc.c4_run import Main
      cmdl = ' '.join( sys.argv )
      m = Main(cmdl=cmdl)
      m.run(printInfo=True)

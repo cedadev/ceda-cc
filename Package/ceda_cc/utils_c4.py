@@ -517,7 +517,7 @@ class checkGlobalAttributes(CheckBase):
     assert self.completed, 'method getDrs should not be called if checks have not been completed successfully'
     ee = {}
     drsDefaults = { 'convention_version':'n/a'}
-    variant_ixs = ['realization' 'initialization', 'physics', 'forcing']
+    variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
     if 'product' not in self.globalAts:
         self.globalAts['product'] = 'output'
     for k in self.drsMappings:
@@ -528,7 +528,7 @@ class checkGlobalAttributes(CheckBase):
       elif self.drsMappings[k] == '@ensemble':
         ee[k] = "r%si%sp%s" % (self.globalAts["realization"],self.globalAts["initialization_method"],self.globalAts["physics_version"])
       elif self.drsMappings[k] == '@variant':
-        ee[k] = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index"] for x in variant_ixs])
+        ee[k] = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index" % x] for x in variant_ixs])
       elif self.drsMappings[k] == '@forecast_reference_time':
         x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
@@ -734,6 +734,7 @@ class checkGlobalAttributes(CheckBase):
            ix = i
 
          targVal = fnParts[ix]
+         variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
          if gaif[0] == "@":
            if gaif[1:] == "mip_id":
                bits = globalAts[ "table_id" ].split( ) 
@@ -742,9 +743,11 @@ class checkGlobalAttributes(CheckBase):
                else:
                  thisVal = globalAts[ "table_id" ]
                  self.test( False, 'Global attribute table_id does not conform to CMOR pattern ["Table ......"]: %s' % thisVal, part=True)
-           elif gaif[1:] == "ensemble":
+           elif gaif == "@ensemble":
                thisVal = "r%si%sp%s" % (globalAts["realization"],globalAts["initialization_method"],globalAts["physics_version"])
 ## following mappings are depricated -- introduced for SPECS and withdrawn ---
+           elif gaif == '@variant':
+             thisVal = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index" % x] for x in variant_ixs])
            elif gaif[1:] == "experiment_family":
                thisVal = globalAts["experiment_id"][:-4]
            elif gaif[1:] == "forecast_reference_time":

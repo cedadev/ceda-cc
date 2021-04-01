@@ -274,7 +274,7 @@ class ProjectConfig(object):
       self.varTables='json_ccmi'
       self.requiredGlobalAttributes = self.thiscfg.required[:]
       self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] )
-      self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label']
+      self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label','@variant:5:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.requiredVarAttributes = ['long_name', 'units']
       self.drsMappings = {'variable':'@var', 'institution_id':'institution_id', 'experiment_id':'experiment_id', \
