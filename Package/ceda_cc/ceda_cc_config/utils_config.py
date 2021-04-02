@@ -303,6 +303,40 @@ class patternControl(object):
       self.note = "val=%s" % m.groupdict()["val"]
       return m.groupdict()["val"] in self.list
     
+class NumericControl(object):
+  """Check on a numeric object"""
+  def __init__(self,tag,target_type,max_valid=None,min_valid=None,element_check=None, mode='type'):
+    self.tag = tag
+    self.mode = mode
+    self.target_type = target_type
+    self.max_valid = max_valid
+    self.min_valid = min_valid
+    self.element_check = element_check
+
+  def check(self,val):
+    if self.mode == 'type':
+      print( "testing type" )
+      if not type(val) == self.target_type:
+        self.note = 'Value has wrong type'
+        return False
+    else:
+      if not isinstance(val, self.target_type):
+        self.note = 'Value is not instance of required class: %s -- %s' % (val, type(val) )
+        return False
+
+    if self.max_valid != None and val > self.max_valid:
+      self.note = 'Value is too large'
+      return False
+    if self.min_valid != None and val < self.min_valid:
+      self.note = 'Value is too small'
+      return False
+    if self.element_check != None and not all( [self.element_check.check(x) for x in val] ):
+      self.note = 'Not all elements match specifications'
+      return False
+    return True
+      
+    
+    
 class listControl(object):
   def __init__(self,tag,list,split=False,splitVal=None,enumeration=False):
     self.list = list

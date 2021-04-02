@@ -274,7 +274,9 @@ class ProjectConfig(object):
       self.thiscfg = ti.Ingest_ccmi2022()
       self.varTables='json_ccmi'
       self.requiredGlobalAttributes = self.thiscfg.required[:]
-      self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + ['realization_index']
+      variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
+      self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + \
+                              ['%s_index' % x for x in variant_ixs]
       self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label','@variant:5:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.requiredVarAttributes = ['long_name', 'units']
@@ -371,6 +373,7 @@ class ProjectConfig(object):
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr','satdaily':'day'}
        self.mipVocabFnpat = 'CCMI1_%s'
     elif self.projectV.id == 'ccmi2022':
+       self.legacy = False
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi2022/Tables/')
        self.mipVocabTl = self.thiscfg.acvs['table_id'][1]
        self.mipVocabVgmap = {}
@@ -487,7 +490,9 @@ class ProjectConfig(object):
           if i[0] == 'list':
               vocabs[k] = utils.listControl( k, i[1] )
       vocabs[ 'variable' ] = utils.mipVocab(self)
-      vocabs[ 'realization_index' ] = utils.TypeControl( 'realization_index', (int, numpy.integer), min_valid=0, mode='instance' )
+      variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
+      for x in variant_ixs:
+        vocabs[ '%s_index' % x ] = utils.NumericControl( '%s_index' % x, (int, numpy.integer), min_valid=0, mode='instance' )
 
     elif self.projectV.id == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')

@@ -711,7 +711,11 @@ class checkGlobalAttributes(CheckBase):
       if a in globalAts:
         try:
           #if not vocabs[a].check( str(globalAts[a]) ):
-          if not vocabs[a].check( globalAts[a] ):
+          if self.pcfg.legacy:
+            this = vocabs[a].check( str(globalAts[a]) )
+          else:
+            this = vocabs[a].check( globalAts[a] )
+          if not this:
             m.append( (a,globalAts[a],vocabs[a].note) )
         except:
           print('failed trying to check global attribute %s' % a)
