@@ -258,7 +258,7 @@ class mipVocab(object):
       
     return self.varcons[vg][v][a]
       
-class patternControl(object):
+class PatternControl(object):
 
   def __init__(self,tag,pattern,list=None,cls=None,examples=None,badExamples=None,runTest=True):
     if cls is not None:
@@ -305,22 +305,22 @@ class patternControl(object):
     
 class NumericControl(object):
   """Check on a numeric object"""
-  def __init__(self,tag,target_type,max_valid=None,min_valid=None,element_check=None, mode='type'):
+  def __init__(self,tag,target_type=None,max_valid=None,min_valid=None,element_check=None, base_class=None):
     self.tag = tag
     self.mode = mode
     self.target_type = target_type
+    self.base_class = base_class
     self.max_valid = max_valid
     self.min_valid = min_valid
     self.element_check = element_check
 
   def check(self,val):
-    if self.mode == 'type':
-      print( "testing type" )
+    if self.target_type != None:
       if not type(val) == self.target_type:
         self.note = 'Value has wrong type'
         return False
-    else:
-      if not isinstance(val, self.target_type):
+    elif self.base_class != None:
+      if not isinstance(val, self.base_class):
         self.note = 'Value is not instance of required class: %s -- %s' % (val, type(val) )
         return False
 
@@ -337,7 +337,7 @@ class NumericControl(object):
       
     
     
-class listControl(object):
+class ListControl(object):
   def __init__(self,tag,list,split=False,splitVal=None,enumeration=False):
     self.list = list
     self.tag = tag

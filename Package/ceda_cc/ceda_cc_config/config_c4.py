@@ -441,89 +441,89 @@ class ProjectConfig(object):
   def getVocabs(self):
   ## "Returns a dictionary of vocabulary details for the project provided."
     if self.projectV.id == 'SPECS':
-               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
+               ##'experiment_id':utils.PatternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
       vocabs = { 'variable':utils.mipVocab(self), \
-               'Conventions':utils.listControl( 'Conventions', ['CF-1.6'] ), \
-               'frequency':utils.listControl( 'frequency', validSpecsFrequencies ), \
-               'experiment_id':utils.listControl( 'experiment_id', validSpecsExptFamilies ), \
-               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
-               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
-               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
-               'startdate':utils.patternControl( 'startdate', "S[0-9]{8}" ), \
-               ## 'associated_experiment':utils.patternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
-               'project_id':utils.listControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
-               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
-               'modeling_realm':utils.listControl( 'realm', self.realm, split=True ), \
+               'Conventions':utils.ListControl( 'Conventions', ['CF-1.6'] ), \
+               'frequency':utils.ListControl( 'frequency', validSpecsFrequencies ), \
+               'experiment_id':utils.ListControl( 'experiment_id', validSpecsExptFamilies ), \
+               'initialization_method':utils.PatternControl( 'initialization_method', "[0-9]+" ), \
+               'physics_version':utils.PatternControl( 'physics_version', "[0-9]+" ), \
+               'realization':utils.PatternControl( 'realization', "[0-9]+" ), \
+               'startdate':utils.PatternControl( 'startdate', "S[0-9]{8}" ), \
+               ## 'associated_experiment':utils.PatternControl( 'associated_experment', "(?P<val>(N/A|(decadal|seasonal): r\*i[0-9]{1,4}p[0-9]{1,4}))" ), \
+               'project_id':utils.ListControl( 'project_id', ['SPECS', 'NMME-SPECS'] ), \
+               ## 'institution':utils.ListControl( 'institution', validSpecsInstitutions ), \
+               'modeling_realm':utils.ListControl( 'realm', self.realm, split=True ), \
              }
     elif self.projectV.id == 'CMIP5':
-               ##'experiment_id':utils.patternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
+               ##'experiment_id':utils.PatternControl( 'experiment_id', "(?P<val>.*)[0-9]{4}", list=validSpecsExptFamilies ), \
       lrdr = readVocab( 'cmip5_vocabs/')
       vocabs = { 'variable':utils.mipVocab(self), \
-               'Conventions':utils.listControl( 'Conventions', ['CF-1.4','CF-1.5'] ), \
-               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'experiments.txt' ) ), \
-               'institute_id':utils.listControl( 'institute_id', lrdr.getSimpleList( 'institutes.txt' ) ), \
-               'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models.txt' ) ), \
-               'frequency':utils.listControl( 'frequency', validCmip5Frequencies ), \
-               'initialization_method':utils.patternControl( 'initialization_method', "[0-9]+" ), \
-               'physics_version':utils.patternControl( 'physics_version', "[0-9]+" ), \
-               'realization':utils.patternControl( 'realization', "[0-9]+" ), \
-               'project_id':utils.listControl( 'project_id', ['CMIP5'] ), \
-               ## 'institution':utils.listControl( 'institution', validSpecsInstitutions ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
+               'Conventions':utils.ListControl( 'Conventions', ['CF-1.4','CF-1.5'] ), \
+               'experiment_id':utils.ListControl( 'experiment_id', lrdr.getSimpleList( 'experiments.txt' ) ), \
+               'institute_id':utils.ListControl( 'institute_id', lrdr.getSimpleList( 'institutes.txt' ) ), \
+               'model_id':utils.ListControl( 'model_id', lrdr.getSimpleList( 'models.txt' ) ), \
+               'frequency':utils.ListControl( 'frequency', validCmip5Frequencies ), \
+               'initialization_method':utils.PatternControl( 'initialization_method', "[0-9]+" ), \
+               'physics_version':utils.PatternControl( 'physics_version', "[0-9]+" ), \
+               'realization':utils.PatternControl( 'realization', "[0-9]+" ), \
+               'project_id':utils.ListControl( 'project_id', ['CMIP5'] ), \
+               ## 'institution':utils.ListControl( 'institution', validSpecsInstitutions ), \
+               'modeling_realm':utils.ListControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'], split=True ), \
              }
     elif self.projectV.id == 'CCMI':
     
       lrdr = readVocab( 'ccmi_vocabs/')
       vocabs = { 'variable':utils.mipVocab(self), \
-               'frequency':utils.listControl( 'frequency', validCcmiFrequencies ), \
-               'experiment_id':utils.listControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
+               'frequency':utils.ListControl( 'frequency', validCcmiFrequencies ), \
+               'experiment_id':utils.ListControl( 'experiment_id', lrdr.getSimpleList( 'ccmi_experiments.txt', bit=-1 ) ), \
 ## do not preserve or check relation between model and institution.
-               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
-               'model_id':utils.listControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
-               'modeling_realm':utils.listControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
-               'project_id':utils.listControl( 'project_id', ['CCMI'] ) }
+               'institution':utils.ListControl( 'institution', lrdr.getSimpleList( 'models_insts.txt', bit=1 ) ), \
+               'model_id':utils.ListControl( 'model_id', lrdr.getSimpleList( 'models_insts.txt', bit=0 ) ), \
+               'modeling_realm':utils.ListControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
+               'project_id':utils.ListControl( 'project_id', ['CCMI'] ) }
 
     elif self.projectV.id == 'ccmi2022':
     
       vocabs = dict()
       for k,i in self.thiscfg.acvs.items():
           if i[0] == 'list':
-              vocabs[k] = utils.listControl( k, i[1] )
+              vocabs[k] = utils.ListControl( k, i[1] )
       vocabs[ 'variable' ] = utils.mipVocab(self)
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
       for x in variant_ixs:
-        vocabs[ '%s_index' % x ] = utils.NumericControl( '%s_index' % x, (int, numpy.integer), min_valid=0, mode='instance' )
+        vocabs[ '%s_index' % x ] = utils.NumericControl( '%s_index' % x, base_class=(int, numpy.integer), min_valid=0 )
 
     elif self.projectV.id == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')
       cciProjectList, self.ecvMappings = lrdr.getSimpleList( 'cciProject.txt', bit=-1, options='returnMappings' )
       vocabs = { 'variable':utils.mipVocab(self), \
-               'version':utils.patternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$', examples=['fv1.1'] ), \
-               'level':utils.listControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
-               'platform':utils.listControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0), enumeration=True, split=True, splitVal=',' ), \
-               'institution':utils.listControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
-               'Conventions':utils.patternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$', examples=['CF-1.6'] ), \
-               'sensor':utils.listControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ), enumeration=True, split=True, splitVal=',' ), \
-               'cdm_data_type':utils.listControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
-               'time_coverage_duration':utils.patternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO',examples=['P1Y'] ), \
-               'spatial_resolution':utils.patternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})[\s]*(km|m|degree).*', examples=['20km','1 km at nadir'] ), \
-               'project':utils.listControl( 'project', ['Climate Change Initiative - European Space Agency','CLIPC','ESA GlobSnow-2'] ), \
-               'cciProject':utils.listControl( 'cciproject', cciProjectList ), \
-               'var':utils.listControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
+               'version':utils.PatternControl( 'version',  '^(fv[0-9]+(\.[0-9]+){0,1})$', examples=['fv1.1'] ), \
+               'level':utils.ListControl( 'level', lrdr.getSimpleList( 'procLevel01.txt', bit=0 ) ), \
+               'platform':utils.ListControl( 'platforms', lrdr.getSimpleList( 'platforms.txt', bit=0), enumeration=True, split=True, splitVal=',' ), \
+               'institution':utils.ListControl( 'institution', lrdr.getSimpleList( 'institutions.txt', omt='last' ) ), \
+               'Conventions':utils.PatternControl( 'Conventions', '^CF-1.[56789](,.*){0,1}$', examples=['CF-1.6'] ), \
+               'sensor':utils.ListControl( 'sensors', lrdr.getSimpleList( 'sensors.txt', bit=0 ), enumeration=True, split=True, splitVal=',' ), \
+               'cdm_data_type':utils.ListControl( 'cdm_data_type', lrdr.getSimpleList( 'threddsDataType.txt', bit=0 ) ), \
+               'time_coverage_duration':utils.PatternControl( 'time_coverage_duration',  'ISO8601 duration', cls='ISO',examples=['P1Y'] ), \
+               'spatial_resolution':utils.PatternControl( 'spatial_resolution',  '([0-9]+(.[0-9]+){0,1})[\s]*(km|m|degree).*', examples=['20km','1 km at nadir'] ), \
+               'project':utils.ListControl( 'project', ['Climate Change Initiative - European Space Agency','CLIPC','ESA GlobSnow-2'] ), \
+               'cciProject':utils.ListControl( 'cciproject', cciProjectList ), \
+               'var':utils.ListControl( 'var', lrdr.getSimpleList( 'variables.txt', bit=-1 ) ) \
              }
     elif self.projectV.id == '__dummy':
       vocabs = { 'variable':utils.mipVocab(self,dummy=True) }
     else:
       vocabs = { 'variable':utils.mipVocab(self), \
-           'driving_experiment_name':utils.listControl( 'driving_experiment_name', validCordexExperiment ), \
-           'project_id':utils.listControl( 'project_id', ['CORDEX'] ), \
-           'CORDEX_domain':utils.listControl( 'CORDEX_domain',  validCordexDomains ), \
-           'driving_model_id':utils.listControl( 'driving_model_id',  validGcmNames ), \
-           'driving_model_ensemble_member':utils.patternControl( 'driving_model_ensemble_member',  'r[0-9]+i[0-9]+p[0-9]+' ), \
-           'rcm_version_id':utils.patternControl( 'rcm_version_id',  '[a-zA-Z0-9-]+' ), \
-           'model_id':utils.listControl( 'model_id',  validRcmNames ), \
-           'institute_id':utils.listControl( 'institute_id',  validInstNames ), \
-           'frequency':utils.listControl( 'frequency', validCordexFrequencies ) }
+           'driving_experiment_name':utils.ListControl( 'driving_experiment_name', validCordexExperiment ), \
+           'project_id':utils.ListControl( 'project_id', ['CORDEX'] ), \
+           'CORDEX_domain':utils.ListControl( 'CORDEX_domain',  validCordexDomains ), \
+           'driving_model_id':utils.ListControl( 'driving_model_id',  validGcmNames ), \
+           'driving_model_ensemble_member':utils.PatternControl( 'driving_model_ensemble_member',  'r[0-9]+i[0-9]+p[0-9]+' ), \
+           'rcm_version_id':utils.PatternControl( 'rcm_version_id',  '[a-zA-Z0-9-]+' ), \
+           'model_id':utils.ListControl( 'model_id',  validRcmNames ), \
+           'institute_id':utils.ListControl( 'institute_id',  validInstNames ), \
+           'frequency':utils.ListControl( 'frequency', validCordexFrequencies ) }
 
     self.vocabs = vocabs
 

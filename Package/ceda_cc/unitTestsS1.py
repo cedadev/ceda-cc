@@ -271,7 +271,7 @@ if cga.errorCount == 0:
 else:
   print('OK: [%s]: detected bad global attributes (%s)' % (testId,gafile))
 
-ls = ceda_cc_config.utils_config.listControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
+ls = ceda_cc_config.utils_config.ListControl('test',['a','b','c1','c2'],split=True,splitVal=',',enumeration=True)
 testId = '#05.001'
 res = ls.essplit.findall( 'a, b, c<1,2>')
 if res == ['a', 'b', 'c<1,2>']:
@@ -295,7 +295,7 @@ else:
 
 
 testId = '#06.001'
-pc = ceda_cc_config.utils_config.patternControl( 'pattern test', 'ISO8601 duration', cls='ISO' )
+pc = ceda_cc_config.utils_config.PatternControl( 'pattern test', 'ISO8601 duration', cls='ISO' )
 res = pc.check( 'P1Z' )
 if res:
   print('Failed: [%s] Invalid value passed' % (testId))
