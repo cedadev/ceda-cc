@@ -710,7 +710,8 @@ class checkGlobalAttributes(CheckBase):
     for a in self.controlledGlobalAttributes:
       if a in globalAts:
         try:
-          if not vocabs[a].check( str(globalAts[a]) ):
+          #if not vocabs[a].check( str(globalAts[a]) ):
+          if not vocabs[a].check( globalAts[a] ):
             m.append( (a,globalAts[a],vocabs[a].note) )
         except:
           print('failed trying to check global attribute %s' % a)

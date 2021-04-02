@@ -9,6 +9,7 @@ from . import utils_config as utils
 import os
 import os.path as op
 import shutil, collections
+import numpy
 ##from versionConfig import version, versionComment
 
 NT_project = collections.namedtuple( 'project', ['id','v'] )
@@ -273,7 +274,7 @@ class ProjectConfig(object):
       self.thiscfg = ti.Ingest_ccmi2022()
       self.varTables='json_ccmi'
       self.requiredGlobalAttributes = self.thiscfg.required[:]
-      self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] )
+      self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + ['realization_index']
       self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label','@variant:5:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.requiredVarAttributes = ['long_name', 'units']
@@ -486,6 +487,7 @@ class ProjectConfig(object):
           if i[0] == 'list':
               vocabs[k] = utils.listControl( k, i[1] )
       vocabs[ 'variable' ] = utils.mipVocab(self)
+      vocabs[ 'realization_index' ] = utils.TypeControl( 'realization_index', (int, numpy.integer), min_valid=0, mode='instance' )
 
     elif self.projectV.id == 'ESA-CCI':
       lrdr = readVocab( 'esacci_vocabs/')
