@@ -271,6 +271,7 @@ class ProjectConfig(object):
 
     elif project == 'ccmi2022':
       import ceda_cc.ceda_cc_config.config.table_imports as ti
+      self.varTableFlavour='json_ccmi'
       self.thiscfg = ti.Ingest_ccmi2022()
       self.requiredGlobalAttributes = self.thiscfg.required[:]
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
