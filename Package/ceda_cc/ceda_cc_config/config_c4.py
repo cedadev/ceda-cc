@@ -272,14 +272,13 @@ class ProjectConfig(object):
     elif project == 'ccmi2022':
       import ceda_cc.ceda_cc_config.config.table_imports as ti
       self.thiscfg = ti.Ingest_ccmi2022()
-      self.varTables='json_ccmi'
       self.requiredGlobalAttributes = self.thiscfg.required[:]
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
       self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + \
                               ['%s_index' % x for x in variant_ixs]
       self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label','@variant:5:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
-      self.requiredVarAttributes = ['long_name', 'units']
+      self.requiredVarAttributes = ['long_name', 'units', 'standard_name']
       self.drsMappings = {'variable':'@var', 'institution_id':'institution_id', 'experiment_id':'experiment_id', \
                         'variant_label':'variant_label', 'source_id':'source_id', 'realm':'realm', \
                         'frequency':'frequency',  'table_id':'table_id', 'mip_era':'mip_era','frequency':'frequency',
