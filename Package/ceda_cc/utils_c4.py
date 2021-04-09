@@ -661,6 +661,8 @@ class checkGlobalAttributes(CheckBase):
             val = ' '.join( val.split(maxsplit=1) )
           if targ.find( ' ' ) != -1:
             targ = ' '.join( targ.split(maxsplit=1) )
+            if targ == '':
+              targ = 'Attribute not present'
 
       if k == "cell_methods":
         if val is not None:
