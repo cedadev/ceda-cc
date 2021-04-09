@@ -128,11 +128,12 @@ class mipVocab(object):
      if dummy:
        self.dummyMipTable()
      elif pcfg.varTables=='CMIP':
-       self.ingestMipTables()
+       if pcfg.varTableFlavour=='json_ccmi':
+         self.ingestJsonMipTables()
+       else:
+         self.ingestMipTables()
      elif pcfg.varTables=='FLAT':
        self.flatTable()
-     elif pcfg.varTables=='json_ccmi':
-       self.ingestJsonMipTables()
     
   def ingestJsonMipTables(self):
      dir, tl, vgmap, fnpat = self.pcfg.mipVocabPars
