@@ -205,6 +205,7 @@ class ProjectConfig(object):
     self.varIndex = 0
     self.fnvdict = None
     self.varTables='CMIP'
+    self.varTableFlavour='def'
     self.checkVarType = True
     self.projectV = NT_project(project,version)
     self.gridSpecTol = 0.01

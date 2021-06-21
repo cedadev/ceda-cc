@@ -308,7 +308,6 @@ class NumericControl(object):
   """Check on a numeric object"""
   def __init__(self,tag,target_type=None,max_valid=None,min_valid=None,element_check=None, base_class=None):
     self.tag = tag
-    self.mode = mode
     self.target_type = target_type
     self.base_class = base_class
     self.max_valid = max_valid
