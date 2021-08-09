@@ -197,7 +197,7 @@ class ProjectConfig(object):
   """
 
   def __init__(self, project, version=-1):
-    knownProjects = ['CMIP5','ccmi2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
+    knownProjects = ['CMIP5','snapsi','ccmi2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -270,10 +270,10 @@ class ProjectConfig(object):
                         'frequency':'frequency',  'table':'@mip_id',
                         'project':'project_id'}
 
-    elif project == 'ccmi2022':
+    elif project in [ 'ccmi2022', 'snapsi']:
       import ceda_cc.ceda_cc_config.config.table_imports as ti
       self.varTableFlavour='json_ccmi'
-      self.thiscfg = ti.Ingest_ccmi2022()
+      self.thiscfg = ti.Ingest_ccmiplus(project)
       self.requiredGlobalAttributes = self.thiscfg.required[:]
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
       self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + \
@@ -332,7 +332,7 @@ class ProjectConfig(object):
       self.fnParts = lrdr.getEvalAssign( 'fnParts_sv0101.txt' )
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
-    elif self.projectV.id == 'ccmi2022':
+    elif self.projectV.id in ['snapsi', 'ccmi2022']:
         # ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'ESA-CCI':
@@ -373,12 +373,12 @@ class ProjectConfig(object):
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr','satdaily':'day'}
        self.mipVocabFnpat = 'CCMI1_%s'
-    elif self.projectV.id == 'ccmi2022':
+    elif self.projectV.id in ['snapsi','ccmi2022']:
        self.legacy = False
-       self.mipVocabDir = op.join(CC_CONFIG_DIR, 'ccmi2022/Tables/')
+       self.mipVocabDir = op.join(CC_CONFIG_DIR, '%s/Tables/' % project)
        self.mipVocabTl = self.thiscfg.acvs['table_id'][1]
        self.mipVocabVgmap = {}
-       self.mipVocabFnpat = 'CCMI2022_%s.json'
+       self.mipVocabFnpat =  project.upper() + '_%s.json'
     elif self.projectV.id == 'ESA-CCI':
        self.mipVocabDir = op.join(CC_CONFIG_DIR, 'esacci_vocabs/')
        self.mipVocabTl = []
@@ -394,7 +394,7 @@ class ProjectConfig(object):
 # ## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
-    elif self.project in ['CMIP5','CCMI','ccmi2022','SPECS','__dummy']:
+    elif self.project in ['CMIP5','CCMI','ccmi2022','snapsi','SPECS','__dummy']:
       self.groupIndex = 1
     elif self.project in ['ESA-CCI']:
       self.fnvdict = { 'SSTskin':{'v':'sea_surface_temperature', 'sn':'sea_surface_skin_temperature'} }
@@ -484,7 +484,7 @@ class ProjectConfig(object):
                'modeling_realm':utils.ListControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'project_id':utils.ListControl( 'project_id', ['CCMI'] ) }
 
-    elif self.projectV.id == 'ccmi2022':
+    elif self.projectV.id in ['snapsi', 'ccmi2022']:
     
       vocabs = dict()
       for k,i in self.thiscfg.acvs.items():

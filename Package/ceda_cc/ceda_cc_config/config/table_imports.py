@@ -4,9 +4,14 @@ HERE = os.path.dirname(__file__)
 CC_CONFIG_DEFAULT_DIR = HERE
 CC_CONFIG_DIR = os.environ.get('CC_CONFIG_DIR', CC_CONFIG_DEFAULT_DIR)
 
-class Ingest_ccmi2022(object):
-    def __init__(self,idir='ccmi2022/Tables', verbose=False ):
-        self.cvs = json.load( open( '%s/%s/CCMI2022_CV.json' % (CC_CONFIG_DIR,idir) ) )['CV']
+class Ingest_cmipplus(object):
+    def __init__(self, project, verbose=False ):
+        idir = '%s/%s/Tables' % (CC_CONFIG_DIR,project)
+        assert os.path.isdir( idir ), 'Tables not found for project %s' % project
+        cv_test = glob.glob( '%s/*_CV.json' % idir )
+        assert len( cv_test ) == 1, 'There should be a single *_CV.json file in the Tables directory'
+        cvfile = cv_test[0]
+        self.cvs = json.load( open( cvfile ) )['CV']
         self.required = self.cvs["required_global_attributes"]
         self.acvs = {x:'unknown' for x in self.required if x in self.cvs}
         if verbose:
@@ -36,4 +41,4 @@ class Ingest_ccmi2022(object):
 
 
 if __name__ == "__main__":
-  ic = Ingest_ccmi2022()
+  ic = Ingest_ccmiplus()
