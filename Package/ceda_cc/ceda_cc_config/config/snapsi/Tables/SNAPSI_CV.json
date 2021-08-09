@@ -1,0 +1,281 @@
+{
+    "CV": {
+        "required_global_attributes": [
+            "Conventions",
+            "activity_id",
+            "contact",
+            "creation_date",
+            "data_specs_version",
+            "experiment",
+            "experiment_id",
+            "forcing_index",
+            "frequency",
+            "grid",
+            "grid_label",
+            "initialization_index",
+            "institution",
+            "institution_id",
+            "license",
+            "mip_era",
+            "nominal_resolution",
+            "physics_index",
+            "product",
+            "realization_index",
+            "realm",
+            "source",
+            "source_id",
+            "source_type",
+            "sub_experiment",
+            "sub_experiment_id",
+            "table_id",
+            "tracking_id",
+            "variable_id",
+            "variant_label"
+        ],
+        "version_metadata": {
+            "CV_collection_modified": "April 16, 2021, 15:49:57 UTC",
+            "CV_collection_version": "0.9.0",
+            "author": "Peter Hitchcock <aph28@cornell.edu>"
+        },
+        "activity_id": {
+            "SNAPSI": "Stratospheric Nudging And Predictable Surface Impacts: coordinated nudging experiments to isolate the influence of the stratosphere on sub-seasonal predictability"
+        },
+        "institution_id": {
+            "BoM": "Bureau of Meteorology, Melbourne, Victoria, Australia",
+            "BCC-CMA": "Beijing Climate Center of China Meteorological Administration",
+            "CNR-ISAC": "Institute of Atmospheric Sciences and Climate, Bologna, Italy",
+            "ECCC": "Environment and Climate Change Canada",
+            "ECMWF": "European Centre for Medium-Range Weather Forecasts, Shinfield Park, Reading, United Kingdom",
+            "KMA": "Korea Meteorological Administration",
+            "Meteo-France": "Meteo France",
+            "NOAA-GFDL": "National Oceanic and Atmospheric Administration- Geophysical Fluid Dynamics Laboratory, Princeton, NJ, USA",
+            "NCAR": "National Center for Atmospheric Research, Climate and Global Dynamics Laboratory, 1850 Table Mesa Drive, Boulder, CO 80305, USA",
+            "NRL": "Naval Research Laboratory, Washington DC, USA",
+            "UKMO": "Met Office, Exeter, UK"
+        },
+        "source_id": {
+            "ACCESS-S": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "BoM",
+                "source_id": "ACCESS-S",
+                "source": "ACCESS-S (description)"
+            },
+            "BCC-CSM2-HR": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "BCC-CMA",
+                "source_id": "BCC-CSM2-HR",
+                "source": "BCC-CSM2-HR (description)"
+            },
+            "GLOBO": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "CNR-ISAC",
+                "source_id": "GLOBO",
+                "source": "GLOBO (description)"
+            },
+            "CanESM5": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "ECCC",
+                "source_id": "CanESM5",
+                "source": "CanESM5 (description)"
+            },  
+            "GEM-NEMO": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "ECCC",
+                "source_id": "GEM-NEMO",
+                "source": "GEM-NEMO (description)"
+            },
+            "IFS": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "ECMWF",
+                "source_id": "IFS",
+                "source": "IFS (description)"
+            },
+            "GloSea5-GC2": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "KMA",
+                "source_id": "GloSea5-GC2",
+                "source": "GloSea5-GC2 (description)"
+            },
+            "CNRM-CM 6.1": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "Meteo-France",
+                "source_id": "CNRM-CM 6.1",
+                "source": "CNRM-CM 6.1 (description)"
+            },
+            "SPEAR": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "NOAA-GFDL",
+                "source_id": "SPEAR",
+                "source": "SPEAR (description)"
+            },
+            "CESM2-CAM6": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "NCAR",
+                "source_id": "CESM2-CAM6",
+                "source": "CESM2-CAM6 (description)"
+            },
+            "NAVGEM": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "NRL",
+                "source_id": "NAVGEM",
+                "source": "NAVGEM (description)"
+            },        
+            "GloSea5": {
+                "activity_participation": "SNAPSI",
+                "cohort": "Registered",
+                "institution_id": "UKMO",
+                "source_id": "GloSea5",
+                "source": "GloSea5 (description)"
+            }
+        },
+        "source_type": {
+            "AER": "aerosol treatment in an atmospheric model where concentrations are calculated based on emissions, transformation, and removal processes (rather than being prescribed or omitted entirely)",
+            "AGCM": "atmospheric general circulation model run with prescribed ocean surface conditions and usually a model of the land surface",
+            "AOGCM": "coupled atmosphere-ocean global climate model, additionally including explicit representation of at least the land and sea ice",
+            "BGC": "biogeochemistry model component that at the very least accounts for carbon reservoirs and fluxes in the atmosphere, terrestrial biosphere, and ocean",
+            "CHEM": "chemistry treatment in an atmospheric model that calculates atmospheric oxidant concentrations (including at least ozone), rather than prescribing them",
+            "CTM": "chemistry transport model, calculating transport and chemistry using specified meteorological fields",
+            "ISM": "ice-sheet model that includes ice-flow",
+            "LAND": "land model run uncoupled from the atmosphere",
+            "OGCM": "ocean general circulation model run uncoupled from an AGCM but, usually including a sea-ice model",
+            "RAD": "radiation component of an atmospheric model run 'offline'",
+            "SLAB": "slab-ocean used with an AGCM in representing the atmosphere-ocean coupled system"
+        },
+        "frequency": {
+            "6hr":"sampled every 6 hours",
+            "6hrPt":"sampled 6 hourly, at specified time point within the time period",
+            "fx":"fixed (time invariant) field"
+        },
+        "grid_label": {
+            "gm": "global mean data",
+            "gn": "data reported on a model's native grid",
+            "gnz": "zonal mean data reported on a model's native latitude grid",
+            "gr": "regridded data reported on the data provider's preferred target grid",
+            "grz": "regridded zonal mean data reported on the data provider's preferred latitude target grid",
+            "gr1": "regridded data reported on a grid other than the native grid and other than the preferred target grid",
+            "gr1z": "regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid",
+            "gr2": "regridded data reported on a grid other than the native grid and other than the preferred target grid",
+            "gr2z": "regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid"
+        },
+        "nominal_resolution": [
+            "0.5 km",
+            "1 km",
+            "10 km",
+            "100 km",
+            "1000 km",
+            "10000 km",
+            "1x1 degree",
+            "2.5 km",
+            "25 km",
+            "250 km",
+            "2500 km",
+            "5 km",
+            "50 km",
+            "500 km",
+            "5000 km"
+        ],
+        "realm": {
+            "atmos": "Atmosphere",
+            "seaIce": "Sea Ice",
+            "ocean":"Ocean",
+            "land": "Land Surface"
+        },
+        "table_id": [
+            "6hr",
+            "6hrPt",
+            "6hrZ",
+            "6hrZPt",
+            "fx"
+        ],
+        "license": [
+            "^SNAPSI model data produced by .* is licensed under a Creative Commons Attribution.*ShareAlike 4.0 International License .https://creativecommons.org/licenses.* *Consult _ for terms of use governing SNAPSI output, including citation requirements and proper acknowledgment\\. *The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose\\. *All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law\\.$"
+        ],
+        "mip_era": [
+            "CMIP6"
+        ],
+        "sub_experiment_id": {
+            "s20180125": "Forecasts initialized on or near 2018-01-25",
+            "s20180208": "Forecasts initialized on or near 2018-02-08",
+            "s20181213": "Forecasts initialized on or near 2018-12-13",
+            "s20190108": "Forecasts initialized on or near 2019-01-08",
+            "s20190829": "Forecasts initialized on or near 2019-08-29",
+            "s20191001": "Forecasts initialized on or near 2019-10-01"
+        },
+        "experiment_id": {
+            "free": {
+                "activity_id": "SNAPSI",
+                "experiment": "Free-running ensemble forecast",
+                "experiment_id": "free",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "s20180125", "s20180208", "s20181213", "s20190108", "s20190829", "s20191001"
+                ]
+            },
+            "control": {
+                "activity_id": "SNAPSI",
+                "experiment": "Ensemble forecast with zonally symmetric component of stratosphere nudged to climatology",
+                "experiment_id": "control",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "s20180125", "s20180208", "s20181213", "s20190108", "s20190829", "s20191001"
+                ]
+            },
+            "nudged": {
+                "activity_id": "SNAPSI",
+                "experiment": "Ensemble forecast with zonally symmetric component of stratosphere nudged to reanalyzed evolution",
+                "experiment_id": "nudged",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "s20180125", "s20180208", "s20181213", "s20190108", "s20190829", "s20191001"
+                ]
+            },
+            "nudged-full": {
+                "activity_id": "SNAPSI",
+                "experiment": "Ensemble forecast with stratosphere nudged to reanalyzed evolution",
+                "experiment_id": "nudged-full",
+                "parent_experiment_id": "no parent",
+                "sub_experiment_id": [
+                    "s20180125", "s20180208", "s20181213", "s20190108", "s20190829", "s20191001"
+                ]
+            }
+        },
+        "product": [
+            "model-output"
+        ],
+        "tracking_id": [
+            "hdl:21.14100/.*"
+        ],
+        "realization_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ],
+        "variant_label": [
+            "r[[:digit:]]\\{1,\\}i[[:digit:]]\\{1,\\}p[[:digit:]]\\{1,\\}f[[:digit:]]\\{1,\\}$"
+        ],
+        "data_specs_version": [
+            "^[[:digit:]]\\{2,2\\}\\.[[:digit:]]\\{2,2\\}\\.[[:digit:]]\\{2,2\\}$"
+        ],
+        "Conventions": [
+            "CF-1.8 SNAP"
+        ],
+        "forcing_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ],
+        "initialization_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ],
+        "physics_index": [
+            "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
+        ]
+    }
+}
