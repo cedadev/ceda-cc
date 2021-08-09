@@ -15,6 +15,7 @@ Arguments:
   :--blfms:            Set milli-second mode for naming batch log files (instead of second mode);
   :--flfmode: <mode>:  Set mode for file-level log file -- see log file modes
   :--aMap:             Read in some attribute mappings and run tests with virtual substitutions;
+  :--unitTest: run tests to check installation.
 
 Log file modes
 --------------
