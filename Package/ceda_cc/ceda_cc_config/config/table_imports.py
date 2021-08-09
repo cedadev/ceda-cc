@@ -1,4 +1,4 @@
-import json, re, os
+import json, re, os, glob
 
 HERE = os.path.dirname(__file__)
 CC_CONFIG_DEFAULT_DIR = HERE

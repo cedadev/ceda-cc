@@ -273,7 +273,7 @@ class ProjectConfig(object):
     elif project in [ 'ccmi2022', 'snapsi']:
       import ceda_cc.ceda_cc_config.config.table_imports as ti
       self.varTableFlavour='json_ccmi'
-      self.thiscfg = ti.Ingest_ccmiplus(project)
+      self.thiscfg = ti.Ingest_cmipplus(project)
       self.requiredGlobalAttributes = self.thiscfg.required[:]
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
       self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + \

@@ -70,6 +70,7 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  'CMIP5':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'CCMI':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'ccmi2022':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
+                 'snapsi':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
                  'ESA-CCI':'%(level)s/%(platform)s/%(sensor)s/%(variable)s/', \
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
@@ -391,7 +392,7 @@ class Main(object):
   
     self.cc.info.log = self.c4i.logger
     
-    if self.c4i.project not in ['SPECS','CCMI','ccmi2022', 'CMIP5','ESA-CCI']:
+    if self.c4i.project not in ['SPECS','CCMI','snapsi','ccmi2022', 'CMIP5','ESA-CCI']:
        cbv.c4i = self.c4i
        cbv.setLogDict( self.logDict )
        cbv.check( recorder=self.rec, calendar=self.cc.calendar)
