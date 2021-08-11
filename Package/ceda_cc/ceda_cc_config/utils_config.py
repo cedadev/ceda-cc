@@ -321,7 +321,7 @@ class NumericControl(object):
         return False
     elif self.base_class != None:
       if not isinstance(val, self.base_class):
-        self.note = 'Value is not instance of required class: %s -- %s' % (val, type(val) )
+        self.note = 'Value is not instance of required class (%s): %s -- %s' % (type( self.base_class), val, type(val) )
         return False
 
     if self.max_valid != None and val > self.max_valid:
