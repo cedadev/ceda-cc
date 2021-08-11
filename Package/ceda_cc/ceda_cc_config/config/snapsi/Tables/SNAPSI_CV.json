@@ -155,6 +155,7 @@
         "frequency": {
             "6hr":"sampled every 6 hours",
             "6hrPt":"sampled 6 hourly, at specified time point within the time period",
+	    "6hrPtZ":"sampled 6 hourly, at specified time point within the time period, profiles",
             "fx":"fixed (time invariant) field"
         },
         "grid_label": {

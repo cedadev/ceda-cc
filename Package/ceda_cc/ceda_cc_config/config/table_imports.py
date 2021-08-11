@@ -42,8 +42,8 @@ class Ingest_cmipplus(object):
           print( y.match( '01.00.32' ) )
           print( [k for k,item in self.acvs.items() if item == 'unknown'] )
         if 'table_id' in self.acvs and 'frequency' in self.acvs:
-            c1 = all( [x in self.acvs['table_id'] for x in self.acvs['frequency'] )
-            c2 = all( [x in self.acvs['frequency'] for x in self.acvs['table_id'] )
+            c1 = all( [x in self.acvs['table_id'] for x in self.acvs['frequency'] ] )
+            c2 = all( [x in self.acvs['frequency'] for x in self.acvs['table_id'] ] )
             if not c1:
               print ('CV error: not all frequencies included in table_id list' )
             if not c2:
