@@ -281,7 +281,7 @@ class ProjectConfig(object):
       if project == 'ccmi2022':
         self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label','@variant:5:']
       elif project == 'snapsi':
-        self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','variant_label','grid_label','@variant:4:']
+        self.globalAttributesInFn = [None,'table_id','source_id','experiment_id',None,'grid_label','@variant:4:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.requiredVarAttributes = ['long_name', 'units', 'standard_name']
       self.drsMappings = {'variable':'@var', 'institution_id':'institution_id', 'experiment_id':'experiment_id', \
@@ -340,8 +340,7 @@ class ProjectConfig(object):
       self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id in ['snapsi']:
          # epfy_6hrPtZ_CESM2-CAM6_free_s20180125_r10i1p1f1_gn_20180125-20180310.nc
-       self.fnParts = NT_fnParts( len=[7,8], fxLen=[7,],  unfLen=[8,],
-checkTLen=False, ixDomain=None, ixFreq=None )
+       self.fnParts = NT_fnParts( len=[7,8], fxLen=[7,],  unfLen=[8,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id == 'ESA-CCI':
       self.fnParts = NT_fnParts( len=[7,8,9], fxLen=[0,],  unfLen=[7,8,9,], checkTLen=False, ixDomain=None, ixFreq=None )
       self.trangeType = 'ESA-CCI'

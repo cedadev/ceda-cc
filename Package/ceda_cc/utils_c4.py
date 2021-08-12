@@ -529,6 +529,8 @@ class checkGlobalAttributes(CheckBase):
         ee[k] = "r%si%sp%s" % (self.globalAts["realization"],self.globalAts["initialization_method"],self.globalAts["physics_version"])
       elif self.drsMappings[k] == '@variant':
         ee[k] = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index" % x] for x in variant_ixs])
+        if 'sub_experiment_id' in self.globalAts:
+            ee[k] = '%s-%s' % (self.globalAts['sub_experiment_id'], ee[k] )
       elif self.drsMappings[k] == '@forecast_reference_time':
         x = self.globalAts.get("forecast_reference_time",'yyyy-mm-dd Thh:mm:ssZ' )
         ee[k] = "%s%s%s" % (x[:4],x[5:7],x[8:10])
@@ -755,6 +757,8 @@ class checkGlobalAttributes(CheckBase):
 ## following mappings are depricated -- introduced for SPECS and withdrawn ---
            elif gaif == '@variant':
              thisVal = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index" % x] for x in variant_ixs])
+             if 'sub_experiment_id' in self.globalAts:
+               thisVal = '%s-%s' % (self.globalAts['sub_experiment_id'],    thisVal )
            elif gaif[1:] == "experiment_family":
                thisVal = globalAts["experiment_id"][:-4]
            elif gaif[1:] == "forecast_reference_time":
