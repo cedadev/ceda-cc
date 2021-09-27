@@ -657,14 +657,20 @@ class checkGlobalAttributes(CheckBase):
       targ = varAts[varName].get( k, 'Attribute not present' )
       val = vocabs['variable'].getAttr( varName, varGroup, k )
 
+#
+# . if standard_name in tables is blank, this is interpreted as no standard name.
+#
       if k == "standard_name":
         if val is not None:
-          if val.find( ' ' ) != -1:
-            val = ' '.join( val.split(maxsplit=1) )
-          if targ.find( ' ' ) != -1:
-            targ = ' '.join( targ.split(maxsplit=1) )
-            if targ == '':
-              targ = 'Attribute not present'
+          if val.strip() == '':
+                val = None
+          else:
+            if val.find( ' ' ) != -1:
+              val = ' '.join( val.split(maxsplit=1) )
+            if targ.find( ' ' ) != -1:
+              targ = ' '.join( targ.split(maxsplit=1) )
+              if targ == '':
+                targ = 'Attribute not present'
 
       if k == "cell_methods":
         if val is not None:
@@ -687,8 +693,11 @@ class checkGlobalAttributes(CheckBase):
               mm.append( (k,parenthesies1,p) )
           if targ.find( val):
              mm.append( (k,targ,val) )
-      elif targ != 'Attribute not present' and targ != val:
-        mm.append( (k,targ,val) )
+      else:
+          if val == None or targ == 'Attribute not present':
+             pass
+          elif  targ != val:
+             mm.append( (k,targ,val) )
 
     ok &= self.test( len(mm)  == 0, 'Variable [%s] has incorrect attributes: %s' % (varName, strmm3(mm)), part=True )
     if len( mm  ) != 0:
