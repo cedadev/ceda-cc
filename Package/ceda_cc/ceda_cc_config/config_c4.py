@@ -279,7 +279,8 @@ class ProjectConfig(object):
       self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + \
                               ['%s_index' % x for x in variant_ixs]
       if project == 'ccmi2022':
-        self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','grid_label','variant_label','@variant:5:']
+        self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','variant_label','grid_label','@variant:5:']
+                  ##### o3_Amon_CMAM_refD1_r1i1p1f1_gn_196001-201812.nc
       elif project == 'snapsi':
         self.globalAttributesInFn = [None,'table_id','source_id','experiment_id',None,'grid_label','@variant:4:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
