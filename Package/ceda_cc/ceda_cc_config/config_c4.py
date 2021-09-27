@@ -496,7 +496,7 @@ class ProjectConfig(object):
       vocabs = dict()
       for k,i in self.thiscfg.acvs.items():
           if i[0] == 'list':
-              vocabs[k] = utils.ListControl( k, i[1] )
+              vocabs[k] = utils.ListControl( k, i[1], split= k in ['source_type'] )
       vocabs[ 'variable' ] = utils.mipVocab(self)
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
       for x in variant_ixs:
