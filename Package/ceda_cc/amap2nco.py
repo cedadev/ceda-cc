@@ -10,7 +10,7 @@ Check ouput and run ceda-cc to verify that the correct changes have been impleme
 
 See file USAGE_amap2nco.txt in code repository for more detail"""
 
-import os, string, random, time
+import os, random, time
 from .xceptions import *
 
 xx='abcdefghijklmnopqrstuvwxyz1234567890$%-=+*'
@@ -21,9 +21,11 @@ class map2nco(object):
     assert os.path.isfile( ifile ), 'File %s not found' % ifile
     ii = open(ifile).readlines()
     self.directives = []
-    for l in map( string.strip, ii):
+    for l in [x.strip() for x in ii]:
       if l[0] == '@':
-        if l[:5] == '@var:':
+        if l[:9] == '@varname:':
+          self.directives.append( ('var',l[9:] ) )
+        elif l[:5] == '@var:':
           self.directives.append( ('var',l[5:] ) )
         elif l[:4] == '@ax:':
           self.directives.append( ('ax',l[4:] ) )
@@ -34,7 +36,7 @@ class map2nco(object):
         else:
           raise baseException( 'unrecognised directive:\n %s' % l )
       elif l[0] != '#':
-        if string.strip(l) != '':
+        if l.strip() != '':
            raise baseException( 'unrecognised line:\n %s' % l )
     self.ipth = ipth
     self.opth = opth
@@ -47,7 +49,7 @@ class map2nco(object):
     lok = {'var':5, 'fn':2, 'ax':5, 'ga':4 }
     for d in self.directives:
       assert d[0] in lok, 'Directive not recognised'
-      bits = string.split( string.strip( d[1], '"' ), '","' ) 
+      bits = d[1].strip( '"' ).split( '","' ) 
       assert len(bits) == lok[d[0]], 'Not enough elements for directive'
       fpath = bits[0]
       if thislist == None or thislist[0] != fpath:
@@ -63,9 +65,9 @@ class map2nco(object):
       assert os.path.isfile( f[0], ), 'File %s not found' % f[0]
       assert f[0][:li] == self.ipth, 'File not in declared input directory %s' % self.ipth
       ofile = self.opth + f[0][li:]
-      ofb = string.split( ofile, '/')
+      ofb = ofile.split( '/')
       fn = ofb[-1]
-      odir = string.join( ofb[:-1], '/' ) + '/'
+      odir = '/'.join( ofb[:-1] ) + '/'
       if odir not in ndl:
         if not os.path.isdir( odir ):
           oo.write( 'echo Creating output directory %s\n' % odir )
@@ -83,13 +85,13 @@ class map2nco(object):
             token = '%s,global,o,c,"%s"' % (att,var,nval)
           toklist.append(token)
         elif d[0] == 'fn':
-          fs = string.split( fn, '.' )
-          bits = string.split( fs[0], '_' )
+          fs = fn.split( '.' )
+          bits = fs[0].split( '_' )
           assert  d[1][0] in bits, '%s not found in file name: %s' % (d[1][0], fn)
           i = bits.index( d[1][0] )
           bits[i] =  d[1][1]
-          fs[0] = string.join( bits, '_' )
-          ofn = string.join( fs, '.' )
+          fs[0] = '_'.join( bits )
+          ofn = '.'.join( '.' )
           ofile = odir + ofn
         else:
           print('WARNING: UNREPARABLE ERRORS ARE LISTED')
@@ -110,12 +112,13 @@ class map2nco(object):
       oo.write( '%s\n'  % cmd )
     oo.close()
     
-if __name__ == '__main__':
+
+def main_entry():
   import sys
   if len(sys.argv) != 4:
     if os.path.isfile( 'USAGE_amap2nco.txt' ):
       for l in open( 'USAGE_amap2nco.txt').readlines():
-        print(string.strip(l))
+        print(l.strip())
     else:
       print(__doc__)
   else:
@@ -123,5 +126,8 @@ if __name__ == '__main__':
      m = map2nco(mfile, idir, odir )
      m.parse1()
       
+if __name__ == '__main__':
+  main_entry()
+
 
     #@var:/data/work/cordex/early/AFR-44i/SMHI/ECMWF-ERAINT/evaluation/SMHI-RCA4/v1/mon/tas/tas_AFR-44i_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_v1_mon_198001-198012.nc","height","long_name","height above the surface","height"

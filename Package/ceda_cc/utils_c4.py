@@ -588,9 +588,12 @@ class checkGlobalAttributes(CheckBase):
     self.checkId = ('002','variable_in_group')
 
     
-    self.test( varName in varAts, 'Expected variable [%s] not present' % varName, abort=True, part=True )
-    msg = 'Variable %s not in table %s' % (varName,varGroup)
+    if not self.test( varName in varAts, 'Expected variable [%s] not present' % varName, abort=True, part=True ):
+      if varName.lower() in [x.lower() for x in varAts]:
+        possible = {x.lower():x for x in varAts}[varName.lower()]
+        self.parent.amapListDraft.append( '## @varname=%s|%s|Rename variable %s to %s (automation not implemented)' % (varName,possible, possible, varName) )
     
+    msg = 'Variable %s not in table %s' % (varName,varGroup)
     self.test( vocabs['variable'].isInTable( varName, varGroup ), msg, abort=True, part=True )
 
     if self.pcfg.checkVarType:
@@ -619,7 +622,7 @@ class checkGlobalAttributes(CheckBase):
     if not self.test( len(m)  == 0, 'Required variable attributes missing: %s' % str(m) ):
       vaerr = True
       for k in m:
-        self.parent.amapListDraft.append( '#@var=%s;%s=%s|%s=%s' % (varName,k,'__absent__',k,'<insert attribute value and uncomment>') )
+        self.parent.amapListDraft.append( '#@var=%s;%s=%s|%s=%s|Required attribute is missing and needs a value assigned' % (varName,k,'__absent__',k,'<insert attribute value and uncomment>') )
         ## print self.parent.amapListDraft[-1]
 
 ## need to insert a check that variable is present
@@ -707,7 +710,7 @@ class checkGlobalAttributes(CheckBase):
           if m[2] is None:
             self.parent.amapListDraft.append( '## @var=%s;%s=%s|@delete=%s -- not supported yet' % (varName,m[0],m[1],m[0]) )
           else:
-            self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s' % (varName,m[0],m[1],m[0],m[2]) )
+            self.parent.amapListDraft.append( '@var=%s;%s=%s|%s=%s|Incorrect attribute value needs to be reset' % (varName,m[0],m[1],m[0],m[2]) )
 
     if ok:
        self.log_pass()
@@ -736,7 +739,7 @@ class checkGlobalAttributes(CheckBase):
 
     if not self.test( len(m)  == 0, 'Global attributes do not match constraints: %s' % str(m) ):
       for t in m:
-        self.parent.amapListDraft.append( '#@;%s=%s|%s=%s' % (t[0],str(t[1]),t[0],'<insert attribute value and uncomment>' + str(t[2]) ) )
+        self.parent.amapListDraft.append( '#@;%s=%s|%s=%s|Required global attribute needs to be set' % (t[0],str(t[1]),t[0],'<insert attribute value and uncomment>' + str(t[2]) ) )
 
     self.checkId = ('007','filename_filemetadata_consistency')
     m = []

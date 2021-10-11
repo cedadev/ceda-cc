@@ -231,9 +231,13 @@ class c4_init(object):
     if self.attributeMappingFile != None:
       for l in open( self.attributeMappingFile ).readlines():
         if l[0] != '#':
-          bb = l.strip(l).split( '|' ) 
-          assert len(bb) ==2, "Error in experimental module attributeMapping -- configuration line not scanned [%s]" % str(l)
+          bb = l.strip().split( '|' ) 
+          assert len(bb) in [2,3], "Error in experimental module attributeMapping -- configuration line not scanned [%s]" % str(l)
           bits =  bb[0].split( ';' )
+          if len( bb ) == 3:
+              cmt = bb[2]
+          else:
+              cmt = ''
           cl = []
           for b in bits:
             cl.append( b.split( '=' ) )
