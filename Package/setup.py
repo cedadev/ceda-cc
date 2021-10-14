@@ -38,6 +38,7 @@ setup(name='ceda-cc',
       #install_requires=[
       #],
       entry_points= {
-        'console_scripts': ['beta-ceda-cc=ceda_cc.c4:main_entry'],
+        'console_scripts': ['ceda-cc=ceda_cc.c4:main_entry',
+                          'ceda-cc-nco=ceda_cc.amap2nco:main_entry'],
         },
       )

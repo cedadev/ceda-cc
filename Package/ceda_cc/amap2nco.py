@@ -115,6 +115,8 @@ class map2nco(object):
 
 def main_entry():
   import sys
+  ##if len(sys.argv) >1 and sys.argv[1] == '-h':
+      ##print( 'amp2nco.main_entry-- creating nco scripts' )
   if len(sys.argv) != 4:
     if os.path.isfile( 'USAGE_amap2nco.txt' ):
       for l in open( 'USAGE_amap2nco.txt').readlines():
