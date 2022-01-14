@@ -262,3 +262,6 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
 
+html_context = {
+    "edit_page_url_template": "https://github.com/cedadev/ceda-cc/" }
+
