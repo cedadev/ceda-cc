@@ -51,5 +51,6 @@ class Ingest_cmipplus(object):
             if len(l2) != 0:
                 print ('CV error: not all table_ids included in frequency list: %s' % l2 )
 
+                
 if __name__ == "__main__":
     ic = Ingest_cmipplus('snapsi',base_dir='.')
