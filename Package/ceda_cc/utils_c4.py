@@ -769,7 +769,7 @@ class checkGlobalAttributes(CheckBase):
 ## following mappings are depricated -- introduced for SPECS and withdrawn ---
            elif gaif == '@variant':
              thisVal = "r%si%sp%sf%s" % tuple( [self.globalAts["%s_index" % x] for x in variant_ixs])
-             if 'sub_experiment_id' in self.globalAts:
+             if 'sub_experiment_id' in self.globalAts and self.globalAts['sub_experiment_id'] != 'none':
                thisVal = '%s-%s' % (self.globalAts['sub_experiment_id'],    thisVal )
            elif gaif[1:] == "experiment_family":
                thisVal = globalAts["experiment_id"][:-4]
@@ -1098,7 +1098,11 @@ class checkByVar(CheckBase):
       
       try:
         if self.pcfg.freqIndex is not None:
-          freq = fnParts[self.pcfg.freqIndex]
+          if self.pcfg.freqIndex < len( fnParts ):
+              freq = fnParts[self.pcfg.freqIndex]
+          else:
+              print( 'ERROR: freqIndex=%s, fnParts=%s' % (self.pcfg.freqIndex, fnParts) )
+              raise
         else:
           freq = None
 
