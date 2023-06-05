@@ -33,7 +33,7 @@
             "variant_label"
         ],
         "version_metadata": {
-            "CV_collection_modified": "March 16, 2021, 15:49:57 UTC",
+            "CV_collection_modified": "February 15, 2022, 20:42:17 UTC",
             "CV_collection_version": "0.9.0",
             "author": "David Plummer <david.plummer@canada.ca>"
         },
@@ -43,12 +43,24 @@
         "institution_id": {
             "CCCma": "Canadian Centre for Climate Modelling and Analysis, Environment and Climate Change Canada, Victoria, BC V8P 5C2, Canada",
             "CNRM-CERFACS": "CNRM (Centre National de Recherches Meteorologiques, Toulouse 31057, France), CERFACS (Centre Europeen de Recherche et de Formation Avancee en Calcul Scientifique, Toulouse 31057, France)",
+            "CSIRO-ARCCSS": "CSIRO (Commonwealth Scientific and Industrial Research Organisation, Aspendale, Victoria 3195, Australia), ARCCSS (Australian Research Council Centre of Excellence for Climate System Science)",
             "ETH-PMOD": "IAC ETH, Zurich and PMOD/WRC, Davos, Switzerland",
+            "IPSL": "Institut Pierre Simon Laplace, Paris 75252, France",
             "MESSy-Consortium": "The Modular Earth Submodel System (MESSy) Consortium, represented by the Institute for Physics of the Atmosphere, Deutsches Zentrum fur Luft- und Raumfahrt (DLR), Wessling, Bavaria 82234, Germany",
+            "NASA-GSFC": "NASA Goddard Space Flight Center, Greenbelt, MD 20771, USA",
             "NCAR": "National Center for Atmospheric Research, Climate and Global Dynamics Laboratory, 1850 Table Mesa Drive, Boulder, CO 80305, USA",
-            "NIES": "National Institute for Environmental Studies, Ibaraki 305-8506, Japan"
+            "NCAS-CAMBRIDGE": "National Centre for Atmospheric Science, Department of Chemistry, University of Cambridge, Lensfield Road, Cambridge, CB2 1EW, UK",
+            "NIES": "National Institute for Environmental Studies, Ibaraki 305-8506, Japan",
+            "NIWA": "National Institute of Water and Atmospheric Research, Wellington, New Zealand"
         },
         "source_id": {
+            "ACCESS-CM2-Chem": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "CSIRO-ARCCSS",
+                "source_id": "ACCESS-CM2-Chem",
+                "source": "ACCESS-CM2-Chem (2020): aerosol: UKCA-GLOMAP-mode atmos: MetUM-HadGEM3-GA7.1 (N96; 192 x 144 longitude/latitude; 85 levels; top level 85 km) atmosChem: UKCA CheST land: CABLE2.5 landIce: none ocean: ACCESS-OM2 (GFDL-MOM5, tripolar primarily 1deg; 360 x 300 longitude/latitude; 50 levels; top grid cell 0-10 m) ocnBgchem: none seaIce: CICE5.1.2 (same grid as ocean)"
+            },
             "CCSRNIES-MIROC32": {
                 "activity_participation": "CCMI2022",
                 "cohort": "Registered",
@@ -70,12 +82,12 @@
                 "source_id": "CMAM",
                 "source": "CMAM (2020): \natmos: CanAM3.1 (T47; 48x96 linear grid; 80 levels; top level 0.08 Pa) \natmosChem: stratospheric mechanism plus CH4-NOx tropospheric \nocean: none"
             },
-            "CNRM-MOCAGE-1-HR": {
+            "CNRM-MOCAGE": {
                 "activity_participation": "CCMI2022",
                 "cohort": "Registered",
                 "institution_id": "CNRM-CERFACS",
-                "source_id": "CNRM-MOCAGE-1-HR",
-                "source": "CNRM-MOCAGE-1-HR: a completer"
+                "source_id": "CNRM-MOCAGE",
+                "source": "CNRM-MOCAGE (2020): 2x2 degree grid, 60 levels, top level 10 Pa. \natmosChem: full tropospheric-stratospheric mechanism. \nBeing a CTM, MOCAGE needs meteorological forcing. It comes from CNRM-CM, being the same for the 4 refD2 realizations. For senD2-sai, 2 runs have been made using exactly the same metetorology as refD2  (senD2-sai_r1i1p1f1 and senD2-sai_r1i1p2f1). 2 other runs have been made using, after 2030, a cycling meteorology on 2020-2030, trying to reflect the stabilisation of climate around 2025 due to stratospheric aerosol intervention (senD2-sai_r1i1p1f2 and senD2-sai_r1i1p2f2). Contact : Beatrice.Josse@meteo.fr and Francoise.Cheroux@meteo.fr"
             },
             "EMAC-CCMI2-oce": {
                 "activity_participation": "CCMI2022",
@@ -91,12 +103,40 @@
                 "source_id": "EMAC-CCMI2",
                 "source": "EMAC-CCMI2 (2020): \natmos: ECHAM5.3.02 (modified, spectral T42; 128 x 64 longitude/latitude; 90 levels; top level 0.01 hPa) \natmosChem: MECCA 4.4.0.m1 \nland: same as Atmosphere\nlandIce: none \nocean: none \nocnBgchem: none \nseaIce: same as Atmosphere"
             },
+            "GEOSCCM": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "NASA-GSFC",
+                "source_id": "GEOSCCM",
+                "source": "GEOSCCM (2021): \natmos: NASA GMAO GEOS5 (Icarus3.2, 1-deg Cube Sphere, L72)"
+            },
+            "IPSL-CM6A-ATM-LR-REPROBUS": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "IPSL",
+                "source_id": "IPSL-CM6A-ATM-LR-REPROBUS",
+                "source": "IPSL-CM6A-ATM-LR-REPROBUS (2021): \naerosol: REPROBUS v6 \natmos: LMDZ (NPv6; 144 x 143 longitude/latitude; 79 levels; top level 80000 m)"
+            },
+            "NIWA-UKCA2": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "NIWA",
+                "source_id": "NIWA-UKCA2",
+                "source": "NIWA-UKCA2 (2021): \naerosol: CLASSIC \natmos: MetUM-HadGEM3-GA2 (N48; 96 x 73 longitude/latitude; 60 levels; top level 84 km) \natmosChem: NIWA-UKCA2 \nland: JULES \nlandIce: none \nocean: HadISST (REFD1) or MPI-ESM2-1-LR prescribed \nocnBgchem: none \nseaIce: (same as ocean)"
+            },
             "SOCOL": {
                 "activity_participation": "CCMI2022",
                 "cohort": "Registered",
                 "institution_id": "ETH-PMOD",
                 "source_id": "SOCOL",
                 "source": "SOCOL: \natmos: SOCOL (T63; 47 levels; top level 0.01 Pa) \natmosChem: stratospheric and tropospheric mechanism \nocean: none"
+            },
+            "UKESM1-StratTrop": {
+                "activity_participation": "CCMI2022",
+                "cohort": "Registered",
+                "institution_id": "NCAS-CAMBRIDGE",
+                "source_id": "UKESM1-StratTrop",
+                "source": "UKESM1-StratTrop: \naerosol: UKCA-GLOMAP-mode \natmos: MetUM-HadGEM3-GA7.1 (N96; 192 x 144 longitude/latitude; 85 levels; top level 85 km) \natmosChem: UKCA StratTrop version 2.0 \nland: JULES-ES-1.0 \nocean: NEMO-HadGEM3-GO6.0 (eORCA1 tripolar primarily 1 deg with meridional refinement down to 1/3 degree in the tropics; 360 x 330 longitude/latitude; 75 levels; top grid cell 0-1 m) \nocnBgchem: MEDUSA2 \nseaIce: CICE-HadGEM3-GSI8 (eORCA1 tripolar primarily 1 deg; 360 x 330 longitude/latitude)"
             }
         },
         "source_type": {
@@ -172,7 +212,12 @@
                 "activity_id": "CCMI2022",
                 "experiment": "Hindcast",
                 "experiment_id": "refD1",
-                "parent_experiment_id": "no parent",
+                "parent_activity_id": [
+                    "no parent"
+                ],
+                "parent_experiment_id": [
+                    "no parent"
+                ],
                 "sub_experiment_id": [
                     "none"
                 ]
@@ -181,16 +226,26 @@
                 "activity_id": "CCMI2022",
                 "experiment": "Baseline projection using CMIP6 SSP2-45 GHGs and precursor emissions with WMO-2018 ODSs",
                 "experiment_id": "refD2",
-                "parent_experiment_id": "no parent",
+                "parent_activity_id": [
+                    "no parent"
+                ],
+                "parent_experiment_id": [
+                    "no parent"
+                ],
                 "sub_experiment_id": [
                     "none"
                 ]
             },
-            "senD2-geo": {
+            "senD2-sai": {
                 "activity_id": "CCMI2022",
-                "experiment": "Baseline (SSP2-45) with geoengineering using specified stratospheric aerosol distribution and specified SSTs/sea-ice",
-                "experiment_id": "senD2-geo",
-                "parent_experiment_id": "refD2",
+                "experiment": "Baseline (SSP2-45) with a modified specified stratospheric aerosol distribution reflecting increased stratospheric aerosol amounts from SAI and with specified SSTs/sea-ice",
+                "experiment_id": "senD2-sai",
+                "parent_activity_id": [
+                    "CCMI2022"
+                ],
+                "parent_experiment_id": [
+                    "refD2"
+                ],
                 "sub_experiment_id": [
                     "none"
                 ]
@@ -199,7 +254,14 @@
                 "activity_id": "CCMI2022",
                 "experiment": "Future projection using CMIP6 SSP1-26 GHGs and precursor emissions with WMO-2018 ODSs",
                 "experiment_id": "senD2-ssp126",
-                "parent_experiment_id": "no parent",
+                "parent_activity_id": [
+                    "no parent",
+                    "CCMI2022"
+                ],
+                "parent_experiment_id": [
+                    "no parent",
+                    "refD2"
+                ],
                 "sub_experiment_id": [
                     "none"
                 ]
@@ -207,8 +269,15 @@
             "senD2-ssp370": {
                 "activity_id": "CCMI2022",
                 "experiment": "Future projection using CMIP6 SSP3-70 GHGs and precursor emissions with WMO-2018 ODSs",
-                "parent_experiment_id": "no parent",
                 "experiment_id": "senD2-ssp370",
+                "parent_activity_id": [
+                    "no parent",
+                    "CCMI2022"
+                ],
+                "parent_experiment_id": [
+                    "no parent",
+                    "refD2"
+                ],
                 "sub_experiment_id": [
                     "none"
                 ]
@@ -218,7 +287,7 @@
             "model-output"
         ],
         "tracking_id": [
-            "hdl:21.14100/.*"
+            ".*"
         ],
         "realization_index": [
             "^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$"
