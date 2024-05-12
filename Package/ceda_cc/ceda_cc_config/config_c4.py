@@ -197,7 +197,7 @@ class ProjectConfig(object):
   """
 
   def __init__(self, project, version=-1):
-    knownProjects = ['CMIP5','snapsi','ccmi2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
+    knownProjects = ['CMIP5','snapsi','ramip','ccmi2022','CCMI','CORDEX','SPECS','ESA-CCI', '__dummy']
     assert project in knownProjects, 'Project %s not in knownProjects %s' % (project, str(knownProjects))
 
     self.project = project
@@ -270,7 +270,7 @@ class ProjectConfig(object):
                         'frequency':'frequency',  'table':'@mip_id',
                         'project':'project_id'}
 
-    elif project in [ 'ccmi2022', 'snapsi']:
+    elif project in [ 'ccmi2022', 'ramip', 'snapsi']:
       import ceda_cc.ceda_cc_config.config.table_imports as ti
       self.varTableFlavour='json_ccmi'
       self.thiscfg = ti.Ingest_cmipplus(project)
@@ -278,12 +278,13 @@ class ProjectConfig(object):
       variant_ixs = ['realization', 'initialization', 'physics', 'forcing']
       self.controlledGlobalAttributes = sorted( [ x for x,i in self.thiscfg.acvs.items() if i[0] == 'list' ] ) + \
                               ['%s_index' % x for x in variant_ixs]
-      if project == 'ccmi2022':
+      if project in ['ramip', 'ccmi2022']:
         self.globalAttributesInFn = [None,'table_id','source_id','experiment_id','variant_label','grid_label','@variant:4:']
                   ##### o3_Amon_CMAM_refD1_r1i1p1f1_gn_196001-201812.nc
       elif project == 'snapsi':
         self.globalAttributesInFn = [None,'table_id','source_id','experiment_id',None,'grid_label','@variant:4:']
       ##ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
+      ##ramip: huss_day_CESM2_ssp370-126aer_r2i1p1f1_gn_20150101-20791231.nc
       self.requiredVarAttributes = ['long_name', 'units', 'standard_name']
       self.drsMappings = {'variable':'@var', 'institution_id':'institution_id', 'experiment_id':'experiment_id', \
                         'variant_label':'variant_label', 'source_id':'source_id', 'realm':'realm', \
@@ -336,7 +337,7 @@ class ProjectConfig(object):
       self.fnParts = lrdr.getEvalAssign( 'fnParts_sv0101.txt' )
     elif self.projectV.id == 'CCMI':
       self.fnParts = NT_fnParts( len=[5,6], fxLen=[5,],  unfLen=[6,], checkTLen=False, ixDomain=None, ixFreq=None )
-    elif self.projectV.id in ['ccmi2022']:
+    elif self.projectV.id in ['ramip','ccmi2022']:
         # ch4_Amon_SOCOL_refD1_gn_r1i1p1f1_196001-201812.nc
       self.fnParts = NT_fnParts( len=[6,7], fxLen=[6,],  unfLen=[7,], checkTLen=False, ixDomain=None, ixFreq=None )
     elif self.projectV.id in ['snapsi']:
@@ -380,7 +381,7 @@ class ProjectConfig(object):
        self.mipVocabTl = ['fixed','annual','monthly','daily','hourly','satdaily']
        self.mipVocabVgmap = {'fixed':'fx','annual':'yr','monthly':'mon','daily':'day','hourly':'hr','satdaily':'day'}
        self.mipVocabFnpat = 'CCMI1_%s'
-    elif self.projectV.id in ['snapsi','ccmi2022']:
+    elif self.projectV.id in ['snapsi','ramip','ccmi2022']:
        self.legacy = False
        self.mipVocabDir = op.join(CC_CONFIG_DIR, '%s/Tables/' % project)
        self.mipVocabTl = self.thiscfg.acvs['table_id'][1]
@@ -401,7 +402,7 @@ class ProjectConfig(object):
 # ## used in checkByVar
     if self.project == 'CORDEX':
       self.groupIndex = 7
-    elif self.project in ['CMIP5','CCMI','ccmi2022','snapsi','SPECS','__dummy']:
+    elif self.project in ['CMIP5','CCMI','ramip','ccmi2022','snapsi','SPECS','__dummy']:
       self.groupIndex = 1
     elif self.project in ['ESA-CCI']:
       self.fnvdict = { 'SSTskin':{'v':'sea_surface_temperature', 'sn':'sea_surface_skin_temperature'} }
@@ -491,7 +492,7 @@ class ProjectConfig(object):
                'modeling_realm':utils.ListControl( 'realm', ['atmos', 'ocean', 'land', 'landIce', 'seaIce', 'aerosol', 'atmosChem', 'ocnBgchem'] ), \
                'project_id':utils.ListControl( 'project_id', ['CCMI'] ) }
 
-    elif self.projectV.id in ['snapsi', 'ccmi2022']:
+    elif self.projectV.id in ['snapsi', 'ramip', 'ccmi2022']:
     
       vocabs = dict()
       for k,i in self.thiscfg.acvs.items():

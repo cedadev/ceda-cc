@@ -38,8 +38,9 @@ pcmip5.pcfg = config.ProjectConfig( "CMIP5" )
 pccmi.pcfg = config.ProjectConfig( "CCMI" )
 pccmi.pcfg = config.ProjectConfig( "ccmi2022" )
 pcci.pcfg = config.ProjectConfig( "ESA-CCI" )
+pramip.pcfg = config.ProjectConfig( "ramip" )
 
-cfgd = { 'CORDEX':p, 'SPECS':ps, 'CMIP5':pcmip5, 'CCMI':pccmi, 'ESA-CCI':pcci }
+cfgd = { 'CORDEX':p, 'SPECS':ps, 'CMIP5':pcmip5, 'CCMI':pccmi, 'ESA-CCI':pcci, 'ramip':pramip }
 
 fnlist = """CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_day_20060101-20101231.nc True
 CORDEX ps_AFR-44_ECMWF-ERAINT_evaluation_r1i1p1_SMHI-RCA4_x1_fx.nc True  fixed
@@ -50,6 +51,8 @@ CMIP5 pr_3hr_HadGEM2-ES_historical_r2i1p1_196001010130-196412302230.nc True
 CMIP5 pr_3hr_HadGEM2-ES_historical_r2i1p1.nc False
 CCMI clivi_monthly_CESM1-CAM4Chem_refC1sd_r1i1p1_197501-197912.nc True
 CCMI areacella_fixed_SOCOL3_refC1_r0i0p0.nc True
+ramip huss_day_CESM2_ssp370-126aer_r2i1p1f1_gn_20150101-20791231.nc True
+ramip hust_day_CESM2_ssp370-126aer_r2i1p1f1_gn_20150101-20791231.nc False
 SPECS orog_fx_EC-EARTH3_seaIceClimInit_S19930501_r0i0p0.nc True fixed
 SPECS tas_Amon_EC-EARTH3_seaIceClimInit_series2_S19930501_r1i1p1_199306-199306.nc False
 SPECS tas_Amon_EC-EARTH3_seaIceClimInit_S19930501_r1i1p1_199306-199306.nc True

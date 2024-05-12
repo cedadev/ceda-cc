@@ -71,22 +71,23 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  'CCMI':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'ccmi2022':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
                  'snapsi':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
-                 'ESA-CCI':'%(level)s/%(platform)s/%(sensor)s/%(variable)s/', \
+                 'ramip':'%(project)s/%(institute)s/%(source_id)s/%(experiment)s/%(variant_label)s/%(table)s/%(variable)s/%(grid_id)s/%(version)s/', \
+                 'esa-cci':'%(level)s/%(platform)s/%(sensor)s/%(variable)s/', \
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
 
-## Core DRS: list of vocab names
-## Path template: -- current version puts upper case in "project"
-## Dataset template:  
+## core drs: list of vocab names
+## path template: -- current version puts upper case in "project"
+## dataset template:  
 
 class recorder(object):
 
-  def __init__(self,project,fileName,type='map',dummy=False):
+  def __init__(self,project,filename,type='map',dummy=false):
     self.dummy = dummy
-    self.file = fileName
+    self.file = filename
     self.type = type
-    self.pathTmpl = '%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/'
-    self.pathTmpl = pathTmplDict.get(project,pathTmplDict['__def__'])
+    self.pathtmpl = '%(project)s/%(product)s/%(domain)s/%(institute)s/%(driving_model)s/%(experiment)s/%(ensemble)s/%(model)s/%(model_version)s/%(frequency)s/%(variable)s/files/%%(version)s/'
+    self.pathtmpl = pathtmpldict.get(project,pathtmpldict['__def__'])
     self.records = {}
     self.tidtupl = []
 
@@ -102,18 +103,18 @@ class recorder(object):
     else:
       self.sh.close()
 
-  def add(self,fpath,drs,safe=True):
-    assert self.type == 'map','Can only do map files at present'
+  def add(self,fpath,drs,safe=true):
+    assert self.type == 'map','can only do map files at present'
     assert type(drs) == type( {} ), '2nd user argument to method add should be a dictionary [%s]' % type(drs)
-    tpath = self.pathTmpl % drs
+    tpath = self.pathtmpl % drs
     if not self.dummy:
-      assert os.path.isfile( fpath ), 'File %s not found' % fpath
+      assert os.path.isfile( fpath ), 'file %s not found' % fpath
       fdate = time.ctime(os.path.getmtime(fpath))
       sz = os.stat(fpath).st_size
     else:
       fdate = "na"
       sz = 0
-    record = '%s | OK | %s | modTime = %s | target = %s ' % (fpath,sz,fdate,tpath)
+    record = '%s | ok | %s | modtime = %s | target = %s ' % (fpath,sz,fdate,tpath)
     fn = fpath.split( '/' )[-1]
     for k in ['creation_date','tracking_id']:
       if k in list(drs.keys()):
@@ -124,11 +125,11 @@ class recorder(object):
     self.records[fn] = record
   
   def modify(self,fn,msg):
-    assert fn in list(self.records.keys()),'Attempt to modify non-existent record %s, %s' % [fn,str(list(self.records.keys())[0:10])]
-    if self.records[fn].find( '| OK |') == -1:
-      ##print 'File %s already flagged with errors' % fn
+    assert fn in list(self.records.keys()),'attempt to modify non-existent record %s, %s' % [fn,str(list(self.records.keys())[0:10])]
+    if self.records[fn].find( '| ok |') == -1:
+      ##print 'file %s already flagged with errors' % fn
       return
-    s = self.records[fn].replace( '| OK |', '| %s |' % msg )
+    s = self.records[fn].replace( '| ok |', '| %s |' % msg )
     ##print '--> ',s
     self.records[fn] = s
 
@@ -141,258 +142,258 @@ class recorder(object):
     fnl = []
     for k in range(len(self.tidtupl)-1):
       if self.tidtupl[k][1] == self.tidtupl[k+1][1]:
-        print('Duplicate tracking_id: %s, %s:: %s' % (self.tidtupl[k][0],self.tidtupl[k+1][0],self.tidtupl[k][1]))
+        print('duplicate tracking_id: %s, %s:: %s' % (self.tidtupl[k][0],self.tidtupl[k+1][0],self.tidtupl[k][1]))
         nd += 1
         if len(fnl) == 0 or fnl[-1] != self.tidtupl[k][0]:
           fnl.append( self.tidtupl[k][0])
         fnl.append( self.tidtupl[k+1][0])
     if nd == 0:
-      print('No duplicate tracking ids found in %s files' % len(self.tidtupl))
+      print('no duplicate tracking ids found in %s files' % len(self.tidtupl))
     else:
       print('%s duplicate tracking ids' % nd)
       for f in fnl:
-        self.modify( f, 'ERROR: duplicate tid' )
+        self.modify( f, 'error: duplicate tid' )
 
-  def dumpAll(self,safe=True):
+  def dumpall(self,safe=true):
     keys = list(self.records.keys())
     keys.sort()
     for k in keys:
       self.dump( self.records[k], safe=safe )
 
-  def dump( self, record, safe=True ):
+  def dump( self, record, safe=true ):
     if safe:
       self.open()
     self.fh.write( record + '\n' )
     if safe:
       self.close()
 
-  def addErr(self,fpath,reason,safe=True):
+  def adderr(self,fpath,reason,safe=true):
     record = '%s | %s' % (fpath, reason)
     fn = fpath.split( '/' )[-1]
     self.records[fn] = record
 
-class Checker(object):
-  def __init__(self, pcfg, cls,reader,abortMessageCount=-1,experimental=False):
+class checker(object):
+  def __init__(self, pcfg, cls,reader,abortmessagecount=-1,experimental=false):
     self.info = dummy()
     self.info.pcfg = pcfg
-    self.info.fileIsFixed = None
-    self.info.abortMessageCount = abortMessageCount
+    self.info.fileisfixed = none
+    self.info.abortmessagecount = abortmessagecount
     self.info.experimental = experimental
-    self.calendar = 'None'
-    self.ncReader = reader
-    self.cfn = utils.checkFileName( parent=self.info,cls=cls)
-    self.cga = utils.checkGlobalAttributes( parent=self.info,cls=cls)
-    self.cgd = utils.checkStandardDims( parent=self.info,cls=cls)
-    self.cgg = utils.checkGrids( parent=self.info,cls=cls)
+    self.calendar = 'none'
+    self.ncreader = reader
+    self.cfn = utils.checkfilename( parent=self.info,cls=cls)
+    self.cga = utils.checkglobalattributes( parent=self.info,cls=cls)
+    self.cgd = utils.checkstandarddims( parent=self.info,cls=cls)
+    self.cgg = utils.checkgrids( parent=self.info,cls=cls)
     self.cls = cls
 
-    # Define vocabs based on project
-    ##self.vocabs = getVocabs(pcgf)
+    # define vocabs based on project
+    ##self.vocabs = getvocabs(pcgf)
     self.vocabs = pcfg.vocabs
 
-  def checkFile(self,fpath,log=None,attributeMappings=[], getdrs=True):
-    self.calendar = 'None'
+  def checkfile(self,fpath,log=none,attributemappings=[], getdrs=true):
+    self.calendar = 'none'
     self.info.log = log
 
     fn = fpath.split( '/' )[-1]
 
-    if attributeMappings != []:
-      self.ncReader.loadNc( fpath )
-      self.ncReader.applyMap( attributeMappings, self.cfn.globalAttributesInFn, log=log )
-      ncRed = True
-      thisFn = self.ncReader.fn
+    if attributemappings != []:
+      self.ncreader.loadnc( fpath )
+      self.ncreader.applymap( attributemappings, self.cfn.globalattributesinfn, log=log )
+      ncred = true
+      thisfn = self.ncreader.fn
     else:
-      ncRed = False
-      thisFn = fn
+      ncred = false
+      thisfn = fn
 
-    self.cfn.check( thisFn )
+    self.cfn.check( thisfn )
     if not self.cfn.completed:
-      self.completed = False
+      self.completed = false
       return
-    if not self.info.pcfg.projectV.id[:2] == '__':
+    if not self.info.pcfg.projectv.id[:2] == '__':
       if not os.path.isfile( fpath ):
-        print('File %s not found [2]' % fpath)
-        self.completed = False
+        print('file %s not found [2]' % fpath)
+        self.completed = false
         return
 
-    self.info.fnTimeTuples = self.cfn.fnTimeTuples
+    self.info.fntimetuples = self.cfn.fntimetuples
 
-    if not ncRed:
+    if not ncred:
       ##print fpath
-      self.ncReader.loadNc( fpath )
-    self.ga = self.ncReader.ga
-    self.va = self.ncReader.va
-    self.da = self.ncReader.da
+      self.ncreader.loadnc( fpath )
+    self.ga = self.ncreader.ga
+    self.va = self.ncreader.va
+    self.da = self.ncreader.da
 
-    if self.cfn.freq is not None:
-      vGroup = self.cfn.freq
+    if self.cfn.freq is not none:
+      vgroup = self.cfn.freq
     else:
-      vGroup = self.info.pcfg.mipVocabVgmap.get(self.cfn.group,self.cfn.group)
-    self.cga.check( self.ga, self.va, self.cfn.var, vGroup, self.vocabs, self.cfn.fnParts )
+      vgroup = self.info.pcfg.mipvocabvgmap.get(self.cfn.group,self.cfn.group)
+    self.cga.check( self.ga, self.va, self.cfn.var, vgroup, self.vocabs, self.cfn.fnparts )
     if not self.cga.completed:
-      self.completed = False
+      self.completed = false
       return
 
-    ##self.cgd.plevRequired = config.plevRequired
-    ##self.cgd.plevValues = config.plevValues
-    ##self.cgd.heightRequired = config.heightRequired
-    ##self.cgd.heightValues = config.heightValues
-    ##self.cgd.heightRange = config.heightRange
-    self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isInstantaneous, self.vocabs, self.cfn.fnParts )
+    ##self.cgd.plevrequired = config.plevrequired
+    ##self.cgd.plevvalues = config.plevvalues
+    ##self.cgd.heightrequired = config.heightrequired
+    ##self.cgd.heightvalues = config.heightvalues
+    ##self.cgd.heightrange = config.heightrange
+    self.cgd.check( self.cfn.var, self.cfn.freq, self.da, self.va, self.cga.isinstantaneous, self.vocabs, self.cfn.fnparts )
     self.calendar = self.cgd.calendar
     if not self.cgd.completed:
-      self.completed = False
+      self.completed = false
       return
 
-    if self.info.pcfg.doCheckGrids:
-      ##self.cgg.rotatedPoleGrids = config.rotatedPoleGrids
-      ##self.cgg.interpolatedGrids = config.interpolatedGrids
+    if self.info.pcfg.docheckgrids:
+      ##self.cgg.rotatedpolegrids = config.rotatedpolegrids
+      ##self.cgg.interpolatedgrids = config.interpolatedgrids
       self.cgg.check( self.cfn.var, self.cfn.domain, self.da, self.va )
     
       if not self.cgg.completed:
-        self.completed = False
+        self.completed = false
         return
-    self.completed = True
+    self.completed = true
     if getdrs:
-      self.drs = self.cga.getDrs()
-      self.drs['project'] = self.info.pcfg.projectV.id
-    self.errorCount = self.cfn.errorCount + self.cga.errorCount + self.cgd.errorCount + self.cgg.errorCount
+      self.drs = self.cga.getdrs()
+      self.drs['project'] = self.info.pcfg.projectv.id
+    self.errorcount = self.cfn.errorcount + self.cga.errorcount + self.cgd.errorcount + self.cgg.errorcount
 
-class Main(object):
-  """Main entry point for execution.
+class main(object):
+  """main entry point for execution.
 
-     All compliance tests are completed in the execution of the "main.run()" method. Test results are aggregated in a number of attributes.
+     all compliance tests are completed in the execution of the "main.run()" method. test results are aggregated in a number of attributes.
   """
   
 
-  def __init__(self,args=None,abortMessageCount=-1,monitorFileHandles = False,cmdl=None):
-    """Instantiation sets up logging, imports the package configuration, and creates a Checker instance.
-       A monitor to check on open file handles is created if required (this was needed to deal with accumulation of zombie file handles in an earlier version) """
+  def __init__(self,args=none,abortmessagecount=-1,monitorfilehandles = false,cmdl=none):
+    """instantiation sets up logging, imports the package configuration, and creates a checker instance.
+       a monitor to check on open file handles is created if required (this was needed to deal with accumulation of zombie file handles in an earlier version) """
 
-    self.logDict = {}
-    self.monitorFileHandles = monitorFileHandles
+    self.logdict = {}
+    self.monitorfilehandles = monitorfilehandles
     c4i = c4_init(args=args)
     self.c4i = c4i
-    c4i.logger.info( 'Starting batch -- number of file: %s' % (len(c4i.flist)) )
-    c4i.logger.info( 'Source: %s' % c4i.source )
-    if cmdl is not None:
-      c4i.logger.info( 'Command: %s' % cmdl )
+    c4i.logger.info( 'starting batch -- number of file: %s' % (len(c4i.flist)) )
+    c4i.logger.info( 'source: %s' % c4i.source )
+    if cmdl is not none:
+      c4i.logger.info( 'command: %s' % cmdl )
       
-    isDummy  = c4i.project[:2] == '__'
-    if (ncLib is None) and (not isDummy):
-       raise baseException( 'Cannot proceed with non-dummy [%s] project without a netcdf API' % (c4i.project) )
-    pcfg = config.ProjectConfig( c4i.project )
-    assert pcfg.projectV.v == -1, 'Cannot handle anything other than latest version at present'
-    self.ncReader = fileMetadata(dummy=isDummy, attributeMappingsLog=c4i.attributeMappingsLog,forceLib=c4i.forceNetcdfLib)
-    c4i.logger.info( 'Python netcdf: %s' % self.ncReader.ncLib )
-    self.cc = Checker(pcfg, c4i.project, self.ncReader,abortMessageCount=abortMessageCount, experimental=c4i.experimental)
-    self.rec = recorder( c4i.project, c4i.recordFile, dummy=isDummy )
-    self.ncLib = ncLib
+    isdummy  = c4i.project[:2] == '__'
+    if (nclib is none) and (not isdummy):
+       raise baseexception( 'cannot proceed with non-dummy [%s] project without a netcdf api' % (c4i.project) )
+    pcfg = config.projectconfig( c4i.project )
+    assert pcfg.projectv.v == -1, 'cannot handle anything other than latest version at present'
+    self.ncreader = filemetadata(dummy=isdummy, attributemappingslog=c4i.attributemappingslog,forcelib=c4i.forcenetcdflib)
+    c4i.logger.info( 'python netcdf: %s' % self.ncreader.nclib )
+    self.cc = checker(pcfg, c4i.project, self.ncreader,abortmessagecount=abortmessagecount, experimental=c4i.experimental)
+    self.rec = recorder( c4i.project, c4i.recordfile, dummy=isdummy )
+    self.nclib = nclib
 
-    # This list will record the drs dictionaries of all checked files for export to JSON
+    # this list will record the drs dictionaries of all checked files for export to json
 
-    if monitorFileHandles:
-      self.monitor = utils.SysMonitor()
+    if monitorfilehandles:
+      self.monitor = utils.sysmonitor()
     else:
-      self.monitor = None
+      self.monitor = none
 
     if len( c4i.errs ) > 0:
       for i in range(0,len( c4i.errs ), 2 ):
         c4i.logger.info( c4i.errs[i] )
   
-    self.cc.info.amapListDraft = []
+    self.cc.info.amaplistdraft = []
 
-  def run(self, printInfo=False):
+  def run(self, printinfo=false):
     drs_list = []
-    cal = None
+    cal = none
     ecount = 0
-    fileLogOpen = False
-    self.resList =  []
+    filelogopen = false
+    self.reslist =  []
     stdoutsum = 2000
-    cbv = utils.checkByVar( parent=self.cc.info,cls=self.c4i.project,monitor=self.monitor)
-    if self.c4i.project not in ['ESA-CCI']:
+    cbv = utils.checkbyvar( parent=self.cc.info,cls=self.c4i.project,monitor=self.monitor)
+    if self.c4i.project not in ['esa-cci']:
       cbv.impt( self.c4i.flist )
-      if printInfo:
+      if printinfo:
         print(cbv.info)
     npass = 0
     kf = 0
     for f in self.c4i.flist:
       kf += 1
-      rv = False
-      ec = None
-      if self.monitorFileHandles:
-        nofhStart = self.monitor.get_open_fds()
+      rv = false
+      ec = none
+      if self.monitorfilehandles:
+        nofhstart = self.monitor.get_open_fds()
       fn = f.split('/')[-1]
-      self.c4i.logger.info( 'Starting: %s' % fn )
+      self.c4i.logger.info( 'starting: %s' % fn )
       try:
   ### need to have a unique name, otherwise get mixing of logs despite close statement below.
   ### if duplicate file names are present, this will be recorded in the main log, tag appended to file level log name (not yet tested).
-        if self.c4i.logByFile:
-          fLogger = self.c4i.getFileLog( fn )
-          self.logDict[fn] = self.c4i.fileLogfile
-          self.c4i.logger.info( 'Log file: %s' % self.c4i.fileLogfile )
-          fileLogOpen = True
+        if self.c4i.logbyfile:
+          flogger = self.c4i.getfilelog( fn )
+          self.logdict[fn] = self.c4i.filelogfile
+          self.c4i.logger.info( 'log file: %s' % self.c4i.filelogfile )
+          filelogopen = true
         else:
-          fLogger = self.c4i.logger
+          flogger = self.c4i.logger
   
-        fLogger.info( 'Starting file %s' % fn )
+        flogger.info( 'starting file %s' % fn )
 ## default appending to myapp.log; mode='w' forces a new file (deleting old contents).
-        self.cc.checkFile( f, log=fLogger,attributeMappings=self.c4i.attributeMappings, getdrs=self.c4i.getdrs )
+        self.cc.checkfile( f, log=flogger,attributemappings=self.c4i.attributemappings, getdrs=self.c4i.getdrs )
 
         if self.cc.completed:
-          if cal not in (None, 'None') and self.cc.cgd.varGroup != "fx":
+          if cal not in (none, 'none') and self.cc.cgd.vargroup != "fx":
             if cal != self.cc.calendar:
-              cal_change_err_msg = 'Error: change in calendar attribute %s --> %s' % (cal, self.cc.calendar)
+              cal_change_err_msg = 'error: change in calendar attribute %s --> %s' % (cal, self.cc.calendar)
               self.c4i.logger.info(cal_change_err_msg)
-              fLogger.info(cal_change_err_msg)
-              self.cc.errorCount += 1
+              flogger.info(cal_change_err_msg)
+              self.cc.errorcount += 1
 
           cal = self.cc.calendar
-          ec = self.cc.errorCount
+          ec = self.cc.errorcount
         rv =  ec == 0
         if rv:
           npass += 1
-        self.resList.append( (rv,ec) )
+        self.reslist.append( (rv,ec) )
 
-        if self.c4i.logByFile:
+        if self.c4i.logbyfile:
           if self.cc.completed:
-            fLogger.info( 'Done -- error count %s' % self.cc.errorCount )
+            flogger.info( 'done -- error count %s' % self.cc.errorcount )
           else:
-            fLogger.info( 'Done -- checks not completed' )
-          self.c4i.closeFileLog( )
-          fileLogOpen = False
+            flogger.info( 'done -- checks not completed' )
+          self.c4i.closefilelog( )
+          filelogopen = false
 
         if self.cc.completed:
-          self.c4i.logger.info( 'Done -- error count %s' % self.cc.errorCount ) 
-          ecount += self.cc.errorCount
-          if self.cc.errorCount == 0:
+          self.c4i.logger.info( 'done -- error count %s' % self.cc.errorcount ) 
+          ecount += self.cc.errorcount
+          if self.cc.errorcount == 0:
             self.rec.add( f, self.cc.drs )
             drs_list.append({'path': f, 'drs': self.cc.drs})
           else:
-            self.rec.addErr( f, 'ERRORS FOUND | errorCount = %s' % self.cc.errorCount )
+            self.rec.adderr( f, 'errors found | errorcount = %s' % self.cc.errorcount )
         else:
           ecount += 20
-          self.c4i.logger.info( 'Done -- testing aborted because of severity of errors' )
-          self.rec.addErr( f, 'ERRORS FOUND AND CHECKS ABORTED' )
+          self.c4i.logger.info( 'done -- testing aborted because of severity of errors' )
+          self.rec.adderr( f, 'errors found and checks aborted' )
       except:
-        self.c4i.logger.error("Exception has occured" ,exc_info=1)
-        if fileLogOpen:
-          fLogger.error("C4.100.001: [exception]: FAILED:: Exception has occured" ,exc_info=1)
-          self.c4i.closeFileLog( )
-          fileLogOpen = False
-        self.rec.addErr( f, 'ERROR: Exception' )
-        if not self.c4i.holdExceptions:
+        self.c4i.logger.error("exception has occured" ,exc_info=1)
+        if filelogopen:
+          flogger.error("c4.100.001: [exception]: failed:: exception has occured" ,exc_info=1)
+          self.c4i.closefilelog( )
+          filelogopen = false
+        self.rec.adderr( f, 'error: exception' )
+        if not self.c4i.holdexceptions:
           raise
       if stdoutsum > 0 and kf%stdoutsum == 0:
          print('%s files checked; %s passed this round' % (kf,npass))
-      if self.monitorFileHandles:
-        nofhEnd = self.monitor.get_open_fds()
-        if nofhEnd > nofhStart:
-           print('Open file handles: %s --- %s' % (nofhStart, nofhEnd))
+      if self.monitorfilehandles:
+        nofhend = self.monitor.get_open_fds()
+        if nofhend > nofhstart:
+           print('open file handles: %s --- %s' % (nofhstart, nofhend))
   
     self.cc.info.log = self.c4i.logger
     
-    if self.c4i.project not in ['SPECS','CCMI','snapsi','ccmi2022', 'CMIP5','ESA-CCI']:
+    if self.c4i.project not in ['specs','ccmi','snapsi','ramip','ccmi2022', 'CMIP5','ESA-CCI']:
        cbv.c4i = self.c4i
        cbv.setLogDict( self.logDict )
        cbv.check( recorder=self.rec, calendar=self.cc.calendar)
