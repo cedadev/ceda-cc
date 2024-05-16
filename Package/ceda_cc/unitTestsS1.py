@@ -28,7 +28,8 @@ ps = dummy()
 pcmip5 = dummy()
 pccmi = dummy()
 pcci = dummy()
-for x in (p,ps,pcmip5,pccmi,pcci):
+pramip = dummy()
+for x in (p,ps,pcmip5,pccmi,pcci,pramip):
   x.log = log
   x.abortMessageCount = -1
   x.experimental = False

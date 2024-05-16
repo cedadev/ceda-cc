@@ -45,7 +45,7 @@ if sys.version_info >= (2,7):
   ## monitoting file handles uses a "subprocess" method which is not available in python 2.6
   testId = '#11.001'
   try:
-    m = Main( args=['-p', '__dummy'], monitorFileHandles=True )
+    m = Main( args=['-p', '__dummy'], monitorfilehandles=True )
     m.run()
     print('OK: [%s]: dummy run completed without exception' % testId)
   except:
