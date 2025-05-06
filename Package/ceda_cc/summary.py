@@ -289,7 +289,7 @@ Click on the code to see a list of the files in which each error is detected.
     oo.write( ptmpl % content )
     oo.close()
 
-def summarise_logs():
+def summariseLogs():
     summariser = LogSummariser()
     summariser.summarise()
 
@@ -298,4 +298,4 @@ if __name__ == '__main__':
   if len(sys.argv) > 1 and sys.argv[1] == '-h':
      print (__doc__)
   else:
-    summarise_logs()
+    summariseLogs()

@@ -71,7 +71,7 @@ pathTmplDict = { 'CORDEX':'%(project)s/%(product)s/%(domain)s/%(institute)s/%(dr
                  'CCMI':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(table)s/%(ensemble)s/files/%%(version)s/%(variable)s/', \
                  'ccmi2022':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
                  'snapsi':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
-                 'ramip':'%(project)s/%(institute)s/%(source_id)s/%(experiment)s/%(variant_label)s/%(table)s/%(variable)s/%(grid_id)s/%(version)s/', \
+                 'ramip':'%(mip_era)s/%(activity_id)s/%(institution_id)s/%(source_id)s/%(experiment_id)s/%(variant_label)s/%(table_id)s/%(realm)s/files/%%(version)s/%(variable)s/', \
                  'esa-cci':'%(level)s/%(platform)s/%(sensor)s/%(variable)s/', \
                  '__def__':'%(project)s/%(product)s/%(institute)s/%(model)s/%(experiment)s/%(frequency)s/%(realm)s/%(variable)s/%(ensemble)s/files/%%(version)s/', \
                }
@@ -228,7 +228,7 @@ class checker(object):
     if self.cfn.freq is not None:
       vgroup = self.cfn.freq
     else:
-      vgroup = self.info.pcfg.mipvocabvgmap.get(self.cfn.group,self.cfn.group)
+      vgroup = self.info.pcfg.mipVocabVgmap.get(self.cfn.group,self.cfn.group)
     self.cga.check( self.ga, self.va, self.cfn.var, vgroup, self.vocabs, self.cfn.fnParts )
     if not self.cga.completed:
       self.completed = False
