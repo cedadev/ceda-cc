@@ -25,4 +25,4 @@ jobs:
       if: github.ref == 'refs/head/master'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: Package/doc/build/html
+        publish_dir: /
