@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>ceda_cc.file_utils &#8212; ceda-cc 1.3.1+ documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ceda-cc 1.3.1+ documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ceda_cc.file_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Basic file utilities for reading NetCDF files.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard library imports</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+
+<span class="kn">from</span> <span class="nn">ceda_cc.xceptions</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># Third party imports</span>
+
+<span class="c1">#### netcdf --- currently support cdms2, python-netCDF4 and Scientific</span>
+
+<span class="n">l</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">iter_modules</span><span class="p">()</span>
+<span class="n">ll</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span>
+
+<span class="n">supportedNetcdf</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cdms2&quot;</span><span class="p">,</span> <span class="s2">&quot;netCDF4&quot;</span><span class="p">,</span> <span class="s2">&quot;Scientific&quot;</span><span class="p">,</span> <span class="s2">&quot;ncq3&quot;</span><span class="p">]</span>
+
+<span class="n">installedSupportedNetcdf</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1">##ll = []</span>
+
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">supportedNetcdf</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">installedSupportedNetcdf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;import </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span>
+                <span class="n">exec</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                <span class="n">installedSupportedNetcdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to install </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">installedSupportedNetcdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">installedSupportedNetcdf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">ncLib</span> <span class="o">=</span> <span class="n">installedSupportedNetcdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sd">&quot;&quot;&quot;No supported netcdf module found.</span>
+<span class="sd">         Supported modules are %s.</span>
+<span class="sd">         Attempting to run with experimental ncq3</span>
+<span class="sd">         Execution may fail, depending on options chosen.</span>
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">supportedNetcdf</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">ncLib</span> <span class="o">=</span> <span class="s2">&quot;ncq3&quot;</span>
+
+<span class="k">if</span> <span class="n">ncLib</span> <span class="o">==</span> <span class="s2">&quot;Scientific&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">Scientific.IO</span> <span class="kn">import</span> <span class="n">NetCDF</span> <span class="k">as</span> <span class="n">ncdf</span>
+
+<span class="c1">## end of netcdf import.</span>
+
+
+<span class="c1">## utility function to convert &quot;type&quot; to string and standardise terminology</span>
+<span class="k">def</span> <span class="nf">tstr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;real&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;integer&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;double&quot;</span><span class="p">:</span> <span class="s2">&quot;float64&quot;</span><span class="p">,</span>
+    <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GlobalAttributes"><a class="viewcode-back" href="../../index.html#ceda_cc.file_utils.GlobalAttributes">[docs]</a><span class="k">class</span> <span class="nc">GlobalAttributes</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary to contain the global attributes from the data file.</span>
+<span class="sd">    Each attribute simply stored with attribute name as key.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="VariableAttributes"><a class="viewcode-back" href="../../index.html#ceda_cc.file_utils.VariableAttributes">[docs]</a><span class="k">class</span> <span class="nc">VariableAttributes</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary to contain the variable attributes from the data file.</span>
+<span class="sd">    this[k] gives a dictionary of values for variable k. The dictionary for each variable has key/value pairs for each attribute, plus two special keys:</span>
+<span class="sd">    :_type [required]: indicating the data type (float32|int32|float64|...)</span>
+<span class="sd">    :_data [optional]: data values</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="DimensionAttributes"><a class="viewcode-back" href="../../index.html#ceda_cc.file_utils.DimensionAttributes">[docs]</a><span class="k">class</span> <span class="nc">DimensionAttributes</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary to contain the dimension attributes from the data file.</span>
+<span class="sd">    this[k] gives a dictionary of values for dimension k. The dictionary for each variable has key/value pairs for each attribute, plus two special keys:</span>
+<span class="sd">    :_type [required]: indicating the data type (float32|int32|float64|...)</span>
+<span class="sd">    :_data [required]: data values</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="fileMetadata"><a class="viewcode-back" href="../../index.html#ceda_cc.file_utils.fileMetadata">[docs]</a><span class="k">class</span> <span class="nc">fileMetadata</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads in the meta data from a netcdf file.</span>
+<span class="sd">    Four python NetCDF APIs are supported</span>
+<span class="sd">      cdms2</span>
+<span class="sd">      NetCDF4</span>
+<span class="sd">      Scientific</span>
+<span class="sd">      ctypes (libnetcdf.so)</span>
+
+
+<span class="sd">    Metadata, values of dimensions, and some data values for vertical coordinate bounds are read in (**hard coded dependency on vertical coordinate bounds names**) and stored in 3 dictionaries-</span>
+
+<span class="sd">    There is also an option to create a dummy dictionaries which can be used for unit testing of code.</span>
+
+<span class="sd">    A final method allows some substitutions to be inserted before completing tests. With complex files it may be that some errors are masking others, and several attempts may be needed to arrive at valid specifications. This approach allows provisional modifications to be tested quickly before updating files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">attributeMappingsLog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forceLib</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">readDx</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readDims</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;plev&quot;</span><span class="p">,</span> <span class="s2">&quot;plev_bnds&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">readDx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">readDx</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">readDims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span> <span class="o">=</span> <span class="n">attributeMappingsLog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forceLib</span> <span class="o">=</span> <span class="n">forceLib</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="n">ncLib</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;cccc_atMapLog.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forceLib</span> <span class="o">==</span> <span class="s2">&quot;ncq3&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ncq3</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncq3</span> <span class="o">=</span> <span class="n">ncq3</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="s2">&quot;ncq3&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">forceLib</span> <span class="o">==</span> <span class="s2">&quot;cdms2&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">cdms2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdms2</span> <span class="o">=</span> <span class="n">cdms2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="s2">&quot;cdms2&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">forceLib</span> <span class="o">==</span> <span class="s2">&quot;netCDF4&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">netCDF4</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">netCDF4</span> <span class="o">=</span> <span class="n">netCDF4</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="s2">&quot;netCDF4 [</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">__version__</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">forceLib</span> <span class="o">==</span> <span class="s2">&quot;Scientific&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">Scientific</span>
+            <span class="kn">from</span> <span class="nn">Scientific.IO</span> <span class="kn">import</span> <span class="n">NetCDF</span> <span class="k">as</span> <span class="n">ncdf</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncdf</span> <span class="o">=</span> <span class="n">ncdf</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="s2">&quot;Scientific [</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="n">Scientific</span><span class="o">.</span><span class="n">__version__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="n">ncLib</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">loadNc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fpath</span> <span class="o">=</span> <span class="n">fpath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fparts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ga</span> <span class="o">=</span> <span class="n">GlobalAttributes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">va</span> <span class="o">=</span> <span class="n">VariableAttributes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">da</span> <span class="o">=</span> <span class="n">DimensionAttributes</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">makeDummyFileImage</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">==</span> <span class="s2">&quot;cdms2&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">cdms2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdms2</span> <span class="o">=</span> <span class="n">cdms2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadNc__Cdms</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;netCDF4&quot;</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">netCDF4</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">netCDF4</span> <span class="o">=</span> <span class="n">netCDF4</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadNc__Netcdf4</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Scientific&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">Scientific.IO</span> <span class="kn">import</span> <span class="n">NetCDF</span> <span class="k">as</span> <span class="n">ncdf</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncdf</span> <span class="o">=</span> <span class="n">ncdf</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadNc__Scientific</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ncq3</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ncq3</span> <span class="o">=</span> <span class="n">ncq3</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadNc__ncq</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+            <span class="c1">##raise baseException( &#39;No supported netcdf module assigned&#39; )</span>
+
+    <span class="k">def</span> <span class="nf">loadNc__ncq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncq3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc0</span><span class="o">.</span><span class="n">getDigest</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ncq3</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncq3</span><span class="o">.</span><span class="n">Browse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc0</span><span class="o">.</span><span class="n">digest</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_gal</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_vdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">thisv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_vdict</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_ddict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_ll</span><span class="p">[</span><span class="n">thisv</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="n">thisv</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readDims</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">thisv</span><span class="o">.</span><span class="n">data</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">([]):</span>
+                        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">thisa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_ddict</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">_ll</span><span class="p">[</span><span class="n">thisv</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="n">thisv</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thisv</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">loadNc__Cdms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdms2</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1">## nasty fix to deal with fact that cdms2 does not read the &#39;id&#39; global attribute</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">thisid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thisid</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="c1">## returns a list for some scalar attributes.</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readDims</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">([]):</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="c1">### Note: returns a scalar if data has a scalar value.</span>
+            <span class="c1">## remove missing_value is None</span>
+            <span class="k">if</span> <span class="s2">&quot;missing_value&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;missing_value&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;missing_value&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1">###</span>
+    <span class="c1">### attributes in .__dict__ dictionary</span>
+    <span class="c1">### variables in .variables dicttionary</span>
+    <span class="c1">### dimension lengths in .dimensions</span>
+    <span class="c1">### &lt;variable&gt;.getValue() returns an numpy.ndarray</span>
+    <span class="c1">### data type in &lt;variable&gt;.getValue().dtype</span>
+    <span class="c1">### for scalar variables, &lt;variable&gt;.getValue().tolist() returns a scalar.</span>
+    <span class="c1">###</span>
+    <span class="k">def</span> <span class="nf">loadNc__Scientific</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncdf</span><span class="o">.</span><span class="n">NetCDFFile</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readDims</span><span class="p">:</span>
+                    <span class="c1">### Note: returns a scalar if data has a scalar value.</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">([]):</span>
+                        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;index (no data variable)&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">loadNc__Netcdf4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netCDF4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">([]),</span> <span class="nb">type</span><span class="p">(())]:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readDims</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">][:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">([]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">],</span>
+                        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">v</span><span class="p">][:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">([]):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">],</span>
+                    <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;index (no data variable)&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">makeDummyFileImage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="s2">&quot;ga</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fparts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;standard_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;s</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;cell_methods&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;time: point&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;float32&quot;</span>
+
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;float64&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+        <span class="n">dlist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="n">svals</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="n">dlist</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">svals</span><span class="p">(</span><span class="s2">&quot;standard_name&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">])</span>
+        <span class="n">svals</span><span class="p">(</span><span class="s2">&quot;long_name&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">])</span>
+        <span class="n">svals</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;degrees_north&quot;</span><span class="p">,</span> <span class="s2">&quot;degrees_east&quot;</span><span class="p">,</span> <span class="s2">&quot;days since 19590101&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="fileMetadata.applyMap"><a class="viewcode-back" href="../../index.html#ceda_cc.file_utils.fileMetadata.applyMap">[docs]</a>    <span class="k">def</span> <span class="nf">applyMap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapList</span><span class="p">,</span> <span class="n">globalAttributesInFn</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply some mappings to the metadata dictionaries, to transform values so that compliance tests will be on modified values&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mapList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;am001&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;@var&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                        <span class="n">this</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+                        <span class="n">apThis</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
+                            <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                                <span class="n">apThis</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">this</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+                                <span class="n">apThis</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                            <span class="n">targ</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">targ</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">apThis</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+                            <span class="c1">##print &#39;Setting %s:%s to %s&#39; % (m[1][0][1],targ,m[2][1])</span>
+                            <span class="n">thisval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]][</span><span class="n">targ</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                                <span class="s1">&#39;@var:&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                                <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpath</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">targ</span><span class="p">,</span> <span class="n">thisval</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;@ax&quot;</span><span class="p">:</span>
+                    <span class="c1">##print &#39;checking dimension &#39;,m[1][0][1], self.da.keys()</span>
+                    <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                        <span class="c1">##print &#39;checking dimension [2]&#39;,m[1][0][1]</span>
+                        <span class="n">this</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+                        <span class="n">apThis</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
+                            <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                                <span class="n">apThis</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">this</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+                                <span class="n">apThis</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                            <span class="n">targ</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">targ</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">apThis</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+                            <span class="c1">##print &#39;Setting %s:%s to %s&#39; % (m[1][0][1],targ,m[2][1])</span>
+                            <span class="n">thisval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]][</span><span class="n">targ</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                                <span class="s1">&#39;@ax:&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                                <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpath</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">targ</span><span class="p">,</span> <span class="n">thisval</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;@&quot;</span><span class="p">:</span>
+                    <span class="n">this</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ga</span>
+                    <span class="n">apThis</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="c1">## apply change where attribute absent only</span>
+                    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
+                        <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                            <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;__absent__&quot;</span><span class="p">:</span>
+                                <span class="n">apThis</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;__absent__&quot;</span> <span class="ow">or</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">this</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+                            <span class="n">apThis</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                        <span class="n">targ</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">targ</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">apThis</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="c1">##print &#39;Setting %s to %s&#39; % (targ,m[2][1])</span>
+                        <span class="n">thisval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">[</span><span class="n">targ</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                            <span class="s1">&#39;@:&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                            <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;ga&quot;</span><span class="p">,</span> <span class="n">targ</span><span class="p">,</span> <span class="n">thisval</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="p">)</span>
+                        <span class="c1">##</span>
+                        <span class="k">if</span> <span class="n">targ</span> <span class="ow">in</span> <span class="n">globalAttributesInFn</span><span class="p">:</span>
+                            <span class="n">i</span> <span class="o">=</span> <span class="n">globalAttributesInFn</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">targ</span><span class="p">)</span>
+                            <span class="n">thisval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fparts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">fparts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fparts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.nc&quot;</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">atMapLog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                                <span class="s1">&#39;@fn:&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;,&quot;</span><span class="si">%s</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpath</span><span class="p">,</span> <span class="n">thisval</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Token </span><span class="si">%s</span><span class="s2"> not recognised&quot;</span> <span class="o">%</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ceda-cc 1.3.1+ documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015-2025, Centre of Environmental Data Analysis,Scientific and Technical Facilities Council (STFC),UK Research and Innovation (UKRI). BSD 2-Clause License. All rights reserved..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

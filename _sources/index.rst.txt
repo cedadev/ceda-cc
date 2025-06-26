@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 The ceda-cc file compliance checker: technical documentation 
-===================================
+=============================================================
 
 .. toctree::
    :maxdepth: 2
@@ -25,48 +25,48 @@ ceda-cc --sum <log file directory>   [..]      create an overview of results
 ceda-cc --copy-config  <target diectory> [..]  copy configuration files to a new directory
 =============================================  ==========================================================
 
-.. automodule:: ccinit
+.. automodule:: ceda_cc.ccinit
    :members:
 
 c4
 ===============
 
-.. automodule:: c4
+.. automodule:: ceda_cc.c4
    :members:
 
 
 c4_run
 ===============
 
-.. automodule:: c4_run
+.. automodule:: ceda_cc.c4_run
    :members:
 
 
 config_c4
 ===============
 
-.. automodule:: ceda_cc_config.config_c4
+.. automodule:: ceda_cc.ceda_cc_config.config_c4
    :members:
 
 
 utils_c4
 ===============
 
-.. automodule:: utils_c4
+.. automodule:: ceda_cc.utils_c4
    :show-inheritance:
    :members:
 
 file_utils
 ===============
 
-.. automodule:: file_utils
+.. automodule:: ceda_cc.file_utils
    :show-inheritance:
    :members:
 
 xceptions
 =========
 
-.. automodule:: xceptions
+.. automodule:: ceda_cc.xceptions
    :members:
 
 Indices and tables
