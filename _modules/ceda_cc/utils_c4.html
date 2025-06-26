@@ -1,58 +1,92 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ceda_cc.utils_c4 &mdash; ceda-cc 1.3.1+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>ceda_cc.utils_c4 &#8212; ceda-cc 1.3.1+ documentation</title>
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
-    
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=2b5c5e91"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">ceda-cc 1.3.1+ documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ceda-cc
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ceda-cc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ceda_cc.utils_c4</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <h1>Source code for ceda_cc.utils_c4</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;A set of classes running checks and providing utilities to support checks&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">ctypes</span><span class="o">,</span> <span class="nn">collections</span><span class="o">,</span> <span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span><span class="o">,</span><span class="w"> </span><span class="nn">ctypes</span><span class="o">,</span><span class="w"> </span><span class="nn">collections</span><span class="o">,</span><span class="w"> </span><span class="nn">importlib</span>
 
-<span class="k">def</span> <span class="nf">strmm3</span><span class="p">(</span> <span class="n">mm</span> <span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">strmm3</span><span class="p">(</span> <span class="n">mm</span> <span class="p">):</span>
   <span class="k">return</span> <span class="s1">&#39;; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=&quot;</span><span class="si">%s</span><span class="s1">&quot; [correct: &quot;</span><span class="si">%s</span><span class="s1">&quot;]&#39;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mm</span><span class="p">]</span> <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">ceda_cc.xceptions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.xceptions</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">re_dlr01</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span> <span class="s1">&#39;MERGED-DLR_1M-[0-9]</span><span class="si">{8}</span><span class="s1">-fv0100.nc$&#39;</span> <span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">timeInt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">timeInt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
    <span class="n">vc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gregorian&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;standard&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;noleap&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;365_day&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;all_leap&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;366_day&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;360_day&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;julian&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">}</span>
    <span class="n">mnmx</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="mi">365</span><span class="p">,</span><span class="mi">366</span><span class="p">),(</span><span class="mi">365</span><span class="p">,</span><span class="mi">365</span><span class="p">),(</span><span class="mi">366</span><span class="p">,</span><span class="mi">366</span><span class="p">),(</span><span class="mi">360</span><span class="p">,</span><span class="mi">360</span><span class="p">)</span> <span class="p">]</span>
    <span class="n">mmnmmx</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">),(</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">),(</span><span class="mi">29</span><span class="p">,</span><span class="mi">31</span><span class="p">),(</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span> <span class="p">]</span>
-   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cal</span><span class="o">=</span><span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">,</span><span class="n">dpymn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpymx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dpmmn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dpmmx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">):</span>
+   <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cal</span><span class="o">=</span><span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">,</span><span class="n">dpymn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpymx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dpmmn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dpmmx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">):</span>
      <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
      <span class="k">if</span> <span class="n">cal</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vc</span> <span class="ow">or</span> <span class="n">cal</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
        <span class="k">assert</span> <span class="n">dpymx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dpymn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;If standard calendar is not use, dpymn and dpymx must be set&#39;</span>
@@ -69,14 +103,14 @@
      <span class="bp">self</span><span class="o">.</span><span class="n">map</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;yr&#39;</span><span class="p">:</span><span class="s1">&#39;P1Y&#39;</span><span class="p">,</span><span class="s1">&#39;monClim&#39;</span><span class="p">:</span><span class="s1">&#39;P1M&#39;</span><span class="p">,</span><span class="s1">&#39;mon&#39;</span><span class="p">:</span><span class="s1">&#39;P1M&#39;</span><span class="p">,</span><span class="s1">&#39;day&#39;</span><span class="p">:</span><span class="s1">&#39;P1D&#39;</span><span class="p">,</span><span class="s1">&#39;6hr&#39;</span><span class="p">:</span><span class="s1">&#39;P6H&#39;</span><span class="p">,</span><span class="s1">&#39;3hr&#39;</span><span class="p">:</span><span class="s1">&#39;P3H&#39;</span><span class="p">,</span> <span class="s1">&#39;1hr&#39;</span><span class="p">:</span><span class="s1">&#39;P1H&#39;</span><span class="p">}</span>
      <span class="bp">self</span><span class="o">.</span><span class="n">nd</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="s1">&#39;y&#39;</span> <span class="p">}</span>
 
-   <span class="k">def</span> <span class="nf">setUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u</span><span class="p">):</span>
+   <span class="k">def</span><span class="w"> </span><span class="nf">setUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u</span><span class="p">):</span>
      <span class="k">if</span> <span class="n">u</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;days&#39;</span><span class="p">,</span><span class="s1">&#39;months&#39;</span><span class="p">,</span><span class="s1">&#39;years&#39;</span><span class="p">]:</span>
          <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time unit </span><span class="si">%s</span><span class="s1"> not supported&#39;</span> <span class="o">%</span> <span class="n">u</span><span class="p">)</span>
          <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="kc">None</span>
      <span class="k">else</span><span class="p">:</span>
          <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">u</span>
 
-   <span class="k">def</span> <span class="nf">chk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">f</span><span class="p">):</span>
+   <span class="k">def</span><span class="w"> </span><span class="nf">chk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">u</span><span class="p">,</span><span class="n">f</span><span class="p">):</span>
       <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">:</span>
          <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;No frequency check available for f = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">f</span> <span class="p">)</span>
       <span class="k">if</span> <span class="n">u</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;days&#39;</span><span class="p">]:</span>
@@ -94,9 +128,9 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">v</span> <span class="o">&gt;</span> <span class="mf">0.125</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.125</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
       
 
-<span class="k">class</span> <span class="nc">reportSection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">reportSection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">id</span><span class="p">,</span><span class="bp">cls</span><span class="p">,</span><span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">id</span><span class="p">,</span><span class="bp">cls</span><span class="p">,</span><span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">cls</span> <span class="o">=</span> <span class="bp">cls</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
@@ -108,24 +142,24 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">fail</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">auditDone</span> <span class="o">=</span> <span class="kc">True</span>
 
-  <span class="k">def</span> <span class="nf">addSubSection</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">addSubSection</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">,</span> <span class="s1">&#39;Attempt to add sub-section to closed report section&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">subsections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">reportSection</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="p">)</span>  <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">auditDone</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsections</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-  <span class="k">def</span> <span class="nf">addRecord</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">msg</span> <span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">addRecord</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">msg</span> <span class="p">):</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">,</span> <span class="s1">&#39;Attempt to add record to closed report section&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">auditDone</span> <span class="o">=</span> <span class="kc">False</span>
 
-  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
 
-  <span class="k">def</span> <span class="nf">reopen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">reopen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">False</span>
 
-  <span class="k">def</span> <span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auditDone</span><span class="p">:</span>
       <span class="k">return</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
@@ -142,11 +176,11 @@
       <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fail</span> <span class="o">+=</span> <span class="mi">1</span>
 
-<span class="k">class</span> <span class="nc">checkSeq</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">checkSeq</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">pass</span>
 
-  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
     <span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">delt</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dmx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
@@ -155,11 +189,11 @@
 
 <span class="n">cs</span> <span class="o">=</span> <span class="n">checkSeq</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CheckBase"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase">[docs]</a><span class="k">class</span> <span class="nc">CheckBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Base class for checks, containing a set of standard methods for managing operation of checks and logging of results&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CheckBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Base class for checks, containing a set of standard methods for managing operation of checks and logging of results&quot;&quot;&quot;</span>
 
-  <span class="k">def</span>  <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="s2">&quot;CORDEX&quot;</span><span class="p">,</span><span class="n">reportPass</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">monitor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Creat class instance: set defaults, link arguments to instance, create a range of compiled regular expressions&quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w">  </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="s2">&quot;CORDEX&quot;</span><span class="p">,</span><span class="n">reportPass</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">monitor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creat class instance: set defaults, link arguments to instance, create a range of compiled regular expressions&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">cls</span> <span class="o">=</span> <span class="bp">cls</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="bp">cls</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">abortMessageCount</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">abortMessageCount</span>
@@ -169,9 +203,9 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">passCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">missingValue</span> <span class="o">=</span> <span class="mf">1.e20</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">missingValue</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_float</span><span class="p">(</span><span class="mf">1.00000002004e+20</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
-    <span class="kn">from</span> <span class="nn">ceda_cc.file_utils</span> <span class="kn">import</span> <span class="n">ncLib</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ncLib</span>
     <span class="k">if</span> <span class="n">ncLib</span> <span class="o">==</span> <span class="s1">&#39;netCDF4&#39;</span><span class="p">:</span>
-      <span class="kn">import</span> <span class="nn">numpy</span>
+      <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">missingValue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missingValue</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">reportPass</span><span class="o">=</span><span class="n">reportPass</span>
@@ -197,12 +231,12 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;amapListDraft&#39;</span> <span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">amapListDraft</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="CheckBase.isInt"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.isInt">[docs]</a>  <span class="k">def</span> <span class="nf">isInt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check that a string is a representation of an integer&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase.isInt"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.isInt">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">isInt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that a string is a representation of an integer&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">re_isInt</span><span class="o">.</span><span class="n">match</span><span class="p">(</span> <span class="n">x</span> <span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="CheckBase.logMessage"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.logMessage">[docs]</a>  <span class="k">def</span> <span class="nf">logMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Log messages and count messages&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase.logMessage"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.logMessage">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">logMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log messages and count messages&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">messageCount</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">abortMessageCount</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">abortMessageCount</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">messageCount</span><span class="p">,</span> <span class="s1">&#39;Raising error [TESTX01], perhaps for testing&#39;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -228,34 +262,34 @@
          <span class="k">if</span> <span class="n">nofh9</span> <span class="o">&gt;</span> <span class="n">nofh0</span><span class="p">:</span>
            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Leaking file handles [1]: </span><span class="si">%s</span><span class="s1"> --- </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nofh0</span><span class="p">,</span> <span class="n">nofh9</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="CheckBase.log_exception"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.log_exception">[docs]</a>  <span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Logging of exceptions -- putting trace information in log files&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase.log_exception"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.log_exception">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">log_exception</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Logging of exceptions -- putting trace information in log files&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Exception has occured&quot;</span> <span class="p">,</span><span class="n">exc_info</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CheckBase.log_error"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.log_error">[docs]</a>  <span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">msg</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create an error log message and call logMessage; count errors;&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase.log_error"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.log_error">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">msg</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an error log message and call logMessage; count errors;&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lastError</span> <span class="o">=</span> <span class="n">msg</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">: FAILED:: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">getCheckId</span><span class="p">(),</span><span class="n">msg</span><span class="p">),</span> <span class="n">error</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span></div>
 
-<div class="viewcode-block" id="CheckBase.log_pass"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.log_pass">[docs]</a>  <span class="k">def</span> <span class="nf">log_pass</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a pass log message and call logMessage; count passes;&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase.log_pass"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.log_pass">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">log_pass</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a pass log message and call logMessage; count passes;&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">passCount</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reportPass</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span>  <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">: OK&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">getCheckId</span><span class="p">())</span> <span class="p">)</span></div>
 
-  <span class="k">def</span> <span class="nf">log_abort</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">log_abort</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span>   <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">: ABORTED:: Errors too severe to complete further checks in this module&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="s1">&#39;xxx&#39;</span><span class="p">)</span> <span class="p">)</span>
     <span class="k">raise</span> <span class="n">abortChecks</span>
 
-  <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">getCheckId</span><span class="p">())</span>
 
-  <span class="k">def</span> <span class="nf">getCheckId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">getCheckId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span> <span class="s1">&#39;x&#39;</span> <span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span>
     <span class="k">else</span><span class="p">:</span>
@@ -264,8 +298,8 @@
       <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<div class="viewcode-block" id="CheckBase.test"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.test">[docs]</a>  <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">res</span><span class="p">,</span><span class="n">msg</span><span class="p">,</span><span class="n">abort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">part</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">appendLogfile</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">)):</span>
-    <span class="sd">&quot;&quot;&quot;Handle test results. </span>
+<div class="viewcode-block" id="CheckBase.test"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.test">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">res</span><span class="p">,</span><span class="n">msg</span><span class="p">,</span><span class="n">abort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">part</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">appendLogfile</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle test results. </span>
 <span class="sd">      :param res: [True/False] result of test;</span>
 <span class="sd">      :param msg: Message describing the test;</span>
 <span class="sd">      :param abort: {optional} Set True if checks should be aborted when test fails;</span>
@@ -283,7 +317,7 @@
     <span class="k">return</span> <span class="n">res</span></div>
 
 
-  <span class="k">def</span> <span class="nf">__initPlugs__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">__initPlugs__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
       <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
       <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugins</span><span class="p">:</span>
@@ -292,8 +326,8 @@
         <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span> <span class="n">l</span> <span class="p">)</span>
 
-<div class="viewcode-block" id="CheckBase.runChecks"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.runChecks">[docs]</a>  <span class="k">def</span> <span class="nf">runChecks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Run all the checks registered in this instance (in self.checks) and handle exceptions&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CheckBase.runChecks"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.CheckBase.runChecks">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">runChecks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run all the checks registered in this instance (in self.checks) and handle exceptions&quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
       <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">checks</span><span class="p">:</span>
@@ -308,11 +342,11 @@
       <span class="bp">self</span><span class="o">.</span><span class="n">log_exception</span><span class="p">(</span> <span class="s1">&#39;Exception caught by runChecks&#39;</span> <span class="p">)</span>
       <span class="k">raise</span> <span class="n">loggedException</span></div></div>
     
-<div class="viewcode-block" id="checkFileName"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName">[docs]</a><span class="k">class</span> <span class="nc">checkFileName</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).</span>
+<div class="viewcode-block" id="checkFileName"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">checkFileName</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).</span>
 <span class="sd">Inherits :class:`CheckBase` class. Checks are run by the :meth:`check` method.&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;C4.001&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="o">=</span> <span class="s1">&#39;unset&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">isFixed</span> <span class="o">=</span> <span class="kc">False</span>
@@ -323,8 +357,8 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">fnTimeTuples</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="c1">####</span>
 
-<div class="viewcode-block" id="checkFileName.check"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName.check">[docs]</a>  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Initiate checks: manage arguments and then call *runChecks* (inherited from CheckBase class).</span>
+<div class="viewcode-block" id="checkFileName.check"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName.check">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initiate checks: manage arguments and then call *runChecks* (inherited from CheckBase class).</span>
 <span class="sd">  Arguments: fn: file name: the file name to be checked.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)],</span> <span class="s1">&#39;1st argument to &quot;check&quot; method of checkGrids shound be a string variable name (not </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
@@ -334,8 +368,8 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">runChecks</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">fnDict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnDict</span></div>
 <span class="c1">###</span>
-<div class="viewcode-block" id="checkFileName.do_check_fn"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName.do_check_fn">[docs]</a>  <span class="k">def</span> <span class="nf">do_check_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Basic file name checks:</span>
+<div class="viewcode-block" id="checkFileName.do_check_fn"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName.do_check_fn">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">do_check_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Basic file name checks:</span>
 <span class="sd">       (1) Check suffix;</span>
 <span class="sd">       (1b) [for ESA-CCI files] check presence of &quot;ESACCI&quot; and identify file naming convention;</span>
 <span class="sd">       (2) Split file name into components and check number of such components;</span>
@@ -495,8 +529,8 @@
       <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_pass</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="checkFileName.do_check_fnextra"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName.do_check_fnextra">[docs]</a>  <span class="k">def</span> <span class="nf">do_check_fnextra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether file name components match constraints -- but only if those constraints are not implicitly verified through comparison with global attributes in later checks&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkFileName.do_check_fnextra"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkFileName.do_check_fnextra">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">do_check_fnextra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether file name components match constraints -- but only if those constraints are not implicitly verified through comparison with global attributes in later checks&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;004&#39;</span><span class="p">,</span><span class="s1">&#39;file_name_extra&#39;</span> <span class="p">)</span>
     <span class="n">vocabs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">vocabs</span>
     <span class="n">m</span> <span class="o">=</span> <span class="p">[]</span>
@@ -512,17 +546,17 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>  <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;File name components do not match constraints: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="checkGlobalAttributes"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkGlobalAttributes">[docs]</a><span class="k">class</span> <span class="nc">checkGlobalAttributes</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Check global and variable attributes, using tables of valid values&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkGlobalAttributes"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkGlobalAttributes">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">checkGlobalAttributes</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Check global and variable attributes, using tables of valid values&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;C4.002&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="o">=</span> <span class="s1">&#39;unset&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;Initialised&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checks</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">do_check_ga</span><span class="p">,)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fileId</span> <span class="o">=</span> <span class="kc">None</span>
 
-  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">globalAts</span><span class="p">,</span> <span class="n">varAts</span><span class="p">,</span><span class="n">varName</span><span class="p">,</span><span class="n">varGroup</span><span class="p">,</span> <span class="n">vocabs</span><span class="p">,</span> <span class="n">fnParts</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">globalAts</span><span class="p">,</span> <span class="n">varAts</span><span class="p">,</span><span class="n">varName</span><span class="p">,</span><span class="n">varGroup</span><span class="p">,</span> <span class="n">vocabs</span><span class="p">,</span> <span class="n">fnParts</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)],</span> <span class="s1">&#39;1st argument to &quot;check&quot; method of checkGrids shound be a string variable name (not </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">varName</span>
@@ -533,7 +567,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">fnParts</span> <span class="o">=</span> <span class="n">fnParts</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">runChecks</span><span class="p">()</span>
 
-  <span class="k">def</span> <span class="nf">getId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">getId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fileId</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalAts</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
 <span class="c1">##</span>
@@ -552,7 +586,7 @@
       <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fileId</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.:</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">globalAts</span><span class="p">[</span><span class="s1">&#39;naming_authority&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">globalAts</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">globalAts</span><span class="p">[</span><span class="s1">&#39;time_coverage_duration&#39;</span><span class="p">])</span>
 
-  <span class="k">def</span> <span class="nf">getDrs</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">getDrs</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">,</span> <span class="s1">&#39;method getDrs should not be called if checks have not been completed successfully&#39;</span>
     <span class="n">ee</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">drsDefaults</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;convention_version&#39;</span><span class="p">:</span><span class="s1">&#39;n/a&#39;</span><span class="p">}</span>
@@ -603,7 +637,7 @@
 
     <span class="k">return</span> <span class="n">ee</span>
 
-  <span class="k">def</span> <span class="nf">do_check_ga</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">do_check_ga</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">varName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span>
     <span class="n">globalAts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalAts</span>
     <span class="n">varAts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">varAts</span>
@@ -830,10 +864,10 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">True</span></div>
        
-<div class="viewcode-block" id="checkStandardDims"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkStandardDims">[docs]</a><span class="k">class</span> <span class="nc">checkStandardDims</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Check the dimensions which are defined in the specifications&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkStandardDims"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkStandardDims">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">checkStandardDims</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Check the dimensions which are defined in the specifications&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;C4.003&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="o">=</span> <span class="s1">&#39;unset&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;Initialised&#39;</span>
@@ -845,8 +879,8 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">heightValues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">heightValues</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">heightRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">heightRange</span>
 
-<div class="viewcode-block" id="checkStandardDims.check"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkStandardDims.check">[docs]</a>  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">varName</span><span class="p">,</span><span class="n">varGroup</span><span class="p">,</span> <span class="n">da</span><span class="p">,</span> <span class="n">va</span><span class="p">,</span> <span class="n">isInsta</span><span class="p">,</span><span class="n">vocabs</span><span class="p">,</span><span class="n">fnParts</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;API called from check manager *run_c4* for each file&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkStandardDims.check"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkStandardDims.check">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">varName</span><span class="p">,</span><span class="n">varGroup</span><span class="p">,</span> <span class="n">da</span><span class="p">,</span> <span class="n">va</span><span class="p">,</span> <span class="n">isInsta</span><span class="p">,</span><span class="n">vocabs</span><span class="p">,</span><span class="n">fnParts</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API called from check manager *run_c4* for each file&quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)],</span> <span class="s1">&#39;1st argument to &quot;check&quot; method of checkGrids shound be a string variable name (not </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span>
@@ -859,7 +893,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">vocabs</span> <span class="o">=</span> <span class="n">vocabs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">runChecks</span><span class="p">()</span></div>
 
-  <span class="k">def</span> <span class="nf">check_timeVals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">check_timeVals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">da</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span>
     <span class="n">va</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
@@ -895,7 +929,7 @@
           <span class="c1">##print da[&#39;time&#39;][&#39;_data&#39;][0], da[&#39;time&#39;][&#39;_data&#39;][-1],self.parent.fnTimeTuples</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">True</span>
 
-  <span class="k">def</span> <span class="nf">do_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">do_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">varName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span>
     <span class="n">varGroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">varGroup</span>
     <span class="n">da</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span>
@@ -982,15 +1016,15 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="checkGrids"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkGrids">[docs]</a><span class="k">class</span> <span class="nc">checkGrids</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
+<div class="viewcode-block" id="checkGrids"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkGrids">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">checkGrids</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
 
-  <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;C4.004&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="o">=</span> <span class="s1">&#39;unset&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;Initialised&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checks</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">do_check_rp</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">do_check_intd</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">varName</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">da</span><span class="p">,</span> <span class="n">va</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">varName</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">da</span><span class="p">,</span> <span class="n">va</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span><span class="nb">type</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)],</span> <span class="s1">&#39;1st argument to &quot;check&quot; method of checkGrids shound be a string variable name (not </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">varName</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">varName</span>
@@ -1004,7 +1038,7 @@
     <span class="c1">##self.do_check_rp()</span>
     <span class="c1">##self.do_check_intd()</span>
 
-  <span class="k">def</span> <span class="nf">do_check_rp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">do_check_rp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">varName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span>
     <span class="n">da</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span>
@@ -1053,7 +1087,7 @@
       <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_pass</span><span class="p">()</span>
 
-  <span class="k">def</span> <span class="nf">do_check_intd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">do_check_intd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">varName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span>
     <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span>
     <span class="n">da</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span>
@@ -1109,10 +1143,10 @@
       <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_pass</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="checkByVar"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar">[docs]</a><span class="k">class</span> <span class="nc">checkByVar</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Run some checks on groups of files with a common variable. Checks for continuity of time in group&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkByVar"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">checkByVar</span><span class="p">(</span><span class="n">CheckBase</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Run some checks on groups of files with a common variable. Checks for continuity of time in group&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fileNameSeparator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fileNameSeparator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;C5.001&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">checkId</span> <span class="o">=</span> <span class="s1">&#39;unset&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;Initialised&#39;</span>
@@ -1121,11 +1155,11 @@
     <span class="c1">##self.checks = tuple()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fnsep</span> <span class="o">=</span> <span class="n">fileNameSeparator</span>
 
-  <span class="k">def</span> <span class="nf">setLogDict</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span><span class="n">fLogDict</span> <span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">setLogDict</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span><span class="n">fLogDict</span> <span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fLogDict</span> <span class="o">=</span> <span class="n">fLogDict</span>
 
-<div class="viewcode-block" id="checkByVar.impt"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar.impt">[docs]</a>  <span class="k">def</span> <span class="nf">impt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flist</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Scan a list of files and identify groups which a common variable and extract time ranges into a dictionary of lists, keyed on group identifiers.</span>
+<div class="viewcode-block" id="checkByVar.impt"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar.impt">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">impt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flist</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scan a list of files and identify groups which a common variable and extract time ranges into a dictionary of lists, keyed on group identifiers.</span>
 <span class="sd">     :param flist: List of file names.</span>
 
 <span class="sd"> This routine has rather obscure nested logical tests used to identify the group to which a file belongs. The complexity arises from the fact that the identification of the files that should form a continuous time series from the file names alone is not a standardised feature of the file names.&quot;&quot;&quot;</span>
@@ -1189,7 +1223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">ee</span> <span class="o">=</span> <span class="n">ee</span></div>
 
-  <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recorder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">norun</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recorder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">norun</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">recorder</span><span class="o">=</span><span class="n">recorder</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">calendar</span><span class="o">=</span><span class="n">calendar</span>
@@ -1208,8 +1242,8 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">norun</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">runChecks</span><span class="p">()</span>
 
-<div class="viewcode-block" id="checkByVar.checkTrange"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar.checkTrange">[docs]</a>  <span class="k">def</span> <span class="nf">checkTrange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Manage time range checks: loop over groups of files identified by :meth:`impt`&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkByVar.checkTrange"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar.checkTrange">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">checkTrange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage time range checks: loop over groups of files identified by :meth:`impt`&quot;&quot;&quot;</span>
     <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ee</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
@@ -1219,8 +1253,8 @@
         <span class="k">for</span> <span class="n">k2</span> <span class="ow">in</span> <span class="n">keys2</span><span class="p">:</span>
           <span class="bp">self</span><span class="o">.</span><span class="n">checkThisTrange</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ee</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">k2</span><span class="p">],</span> <span class="n">k</span> <span class="p">)</span></div>
 
-<div class="viewcode-block" id="checkByVar.checkThisTrange"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar.checkThisTrange">[docs]</a>  <span class="k">def</span> <span class="nf">checkThisTrange</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">tt</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check consistency across a list of time ranges&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="checkByVar.checkThisTrange"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.checkByVar.checkThisTrange">[docs]</a>  <span class="k">def</span><span class="w"> </span><span class="nf">checkThisTrange</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">tt</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check consistency across a list of time ranges&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">group</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;1hr&#39;</span><span class="p">,</span><span class="s1">&#39;3hr&#39;</span><span class="p">,</span><span class="s1">&#39;6hr&#39;</span><span class="p">]:</span>
        <span class="n">kg</span> <span class="o">=</span> <span class="s1">&#39;subd&#39;</span>
@@ -1255,18 +1289,18 @@
 
 
 <span class="c1">### http://stackoverflow.com/questions/2023608/check-what-files-are-open-in-python</span>
-<span class="k">class</span> <span class="nc">SysMonitor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SysMonitor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fhCountMax</span> <span class="o">=</span> <span class="mi">0</span>
 
-  <span class="k">def</span> <span class="nf">get_open_fds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_open_fds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    return the number of open file descriptors for current process</span>
 <span class="sd">    .. warning: will only work on UNIX-like os-es.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="kn">import</span> <span class="nn">subprocess</span>
-    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
     <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">procs</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span> 
@@ -1281,48 +1315,38 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">fhCountMax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fhCountMax</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ps</span><span class="p">)</span> <span class="p">)</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ps</span> <span class="p">)</span>
 
-<div class="viewcode-block" id="maybe_plural"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.maybe_plural">[docs]</a><span class="k">def</span> <span class="nf">maybe_plural</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="maybe_plural"><a class="viewcode-back" href="../../index.html#ceda_cc.utils_c4.maybe_plural">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">maybe_plural</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="s2">&quot;Return ``word`` if n is 1, and plural of ``word`` if n is not.&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">word</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">s&quot;</span> <span class="o">%</span> <span class="n">word</span></div>
 </pre></div>
 
+           </div>
           </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015-2025, Centre of Environmental Data Analysis,Scientific and Technical Facilities Council (STFC),UK Research and Innovation (UKRI). BSD 2-Clause License. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">ceda-cc 1.3.1+ documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2015-2025, Centre of Environmental Data Analysis,Scientific and Technical Facilities Council (STFC),UK Research and Innovation (UKRI). BSD 2-Clause License. All rights reserved..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

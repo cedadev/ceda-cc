@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ceda_cc.c4_run &mdash; ceda-cc 1.3.1+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=2b5c5e91"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ceda-cc
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ceda-cc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ceda_cc.c4_run</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ceda_cc.c4_run</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;ceda_cc</span>
+<span class="sd">##########</span>
+<span class="sd">Entry point for API.</span>
+
+<span class="sd">USAGE</span>
+<span class="sd">#####</span>
+<span class="sd">c4_run.main( &lt;argument list&gt; )</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.ccinit</span><span class="w"> </span><span class="kn">import</span> <span class="n">c4_init</span>
+
+<span class="n">testmain</span><span class="o">=</span><span class="kc">False</span>
+<span class="c1">## callout to summary.py: if this option is selected, imports of libraries are not needed.</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">testmain</span><span class="p">:</span>
+  <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+   <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;--sum&#39;</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">summary</span>
+        <span class="n">summary</span><span class="o">.</span><span class="n">summariseLogs</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+     <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-v&#39;</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.versionConfig</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span><span class="p">,</span> <span class="n">versionComment</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ceda-cc version </span><span class="si">%s</span><span class="s1"> [</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">version</span><span class="p">,</span><span class="n">versionComment</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+     <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;--unitTest&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting test suite 1&quot;</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestsS1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting test suite 2&quot;</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestsS2</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tests completed&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+   <span class="k">else</span><span class="p">:</span>
+     <span class="nb">print</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
+     <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Standard library imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">glob</span><span class="o">,</span><span class="w"> </span><span class="nn">pkgutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="c1">## pkgutil is used in file_utils</span>
+<span class="c1"># Third party imports</span>
+
+<span class="c1">## Local imports with 3rd party dependencies</span>
+<span class="c1">#### netcdf --- currently only support for cmds2 -- re-arranged to facilitate support for alternative modules</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ceda_cc.file_utils</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">fileMetadata</span><span class="p">,</span> <span class="n">ncLib</span>
+
+<span class="c1"># Local imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ceda_cc.utils_c4</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.ceda_cc_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_c4</span> <span class="k">as</span> <span class="n">config</span>
+
+<span class="c1">##reload( utils )</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.xceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">baseException</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ceda_cc.fcc_utils2</span><span class="w"> </span><span class="kn">import</span> <span class="n">tupsort</span>
+
+
+<span class="c1">#driving_model_ensemble_member = &lt;CMIP5Ensemble_member&gt;</span>
+<span class="c1">#rcm_version_id = &lt;RCMVersionID&gt;                     </span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+     <span class="bp">self</span><span class="o">.</span><span class="n">experimental</span> <span class="o">=</span> <span class="kc">None</span>
+     <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">pathTmplDict</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;CORDEX&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(project)s</span><span class="s1">/</span><span class="si">%(product)s</span><span class="s1">/</span><span class="si">%(domain)s</span><span class="s1">/</span><span class="si">%(institute)s</span><span class="s1">/</span><span class="si">%(driving_model)s</span><span class="s1">/</span><span class="si">%(experiment)s</span><span class="s1">/</span><span class="si">%(ensemble)s</span><span class="s1">/</span><span class="si">%(model)s</span><span class="s1">/</span><span class="si">%(model_version)s</span><span class="s1">/</span><span class="si">%(frequency)s</span><span class="s1">/</span><span class="si">%(variable)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/&#39;</span><span class="p">,</span>   \
+                 <span class="s1">&#39;SPECS&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(project)s</span><span class="s1">/</span><span class="si">%(product)s</span><span class="s1">/</span><span class="si">%(institute)s</span><span class="s1">/</span><span class="si">%(model)s</span><span class="s1">/</span><span class="si">%(experiment)s</span><span class="s1">/</span><span class="si">%(start_date)s</span><span class="s1">/</span><span class="si">%(frequency)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/</span><span class="si">%(table)s</span><span class="s1">/</span><span class="si">%(variable)s</span><span class="s1">/</span><span class="si">%(ensemble)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;CMIP5&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(project)s</span><span class="s1">/</span><span class="si">%(product)s</span><span class="s1">/</span><span class="si">%(institute)s</span><span class="s1">/</span><span class="si">%(model)s</span><span class="s1">/</span><span class="si">%(experiment)s</span><span class="s1">/</span><span class="si">%(frequency)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/</span><span class="si">%(table)s</span><span class="s1">/</span><span class="si">%(ensemble)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/</span><span class="si">%(variable)s</span><span class="s1">/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;CCMI&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(project)s</span><span class="s1">/</span><span class="si">%(product)s</span><span class="s1">/</span><span class="si">%(institute)s</span><span class="s1">/</span><span class="si">%(model)s</span><span class="s1">/</span><span class="si">%(experiment)s</span><span class="s1">/</span><span class="si">%(frequency)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/</span><span class="si">%(table)s</span><span class="s1">/</span><span class="si">%(ensemble)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/</span><span class="si">%(variable)s</span><span class="s1">/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;ccmi2022&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(mip_era)s</span><span class="s1">/</span><span class="si">%(activity_id)s</span><span class="s1">/</span><span class="si">%(institution_id)s</span><span class="s1">/</span><span class="si">%(source_id)s</span><span class="s1">/</span><span class="si">%(experiment_id)s</span><span class="s1">/</span><span class="si">%(variant_label)s</span><span class="s1">/</span><span class="si">%(table_id)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/</span><span class="si">%(variable)s</span><span class="s1">/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;snapsi&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(mip_era)s</span><span class="s1">/</span><span class="si">%(activity_id)s</span><span class="s1">/</span><span class="si">%(institution_id)s</span><span class="s1">/</span><span class="si">%(source_id)s</span><span class="s1">/</span><span class="si">%(experiment_id)s</span><span class="s1">/</span><span class="si">%(variant_label)s</span><span class="s1">/</span><span class="si">%(table_id)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/</span><span class="si">%(variable)s</span><span class="s1">/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;ramip&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(mip_era)s</span><span class="s1">/</span><span class="si">%(activity_id)s</span><span class="s1">/</span><span class="si">%(institution_id)s</span><span class="s1">/</span><span class="si">%(source_id)s</span><span class="s1">/</span><span class="si">%(experiment_id)s</span><span class="s1">/</span><span class="si">%(variant_label)s</span><span class="s1">/</span><span class="si">%(table_id)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/</span><span class="si">%(variable)s</span><span class="s1">/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;esa-cci&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(level)s</span><span class="s1">/</span><span class="si">%(platform)s</span><span class="s1">/</span><span class="si">%(sensor)s</span><span class="s1">/</span><span class="si">%(variable)s</span><span class="s1">/&#39;</span><span class="p">,</span> \
+                 <span class="s1">&#39;__def__&#39;</span><span class="p">:</span><span class="s1">&#39;</span><span class="si">%(project)s</span><span class="s1">/</span><span class="si">%(product)s</span><span class="s1">/</span><span class="si">%(institute)s</span><span class="s1">/</span><span class="si">%(model)s</span><span class="s1">/</span><span class="si">%(experiment)s</span><span class="s1">/</span><span class="si">%(frequency)s</span><span class="s1">/</span><span class="si">%(realm)s</span><span class="s1">/</span><span class="si">%(variable)s</span><span class="s1">/</span><span class="si">%(ensemble)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/&#39;</span><span class="p">,</span> \
+               <span class="p">}</span>
+
+<span class="c1">## core drs: list of vocab names</span>
+<span class="c1">## path template: -- current version puts upper case in &quot;project&quot;</span>
+<span class="c1">## dataset template:  </span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">recorder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">project</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;map&#39;</span><span class="p">,</span><span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pathtmpl</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(project)s</span><span class="s1">/</span><span class="si">%(product)s</span><span class="s1">/</span><span class="si">%(domain)s</span><span class="s1">/</span><span class="si">%(institute)s</span><span class="s1">/</span><span class="si">%(driving_model)s</span><span class="s1">/</span><span class="si">%(experiment)s</span><span class="s1">/</span><span class="si">%(ensemble)s</span><span class="s1">/</span><span class="si">%(model)s</span><span class="s1">/</span><span class="si">%(model_version)s</span><span class="s1">/</span><span class="si">%(frequency)s</span><span class="s1">/</span><span class="si">%(variable)s</span><span class="s1">/files/</span><span class="si">%%</span><span class="s1">(version)s/&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pathtmpl</span> <span class="o">=</span> <span class="n">pathTmplDict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">project</span><span class="p">,</span><span class="n">pathTmplDict</span><span class="p">[</span><span class="s1">&#39;__def__&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">records</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">sh</span> <span class="o">=</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">sh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fpath</span><span class="p">,</span><span class="n">drs</span><span class="p">,</span><span class="n">safe</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span><span class="s1">&#39;can only do map files at present&#39;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">drs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span> <span class="p">{}</span> <span class="p">),</span> <span class="s1">&#39;2nd user argument to method add should be a dictionary [</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">drs</span><span class="p">)</span>
+    <span class="n">tpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pathtmpl</span> <span class="o">%</span> <span class="n">drs</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span><span class="p">:</span>
+      <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">fpath</span> <span class="p">),</span> <span class="s1">&#39;file </span><span class="si">%s</span><span class="s1"> not found&#39;</span> <span class="o">%</span> <span class="n">fpath</span>
+      <span class="n">fdate</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">fpath</span><span class="p">))</span>
+      <span class="n">sz</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">fdate</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
+      <span class="n">sz</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> | ok | </span><span class="si">%s</span><span class="s1"> | modtime = </span><span class="si">%s</span><span class="s1"> | target = </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fpath</span><span class="p">,</span><span class="n">sz</span><span class="p">,</span><span class="n">fdate</span><span class="p">,</span><span class="n">tpath</span><span class="p">)</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s1">&#39;/&#39;</span> <span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;creation_date&#39;</span><span class="p">,</span><span class="s1">&#39;tracking_id&#39;</span><span class="p">]:</span>
+      <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">drs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">record</span> <span class="o">+=</span> <span class="s1">&#39; | </span><span class="si">%s</span><span class="s1"> = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">drs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;tracking_id&#39;</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="n">drs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span>
+  
+  <span class="k">def</span><span class="w"> </span><span class="nf">modify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fn</span><span class="p">,</span><span class="n">msg</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">fn</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span><span class="s1">&#39;attempt to modify non-existent record </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">[</span><span class="n">fn</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">])]</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span> <span class="s1">&#39;| ok |&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+      <span class="c1">##print &#39;file %s already flagged with errors&#39; % fn</span>
+      <span class="k">return</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span> <span class="s1">&#39;| ok |&#39;</span><span class="p">,</span> <span class="s1">&#39;| </span><span class="si">%s</span><span class="s1"> |&#39;</span> <span class="o">%</span> <span class="n">msg</span> <span class="p">)</span>
+    <span class="c1">##print &#39;--&gt; &#39;,s</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">checktids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">## sort by tracking id</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span> <span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span> <span class="n">cmp</span><span class="o">=</span><span class="n">tupsort</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cmp</span> <span class="p">)</span>
+    <span class="n">nd</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fnl</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;duplicate tracking_id: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">:: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">nd</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnl</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">fnl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+          <span class="n">fnl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">fnl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">nd</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;no duplicate tracking ids found in </span><span class="si">%s</span><span class="s1"> files&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tidtupl</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> duplicate tracking ids&#39;</span> <span class="o">%</span> <span class="n">nd</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fnl</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="s1">&#39;error: duplicate tid&#39;</span> <span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">dumpAll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">safe</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">safe</span><span class="o">=</span><span class="n">safe</span> <span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">dump</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+    <span class="k">if</span> <span class="n">safe</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">record</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">safe</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">adderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fpath</span><span class="p">,</span><span class="n">reason</span><span class="p">,</span><span class="n">safe</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> | </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s1">&#39;/&#39;</span> <span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">checker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcfg</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span><span class="n">reader</span><span class="p">,</span><span class="n">abortMessageCount</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">experimental</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">dummy</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">pcfg</span> <span class="o">=</span> <span class="n">pcfg</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">fileIsFixed</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">abortMessageCount</span> <span class="o">=</span> <span class="n">abortMessageCount</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">experimental</span> <span class="o">=</span> <span class="n">experimental</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span> <span class="o">=</span> <span class="n">reader</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">checkFileName</span><span class="p">(</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cga</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">checkGlobalAttributes</span><span class="p">(</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cgd</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">checkStandardDims</span><span class="p">(</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cgg</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">checkGrids</span><span class="p">(</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cls</span> <span class="o">=</span> <span class="bp">cls</span>
+
+    <span class="c1"># define vocabs based on project</span>
+    <span class="c1">##self.vocabs = getvocabs(pcgf)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">vocabs</span> <span class="o">=</span> <span class="n">pcfg</span><span class="o">.</span><span class="n">vocabs</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">checkfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fpath</span><span class="p">,</span><span class="n">log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">attributeMappings</span><span class="o">=</span><span class="p">[],</span> <span class="n">getDrs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">log</span>
+
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s1">&#39;/&#39;</span> <span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">attributeMappings</span> <span class="o">!=</span> <span class="p">[]:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">loadNc</span><span class="p">(</span> <span class="n">fpath</span> <span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span> <span class="n">attributeMappings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">globalattributesinfn</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span> <span class="p">)</span>
+      <span class="n">ncred</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="n">thisfn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">fn</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">ncred</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="n">thisfn</span> <span class="o">=</span> <span class="n">fn</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">check</span><span class="p">(</span> <span class="n">thisfn</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">projectV</span><span class="o">.</span><span class="n">id</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;__&#39;</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">fpath</span> <span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;file </span><span class="si">%s</span><span class="s1"> not found [2]&#39;</span> <span class="o">%</span> <span class="n">fpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">fnTimeTuples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">fnTimeTuples</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ncred</span><span class="p">:</span>
+      <span class="c1">##print fpath</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">loadNc</span><span class="p">(</span> <span class="n">fpath</span> <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ga</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">ga</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">va</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">va</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">da</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">da</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">vgroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">freq</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">vgroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">mipVocabVgmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">group</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cga</span><span class="o">.</span><span class="n">check</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ga</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="n">vgroup</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">fnParts</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cga</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">return</span>
+
+    <span class="c1">##self.cgd.plevrequired = config.plevrequired</span>
+    <span class="c1">##self.cgd.plevvalues = config.plevvalues</span>
+    <span class="c1">##self.cgd.heightrequired = config.heightrequired</span>
+    <span class="c1">##self.cgd.heightvalues = config.heightvalues</span>
+    <span class="c1">##self.cgd.heightrange = config.heightrange</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cgd</span><span class="o">.</span><span class="n">check</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cga</span><span class="o">.</span><span class="n">isInstantaneous</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">fnParts</span> <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgd</span><span class="o">.</span><span class="n">calendar</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgd</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">return</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">doCheckGrids</span><span class="p">:</span>
+      <span class="c1">##self.cgg.rotatedpolegrids = config.rotatedpolegrids</span>
+      <span class="c1">##self.cgg.interpolatedgrids = config.interpolatedgrids</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cgg</span><span class="o">.</span><span class="n">check</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">va</span> <span class="p">)</span>
+    
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgg</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">getDrs</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">drs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cga</span><span class="o">.</span><span class="n">getDrs</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">drs</span><span class="p">[</span><span class="s1">&#39;project&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">pcfg</span><span class="o">.</span><span class="n">projectV</span><span class="o">.</span><span class="n">id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfn</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cga</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgd</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgg</span><span class="o">.</span><span class="n">errorCount</span>
+
+<div class="viewcode-block" id="Main"><a class="viewcode-back" href="../../index.html#ceda_cc.c4_run.Main">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Main</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;main entry point for execution.</span>
+
+<span class="sd">     all compliance tests are completed in the execution of the &quot;main.run()&quot; method. test results are aggregated in a number of attributes.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">abortMessageCount</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">monitorfilehandles</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="n">cmdl</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;instantiation sets up logging, imports the package configuration, and creates a checker instance.</span>
+<span class="sd">       a monitor to check on open file handles is created if required (this was needed to deal with accumulation of zombie file handles in an earlier version) &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logDict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">monitorfilehandles</span> <span class="o">=</span> <span class="n">monitorfilehandles</span>
+    <span class="n">c4i</span> <span class="o">=</span> <span class="n">c4_init</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span> <span class="o">=</span> <span class="n">c4i</span>
+    <span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;starting batch -- number of file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c4i</span><span class="o">.</span><span class="n">flist</span><span class="p">))</span> <span class="p">)</span>
+    <span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;source: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">c4i</span><span class="o">.</span><span class="n">source</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">cmdl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;command: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cmdl</span> <span class="p">)</span>
+      
+    <span class="n">isdummy</span>  <span class="o">=</span> <span class="n">c4i</span><span class="o">.</span><span class="n">project</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;__&#39;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ncLib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">isdummy</span><span class="p">):</span>
+       <span class="k">raise</span> <span class="n">baseexception</span><span class="p">(</span> <span class="s1">&#39;cannot proceed with non-dummy [</span><span class="si">%s</span><span class="s1">] project without a netcdf api&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">c4i</span><span class="o">.</span><span class="n">project</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">pcfg</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">ProjectConfig</span><span class="p">(</span> <span class="n">c4i</span><span class="o">.</span><span class="n">project</span> <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">pcfg</span><span class="o">.</span><span class="n">projectV</span><span class="o">.</span><span class="n">v</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;cannot handle anything other than latest version at present&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span> <span class="o">=</span> <span class="n">fileMetadata</span><span class="p">(</span><span class="n">dummy</span><span class="o">=</span><span class="n">isdummy</span><span class="p">,</span> <span class="n">attributeMappingsLog</span><span class="o">=</span><span class="n">c4i</span><span class="o">.</span><span class="n">attributeMappingsLog</span><span class="p">,</span><span class="n">forceLib</span><span class="o">=</span><span class="n">c4i</span><span class="o">.</span><span class="n">forceNetcdfLib</span><span class="p">)</span>
+    <span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;python netcdf: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">ncLib</span> <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="o">=</span> <span class="n">checker</span><span class="p">(</span><span class="n">pcfg</span><span class="p">,</span> <span class="n">c4i</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="p">,</span><span class="n">abortMessageCount</span><span class="o">=</span><span class="n">abortMessageCount</span><span class="p">,</span> <span class="n">experimental</span><span class="o">=</span><span class="n">c4i</span><span class="o">.</span><span class="n">experimental</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rec</span> <span class="o">=</span> <span class="n">recorder</span><span class="p">(</span> <span class="n">c4i</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="n">c4i</span><span class="o">.</span><span class="n">recordFile</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="n">isdummy</span> <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ncLib</span> <span class="o">=</span> <span class="n">ncLib</span>
+
+    <span class="c1"># this list will record the drs dictionaries of all checked files for export to json</span>
+
+    <span class="k">if</span> <span class="n">monitorfilehandles</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">SysMonitor</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="n">c4i</span><span class="o">.</span><span class="n">errs</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span> <span class="n">c4i</span><span class="o">.</span><span class="n">errs</span> <span class="p">),</span> <span class="mi">2</span> <span class="p">):</span>
+        <span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="n">c4i</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">)</span>
+  
+    <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">amaplistdraft</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">printInfo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">drs_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cal</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ecount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">filelogopen</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">resList</span> <span class="o">=</span>  <span class="p">[]</span>
+    <span class="n">stdoutsum</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">cbv</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">checkByVar</span><span class="p">(</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">info</span><span class="p">,</span><span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">project</span><span class="p">,</span><span class="n">monitor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">project</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;esa-cci&#39;</span><span class="p">]:</span>
+      <span class="n">cbv</span><span class="o">.</span><span class="n">impt</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">flist</span> <span class="p">)</span>
+      <span class="k">if</span> <span class="n">printInfo</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cbv</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
+    <span class="n">npass</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">kf</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">flist</span><span class="p">:</span>
+      <span class="n">kf</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">rv</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="n">ec</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitorfilehandles</span><span class="p">:</span>
+        <span class="n">nofhstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">get_open_fds</span><span class="p">()</span>
+      <span class="n">fn</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;starting: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fn</span> <span class="p">)</span>
+      <span class="k">try</span><span class="p">:</span>
+  <span class="c1">### need to have a unique name, otherwise get mixing of logs despite close statement below.</span>
+  <span class="c1">### if duplicate file names are present, this will be recorded in the main log, tag appended to file level log name (not yet tested).</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logByFile</span><span class="p">:</span>
+          <span class="n">flogger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">getFileLog</span><span class="p">(</span> <span class="n">fn</span> <span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">logDict</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">fileLogfile</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;log file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">fileLogfile</span> <span class="p">)</span>
+          <span class="n">filelogopen</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">flogger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span>
+  
+        <span class="n">flogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;starting file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fn</span> <span class="p">)</span>
+<span class="c1">## default appending to myapp.log; mode=&#39;w&#39; forces a new file (deleting old contents).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">checkfile</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">flogger</span><span class="p">,</span><span class="n">attributeMappings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">attributeMappings</span><span class="p">,</span> <span class="n">getDrs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">getDrs</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">cal</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">cgd</span><span class="o">.</span><span class="n">varGroup</span> <span class="o">!=</span> <span class="s2">&quot;fx&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cal</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">calendar</span><span class="p">:</span>
+              <span class="n">cal_change_err_msg</span> <span class="o">=</span> <span class="s1">&#39;error: change in calendar attribute </span><span class="si">%s</span><span class="s1"> --&gt; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">calendar</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">cal_change_err_msg</span><span class="p">)</span>
+              <span class="n">flogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">cal_change_err_msg</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+          <span class="n">cal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">calendar</span>
+          <span class="n">ec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span>
+        <span class="n">rv</span> <span class="o">=</span>  <span class="n">ec</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">rv</span><span class="p">:</span>
+          <span class="n">npass</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">rv</span><span class="p">,</span><span class="n">ec</span><span class="p">)</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logByFile</span><span class="p">:</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+            <span class="n">flogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;done -- error count </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span> <span class="p">)</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="n">flogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;done -- checks not completed&#39;</span> <span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">closeFileLog</span><span class="p">(</span> <span class="p">)</span>
+          <span class="n">filelogopen</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;done -- error count </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span> <span class="p">)</span> 
+          <span class="n">ecount</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">add</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">drs</span> <span class="p">)</span>
+            <span class="n">drs_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">,</span> <span class="s1">&#39;drs&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">drs</span><span class="p">})</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">adderr</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="s1">&#39;errors found | errorCount = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">errorCount</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">ecount</span> <span class="o">+=</span> <span class="mi">20</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;done -- testing aborted because of severity of errors&#39;</span> <span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">adderr</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="s1">&#39;errors found and checks aborted&#39;</span> <span class="p">)</span>
+      <span class="k">except</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;exception has occured&quot;</span> <span class="p">,</span><span class="n">exc_info</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filelogopen</span><span class="p">:</span>
+          <span class="n">flogger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;c4.100.001: [exception]: failed:: exception has occured&quot;</span> <span class="p">,</span><span class="n">exc_info</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">closeFileLog</span><span class="p">(</span> <span class="p">)</span>
+          <span class="n">filelogopen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">adderr</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="s1">&#39;error: exception&#39;</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">holdExceptions</span><span class="p">:</span>
+          <span class="k">raise</span>
+      <span class="k">if</span> <span class="n">stdoutsum</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">kf</span><span class="o">%</span><span class="n">stdoutsum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> files checked; </span><span class="si">%s</span><span class="s1"> passed this round&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">kf</span><span class="p">,</span><span class="n">npass</span><span class="p">))</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitorfilehandles</span><span class="p">:</span>
+        <span class="n">nofhend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">get_open_fds</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nofhend</span> <span class="o">&gt;</span> <span class="n">nofhstart</span><span class="p">:</span>
+           <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;open file handles: </span><span class="si">%s</span><span class="s1"> --- </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nofhstart</span><span class="p">,</span> <span class="n">nofhend</span><span class="p">))</span>
+  
+    <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">logger</span>
+    
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">project</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;specs&#39;</span><span class="p">,</span><span class="s1">&#39;ccmi&#39;</span><span class="p">,</span><span class="s1">&#39;snapsi&#39;</span><span class="p">,</span><span class="s1">&#39;ramip&#39;</span><span class="p">,</span><span class="s1">&#39;ccmi2022&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP5&#39;</span><span class="p">,</span><span class="s1">&#39;ESA-CCI&#39;</span><span class="p">]:</span>
+       <span class="n">cbv</span><span class="o">.</span><span class="n">c4i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span>
+       <span class="n">cbv</span><span class="o">.</span><span class="n">setLogDict</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">logDict</span> <span class="p">)</span>
+       <span class="n">cbv</span><span class="o">.</span><span class="n">check</span><span class="p">(</span> <span class="n">recorder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">calendar</span><span class="p">)</span>
+       <span class="k">try</span><span class="p">:</span>
+         <span class="n">ecount</span> <span class="o">+=</span> <span class="n">cbv</span><span class="o">.</span><span class="n">errorCount</span>
+       <span class="k">except</span><span class="p">:</span>
+         <span class="n">ecount</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ncreader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">amapListDraft</span> <span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span> <span class="p">[]</span> <span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span>  <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">amapListDraft</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">ll</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">amapListDraft</span>
+      <span class="n">ll</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+      <span class="n">oo</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="s1">&#39;amapDraft.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span> <span class="p">)</span>
+      <span class="n">oo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="p">)</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">ll</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ll</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+          <span class="n">oo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">ll</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="p">)</span>
+      <span class="n">oo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">project</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SPECS&#39;</span><span class="p">,</span><span class="s1">&#39;CCMI&#39;</span><span class="p">,</span><span class="s1">&#39;CMIP5&#39;</span><span class="p">]:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">checktids</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">dumpAll</span><span class="p">()</span>
+
+    <span class="c1">#!TODO: the recorder class could export JSON if it recorded the full drs dictionaries.</span>
+    <span class="c1">#       This lightweight solution re-uses the filename from the rec class and dumps</span>
+    <span class="c1">#       JSON in a separate function.</span>
+    <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span>
+    <span class="n">dump_drs_list</span><span class="p">(</span><span class="n">drs_list</span><span class="p">,</span> <span class="n">json_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">printInfo</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error count </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ecount</span><span class="p">)</span>
+    <span class="c1">##c4i.hdlr.close()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c4i</span><span class="o">.</span><span class="n">closeBatchLog</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ok</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">resList</span><span class="p">]</span> <span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_drs_list</span><span class="p">(</span><span class="n">drs_list</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a+&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">drs</span> <span class="ow">in</span> <span class="n">drs_list</span><span class="p">:</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">drs</span><span class="p">))</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015-2025, Centre of Environmental Data Analysis,Scientific and Technical Facilities Council (STFC),UK Research and Innovation (UKRI). BSD 2-Clause License. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

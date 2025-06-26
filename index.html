@@ -1,54 +1,164 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>The ceda-cc file compliance checker: technical documentation &#8212; ceda-cc 1.3.1+ documentation</title>
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The ceda-cc file compliance checker: technical documentation &mdash; ceda-cc 1.3.1+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2b5c5e91"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">ceda-cc 1.3.1+ documentation</a> &#187;</li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <div class="section" id="the-ceda-cc-file-compliance-checker-technical-documentation">
-<h1>The ceda-cc file compliance checker: technical documentation<a class="headerlink" href="#the-ceda-cc-file-compliance-checker-technical-documentation" title="Permalink to this headline">¶</a></h1>
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            ceda-cc
+          </a>
+              <div class="version">
+                1.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">The ceda-cc file compliance checker: technical documentation</a></li>
+<li><a class="reference internal" href="#usage-ccinit">Usage (ccinit)</a><ul>
+<li><a class="reference internal" href="#calling-options">Calling options</a><ul>
+<li><a class="reference internal" href="#log-file-modes">Log file modes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ceda_cc.c4">c4</a><ul>
+<li><a class="reference internal" href="#ceda_cc.c4.main_entry"><code class="docutils literal notranslate"><span class="pre">main_entry()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ceda_cc.c4_run">c4_run</a><ul>
+<li><a class="reference internal" href="#ceda-cc">ceda_cc</a></li>
+<li><a class="reference internal" href="#usage">USAGE</a></li>
+<li><a class="reference internal" href="#ceda_cc.c4_run.Main"><code class="docutils literal notranslate"><span class="pre">Main</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ceda_cc.ceda_cc_config.config_c4">config_c4</a><ul>
+<li><a class="reference internal" href="#id1">config_c4</a></li>
+<li><a class="reference internal" href="#ceda_cc.ceda_cc_config.config_c4.NT_fnParts"><code class="docutils literal notranslate"><span class="pre">NT_fnParts</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.ceda_cc_config.config_c4.NT_project"><code class="docutils literal notranslate"><span class="pre">NT_project</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.ceda_cc_config.config_c4.ProjectConfig"><code class="docutils literal notranslate"><span class="pre">ProjectConfig</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.ceda_cc_config.config_c4.copy_config"><code class="docutils literal notranslate"><span class="pre">copy_config()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.ceda_cc_config.config_c4.readVocab"><code class="docutils literal notranslate"><span class="pre">readVocab</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ceda_cc.utils_c4">utils_c4</a><ul>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase"><code class="docutils literal notranslate"><span class="pre">CheckBase</span></code></a><ul>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.isInt"><code class="docutils literal notranslate"><span class="pre">CheckBase.isInt()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.logMessage"><code class="docutils literal notranslate"><span class="pre">CheckBase.logMessage()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.log_error"><code class="docutils literal notranslate"><span class="pre">CheckBase.log_error()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.log_exception"><code class="docutils literal notranslate"><span class="pre">CheckBase.log_exception()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.log_pass"><code class="docutils literal notranslate"><span class="pre">CheckBase.log_pass()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.runChecks"><code class="docutils literal notranslate"><span class="pre">CheckBase.runChecks()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.CheckBase.test"><code class="docutils literal notranslate"><span class="pre">CheckBase.test()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkByVar"><code class="docutils literal notranslate"><span class="pre">checkByVar</span></code></a><ul>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkByVar.checkThisTrange"><code class="docutils literal notranslate"><span class="pre">checkByVar.checkThisTrange()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkByVar.checkTrange"><code class="docutils literal notranslate"><span class="pre">checkByVar.checkTrange()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkByVar.impt"><code class="docutils literal notranslate"><span class="pre">checkByVar.impt()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkFileName"><code class="docutils literal notranslate"><span class="pre">checkFileName</span></code></a><ul>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkFileName.check"><code class="docutils literal notranslate"><span class="pre">checkFileName.check()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkFileName.do_check_fn"><code class="docutils literal notranslate"><span class="pre">checkFileName.do_check_fn()</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkFileName.do_check_fnextra"><code class="docutils literal notranslate"><span class="pre">checkFileName.do_check_fnextra()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkGlobalAttributes"><code class="docutils literal notranslate"><span class="pre">checkGlobalAttributes</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkGrids"><code class="docutils literal notranslate"><span class="pre">checkGrids</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkStandardDims"><code class="docutils literal notranslate"><span class="pre">checkStandardDims</span></code></a><ul>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.checkStandardDims.check"><code class="docutils literal notranslate"><span class="pre">checkStandardDims.check()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ceda_cc.utils_c4.maybe_plural"><code class="docutils literal notranslate"><span class="pre">maybe_plural()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ceda_cc.file_utils">file_utils</a><ul>
+<li><a class="reference internal" href="#ceda_cc.file_utils.DimensionAttributes"><code class="docutils literal notranslate"><span class="pre">DimensionAttributes</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.file_utils.GlobalAttributes"><code class="docutils literal notranslate"><span class="pre">GlobalAttributes</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.file_utils.VariableAttributes"><code class="docutils literal notranslate"><span class="pre">VariableAttributes</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.file_utils.fileMetadata"><code class="docutils literal notranslate"><span class="pre">fileMetadata</span></code></a><ul>
+<li><a class="reference internal" href="#ceda_cc.file_utils.fileMetadata.applyMap"><code class="docutils literal notranslate"><span class="pre">fileMetadata.applyMap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ceda_cc.xceptions">xceptions</a><ul>
+<li><a class="reference internal" href="#ceda_cc.xceptions.abortChecks"><code class="docutils literal notranslate"><span class="pre">abortChecks</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.xceptions.baseException"><code class="docutils literal notranslate"><span class="pre">baseException</span></code></a></li>
+<li><a class="reference internal" href="#ceda_cc.xceptions.loggedException"><code class="docutils literal notranslate"><span class="pre">loggedException</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">ceda-cc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The ceda-cc file compliance checker: technical documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-ceda-cc-file-compliance-checker-technical-documentation">
+<h1>The ceda-cc file compliance checker: technical documentation<a class="headerlink" href="#the-ceda-cc-file-compliance-checker-technical-documentation" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-<div class="section" id="usage-ccinit">
-<h1>Usage (ccinit)<a class="headerlink" href="#usage-ccinit" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="calling-options">
-<h2>Calling options<a class="headerlink" href="#calling-options" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="usage-ccinit">
+<h1>Usage (ccinit)<a class="headerlink" href="#usage-ccinit" title="Permalink to this heading"></a></h1>
+<section id="calling-options">
+<h2>Calling options<a class="headerlink" href="#calling-options" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 44%" />
-<col style="width: 56%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Command line</p></th>
 <th class="head"><p>Description</p></th>
@@ -72,72 +182,199 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="module-ceda_cc.c4">
-<span id="c4"></span><h1>c4<a class="headerlink" href="#module-ceda_cc.c4" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-ceda_cc.ccinit"></span><dl class="simple">
+<dt>Arguments:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">-p<span class="colon">:</span></dt>
+<dd class="field-odd"><p>project</p>
+</dd>
+<dt class="field-even">–copy-config<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;target directory path&gt;: copy configuration files to target directory path;</p>
+</dd>
+<dt class="field-odd">–sum<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;log file directory&gt; create a summary of the results  logged in the specified directory.</p>
+</dd>
+<dt class="field-even">-f<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;file&gt;: check a single file;</p>
+</dd>
+<dt class="field-odd">-d<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;directory&gt;: check all the NetCDF files in a directory;</p>
+</dd>
+<dt class="field-even">-D<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;directory&gt;: check all the NetCDF files in a directory tree (or latest versions if a recognised version managment system is defined for the project);</p>
+</dd>
+<dt class="field-odd">–ld<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;log file directory&gt;:  ## directory to take log files;</p>
+</dd>
+<dt class="field-even">-R<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;record file name&gt;: file name for file to take one record per file checked;</p>
+</dd>
+<dt class="field-odd">-l<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;file list file&gt;: a file containing one data file to check per line;</p>
+</dd>
+<dt class="field-even">–cae<span class="colon">:</span></dt>
+<dd class="field-even"><p>“catch all errors”: will trap exceptions and record in  log files, and then continue. Default is to stop after unrecognised exceptions.</p>
+</dd>
+<dt class="field-odd">–log<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;single|multi&gt;:  Set log file management option – see “Single log” and “Multi-log” below.</p>
+</dd>
+<dt class="field-even">–blfmode<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;mode&gt;:    Set mode for batch log file – see log file modes</p>
+</dd>
+<dt class="field-odd">–blfms<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Set milli-second mode for naming batch log files (instead of second mode);</p>
+</dd>
+<dt class="field-even">–flfmode<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;mode&gt;:  Set mode for file-level log file – see log file modes</p>
+</dd>
+<dt class="field-odd">–aMap<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Read in some attribute mappings and run tests with virtual substitutions;</p>
+</dd>
+<dt class="field-even">–unitTest<span class="colon">:</span></dt>
+<dd class="field-even"><p>run tests to check installation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<section id="log-file-modes">
+<h3>Log file modes<a class="headerlink" href="#log-file-modes" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>Valid modes are: ‘a’: append</dt><dd><p>‘n’, ‘np’: new file, ‘np’: protect after closing (mode = 444)
+‘w’, ‘wo’: write (overwrite if present), ‘wo’: protect after closing (mode = 444)</p>
+</dd>
+</dl>
+<p>Note that the log files generated in multi-log mode will re-use file names. If running with –flfmode set to ‘n’,’np’ or ‘wo’ it will be necessary to change or clear the target directory. The names of batch log files include the time, to the nearest second, when the process is started, so will not generally suffer from re-use.</p>
+</section>
+</section>
+</section>
+<section id="module-ceda_cc.c4">
+<span id="c4"></span><h1>c4<a class="headerlink" href="#module-ceda_cc.c4" title="Permalink to this heading"></a></h1>
 <p>Entry point for command line usage – see ccinit for usage information.</p>
-<dl class="function">
-<dt id="ceda_cc.c4.main_entry">
-<code class="sig-prename descclassname">ceda_cc.c4.</code><code class="sig-name descname">main_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/c4.html#main_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.c4.main_entry" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="ceda_cc.c4.main_entry">
+<span class="sig-prename descclassname"><span class="pre">ceda_cc.c4.</span></span><span class="sig-name descname"><span class="pre">main_entry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/c4.html#main_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.c4.main_entry" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper around main() for use with setuptools.
 This function will intercept arguments –sum, –unitTest, -v, otherwise pass the commandline to c4_run.main.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="c4-run">
-<h1>c4_run<a class="headerlink" href="#c4-run" title="Permalink to this headline">¶</a></h1>
-</div>
-<div class="section" id="config-c4">
-<h1>config_c4<a class="headerlink" href="#config-c4" title="Permalink to this headline">¶</a></h1>
-</div>
-<div class="section" id="module-ceda_cc.utils_c4">
-<span id="utils-c4"></span><h1>utils_c4<a class="headerlink" href="#module-ceda_cc.utils_c4" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="module-ceda_cc.c4_run">
+<span id="c4-run"></span><h1>c4_run<a class="headerlink" href="#module-ceda_cc.c4_run" title="Permalink to this heading"></a></h1>
+<section id="ceda-cc">
+<h2>ceda_cc<a class="headerlink" href="#ceda-cc" title="Permalink to this heading"></a></h2>
+<p>Entry point for API.</p>
+</section>
+<section id="usage">
+<h2>USAGE<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<p>c4_run.main( &lt;argument list&gt; )</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.c4_run.Main">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.c4_run.</span></span><span class="sig-name descname"><span class="pre">Main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abortMessageCount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitorfilehandles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmdl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/c4_run.html#Main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.c4_run.Main" title="Permalink to this definition"></a></dt>
+<dd><p>main entry point for execution.</p>
+<p>all compliance tests are completed in the execution of the “main.run()” method. test results are aggregated in a number of attributes.</p>
+</dd></dl>
+
+</section>
+<section id="module-ceda_cc.ceda_cc_config.config_c4">
+<span id="config-c4"></span><h1>config_c4<a class="headerlink" href="#module-ceda_cc.ceda_cc_config.config_c4" title="Permalink to this heading"></a></h1>
+<section id="id1">
+<h2>config_c4<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>USAGE:
+import config_c4</p>
+<p>This module sets some basic variables, including some vocabulary lists.</p>
+</section>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ceda_cc.ceda_cc_config.config_c4.NT_fnParts">
+<span class="sig-prename descclassname"><span class="pre">ceda_cc.ceda_cc_config.config_c4.</span></span><span class="sig-name descname"><span class="pre">NT_fnParts</span></span><a class="headerlink" href="#ceda_cc.ceda_cc_config.config_c4.NT_fnParts" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">fnParts</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ceda_cc.ceda_cc_config.config_c4.NT_project">
+<span class="sig-prename descclassname"><span class="pre">ceda_cc.ceda_cc_config.config_c4.</span></span><span class="sig-name descname"><span class="pre">NT_project</span></span><a class="headerlink" href="#ceda_cc.ceda_cc_config.config_c4.NT_project" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">project</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.ceda_cc_config.config_c4.ProjectConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.ceda_cc_config.config_c4.</span></span><span class="sig-name descname"><span class="pre">ProjectConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/ceda_cc_config/config_c4.html#ProjectConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.ceda_cc_config.config_c4.ProjectConfig" title="Permalink to this definition"></a></dt>
+<dd><p>projectConfig:
+Set project specific configuration options.</p>
+<p>USAGE:</p>
+<p>pcfg = projectConfig( &lt;project id&gt;[, version=..] )</p>
+<p>Creates a “pcfg” object which contains attributes used in the code, including vocabulary lists.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ceda_cc.ceda_cc_config.config_c4.copy_config">
+<span class="sig-prename descclassname"><span class="pre">ceda_cc.ceda_cc_config.config_c4.</span></span><span class="sig-name descname"><span class="pre">copy_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dest_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/ceda_cc_config/config_c4.html#copy_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.ceda_cc_config.config_c4.copy_config" title="Permalink to this definition"></a></dt>
+<dd><p>Copy the current default configuration directory into a separate directory.</p>
+<p>The directory &lt;ceda_cc-package-dir&gt;/config is copied to <cite>dest_dir</cite>.
+This is useful when ceda-cc is installed as a Python package and the user may
+not know where the config directory is stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dest_dir</strong> – should be a path to a directory which does not yet exist.  
+The configuration directory will be copied to this path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.ceda_cc_config.config_c4.readVocab">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.ceda_cc_config.config_c4.</span></span><span class="sig-name descname"><span class="pre">readVocab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/ceda_cc_config/config_c4.html#readVocab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.ceda_cc_config.config_c4.readVocab" title="Permalink to this definition"></a></dt>
+<dd><p>readVocab:
+A general class to read in vocabulary lists (“code lists” in ISO 19115 terminology) from a variety of structured text files.</p>
+</dd></dl>
+
+</section>
+<section id="module-ceda_cc.utils_c4">
+<span id="utils-c4"></span><h1>utils_c4<a class="headerlink" href="#module-ceda_cc.utils_c4" title="Permalink to this heading"></a></h1>
 <p>A set of classes running checks and providing utilities to support checks</p>
-<dl class="class">
-<dt id="ceda_cc.utils_c4.CheckBase">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">CheckBase</code><span class="sig-paren">(</span><em class="sig-param">cls='CORDEX'</em>, <em class="sig-param">reportPass=True</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">monitor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">CheckBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CORDEX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportPass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for checks, containing a set of standard methods for managing operation of checks and logging of results</p>
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.isInt">
-<code class="sig-name descname">isInt</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.isInt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.isInt" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.isInt">
+<span class="sig-name descname"><span class="pre">isInt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.isInt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.isInt" title="Permalink to this definition"></a></dt>
 <dd><p>Check that a string is a representation of an integer</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.logMessage">
-<code class="sig-name descname">logMessage</code><span class="sig-paren">(</span><em class="sig-param">msg</em>, <em class="sig-param">error=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.logMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.logMessage" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.logMessage">
+<span class="sig-name descname"><span class="pre">logMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.logMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.logMessage" title="Permalink to this definition"></a></dt>
 <dd><p>Log messages and count messages</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.log_error">
-<code class="sig-name descname">log_error</code><span class="sig-paren">(</span><em class="sig-param">msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.log_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.log_error" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.log_error">
+<span class="sig-name descname"><span class="pre">log_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.log_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.log_error" title="Permalink to this definition"></a></dt>
 <dd><p>Create an error log message and call logMessage; count errors;</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.log_exception">
-<code class="sig-name descname">log_exception</code><span class="sig-paren">(</span><em class="sig-param">msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.log_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.log_exception" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.log_exception">
+<span class="sig-name descname"><span class="pre">log_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.log_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.log_exception" title="Permalink to this definition"></a></dt>
 <dd><p>Logging of exceptions – putting trace information in log files</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.log_pass">
-<code class="sig-name descname">log_pass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.log_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.log_pass" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.log_pass">
+<span class="sig-name descname"><span class="pre">log_pass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.log_pass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.log_pass" title="Permalink to this definition"></a></dt>
 <dd><p>Create a pass log message and call logMessage; count passes;</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.runChecks">
-<code class="sig-name descname">runChecks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.runChecks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.runChecks" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.runChecks">
+<span class="sig-name descname"><span class="pre">runChecks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.runChecks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.runChecks" title="Permalink to this definition"></a></dt>
 <dd><p>Run all the checks registered in this instance (in self.checks) and handle exceptions</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.CheckBase.test">
-<code class="sig-name descname">test</code><span class="sig-paren">(</span><em class="sig-param">res</em>, <em class="sig-param">msg</em>, <em class="sig-param">abort=False</em>, <em class="sig-param">part=False</em>, <em class="sig-param">appendLogfile=(None</em>, <em class="sig-param">None)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.test" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.CheckBase.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendLogfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#CheckBase.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.CheckBase.test" title="Permalink to this definition"></a></dt>
 <dd><p>Handle test results. 
 :param res: [True/False] result of test;
 :param msg: Message describing the test;
@@ -148,29 +385,29 @@ This function will intercept arguments –sum, –unitTest, -v, otherwise pass t
 
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.utils_c4.checkByVar">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">checkByVar</code><span class="sig-paren">(</span><em class="sig-param">cls='CORDEX'</em>, <em class="sig-param">reportPass=True</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">monitor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ceda_cc.utils_c4.CheckBase</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkByVar">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">checkByVar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CORDEX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportPass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckBase</span></code></a></p>
 <p>Run some checks on groups of files with a common variable. Checks for continuity of time in group</p>
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkByVar.checkThisTrange">
-<code class="sig-name descname">checkThisTrange</code><span class="sig-paren">(</span><em class="sig-param">tt</em>, <em class="sig-param">group</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar.checkThisTrange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar.checkThisTrange" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkByVar.checkThisTrange">
+<span class="sig-name descname"><span class="pre">checkThisTrange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar.checkThisTrange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar.checkThisTrange" title="Permalink to this definition"></a></dt>
 <dd><p>Check consistency across a list of time ranges</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkByVar.checkTrange">
-<code class="sig-name descname">checkTrange</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar.checkTrange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar.checkTrange" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkByVar.checkTrange">
+<span class="sig-name descname"><span class="pre">checkTrange</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar.checkTrange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar.checkTrange" title="Permalink to this definition"></a></dt>
 <dd><p>Manage time range checks: loop over groups of files identified by <a class="reference internal" href="#ceda_cc.utils_c4.checkByVar.impt" title="ceda_cc.utils_c4.checkByVar.impt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">impt()</span></code></a></p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkByVar.impt">
-<code class="sig-name descname">impt</code><span class="sig-paren">(</span><em class="sig-param">flist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar.impt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar.impt" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkByVar.impt">
+<span class="sig-name descname"><span class="pre">impt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkByVar.impt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkByVar.impt" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Scan a list of files and identify groups which a common variable and extract time ranges into a dictionary of lists, keyed on group identifiers.</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param flist</dt>
+<dt class="field-odd">param flist<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of file names.</p>
 </dd>
 </dl>
@@ -181,22 +418,22 @@ This function will intercept arguments –sum, –unitTest, -v, otherwise pass t
 
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.utils_c4.checkFileName">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">checkFileName</code><span class="sig-paren">(</span><em class="sig-param">cls='CORDEX'</em>, <em class="sig-param">reportPass=True</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">monitor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ceda_cc.utils_c4.CheckBase</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkFileName">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">checkFileName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CORDEX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportPass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckBase</span></code></a></p>
 <p>Check basic syntax of file names (i.e. checks properties of the text string, it does not attempt to access the file).
 Inherits <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckBase</span></code></a> class. Checks are run by the <a class="reference internal" href="#ceda_cc.utils_c4.checkFileName.check" title="ceda_cc.utils_c4.checkFileName.check"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check()</span></code></a> method.</p>
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkFileName.check">
-<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param">fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName.check" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkFileName.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName.check" title="Permalink to this definition"></a></dt>
 <dd><p>Initiate checks: manage arguments and then call <em>runChecks</em> (inherited from CheckBase class).
 Arguments: fn: file name: the file name to be checked.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkFileName.do_check_fn">
-<code class="sig-name descname">do_check_fn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName.do_check_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName.do_check_fn" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkFileName.do_check_fn">
+<span class="sig-name descname"><span class="pre">do_check_fn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName.do_check_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName.do_check_fn" title="Permalink to this definition"></a></dt>
 <dd><p>Basic file name checks:
 (1) Check suffix;
 (1b) [for ESA-CCI files] check presence of “ESACCI” and identify file naming convention;
@@ -204,53 +441,53 @@ Arguments: fn: file name: the file name to be checked.</p>
 (3) Additional specialist checks for ESA-CCI, CORDEX, CMIP-type (for the time range).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkFileName.do_check_fnextra">
-<code class="sig-name descname">do_check_fnextra</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName.do_check_fnextra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName.do_check_fnextra" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkFileName.do_check_fnextra">
+<span class="sig-name descname"><span class="pre">do_check_fnextra</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkFileName.do_check_fnextra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkFileName.do_check_fnextra" title="Permalink to this definition"></a></dt>
 <dd><p>Check whether file name components match constraints – but only if those constraints are not implicitly verified through comparison with global attributes in later checks</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.utils_c4.checkGlobalAttributes">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">checkGlobalAttributes</code><span class="sig-paren">(</span><em class="sig-param">cls='CORDEX'</em>, <em class="sig-param">reportPass=True</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">monitor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkGlobalAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkGlobalAttributes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ceda_cc.utils_c4.CheckBase</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkGlobalAttributes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">checkGlobalAttributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CORDEX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportPass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkGlobalAttributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkGlobalAttributes" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckBase</span></code></a></p>
 <p>Check global and variable attributes, using tables of valid values</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.utils_c4.checkGrids">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">checkGrids</code><span class="sig-paren">(</span><em class="sig-param">cls='CORDEX'</em>, <em class="sig-param">reportPass=True</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">monitor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkGrids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkGrids" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ceda_cc.utils_c4.CheckBase</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkGrids">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">checkGrids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CORDEX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportPass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkGrids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkGrids" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckBase</span></code></a></p>
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.utils_c4.checkStandardDims">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">checkStandardDims</code><span class="sig-paren">(</span><em class="sig-param">cls='CORDEX'</em>, <em class="sig-param">reportPass=True</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">monitor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkStandardDims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkStandardDims" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ceda_cc.utils_c4.CheckBase</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkStandardDims">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">checkStandardDims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CORDEX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportPass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkStandardDims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkStandardDims" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ceda_cc.utils_c4.CheckBase" title="ceda_cc.utils_c4.CheckBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckBase</span></code></a></p>
 <p>Check the dimensions which are defined in the specifications</p>
-<dl class="method">
-<dt id="ceda_cc.utils_c4.checkStandardDims.check">
-<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param">varName</em>, <em class="sig-param">varGroup</em>, <em class="sig-param">da</em>, <em class="sig-param">va</em>, <em class="sig-param">isInsta</em>, <em class="sig-param">vocabs</em>, <em class="sig-param">fnParts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkStandardDims.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkStandardDims.check" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.checkStandardDims.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varGroup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">da</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">va</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isInsta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocabs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnParts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#checkStandardDims.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.checkStandardDims.check" title="Permalink to this definition"></a></dt>
 <dd><p>API called from check manager <em>run_c4</em> for each file</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="ceda_cc.utils_c4.maybe_plural">
-<code class="sig-prename descclassname">ceda_cc.utils_c4.</code><code class="sig-name descname">maybe_plural</code><span class="sig-paren">(</span><em class="sig-param">word</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#maybe_plural"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.utils_c4.maybe_plural" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="ceda_cc.utils_c4.maybe_plural">
+<span class="sig-prename descclassname"><span class="pre">ceda_cc.utils_c4.</span></span><span class="sig-name descname"><span class="pre">maybe_plural</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">word</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/utils_c4.html#maybe_plural"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.utils_c4.maybe_plural" title="Permalink to this definition"></a></dt>
 <dd><p>Return <code class="docutils literal notranslate"><span class="pre">word</span></code> if n is 1, and plural of <code class="docutils literal notranslate"><span class="pre">word</span></code> if n is not.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-ceda_cc.file_utils">
-<span id="file-utils"></span><h1>file_utils<a class="headerlink" href="#module-ceda_cc.file_utils" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="module-ceda_cc.file_utils">
+<span id="file-utils"></span><h1>file_utils<a class="headerlink" href="#module-ceda_cc.file_utils" title="Permalink to this heading"></a></h1>
 <p>Basic file utilities for reading NetCDF files.</p>
-<dl class="class">
-<dt id="ceda_cc.file_utils.DimensionAttributes">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.file_utils.</code><code class="sig-name descname">DimensionAttributes</code><a class="reference internal" href="_modules/ceda_cc/file_utils.html#DimensionAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.file_utils.DimensionAttributes" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.file_utils.DimensionAttributes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.file_utils.</span></span><span class="sig-name descname"><span class="pre">DimensionAttributes</span></span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#DimensionAttributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.file_utils.DimensionAttributes" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
 <p>A dictionary to contain the dimension attributes from the data file.
 this[k] gives a dictionary of values for dimension k. The dictionary for each variable has key/value pairs for each attribute, plus two special keys:
@@ -258,17 +495,17 @@ this[k] gives a dictionary of values for dimension k. The dictionary for each va
 :_data [required]: data values</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.file_utils.GlobalAttributes">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.file_utils.</code><code class="sig-name descname">GlobalAttributes</code><a class="reference internal" href="_modules/ceda_cc/file_utils.html#GlobalAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.file_utils.GlobalAttributes" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.file_utils.GlobalAttributes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.file_utils.</span></span><span class="sig-name descname"><span class="pre">GlobalAttributes</span></span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#GlobalAttributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.file_utils.GlobalAttributes" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
 <p>A dictionary to contain the global attributes from the data file.
 Each attribute simply stored with attribute name as key.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.file_utils.VariableAttributes">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.file_utils.</code><code class="sig-name descname">VariableAttributes</code><a class="reference internal" href="_modules/ceda_cc/file_utils.html#VariableAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.file_utils.VariableAttributes" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.file_utils.VariableAttributes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.file_utils.</span></span><span class="sig-name descname"><span class="pre">VariableAttributes</span></span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#VariableAttributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.file_utils.VariableAttributes" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
 <p>A dictionary to contain the variable attributes from the data file.
 this[k] gives a dictionary of values for variable k. The dictionary for each variable has key/value pairs for each attribute, plus two special keys:
@@ -276,9 +513,9 @@ this[k] gives a dictionary of values for variable k. The dictionary for each var
 :_data [optional]: data values</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="ceda_cc.file_utils.fileMetadata">
-<em class="property">class </em><code class="sig-prename descclassname">ceda_cc.file_utils.</code><code class="sig-name descname">fileMetadata</code><span class="sig-paren">(</span><em class="sig-param">dummy=False</em>, <em class="sig-param">attributeMappingsLog=None</em>, <em class="sig-param">forceLib=None</em>, <em class="sig-param">readDx=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#fileMetadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.file_utils.fileMetadata" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="ceda_cc.file_utils.fileMetadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.file_utils.</span></span><span class="sig-name descname"><span class="pre">fileMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributeMappingsLog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forceLib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readDx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#fileMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.file_utils.fileMetadata" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Reads in the meta data from a netcdf file.
 Four python NetCDF APIs are supported</p>
@@ -291,104 +528,72 @@ ctypes (libnetcdf.so)</p>
 <p>Metadata, values of dimensions, and some data values for vertical coordinate bounds are read in (<strong>hard coded dependency on vertical coordinate bounds names</strong>) and stored in 3 dictionaries-</p>
 <p>There is also an option to create a dummy dictionaries which can be used for unit testing of code.</p>
 <p>A final method allows some substitutions to be inserted before completing tests. With complex files it may be that some errors are masking others, and several attempts may be needed to arrive at valid specifications. This approach allows provisional modifications to be tested quickly before updating files.</p>
-<dl class="method">
-<dt id="ceda_cc.file_utils.fileMetadata.applyMap">
-<code class="sig-name descname">applyMap</code><span class="sig-paren">(</span><em class="sig-param">mapList</em>, <em class="sig-param">globalAttributesInFn</em>, <em class="sig-param">log=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#fileMetadata.applyMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.file_utils.fileMetadata.applyMap" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="ceda_cc.file_utils.fileMetadata.applyMap">
+<span class="sig-name descname"><span class="pre">applyMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">globalAttributesInFn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/file_utils.html#fileMetadata.applyMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.file_utils.fileMetadata.applyMap" title="Permalink to this definition"></a></dt>
 <dd><p>Apply some mappings to the metadata dictionaries, to transform values so that compliance tests will be on modified values</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-ceda_cc.xceptions">
-<span id="xceptions"></span><h1>xceptions<a class="headerlink" href="#module-ceda_cc.xceptions" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="module-ceda_cc.xceptions">
+<span id="xceptions"></span><h1>xceptions<a class="headerlink" href="#module-ceda_cc.xceptions" title="Permalink to this heading"></a></h1>
 <p>Some exceptions used in the code</p>
-<dl class="exception">
-<dt id="ceda_cc.xceptions.abortChecks">
-<em class="property">exception </em><code class="sig-prename descclassname">ceda_cc.xceptions.</code><code class="sig-name descname">abortChecks</code><a class="reference internal" href="_modules/ceda_cc/xceptions.html#abortChecks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.xceptions.abortChecks" title="Permalink to this definition">¶</a></dt>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ceda_cc.xceptions.abortChecks">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.xceptions.</span></span><span class="sig-name descname"><span class="pre">abortChecks</span></span><a class="reference internal" href="_modules/ceda_cc/xceptions.html#abortChecks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.xceptions.abortChecks" title="Permalink to this definition"></a></dt>
 <dd><p>Raised when checks are aborted following failure of a critical test (e.g. file name cannot be parsed).</p>
 </dd></dl>
 
-<dl class="exception">
-<dt id="ceda_cc.xceptions.baseException">
-<em class="property">exception </em><code class="sig-prename descclassname">ceda_cc.xceptions.</code><code class="sig-name descname">baseException</code><span class="sig-paren">(</span><em class="sig-param">msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/xceptions.html#baseException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.xceptions.baseException" title="Permalink to this definition">¶</a></dt>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ceda_cc.xceptions.baseException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.xceptions.</span></span><span class="sig-name descname"><span class="pre">baseException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ceda_cc/xceptions.html#baseException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.xceptions.baseException" title="Permalink to this definition"></a></dt>
 <dd><p>Basic exception for general use in code.</p>
 </dd></dl>
 
-<dl class="exception">
-<dt id="ceda_cc.xceptions.loggedException">
-<em class="property">exception </em><code class="sig-prename descclassname">ceda_cc.xceptions.</code><code class="sig-name descname">loggedException</code><a class="reference internal" href="_modules/ceda_cc/xceptions.html#loggedException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ceda_cc.xceptions.loggedException" title="Permalink to this definition">¶</a></dt>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ceda_cc.xceptions.loggedException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ceda_cc.xceptions.</span></span><span class="sig-name descname"><span class="pre">loggedException</span></span><a class="reference internal" href="_modules/ceda_cc/xceptions.html#loggedException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ceda_cc.xceptions.loggedException" title="Permalink to this definition"></a></dt>
 <dd><p>Raised after an exception has been caught and logged in a checking class, allowing execution to fall back to the loop over files.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
+</section>
 
 
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">The ceda-cc file compliance checker: technical documentation</a></li>
-<li><a class="reference internal" href="#usage-ccinit">Usage (ccinit)</a><ul>
-<li><a class="reference internal" href="#calling-options">Calling options</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-ceda_cc.c4">c4</a></li>
-<li><a class="reference internal" href="#c4-run">c4_run</a></li>
-<li><a class="reference internal" href="#config-c4">config_c4</a></li>
-<li><a class="reference internal" href="#module-ceda_cc.utils_c4">utils_c4</a></li>
-<li><a class="reference internal" href="#module-ceda_cc.file_utils">file_utils</a></li>
-<li><a class="reference internal" href="#module-ceda_cc.xceptions">xceptions</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
+          <footer>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015-2025, Centre of Environmental Data Analysis,Scientific and Technical Facilities Council (STFC),UK Research and Innovation (UKRI). BSD 2-Clause License. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">ceda-cc 1.3.1+ documentation</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2015-2025, Centre of Environmental Data Analysis,Scientific and Technical Facilities Council (STFC),UK Research and Innovation (UKRI). BSD 2-Clause License. All rights reserved..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
